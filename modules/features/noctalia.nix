@@ -2,6 +2,7 @@
   perSystem = { pkgs, ... }: {
     packages.noctalia-shell = inputs.wrapper-modules.wrappers.noctalia-shell.wrap {
       inherit pkgs; # VERY IMPORTANT
+      outOfStoreConfig = "/home/pollux/.config/noctalia/";
       settings =
         if builtins.pathExists ./noctalia.json then
           let
