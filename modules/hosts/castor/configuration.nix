@@ -12,10 +12,10 @@
     nix.settings.experimental-features = [ "nix-command" "flakes" ];
     nixpkgs.config.allowUnfree = true;
 
-    # Bootloader & Quiet Boot
+    # Bootloader
     boot.loader.systemd-boot.enable = true;
     boot.loader.efi.canTouchEfiVariables = true;
-    boot.kernelParams = [ "quiet" "loglevel=3" "rd.systemd.show_status=auto" "rd.udev.log_level=3" ];
+    boot.kernelParams = [ ];
 
     networking.hostName = "castor";
     networking.networkmanager.enable = true;
@@ -40,11 +40,11 @@
       enable = true;
       settings = {
         initial_session = {
-          command = "niri-session";
+          command = "niri";
           user = "pollux";
         };
         default_session = {
-          command = "niri-session";
+          command = "niri";
           user = "pollux";
         };
       };
@@ -55,6 +55,10 @@
       enable = true;
       nix-direnv.enable = true;
     };
+
+    # CapsLock -> Escape
+    services.xserver.xkb.options = "caps:escape";
+    console.useXkbConfig = true;
 
     # Audio (PipeWire)
     security.rtkit.enable = true;
@@ -77,8 +81,6 @@
     };
 
     time.timeZone = "Asia/Manila";
-    services.xserver.xkb.options = "caps:escape";
-    console.useXkbConfig = true;
     system.stateVersion = "25.11";
   };
 }
