@@ -5,8 +5,8 @@
       user-mail-address "pollux@castor.local")
 
 ;; Fonts
-(setq doom-font (font-spec :family "JetBrainsMono Nerd Font" :size 14 :weight 'regular)
-      doom-variable-pitch-font (font-spec :family "JetBrainsMono Nerd Font" :size 14)
+(setq doom-font (font-spec :family "Maple Mono NF" :size 14 :weight 'regular)
+      doom-variable-pitch-font (font-spec :family "Maple Mono NF" :size 14)
       doom-symbol-font (font-spec :family "Symbola"))
 
 (setq display-line-numbers-type 'relative)

@@ -1,15 +1,12 @@
 { self, inputs, ... }: {
   flake.nixosModules.desktop = { pkgs, ... }: {
     environment.systemPackages = with pkgs; [
-      # Requested Tools
       fd
       fastfetch
       ripgrep
       btop
       cava
       yazi
-
-      # Base Utilities & Media
       git
       ghostty
       foot
@@ -25,8 +22,10 @@
     ];
 
     fonts.packages = with pkgs; [
+      # Maple Mono Font with Nerd Font icons
+      maple-mono.NF-unhinted
+      maple-mono.truetype
       symbola
-      nerd-fonts.jetbrains-mono
       nerd-fonts.symbols-only
     ];
   };
