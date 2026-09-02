@@ -10,6 +10,7 @@
       btop
       cava
       yazi
+      agy
 
       # Base Utilities & Media
       git
