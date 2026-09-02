@@ -46,10 +46,7 @@
             # 1. Shell & Launchers
             # -----------------------------------------------------------------
             "Mod+Space".spawn-sh = "${noctaliaExe} ipc call launcher toggle || noctalia msg panel-toggle launcher";
-
-            # Noctalia Cheatsheet Plugin (SUPER + /)
             "Mod+Slash".spawn-sh = "${noctaliaExe} ipc call cheatsheet toggle || noctalia msg panel-toggle cheatsheet || noctalia msg panel-toggle keybind-cheatsheet";
-
             "Mod+Tab".spawn-sh = "${noctaliaExe} ipc call overview toggle || noctalia msg panel-toggle overview";
             "Mod+A".spawn-sh = "${noctaliaExe} ipc call left-sidebar toggle || noctalia msg panel-toggle left-sidebar";
             "Mod+N".spawn-sh = "${noctaliaExe} ipc call control-center toggle || noctalia msg panel-toggle control-center";
@@ -106,8 +103,9 @@
             "Mod+Ctrl+K".set-window-height = "+5%";
 
             # -----------------------------------------------------------------
-            # 4. Workspaces (0-9)
+            # 4. Workspaces (0-9 & Page Up / Page Down)
             # -----------------------------------------------------------------
+            # Direct Workspace numbers
             "Mod+1".focus-workspace = "w0";
             "Mod+2".focus-workspace = "w1";
             "Mod+3".focus-workspace = "w2";
@@ -129,6 +127,21 @@
             "Mod+Shift+8".move-column-to-workspace = "w7";
             "Mod+Shift+9".move-column-to-workspace = "w8";
             "Mod+Shift+0".move-column-to-workspace = "w9";
+
+            # Page Up / Down Workspace Navigation
+            # Page_Down: Move to higher workspace number (e.g. 2 -> 3)
+            "Mod+Page_Down".focus-workspace-down = { };
+            # Page_Up: Move to lower workspace number (e.g. 3 -> 2)
+            "Mod+Page_Up".focus-workspace-up = { };
+
+            "Mod+Shift+Page_Down".move-column-to-workspace-down = { };
+            "Mod+Shift+Page_Up".move-column-to-workspace-up = { };
+
+            # Wheel navigation
+            "Mod+WheelScrollDown".focus-column-left = { };
+            "Mod+WheelScrollUp".focus-column-right = { };
+            "Mod+Ctrl+WheelScrollDown".focus-workspace-down = { };
+            "Mod+Ctrl+WheelScrollUp".focus-workspace-up = { };
 
             # -----------------------------------------------------------------
             # 5. Utilities & Screenshots
