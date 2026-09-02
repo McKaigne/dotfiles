@@ -1,7 +1,5 @@
 { self, inputs, ... }: {
   flake.nixosModules.desktop = { pkgs, ... }: {
-    programs.hyprland.enable = true;
-
     environment.systemPackages = with pkgs; [
       git
       ghostty

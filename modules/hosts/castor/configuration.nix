@@ -77,6 +77,8 @@
     };
 
     time.timeZone = "Asia/Manila";
+    services.xserver.xkb.options = "caps:escape";
+    console.useXkbConfig = true;
     system.stateVersion = "25.11";
   };
 }
