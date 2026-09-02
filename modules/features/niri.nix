@@ -19,11 +19,11 @@
           heliumExe = "${inputs.helium.packages.${config.pkgs.stdenv.hostPlatform.system}.default}/bin/helium";
         in
         {
-          prefer-no-csd = { };
-          hotkey-overlay.skip-at-startup = { };
+          prefer-no-csd = _: { };
+          hotkey-overlay.skip-at-startup = _: { };
 
           input = {
-            focus-follows-mouse = { };
+            focus-follows-mouse = _: { };
             keyboard = {
               xkb = {
                 layout = "us";
@@ -33,8 +33,8 @@
               repeat-delay = 250;
             };
             touchpad = {
-              natural-scroll = { };
-              tap = { };
+              natural-scroll = _: { };
+              tap = _: { };
             };
             mouse = {
               accel-profile = "flat";
@@ -67,33 +67,33 @@
             # -----------------------------------------------------------------
             # 3. Window Actions
             # -----------------------------------------------------------------
-            "Mod+Q".close-window = { };
-            "Mod+Alt+Space".toggle-window-floating = { };
-            "Mod+Shift+F".toggle-window-floating = { };
-            "Mod+F".maximize-column = { };
-            "Mod+Alt+C".center-column = { };
+            "Mod+Q".close-window = _: { };
+            "Mod+Alt+Space".toggle-window-floating = _: { };
+            "Mod+Shift+F".toggle-window-floating = _: { };
+            "Mod+F".maximize-column = _: { };
+            "Mod+Alt+C".center-column = _: { };
 
             # Focus Navigation (Vim HJKL & Arrows)
-            "Mod+H".focus-column-left = { };
-            "Mod+L".focus-column-right = { };
-            "Mod+K".focus-window-up = { };
-            "Mod+J".focus-window-down = { };
+            "Mod+H".focus-column-left = _: { };
+            "Mod+L".focus-column-right = _: { };
+            "Mod+K".focus-window-up = _: { };
+            "Mod+J".focus-window-down = _: { };
 
-            "Mod+Left".focus-column-left = { };
-            "Mod+Right".focus-column-right = { };
-            "Mod+Up".focus-window-up = { };
-            "Mod+Down".focus-window-down = { };
+            "Mod+Left".focus-column-left = _: { };
+            "Mod+Right".focus-column-right = _: { };
+            "Mod+Up".focus-window-up = _: { };
+            "Mod+Down".focus-window-down = _: { };
 
             # Move Columns (Vim HJKL & Arrows)
-            "Mod+Shift+H".move-column-left = { };
-            "Mod+Shift+L".move-column-right = { };
-            "Mod+Shift+K".move-window-up = { };
-            "Mod+Shift+J".move-window-down = { };
+            "Mod+Shift+H".move-column-left = _: { };
+            "Mod+Shift+L".move-column-right = _: { };
+            "Mod+Shift+K".move-window-up = _: { };
+            "Mod+Shift+J".move-window-down = _: { };
 
-            "Mod+Shift+Left".move-column-left = { };
-            "Mod+Shift+Right".move-column-right = { };
-            "Mod+Shift+Up".move-window-up = { };
-            "Mod+Shift+Down".move-window-down = { };
+            "Mod+Shift+Left".move-column-left = _: { };
+            "Mod+Shift+Right".move-column-right = _: { };
+            "Mod+Shift+Up".move-window-up = _: { };
+            "Mod+Shift+Down".move-window-down = _: { };
 
             # Resize
             "Mod+Ctrl+H".set-column-width = "-5%";
@@ -127,16 +127,16 @@
             "Mod+Shift+0".move-column-to-workspace = "w9";
 
             # Page Up / Down Workspace Navigation
-            "Mod+Page_Down".focus-workspace-down = { };
-            "Mod+Page_Up".focus-workspace-up = { };
-            "Mod+Shift+Page_Down".move-column-to-workspace-down = { };
-            "Mod+Shift+Page_Up".move-column-to-workspace-up = { };
+            "Mod+Page_Down".focus-workspace-down = _: { };
+            "Mod+Page_Up".focus-workspace-up = _: { };
+            "Mod+Shift+Page_Down".move-column-to-workspace-down = _: { };
+            "Mod+Shift+Page_Up".move-column-to-workspace-up = _: { };
 
             # Wheel navigation
-            "Mod+WheelScrollDown".focus-column-left = { };
-            "Mod+WheelScrollUp".focus-column-right = { };
-            "Mod+Ctrl+WheelScrollDown".focus-workspace-down = { };
-            "Mod+Ctrl+WheelScrollUp".focus-workspace-up = { };
+            "Mod+WheelScrollDown".focus-column-left = _: { };
+            "Mod+WheelScrollUp".focus-column-right = _: { };
+            "Mod+Ctrl+WheelScrollDown".focus-workspace-down = _: { };
+            "Mod+Ctrl+WheelScrollUp".focus-workspace-up = _: { };
 
             # -----------------------------------------------------------------
             # 5. Utilities & Screenshots
