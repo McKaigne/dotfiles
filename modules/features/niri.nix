@@ -46,31 +46,25 @@
             # 1. Shell & Launchers
             # -----------------------------------------------------------------
             "Mod+Space".spawn-sh = "${noctaliaExe} ipc call launcher toggle || noctalia msg panel-toggle launcher";
+
+            # Noctalia Cheatsheet Plugin (SUPER + /)
+            "Mod+Slash".spawn-sh = "${noctaliaExe} ipc call cheatsheet toggle || noctalia msg panel-toggle cheatsheet || noctalia msg panel-toggle keybind-cheatsheet";
+
             "Mod+Tab".spawn-sh = "${noctaliaExe} ipc call overview toggle || noctalia msg panel-toggle overview";
             "Mod+A".spawn-sh = "${noctaliaExe} ipc call left-sidebar toggle || noctalia msg panel-toggle left-sidebar";
             "Mod+N".spawn-sh = "${noctaliaExe} ipc call control-center toggle || noctalia msg panel-toggle control-center";
-            "Mod+Slash".spawn-sh = "${noctaliaExe} ipc call cheatsheet toggle || noctalia msg panel-toggle cheatsheet";
             "Mod+Alt+B".spawn-sh = "${noctaliaExe} ipc call bar toggle || noctalia msg bar-toggle";
             "Ctrl+Alt+Delete".spawn-sh = "${noctaliaExe} ipc call session-menu toggle || noctalia msg panel-toggle session-menu";
 
             # -----------------------------------------------------------------
             # 2. Applications
             # -----------------------------------------------------------------
-            # Terminal (Ghostty)
             "Mod+Return".spawn = config.terminal;
             "Mod+T".spawn = config.terminal;
-
-            # File Manager (Yazi)
             "Mod+E".spawn-sh = "ghostty -e ${pkgs.yazi}/bin/yazi";
-
-            # Browser (Helium)
             "Mod+W".spawn-sh = heliumExe;
-
-            # Editors (Doom Emacs)
             "Mod+C".spawn-sh = "emacsclient -c -a 'emacs'";
             "Mod+X".spawn-sh = "ghostty -e nvim";
-
-            # System Monitor & Settings
             "Mod+I".spawn-sh = "${noctaliaExe} ipc call settings toggle || noctalia msg settings-toggle";
             "Ctrl+Shift+Escape".spawn-sh = "ghostty -e ${pkgs.btop}/bin/btop";
 
@@ -136,10 +130,6 @@
             "Mod+Shift+9".move-column-to-workspace = "w8";
             "Mod+Shift+0".move-column-to-workspace = "w9";
 
-            # Wheel navigation
-            "Mod+WheelScrollDown".focus-column-left = { };
-            "Mod+WheelScrollUp".focus-column-right = { };
-
             # -----------------------------------------------------------------
             # 5. Utilities & Screenshots
             # -----------------------------------------------------------------
@@ -156,7 +146,7 @@
             "Print".spawn-sh = "${lib.getExe config.pkgs.grim} -l 0 - | ${config.pkgs.wl-clipboard}/bin/wl-copy";
 
             # -----------------------------------------------------------------
-            # 6. Media & Hardware Keys
+            # 6. Media & Hardware
             # -----------------------------------------------------------------
             "XF86MonBrightnessUp".spawn-sh = "brightnessctl s 5%+";
             "XF86MonBrightnessDown".spawn-sh = "brightnessctl s 5%-";
@@ -169,7 +159,7 @@
             "Mod+Shift+B".spawn-sh = "playerctl previous";
 
             # -----------------------------------------------------------------
-            # 7. Session Controls (No conflicts with HJKL)
+            # 7. Session
             # -----------------------------------------------------------------
             "Mod+Alt+L".spawn-sh = "loginctl lock-session";
             "Mod+Alt+Shift+L".spawn-sh = "systemctl suspend || loginctl suspend";
