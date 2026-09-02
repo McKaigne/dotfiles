@@ -6,6 +6,7 @@
       self.nixosModules.emacs
       self.nixosModules.desktop
       self.nixosModules.nushell
+      self.nixosModules.niri
     ];
 
     nix.settings.experimental-features = [ "nix-command" "flakes" ];
@@ -26,7 +27,7 @@
     services.upower.enable = true;
     services.openssh.enable = true;
 
-    # System-wide Cursor Environment Variables
+    # System-wide Cursor
     environment.sessionVariables = {
       XCURSOR_THEME = "Bibata-Modern-Classic";
       XCURSOR_SIZE = "16";
@@ -34,16 +35,16 @@
       HYPRCURSOR_SIZE = "16";
     };
 
-    # Auto-login to Hyprland
+    # Auto-login to Niri
     services.greetd = {
       enable = true;
       settings = {
         initial_session = {
-          command = "Hyprland";
+          command = "niri-session";
           user = "pollux";
         };
         default_session = {
-          command = "Hyprland";
+          command = "niri-session";
           user = "pollux";
         };
       };
@@ -71,6 +72,7 @@
       extraGroups = [ "wheel" "networkmanager" ];
       packages = with pkgs; [
         tree
+        xwayland-satellite
       ];
     };
 
