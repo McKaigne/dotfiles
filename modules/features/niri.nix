@@ -1,5 +1,4 @@
 { inputs, self, ... }: {
-  # 1. NixOS System Module
   flake.nixosModules.niri = { pkgs, ... }: {
     programs.niri = {
       enable = true;
@@ -7,7 +6,6 @@
     };
   };
 
-  # 2. Wrapper module with valid KDL node structures
   flake.wrappersModules.niri = { config, lib, pkgs, ... }: {
     options.terminal = lib.mkOption {
       type = lib.types.str;
@@ -18,6 +16,7 @@
       settings =
         let
           noctaliaExe = lib.getExe self.packages.${config.pkgs.stdenv.hostPlatform.system}.noctalia-shell;
+          heliumExe = "${inputs.helium.packages.${config.pkgs.stdenv.hostPlatform.system}.default}/bin/helium";
         in
         {
           prefer-no-csd = { };
@@ -43,32 +42,60 @@
           };
 
           binds = {
-            # Terminal & Core Apps
-            "Mod+Return".spawn = config.terminal;
-            "Mod+W".spawn-sh = "${inputs.helium.packages.${config.pkgs.stdenv.hostPlatform.system}.default}/bin/helium";
-            "Mod+E".spawn-sh = "emacsclient -c -a 'emacs'";
+            # -----------------------------------------------------------------
+            # 1. Launcher & Shell (Single, clean bind on Mod+Space)
+            # -----------------------------------------------------------------
+            "Mod+Space".spawn-sh = "${noctaliaExe} ipc call launcher toggle || noctalia msg panel-toggle launcher";
 
-            # Window Actions
+            "Mod+Tab".spawn-sh = "${noctaliaExe} ipc call overview toggle || noctalia msg panel-toggle overview";
+            "Mod+A".spawn-sh = "${noctaliaExe} ipc call left-sidebar toggle || noctalia msg panel-toggle left-sidebar";
+            "Mod+N".spawn-sh = "${noctaliaExe} ipc call control-center toggle || noctalia msg panel-toggle control-center";
+            "Mod+Slash".spawn-sh = "${noctaliaExe} ipc call cheatsheet toggle || noctalia msg panel-toggle cheatsheet";
+            "Mod+J".spawn-sh = "${noctaliaExe} ipc call bar toggle || noctalia msg bar-toggle";
+            "Ctrl+Alt+Delete".spawn-sh = "${noctaliaExe} ipc call session-menu toggle || noctalia msg panel-toggle session-menu";
+
+            # -----------------------------------------------------------------
+            # 2. Applications
+            # -----------------------------------------------------------------
+            # Terminal (Ghostty)
+            "Mod+Return".spawn = config.terminal;
+            "Mod+T".spawn = config.terminal;
+
+            # File Manager (Yazi)
+            "Mod+E".spawn-sh = "ghostty -e ${pkgs.yazi}/bin/yazi";
+
+            # Browser (Helium)
+            "Mod+W".spawn-sh = heliumExe;
+
+            # Editor (Doom Emacs)
+            "Mod+C".spawn-sh = "emacsclient -c -a 'emacs'";
+            "Mod+X".spawn-sh = "ghostty -e nvim";
+
+            # Tasks & Settings
+            "Mod+I".spawn-sh = "${noctaliaExe} ipc call settings toggle || noctalia msg settings-toggle";
+            "Ctrl+Shift+Escape".spawn-sh = "ghostty -e ${pkgs.btop}/bin/btop";
+
+            # -----------------------------------------------------------------
+            # 3. Window Actions
+            # -----------------------------------------------------------------
             "Mod+Q".close-window = { };
-            "Mod+F".maximize-column = { };
-            "Mod+G".fullscreen-window = { };
+            "Mod+Alt+Space".toggle-window-floating = { };
             "Mod+Shift+F".toggle-window-floating = { };
-            "Mod+C".spawn-sh = "emacsclient -c -a \x27emacs\x27";
+            "Mod+F".maximize-column = { };
             "Mod+Alt+C".center-column = { };
 
-            # Vim Navigation (HJKL)
+            # Focus Navigation (HJKL & Arrows)
             "Mod+H".focus-column-left = { };
             "Mod+L".focus-column-right = { };
             "Mod+K".focus-window-up = { };
             "Mod+J".focus-window-down = { };
 
-            # Arrow Navigation
             "Mod+Left".focus-column-left = { };
             "Mod+Right".focus-column-right = { };
             "Mod+Up".focus-window-up = { };
             "Mod+Down".focus-window-down = { };
 
-            # Move Columns (Vim Keys & Arrows)
+            # Move Columns (HJKL & Arrows)
             "Mod+Shift+H".move-column-left = { };
             "Mod+Shift+L".move-column-right = { };
             "Mod+Shift+K".move-window-up = { };
@@ -79,7 +106,15 @@
             "Mod+Shift+Up".move-window-up = { };
             "Mod+Shift+Down".move-window-down = { };
 
-            # Workspaces 0-9
+            # Resize
+            "Mod+Ctrl+H".set-column-width = "-5%";
+            "Mod+Ctrl+L".set-column-width = "+5%";
+            "Mod+Ctrl+J".set-window-height = "-5%";
+            "Mod+Ctrl+K".set-window-height = "+5%";
+
+            # -----------------------------------------------------------------
+            # 4. Workspaces (0-9)
+            # -----------------------------------------------------------------
             "Mod+1".focus-workspace = "w0";
             "Mod+2".focus-workspace = "w1";
             "Mod+3".focus-workspace = "w2";
@@ -102,33 +137,44 @@
             "Mod+Shift+9".move-column-to-workspace = "w8";
             "Mod+Shift+0".move-column-to-workspace = "w9";
 
-            # Noctalia Launcher & Controls
-            "Mod+S".spawn-sh = "${noctaliaExe} ipc call launcher toggle";
-
-            # Audio Controls
-            "XF86AudioRaiseVolume".spawn-sh = "wpctl set-volume -l 1.4 @DEFAULT_AUDIO_SINK@ 5%+";
-            "XF86AudioLowerVolume".spawn-sh = "wpctl set-volume -l 1.4 @DEFAULT_AUDIO_SINK@ 5%-";
-
-            # Column & Window Resizing
-            "Mod+Ctrl+H".set-column-width = "-5%";
-            "Mod+Ctrl+L".set-column-width = "+5%";
-            "Mod+Ctrl+J".set-window-height = "-5%";
-            "Mod+Ctrl+K".set-window-height = "+5%";
-
-            # Mouse Wheel Workspace Scrolling
+            # Wheel navigation
             "Mod+WheelScrollDown".focus-column-left = { };
             "Mod+WheelScrollUp".focus-column-right = { };
-            "Mod+Ctrl+WheelScrollDown".focus-workspace-down = { };
-            "Mod+Ctrl+WheelScrollUp".focus-workspace-up = { };
 
-            # Screenshots
-            "Mod+Ctrl+S".spawn-sh = "${lib.getExe config.pkgs.grim} -l 0 - | ${config.pkgs.wl-clipboard}/bin/wl-copy";
+            # -----------------------------------------------------------------
+            # 5. Utilities & Screenshots
+            # -----------------------------------------------------------------
+            "Mod+V".spawn-sh = "${noctaliaExe} ipc call clipboard toggle || noctalia msg panel-toggle clipboard";
+
             "Mod+Shift+S".spawn-sh = lib.getExe (config.pkgs.writeShellApplication {
-              name = "screenshot";
+              name = "screenshot-area";
+              runtimeInputs = with config.pkgs; [ grim slurp wl-clipboard ];
               text = ''
-                ${lib.getExe config.pkgs.grim} -g "$(${lib.getExe config.pkgs.slurp} -w 0)" - | ${config.pkgs.wl-clipboard}/bin/wl-copy
+                grim -g "$(slurp -w 0)" - | wl-copy
               '';
             });
+
+            "Print".spawn-sh = "${lib.getExe config.pkgs.grim} -l 0 - | ${config.pkgs.wl-clipboard}/bin/wl-copy";
+
+            # -----------------------------------------------------------------
+            # 6. Media & Hardware
+            # -----------------------------------------------------------------
+            "XF86MonBrightnessUp".spawn-sh = "brightnessctl s 5%+";
+            "XF86MonBrightnessDown".spawn-sh = "brightnessctl s 5%-";
+            "XF86AudioRaiseVolume".spawn-sh = "wpctl set-volume -l 1.4 @DEFAULT_AUDIO_SINK@ 2%+";
+            "XF86AudioLowerVolume".spawn-sh = "wpctl set-volume -l 1.4 @DEFAULT_AUDIO_SINK@ 2%-";
+            "XF86AudioMute".spawn-sh = "wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle";
+            "Mod+Shift+M".spawn-sh = "wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle";
+            "Mod+Shift+P".spawn-sh = "playerctl play-pause";
+            "Mod+Shift+N".spawn-sh = "playerctl next";
+            "Mod+Shift+B".spawn-sh = "playerctl previous";
+
+            # -----------------------------------------------------------------
+            # 7. Session
+            # -----------------------------------------------------------------
+            "Mod+L".spawn-sh = "loginctl lock-session";
+            "Mod+Shift+L".spawn-sh = "systemctl suspend || loginctl suspend";
+            "Ctrl+Shift+Alt+Mod+Delete".spawn-sh = "systemctl poweroff || loginctl poweroff";
           };
 
           layout = {
@@ -165,7 +211,6 @@
     };
   };
 
-  # 3. Build the wrapped Niri package
   perSystem = { pkgs, ... }: {
     packages.niri = inputs.wrapper-modules.wrappers.niri.wrap {
       inherit pkgs;

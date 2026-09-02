@@ -4,11 +4,13 @@
       git
       ghostty
       foot
+      yazi       # Terminal File Manager
       grim
       slurp
       wl-clipboard
       brightnessctl
       playerctl
+      btop
       bibata-cursors
       vim
       wget
