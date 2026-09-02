@@ -53,7 +53,8 @@
             "Mod+F".maximize-column = { };
             "Mod+G".fullscreen-window = { };
             "Mod+Shift+F".toggle-window-floating = { };
-            "Mod+C".center-column = { };
+            "Mod+C".spawn-sh = "emacsclient -c -a \x27emacs\x27";
+            "Mod+Alt+C".center-column = { };
 
             # Vim Navigation (HJKL)
             "Mod+H".focus-column-left = { };

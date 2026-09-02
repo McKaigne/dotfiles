@@ -3,6 +3,13 @@
     environment.systemPackages = [
       self.packages.${pkgs.stdenv.hostPlatform.system}.myEmacs
     ];
+
+    # Auto-start Emacs Daemon in the background on user login
+    services.emacs = {
+      enable = true;
+      package = self.packages.${pkgs.stdenv.hostPlatform.system}.myEmacs;
+      defaultEditor = true;
+    };
   };
 
   perSystem = { pkgs, lib, ... }:
@@ -19,7 +26,6 @@
         shellcheck
         python3
         direnv
-        # Exact Zig version required by Ghostel / libghostty-vt
         zig_0_15
       ];
 
