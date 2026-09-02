@@ -1,16 +1,23 @@
 { self, inputs, ... }: {
   flake.nixosModules.desktop = { pkgs, ... }: {
     environment.systemPackages = with pkgs; [
+      # Requested Tools
+      fd
+      fastfetch
+      ripgrep
+      btop
+      cava
+      yazi
+
+      # Base Utilities & Media
       git
       ghostty
       foot
-      yazi       # Terminal File Manager
       grim
       slurp
       wl-clipboard
       brightnessctl
       playerctl
-      btop
       bibata-cursors
       vim
       wget

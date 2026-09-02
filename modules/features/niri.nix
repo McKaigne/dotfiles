@@ -43,15 +43,14 @@
 
           binds = {
             # -----------------------------------------------------------------
-            # 1. Launcher & Shell (Single, clean bind on Mod+Space)
+            # 1. Shell & Launchers
             # -----------------------------------------------------------------
             "Mod+Space".spawn-sh = "${noctaliaExe} ipc call launcher toggle || noctalia msg panel-toggle launcher";
-
             "Mod+Tab".spawn-sh = "${noctaliaExe} ipc call overview toggle || noctalia msg panel-toggle overview";
             "Mod+A".spawn-sh = "${noctaliaExe} ipc call left-sidebar toggle || noctalia msg panel-toggle left-sidebar";
             "Mod+N".spawn-sh = "${noctaliaExe} ipc call control-center toggle || noctalia msg panel-toggle control-center";
             "Mod+Slash".spawn-sh = "${noctaliaExe} ipc call cheatsheet toggle || noctalia msg panel-toggle cheatsheet";
-            "Mod+J".spawn-sh = "${noctaliaExe} ipc call bar toggle || noctalia msg bar-toggle";
+            "Mod+Alt+B".spawn-sh = "${noctaliaExe} ipc call bar toggle || noctalia msg bar-toggle";
             "Ctrl+Alt+Delete".spawn-sh = "${noctaliaExe} ipc call session-menu toggle || noctalia msg panel-toggle session-menu";
 
             # -----------------------------------------------------------------
@@ -67,11 +66,11 @@
             # Browser (Helium)
             "Mod+W".spawn-sh = heliumExe;
 
-            # Editor (Doom Emacs)
+            # Editors (Doom Emacs)
             "Mod+C".spawn-sh = "emacsclient -c -a 'emacs'";
             "Mod+X".spawn-sh = "ghostty -e nvim";
 
-            # Tasks & Settings
+            # System Monitor & Settings
             "Mod+I".spawn-sh = "${noctaliaExe} ipc call settings toggle || noctalia msg settings-toggle";
             "Ctrl+Shift+Escape".spawn-sh = "ghostty -e ${pkgs.btop}/bin/btop";
 
@@ -84,7 +83,7 @@
             "Mod+F".maximize-column = { };
             "Mod+Alt+C".center-column = { };
 
-            # Focus Navigation (HJKL & Arrows)
+            # Focus Navigation (Vim HJKL & Arrows)
             "Mod+H".focus-column-left = { };
             "Mod+L".focus-column-right = { };
             "Mod+K".focus-window-up = { };
@@ -95,7 +94,7 @@
             "Mod+Up".focus-window-up = { };
             "Mod+Down".focus-window-down = { };
 
-            # Move Columns (HJKL & Arrows)
+            # Move Columns (Vim HJKL & Arrows)
             "Mod+Shift+H".move-column-left = { };
             "Mod+Shift+L".move-column-right = { };
             "Mod+Shift+K".move-window-up = { };
@@ -157,7 +156,7 @@
             "Print".spawn-sh = "${lib.getExe config.pkgs.grim} -l 0 - | ${config.pkgs.wl-clipboard}/bin/wl-copy";
 
             # -----------------------------------------------------------------
-            # 6. Media & Hardware
+            # 6. Media & Hardware Keys
             # -----------------------------------------------------------------
             "XF86MonBrightnessUp".spawn-sh = "brightnessctl s 5%+";
             "XF86MonBrightnessDown".spawn-sh = "brightnessctl s 5%-";
@@ -170,10 +169,10 @@
             "Mod+Shift+B".spawn-sh = "playerctl previous";
 
             # -----------------------------------------------------------------
-            # 7. Session
+            # 7. Session Controls (No conflicts with HJKL)
             # -----------------------------------------------------------------
-            "Mod+L".spawn-sh = "loginctl lock-session";
-            "Mod+Shift+L".spawn-sh = "systemctl suspend || loginctl suspend";
+            "Mod+Alt+L".spawn-sh = "loginctl lock-session";
+            "Mod+Alt+Shift+L".spawn-sh = "systemctl suspend || loginctl suspend";
             "Ctrl+Shift+Alt+Mod+Delete".spawn-sh = "systemctl poweroff || loginctl poweroff";
           };
 
