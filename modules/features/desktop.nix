@@ -1,12 +1,18 @@
 { self, inputs, ... }: {
   flake.nixosModules.desktop = { pkgs, ... }: {
     environment.systemPackages = with pkgs; [
-      fd
+      # The 3D spinning logo fetch tool
+      fetch
+
+      # CLI & Monitoring Tools
       fastfetch
+      fd
       ripgrep
       btop
       cava
       yazi
+
+      # Base Utilities & Media
       git
       ghostty
       foot
@@ -22,7 +28,6 @@
     ];
 
     fonts.packages = with pkgs; [
-      # Maple Mono Font with Nerd Font icons
       maple-mono.NF-unhinted
       maple-mono.truetype
       symbola
