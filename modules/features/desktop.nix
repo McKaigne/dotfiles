@@ -1,11 +1,10 @@
 { self, inputs, ... }: {
   flake.nixosModules.desktop = { pkgs, ... }: {
     environment.systemPackages = with pkgs; [
-      # The 3D spinning logo fetch tool
+      # 3D fetch tool only
       fetch
 
-      # CLI & Monitoring Tools
-      fastfetch
+      # CLI & Monitoring
       fd
       ripgrep
       btop
