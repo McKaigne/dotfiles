@@ -19,6 +19,8 @@
         shellcheck
         python3
         direnv
+        # Exact Zig version required by Ghostel / libghostty-vt
+        zig_0_15
       ];
 
       myEmacs = pkgs.symlinkJoin {

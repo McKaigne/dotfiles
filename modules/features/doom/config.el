@@ -110,3 +110,7 @@
         (:prefix ("a" . "ai")
          :desc "ECA prompt" "p" #'eca-chat-send-prompt
          :desc "ECA toggle" "t" #'eca-mode)))
+
+;; Use POSIX bash for internal background processes, but Nushell for terminals
+(setq shell-file-name (executable-find "bash"))
+(setq-default explicit-shell-file-name "/run/current-system/sw/bin/nu")
