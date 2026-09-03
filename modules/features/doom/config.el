@@ -82,20 +82,19 @@
   ;; wildcard manifests (OCaml's "*.opam", Lua's "*.rockspec") need a
   ;; small helper function instead of a plain string entry.
   (defun +projectile-root-with-glob (glob)
-    "Return a root-detection function that searches upward for a
-regular file matching GLOB, for use in
+    "Return a root-detection function for use in
 `projectile-project-root-functions'. Stops at $HOME so a stray
 matching file or directory there (e.g. opam's own ~/.opam) can
 never be mistaken for a project root."
-    (lambda (dir)
-      (let ((root
-             (locate-dominating-file
-              dir
-              (lambda (d)
-                (seq-some #'file-regular-p
-                          (file-expand-wildcards (expand-file-name glob d)))))))
-        (unless (and root (file-equal-p root (expand-file-name "~/")))
-          root))))
+    `(lambda (dir)
+       (let ((root
+              (locate-dominating-file
+               dir
+               (lambda (d)
+                 (seq-some #'file-regular-p
+                           (file-expand-wildcards (expand-file-name ,glob d)))))))
+         (unless (and root (file-equal-p root (expand-file-name "~/")))
+           root))))
   (dolist (glob '("*.opam"      ; OCaml (opam package, no dune-project file)
                   "*.rockspec")) ; Lua (LuaRocks)
     (add-to-list 'projectile-project-root-functions
