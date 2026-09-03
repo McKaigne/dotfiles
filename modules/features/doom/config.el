@@ -6,9 +6,15 @@
       user-mail-address "pollux@castor.local")
 
 ;;; UI: theme, fonts, dashboard
-(setq doom-theme 'doom-nano-light)
+(setq doom-theme 'noctalia)
 (setq doom-font (font-spec :family "Maple Mono NF" :size 14))
 (setq display-line-numbers-type 'relative)
+
+;; Cursor Shapes: Normal = Block, Insert = Vertical Bar / Line
+(setq evil-normal-state-cursor 'box
+      evil-insert-state-cursor 'bar
+      evil-visual-state-cursor 'hollow
+      evil-replace-state-cursor 'hbar)
 
 ;; Custom dashboard banner if present
 (when (file-exists-p (concat doom-user-dir "carabao.svg"))
@@ -23,57 +29,26 @@
 ;;; Org
 (setq org-directory "~/org/")
 
-;;; Shells
+;;; Shells: POSIX for internal machinery, Nushell for interactive terminals & Ghostel
 (setq shell-file-name (executable-find "bash"))
-(setq-default vterm-shell "/run/current-system/sw/bin/nu")
+(setq explicit-shell-file-name "/run/current-system/sw/bin/nu")
 (setq-default explicit-shell-file-name "/run/current-system/sw/bin/nu")
+(setq-default vterm-shell "/run/current-system/sw/bin/nu")
 
-;;; LSP: clangd on NixOS (matches both standard and tree-sitter C/C++ modes)
-(after! eglot
-  (add-to-list 'eglot-server-programs
-               `((c++-mode c-mode c++-ts-mode c-ts-mode)
-                 . ("clangd"
-                    "--background-index"
-                    "--clang-tidy"
-                    "--completion-style=detailed"
-                    ,(concat "--query-driver=" (or (getenv "CASTOR_CLANGXX") "/nix/store/**"))))))
+;; Configure Ghostel to use Nushell
+(after! ghostel
+  (setq ghostel-default-shell "/run/current-system/sw/bin/nu")
+  (map! :leader
+        (:prefix ("o" . "open")
+         :desc "Ghostel popup" "t" #'+ghostel/toggle
+         :desc "Ghostel full"  "T" #'+ghostel/open)))
 
 ;;; Projectile
 (after! projectile
   (setq projectile-enable-caching t
         projectile-indexing-method 'hybrid)
-  (dolist (marker '("Cargo.toml"
-                    "pyproject.toml"
-                    "CMakeLists.txt"
-                    "compile_commands.json"
-                    "setup.py"
-                    "requirements.txt"
-                    "Pipfile"
-                    "build.zig"
-                    "build.zig.zon"
-                    "mix.exs"
-                    "stack.yaml"
-                    "package.yaml"
-                    "cabal.project"
-                    "dune-project"
-                    "flake.nix"))
-    (add-to-list 'projectile-project-root-files marker))
-
-  (defun +projectile-root-with-glob (glob)
-    "Return a root-detection function for use in `projectile-project-root-functions'."
-    `(lambda (dir)
-       (let ((root
-              (locate-dominating-file
-               dir
-               (lambda (d)
-                 (seq-some #'file-regular-p
-                           (file-expand-wildcards (expand-file-name ,glob d)))))))
-         (unless (and root (file-equal-p root (expand-file-name "~/")))
-           root))))
-
-  (dolist (glob '("*.opam" "*.rockspec"))
-    (add-to-list 'projectile-project-root-functions
-                 (+projectile-root-with-glob glob))))
+  (dolist (marker '("Cargo.toml" "pyproject.toml" "CMakeLists.txt" "compile_commands.json" "build.zig" "flake.nix"))
+    (add-to-list 'projectile-project-root-files marker)))
 
 ;;; Navigation
 (setq scroll-margin 99999
@@ -92,6 +67,3 @@
       (:prefix ("r" . "Run")
        :desc "Quickrun" "r" #'quickrun
        :desc "Quickrun Shell" "s" #'quickrun-shell))
-
-(add-to-list 'load-path "~/.config/emacs-lisp/ghostel/lisp")
-(require 'ghostel nil t)

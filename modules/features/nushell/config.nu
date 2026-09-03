@@ -98,9 +98,9 @@ $env.config = {
         use_ls_colors: true
     }
     cursor_shape: {
-        emacs: block
-        vi_insert: block
-        vi_normal: underscore
+        emacs: line
+        vi_insert: line
+        vi_normal: block
     }
     color_config: $dark_theme
     footer_mode: 25
