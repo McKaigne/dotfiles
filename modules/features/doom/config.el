@@ -6,7 +6,7 @@
       user-mail-address "pollux@castor.local")
 
 ;;; UI: theme, fonts, dashboard
-(setq doom-theme 'noctalia)
+(setq doom-theme 'doom-nano-light)
 (setq doom-font (font-spec :family "Maple Mono NF" :size 14))
 (setq display-line-numbers-type 'relative)
 
