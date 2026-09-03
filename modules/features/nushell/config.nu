@@ -173,3 +173,13 @@ $env.DIRENV_LOG_FORMAT = ""
 if ("~/.zoxide.nu" | path expand | path exists) { source ~/.zoxide.nu }
 if ("~/.cache/carapace/init.nu" | path expand | path exists) { source ~/.cache/carapace/init.nu }
 if ("~/.cache/starship/init.nu" | path expand | path exists) { use ~/.cache/starship/init.nu }
+
+# Ensure edit_mode is vi
+$env.config.edit_mode = "vi"
+
+# Explicit cursor shapes
+$env.config.cursor_shape = {
+    vi_insert: line
+    vi_normal: block
+    emacs: line
+}
