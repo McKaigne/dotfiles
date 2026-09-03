@@ -5,7 +5,7 @@
       self.packages.${pkgs.stdenv.hostPlatform.system}.myEmacs
     ];
 
-    # Auto-start Emacs Daemon in the background on user login
+    # Auto-start Emacs Daemon in the background
     services.emacs = {
       enable = true;
       package = self.packages.${pkgs.stdenv.hostPlatform.system}.myEmacs;
@@ -15,13 +15,17 @@
 
   perSystem = { pkgs, lib, ... }:
     let
+      llvm = pkgs.llvmPackages_18;
+
       doomRuntimeDeps = with pkgs; [
         git
         ripgrep
         fd
-        clang
-        clang-tools
+        llvm.clang
+        llvm.clang-tools
+        llvm.lldb
         cmake
+        ninja
         gnumake
         nixfmt
         shellcheck
@@ -30,6 +34,9 @@
         zig_0_15
       ];
 
+      # Path to C++ standard library headers on NixOS
+      cxxHeaders = "${llvm.libcxx}/include/c++/v1";
+
       myEmacs = pkgs.symlinkJoin {
         name = "my-doom-emacs";
         paths = [ pkgs.emacs-pgtk ];
@@ -37,11 +44,13 @@
         postBuild = ''
           wrapProgram $out/bin/emacs \
             --prefix PATH : ${lib.makeBinPath doomRuntimeDeps} \
-            --set CASTOR_CLANGXX "${pkgs.clang}/bin/clang++"
+            --prefix CPLUS_INCLUDE_PATH : "${cxxHeaders}" \
+            --prefix CPATH : "${cxxHeaders}"
 
           wrapProgram $out/bin/emacsclient \
             --prefix PATH : ${lib.makeBinPath doomRuntimeDeps} \
-            --set CASTOR_CLANGXX "${pkgs.clang}/bin/clang++"
+            --prefix CPLUS_INCLUDE_PATH : "${cxxHeaders}" \
+            --prefix CPATH : "${cxxHeaders}"
         '';
       };
     in
