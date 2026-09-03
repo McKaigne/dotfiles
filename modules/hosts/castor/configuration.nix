@@ -10,19 +10,19 @@
       self.nixosModules.desktop
     ];
 
+    nixpkgs.config.allowUnfree = true;
+
     networking.hostName = "castor";
 
     boot.loader.systemd-boot.enable = true;
     boot.loader.efi.canTouchEfiVariables = true;
 
-    # Keyboard remap: Caps Lock -> Escape, system-wide
     services.xserver.xkb = {
       layout = "us";
       options = "caps:escape";
     };
     console.useXkbConfig = true;
 
-    # Display manager: autologin directly into niri
     services.greetd = {
       enable = true;
       settings = {
@@ -33,7 +33,6 @@
       };
     };
 
-    # Audio
     security.rtkit.enable = true;
     services.pipewire = {
       enable = true;
