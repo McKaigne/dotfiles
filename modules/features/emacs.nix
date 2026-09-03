@@ -1,3 +1,4 @@
+
 { self, inputs, ... }: {
   flake.nixosModules.emacs = { pkgs, ... }: {
     environment.systemPackages = [
@@ -35,10 +36,12 @@
         buildInputs = [ pkgs.makeWrapper ];
         postBuild = ''
           wrapProgram $out/bin/emacs \
-            --prefix PATH : ${lib.makeBinPath doomRuntimeDeps}
+            --prefix PATH : ${lib.makeBinPath doomRuntimeDeps} \
+            --set CASTOR_CLANGXX "${pkgs.clang}/bin/clang++"
 
           wrapProgram $out/bin/emacsclient \
-            --prefix PATH : ${lib.makeBinPath doomRuntimeDeps}
+            --prefix PATH : ${lib.makeBinPath doomRuntimeDeps} \
+            --set CASTOR_CLANGXX "${pkgs.clang}/bin/clang++"
         '';
       };
     in

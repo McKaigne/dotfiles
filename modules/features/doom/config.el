@@ -51,6 +51,14 @@
 
 ;; (use-package! ghostel-compile :hook (after-init . ghostel-compile-global-mode))
 
+;;; LSP: fix clangd on NixOS
+;; clangd is unwrapped and has no idea where NixOS keeps its headers
+;; (there's no /usr/include here). Point it at the real wrapped clang++
+;; so it can discover the correct system include paths.
+(after! eglot
+  (add-to-list 'eglot-server-programs
+               `((c++-mode c-mode)
+                 . ("clangd" ,(concat "--query-driver=" (or (getenv "CASTOR_CLANGXX") "clang++"))))))
 
 ;; Projectile
 ;; Projectile's actual current default `projectile-project-root-files' is
