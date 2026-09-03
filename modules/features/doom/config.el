@@ -1,3 +1,4 @@
+
 ;;; $DOOMDIR/config.el -*- lexical-binding: t; -*-
 
 ;; Place your private configuration here! Remember, you do not need to run
@@ -12,14 +13,14 @@
 ;;; UI: theme, fonts, dashboard
 
 ;; Load NANO theme (options: 'doom-nano-light or 'doom-nano-dark)
-(setq doom-theme 'doom-nano-light)
+(setq doom-theme 'noctalia)
 
 (setq doom-font (font-spec :family "Maple Mono NF" :size 14))
 
 (setq display-line-numbers-type 'relative)
 
 ;; Replace default Doom dashboard logo with custom banner.
-(setq fancy-splash-image "/home/cain/.config/doom/carabao.svg")
+(setq fancy-splash-image (concat doom-user-dir "carabao.svg"))
 
 ;; Configure doom-nano-modeline
 (use-package! doom-nano-modeline
