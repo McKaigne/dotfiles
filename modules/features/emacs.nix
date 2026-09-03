@@ -5,7 +5,6 @@
       self.packages.${pkgs.stdenv.hostPlatform.system}.myEmacs
     ];
 
-    # Auto-start Emacs Daemon in the background
     services.emacs = {
       enable = true;
       package = self.packages.${pkgs.stdenv.hostPlatform.system}.myEmacs;
@@ -15,15 +14,14 @@
 
   perSystem = { pkgs, lib, ... }:
     let
-      llvm = pkgs.llvmPackages_18;
+      # Use the wrapped clang-tools package specifically for clangd
+      wrappedClangTools = pkgs.clang-tools;
 
       doomRuntimeDeps = with pkgs; [
         git
         ripgrep
         fd
-        llvm.clang
-        llvm.clang-tools
-        llvm.lldb
+        wrappedClangTools  # <-- Contains the wrapped clangd with Nix headers
         cmake
         ninja
         gnumake
@@ -34,23 +32,16 @@
         zig_0_15
       ];
 
-      # Path to C++ standard library headers on NixOS
-      cxxHeaders = "${llvm.libcxx}/include/c++/v1";
-
       myEmacs = pkgs.symlinkJoin {
         name = "my-doom-emacs";
         paths = [ pkgs.emacs-pgtk ];
         buildInputs = [ pkgs.makeWrapper ];
         postBuild = ''
           wrapProgram $out/bin/emacs \
-            --prefix PATH : ${lib.makeBinPath doomRuntimeDeps} \
-            --prefix CPLUS_INCLUDE_PATH : "${cxxHeaders}" \
-            --prefix CPATH : "${cxxHeaders}"
+            --prefix PATH : ${lib.makeBinPath doomRuntimeDeps}
 
           wrapProgram $out/bin/emacsclient \
-            --prefix PATH : ${lib.makeBinPath doomRuntimeDeps} \
-            --prefix CPLUS_INCLUDE_PATH : "${cxxHeaders}" \
-            --prefix CPATH : "${cxxHeaders}"
+            --prefix PATH : ${lib.makeBinPath doomRuntimeDeps}
         '';
       };
     in
