@@ -42,7 +42,6 @@
               repeat-delay = 250;
             };
 
-            # Touchpad settings & gestures
             touchpad = {
               tap = { };
               natural-scroll = { };
@@ -61,9 +60,9 @@
           # Key & Gesture Bindings
           # -----------------------------------------------------------------
           binds = {
-            # --- 1. Shell & Launchers ---
+            # --- 1. Shell & Launchers (ONLY Super + D for launcher) ---
             "Mod+D".spawn-sh = "${noctaliaExe} ipc call launcher toggle || noctalia msg panel-toggle launcher";
-            "Mod+Space".spawn-sh = "${noctaliaExe} ipc call launcher toggle || noctalia msg panel-toggle launcher";
+
             "Mod+Tab".spawn-sh = "${noctaliaExe} ipc call overview toggle || noctalia msg panel-toggle overview";
             "Mod+A".spawn-sh = "${noctaliaExe} ipc call left-sidebar toggle || noctalia msg panel-toggle left-sidebar";
             "Mod+N".spawn-sh = "${noctaliaExe} ipc call control-center toggle || noctalia msg panel-toggle control-center";
@@ -138,14 +137,17 @@
             "Mod+Shift+9".move-column-to-workspace = "w8";
             "Mod+Shift+0".move-column-to-workspace = "w9";
 
+            "Mod+Page_Down".focus-workspace-down = { };
+            "Mod+Page_Up".focus-workspace-up = { };
+            "Mod+Shift+Page_Down".move-column-to-workspace-down = { };
+            "Mod+Shift+Page_Up".move-column-to-workspace-up = { };
+
             # --- 5. Mouse Wheel & Touchpad Trackpad Scrolling ---
-            # Physical Mouse Wheel:
             "Mod+WheelScrollDown".focus-column-left = { };
             "Mod+WheelScrollUp".focus-column-right = { };
             "Mod+Ctrl+WheelScrollDown".focus-workspace-down = { };
             "Mod+Ctrl+WheelScrollUp".focus-workspace-up = { };
 
-            # 2-Finger Trackpad Scrolling with Mod:
             "Mod+TouchpadScrollDown".focus-column-left = { };
             "Mod+TouchpadScrollUp".focus-column-right = { };
             "Mod+TouchpadScrollRight".focus-column-right = { };
