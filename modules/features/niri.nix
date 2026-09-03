@@ -28,9 +28,6 @@
             xcursor-size = 16;
           };
 
-          # -----------------------------------------------------------------
-          # Input & Touchpad Configuration
-          # -----------------------------------------------------------------
           input = {
             focus-follows-mouse = { };
             keyboard = {
@@ -56,13 +53,9 @@
             };
           };
 
-          # -----------------------------------------------------------------
-          # Key & Gesture Bindings
-          # -----------------------------------------------------------------
           binds = {
-            # --- 1. Shell & Launchers (ONLY Super + D for launcher) ---
+            # --- 1. Shell & Launchers ---
             "Mod+D".spawn-sh = "${noctaliaExe} ipc call launcher toggle || noctalia msg panel-toggle launcher";
-
             "Mod+Tab".spawn-sh = "${noctaliaExe} ipc call overview toggle || noctalia msg panel-toggle overview";
             "Mod+A".spawn-sh = "${noctaliaExe} ipc call left-sidebar toggle || noctalia msg panel-toggle left-sidebar";
             "Mod+N".spawn-sh = "${noctaliaExe} ipc call control-center toggle || noctalia msg panel-toggle control-center";
@@ -114,7 +107,7 @@
             "Mod+Ctrl+J".set-window-height = "-5%";
             "Mod+Ctrl+K".set-window-height = "+5%";
 
-            # --- 4. Workspaces (0-9 & Page Up / Page Down) ---
+            # --- 4. Workspaces ---
             "Mod+1".focus-workspace = "w0";
             "Mod+2".focus-workspace = "w1";
             "Mod+3".focus-workspace = "w2";
@@ -142,7 +135,7 @@
             "Mod+Shift+Page_Down".move-column-to-workspace-down = { };
             "Mod+Shift+Page_Up".move-column-to-workspace-up = { };
 
-            # --- 5. Mouse Wheel & Touchpad Trackpad Scrolling ---
+            # --- 5. Mouse Wheel & Trackpad Scrolling ---
             "Mod+WheelScrollDown".focus-column-left = { };
             "Mod+WheelScrollUp".focus-column-right = { };
             "Mod+Ctrl+WheelScrollDown".focus-workspace-down = { };
@@ -179,9 +172,9 @@
             "Mod+Shift+N".spawn-sh = "playerctl next";
             "Mod+Shift+B".spawn-sh = "playerctl previous";
 
-            # --- 8. Session ---
-            "Mod+Alt+L".spawn-sh = "loginctl lock-session";
-            "Mod+Alt+Shift+L".spawn-sh = "systemctl suspend || loginctl suspend";
+            # --- 8. Session (Hyprlock screen lock) ---
+            "Mod+Alt+L".spawn-sh = "${lib.getExe pkgs.hyprlock}";
+            "Mod+Alt+Shift+L".spawn-sh = "${lib.getExe pkgs.hyprlock} & sleep 0.5 && systemctl suspend";
             "Ctrl+Shift+Alt+Mod+Delete".spawn-sh = "systemctl poweroff || loginctl poweroff";
           };
 

@@ -1,11 +1,17 @@
+
 { self, inputs, ... }: {
   flake.nixosModules.desktop = { pkgs, ... }: {
+    # Enable PAM authentication for screen lockers
+    security.pam.services.hyprlock = {};
+
     environment.systemPackages = with pkgs; [
-      # The 3D spinning logo fetch tool
+      # Screen Locker
+      hyprlock
+
+      # 3D fetch tool
       fetch
 
-      # CLI & Monitoring Tools
-      fastfetch
+      # CLI & Monitoring
       fd
       ripgrep
       btop
