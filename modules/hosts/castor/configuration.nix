@@ -1,22 +1,55 @@
-	nixos
-  		.direnv
-  		modules
-    		features
-      		doom
-      		nushell
-       	󱄅	desktop.nix
-       	󱄅	emacs.nix
-       	󱄅	helium.nix
-       	󱄅	niri.nix
-       	󱄅	noctalia.nix
-       	󱄅	nushell.nix
-    		hosts
-      		castor
-         	󱄅	configuration.nix
-         	󱄅	default.nix
-         	󱄅	hardware.nix
-     	󱄅	systems.nix
-   .envrc
-   		flake.lock
-   	󱄅	flake.nix
-   		README.md
+
+{ self, ... }: {
+  flake.nixosModules.castorConfiguration = { pkgs, ... }: {
+    imports = [
+      self.nixosModules.castorHardware
+      self.nixosModules.niri
+      self.nixosModules.nushell
+      self.nixosModules.emacs
+      self.nixosModules.helium
+      self.nixosModules.desktop
+    ];
+
+    networking.hostName = "castor";
+
+    boot.loader.systemd-boot.enable = true;
+    boot.loader.efi.canTouchEfiVariables = true;
+
+    # Keyboard remap: Caps Lock -> Escape, system-wide
+    services.xserver.xkb = {
+      layout = "us";
+      options = "caps:escape";
+    };
+    console.useXkbConfig = true;
+
+    # Display manager: autologin directly into niri
+    services.greetd = {
+      enable = true;
+      settings = {
+        default_session = {
+          command = "niri-session";
+          user = "pollux";
+        };
+      };
+    };
+
+    # Audio
+    security.rtkit.enable = true;
+    services.pipewire = {
+      enable = true;
+      alsa.enable = true;
+      alsa.support32Bit = true;
+      pulse.enable = true;
+      wireplumber.enable = true;
+    };
+
+    users.users.pollux = {
+      isNormalUser = true;
+      extraGroups = [ "wheel" "networkmanager" "video" "audio" ];
+    };
+
+    networking.networkmanager.enable = true;
+
+    system.stateVersion = "25.05";
+  };
+}
