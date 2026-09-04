@@ -1,7 +1,7 @@
 
-# Nushell Config File
+# Nushell Config File (Dynamic Palette Integration)
 
-let dark_theme = {
+let dynamic_theme = {
     separator: white
     leading_trailing_space_bg: { attr: n }
     header: green_bold
@@ -13,7 +13,7 @@ let dark_theme = {
     date: purple
     range: white
     float: white
-    string: white
+    string: green
     nothing: white
     binary: white
     cell-path: white
@@ -33,11 +33,11 @@ let dark_theme = {
     shape_directory: cyan
     shape_external: cyan
     shape_externalarg: green_bold
-    shape_external_resolved: light_yellow_bold
+    shape_external_resolved: yellow_bold
     shape_filepath: cyan
     shape_flag: blue_bold
     shape_float: purple_bold
-    shape_garbage: { fg: white bg: red attr: b}
+    shape_garbage: { fg: white bg: red attr: b }
     shape_glob_interpolation: cyan_bold
     shape_globpattern: cyan_bold
     shape_int: purple_bold
@@ -71,6 +71,7 @@ $env.config = {
         vi_normal: block
         emacs: line
     }
+    color_config: $dynamic_theme
     ls: { use_ls_colors: true }
     rm: { always_trash: false }
     table: {
@@ -104,7 +105,6 @@ $env.config = {
         }
         use_ls_colors: true
     }
-    color_config: $dark_theme
     footer_mode: 25
     float_precision: 2
     buffer_editor: "nvim"
