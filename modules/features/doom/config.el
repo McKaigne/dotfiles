@@ -10,9 +10,9 @@
 (setq doom-font (font-spec :family "Maple Mono NF" :size 14))
 (setq display-line-numbers-type 'relative)
 
-;; Cursor Shapes
+;; Cursor Shapes: Normal = Block (box), Insert = Underline (hbar . 3)
 (setq evil-normal-state-cursor '(box "white")
-      evil-insert-state-cursor '((bar . 3) "white")
+      evil-insert-state-cursor '((hbar . 3) "white")
       evil-visual-state-cursor '(hollow "white")
       evil-replace-state-cursor '((hbar . 3) "white"))
 (setq-default cursor-type 'box)
@@ -48,25 +48,19 @@
          (proj-root (and (fboundp 'projectile-project-root) (projectile-project-root)))
          (has-cmake (and proj-root (file-exists-p (expand-file-name "CMakeLists.txt" proj-root))))
          (cmd (cond
-               ;; 1. CMake Projects
-               (has-cmake
+               ((has-cmake
                 (format "cd %s && cmake --build build && ./build/app" (shell-quote-argument proj-root)))
-               ;; 2. Single C++ Files
                ((member ext '("cpp" "cc" "cxx"))
                 (format "clang++ -std=c++20 -Wall %s -o /tmp/a.out && /tmp/a.out" (shell-quote-argument file)))
-               ;; 3. Single C Files
                ((string-equal ext "c")
                 (format "clang -Wall %s -o /tmp/a.out && /tmp/a.out" (shell-quote-argument file)))
-               ;; 4. Python
                ((string-equal ext "py")
                 (format "python3 %s" (shell-quote-argument file)))
-               ;; 5. Nushell / Bash scripts
                ((string-equal ext "nu")
                 (format "nu %s" (shell-quote-argument file)))
                ((string-equal ext "sh")
                 (format "bash %s" (shell-quote-argument file)))
-               ;; Fallback
-               (t (format "echo 'No runner configured for %s'" ext)))))
+               (t (format "echo 'No runner configured for %s'" ext))))))
     (if (fboundp '+ghostel/toggle)
         (progn
           (+ghostel/toggle)

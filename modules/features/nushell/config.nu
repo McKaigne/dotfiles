@@ -183,3 +183,10 @@ $env.config.cursor_shape = {
     vi_normal: block
     emacs: line
 }
+
+# Set Insert Mode cursor to Underline (underscore)
+$env.config.cursor_shape = {
+    vi_insert: underscore
+    vi_normal: block
+    emacs: underscore
+}
