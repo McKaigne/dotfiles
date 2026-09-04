@@ -1,3 +1,4 @@
+
 # Nushell Config File
 
 let dark_theme = {
@@ -64,6 +65,12 @@ let dark_theme = {
 
 $env.config = {
     show_banner: false
+    edit_mode: vi
+    cursor_shape: {
+        vi_insert: underscore
+        vi_normal: block
+        emacs: underscore
+    }
     ls: { use_ls_colors: true }
     rm: { always_trash: false }
     table: {
@@ -97,18 +104,12 @@ $env.config = {
         }
         use_ls_colors: true
     }
-    cursor_shape: {
-        emacs: line
-        vi_insert: line
-        vi_normal: block
-    }
     color_config: $dark_theme
     footer_mode: 25
     float_precision: 2
     buffer_editor: "nvim"
     use_ansi_coloring: true
     bracketed_paste: true
-    edit_mode: vi
     shell_integration: {
         osc2: true
         osc7: true
@@ -140,7 +141,7 @@ $env.config = {
     }
 }
 
-# --- Aliases ---
+# --- Functions & Aliases ---
 def --env cx [arg] {
     cd $arg
     ls -l
@@ -151,8 +152,9 @@ alias c = clear
 alias ll = ls -l
 alias lt = eza --tree --level=2 --long --icons --git
 alias v = nvim
+alias cat = bat --paging=never
 
-# Git aliases
+# Git Aliases
 alias gc = git commit -m
 alias gca = git commit -a -m
 alias gp = git push origin HEAD
@@ -169,27 +171,7 @@ alias gre = git reset
 
 $env.DIRENV_LOG_FORMAT = ""
 
-# --- Sourcing Tools (Safe checks) ---
+# --- Sourcing Tools ---
 if ("~/.zoxide.nu" | path expand | path exists) { source ~/.zoxide.nu }
 if ("~/.cache/carapace/init.nu" | path expand | path exists) { source ~/.cache/carapace/init.nu }
 if ("~/.cache/starship/init.nu" | path expand | path exists) { use ~/.cache/starship/init.nu }
-
-# Ensure edit_mode is vi
-$env.config.edit_mode = "vi"
-
-# Explicit cursor shapes
-$env.config.cursor_shape = {
-    vi_insert: line
-    vi_normal: block
-    emacs: line
-}
-
-# Set Insert Mode cursor to Underline (underscore)
-$env.config.cursor_shape = {
-    vi_insert: underscore
-    vi_normal: block
-    emacs: underscore
-}
-
-# Alias cat to bat
-alias cat = bat --paging=never

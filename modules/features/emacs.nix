@@ -14,14 +14,14 @@
 
   perSystem = { pkgs, lib, ... }:
     let
-      # Use the wrapped clang-tools package specifically for clangd
-      wrappedClangTools = pkgs.clang-tools;
+      llvm = pkgs.llvmPackages_18;
+      cxxHeaders = "${llvm.libcxx}/include/c++/v1";
 
       doomRuntimeDeps = with pkgs; [
         git
         ripgrep
         fd
-        wrappedClangTools  # <-- Contains the wrapped clangd with Nix headers
+        llvm.clang-tools
         cmake
         ninja
         gnumake
@@ -38,10 +38,14 @@
         buildInputs = [ pkgs.makeWrapper ];
         postBuild = ''
           wrapProgram $out/bin/emacs \
-            --prefix PATH : ${lib.makeBinPath doomRuntimeDeps}
+            --prefix PATH : ${lib.makeBinPath doomRuntimeDeps} \
+            --prefix CPLUS_INCLUDE_PATH : "${cxxHeaders}" \
+            --prefix CPATH : "${cxxHeaders}"
 
           wrapProgram $out/bin/emacsclient \
-            --prefix PATH : ${lib.makeBinPath doomRuntimeDeps}
+            --prefix PATH : ${lib.makeBinPath doomRuntimeDeps} \
+            --prefix CPLUS_INCLUDE_PATH : "${cxxHeaders}" \
+            --prefix CPATH : "${cxxHeaders}"
         '';
       };
     in
