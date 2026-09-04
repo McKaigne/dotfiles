@@ -59,7 +59,7 @@
             # Launcher (SUPER + D)
             "Mod+D".spawn-sh = "${noctaliaExe} ipc call launcher toggle || noctalia msg panel-toggle launcher";
 
-            # Control Center (SUPER + N)
+            # Control Center & Notifications (SUPER + N)
             "Mod+N".spawn-sh = "${noctaliaExe} ipc call controlCenter toggle || ${noctaliaExe} ipc call control-center toggle || qs -c noctalia-shell ipc call controlCenter toggle || noctalia msg panel-toggle control-center";
 
             # Top Bar (SUPER + Shift + B)
@@ -77,7 +77,7 @@
             # ===============================================================
             # B. NATIVE NIRI OVERVIEW & WORKSPACES
             # ===============================================================
-            # 4-Finger Swipe Up / Overview (SUPER + Tab)
+            # Native Niri Zoomed Overview (SUPER + Tab)
             "Mod+Tab".toggle-overview = { };
 
             # Workspaces using J and K
@@ -199,9 +199,10 @@
             "XF86AudioPrev".spawn-sh = "playerctl previous";
 
             # ===============================================================
-            # G. LOCK SCREEN
+            # G. LOCK SCREEN (Ctrl+Alt+L & Mod+Escape)
             # ===============================================================
-            "Mod+Shift+L".spawn-sh = "${lib.getExe pkgs.hyprlock}";
+            "Ctrl+Alt+L".spawn-sh = "${lib.getExe pkgs.hyprlock}";
+            "Mod+Escape".spawn-sh = "${lib.getExe pkgs.hyprlock}";
           };
 
           layout = {
