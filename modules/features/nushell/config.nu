@@ -67,9 +67,9 @@ $env.config = {
     show_banner: false
     edit_mode: vi
     cursor_shape: {
-        vi_insert: underscore
+        vi_insert: line
         vi_normal: block
-        emacs: underscore
+        emacs: line
     }
     ls: { use_ls_colors: true }
     rm: { always_trash: false }
@@ -141,33 +141,43 @@ $env.config = {
     }
 }
 
-# --- Functions & Aliases ---
-def --env cx [arg] {
-    cd $arg
-    ls -l
-}
+# --- Core Abbreviations & Aliases ---
+def --env cx [arg] { cd $arg; ls -l }
 
-alias l = ls --all
 alias c = clear
+alias l = ls --all
 alias ll = ls -l
 alias lt = eza --tree --level=2 --long --icons --git
-alias v = nvim
 alias cat = bat --paging=never
+alias v = nvim
 
-# Git Aliases
+# App shortcuts
+alias e = emacsclient -c -a 'emacs'
+alias y = yazi
+alias f = fetch
+
+# Nix & Rebuild Abbreviations
+alias nr = sudo nixos-rebuild switch --flake /etc/nixos#castor
+alias nfu = nix flake update --flake /etc/nixos
+alias ncd = cd /etc/nixos
+
+# Git Abbreviations
+alias g = git
+alias ga = git add -A
 alias gc = git commit -m
 alias gca = git commit -a -m
-alias gp = git push origin HEAD
-alias gpu = git pull origin
+alias gp = git push
+alias gpu = git pull
 alias gst = git status
-alias gdiff = git diff
+alias gd = git diff
 alias gco = git checkout
 alias gb = git branch
-alias gba = git branch -a
-alias gadd = git add
-alias ga = git add -p
-alias gr = git remote
-alias gre = git reset
+alias glog = git log --oneline --graph --decorate
+
+# Zoxide Abbreviations
+alias z = __zoxide_z
+alias zi = __zoxide_zi
+alias za = zoxide add
 
 $env.DIRENV_LOG_FORMAT = ""
 

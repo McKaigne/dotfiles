@@ -28,15 +28,11 @@
             xcursor-size = 16;
           };
 
-          # -----------------------------------------------------------------
-          # 1. Hardware Input & Multi-Touch Gestures
-          # -----------------------------------------------------------------
           input = {
             focus-follows-mouse = { };
             keyboard = {
               xkb = {
                 layout = "us";
-                options = "caps:escape";
               };
               repeat-rate = 40;
               repeat-delay = 250;
@@ -56,42 +52,39 @@
             };
           };
 
-          # -----------------------------------------------------------------
-          # 2. Keybindings & Actions
-          # -----------------------------------------------------------------
           binds = {
             # ===============================================================
-            # A. NOCTALIA SHELL & CONTROL CENTER
+            # A. NOCTALIA SHELL & OVERLAYS
             # ===============================================================
             # Launcher (SUPER + D)
             "Mod+D".spawn-sh = "${noctaliaExe} ipc call launcher toggle || noctalia msg panel-toggle launcher";
 
-            # Control Center & Notifications (SUPER + N)
-            "Mod+N".spawn-sh = "${noctaliaExe} ipc call controlCenter toggle || ${noctaliaExe} ipc call control-center toggle || noctalia msg panel-toggle control-center";
+            # Control Center (SUPER + N)
+            "Mod+N".spawn-sh = "${noctaliaExe} ipc call controlCenter toggle || ${noctaliaExe} ipc call control-center toggle || qs -c noctalia-shell ipc call controlCenter toggle || noctalia msg panel-toggle control-center";
 
-            # Left Sidebar (SUPER + A)
-            "Mod+A".spawn-sh = "${noctaliaExe} ipc call sidebarLeft toggle || ${noctaliaExe} ipc call left-sidebar toggle || noctalia msg panel-toggle left-sidebar";
-
-            # Media Controls (SUPER + M)
-            "Mod+M".spawn-sh = "${noctaliaExe} ipc call media toggle || noctalia msg panel-toggle media";
-
-            # Top Bar Visibility (SUPER + Alt + B)
-            "Mod+Alt+B".spawn-sh = "${noctaliaExe} ipc call bar toggle || noctalia msg bar-toggle";
+            # Top Bar (SUPER + Shift + B)
+            "Mod+Shift+B".spawn-sh = "${noctaliaExe} ipc call bar toggle || noctalia msg bar-toggle";
 
             # Clipboard Manager (SUPER + V)
-            "Mod+V".spawn-sh = "${noctaliaExe} ipc call clipboard toggle || noctalia msg panel-toggle clipboard";
+            "Mod+V".spawn-sh = "${noctaliaExe} ipc call launcher clipboard || ${noctaliaExe} ipc call clipboard toggle || qs -c noctalia-shell ipc call launcher clipboard || noctalia msg panel-toggle clipboard";
 
             # Noctalia Settings (SUPER + I)
             "Mod+I".spawn-sh = "${noctaliaExe} ipc call settings toggle || noctalia msg settings-toggle";
 
-            # Session / Power Menu (Ctrl + Alt + Delete)
-            "Ctrl+Alt+Delete".spawn-sh = "${noctaliaExe} ipc call sessionMenu toggle || ${noctaliaExe} ipc call session-menu toggle || noctalia msg panel-toggle session-menu";
+            # Session / Power Menu (SUPER + P)
+            "Mod+P".spawn-sh = "${noctaliaExe} ipc call sessionMenu toggle || ${noctaliaExe} ipc call session-menu toggle || qs -c noctalia-shell ipc call sessionMenu toggle || noctalia msg panel-toggle session-menu";
 
             # ===============================================================
             # B. NATIVE NIRI OVERVIEW & WORKSPACES
             # ===============================================================
-            # Native Niri Zoomed-Out Overview (SUPER + Tab)
+            # 4-Finger Swipe Up / Overview (SUPER + Tab)
             "Mod+Tab".toggle-overview = { };
+
+            # Workspaces using J and K
+            "Mod+J".focus-workspace-down = { };
+            "Mod+K".focus-workspace-up = { };
+            "Mod+Shift+J".move-column-to-workspace-down = { };
+            "Mod+Shift+K".move-column-to-workspace-up = { };
 
             # Direct Workspaces (0-9)
             "Mod+1".focus-workspace = "w0";
@@ -116,26 +109,13 @@
             "Mod+Shift+9".move-column-to-workspace = "w8";
             "Mod+Shift+0".move-column-to-workspace = "w9";
 
-            # Workspace Cycling (Page Up = Higher workspace, Page Down = Lower)
-            "Mod+Page_Down".focus-workspace-down = { };
-            "Mod+Page_Up".focus-workspace-up = { };
-            "Mod+Shift+Page_Down".move-column-to-workspace-down = { };
-            "Mod+Shift+Page_Up".move-column-to-workspace-up = { };
-
-            # Reorder Workspaces up/down
-            "Mod+Ctrl+Page_Down".move-workspace-down = { };
-            "Mod+Ctrl+Page_Up".move-workspace-up = { };
-
             # ===============================================================
             # C. APPLICATIONS
             # ===============================================================
             "Mod+Return".spawn = config.terminal;
-            "Mod+T".spawn = config.terminal;
             "Mod+E".spawn-sh = "ghostty -e ${pkgs.yazi}/bin/yazi";
             "Mod+W".spawn-sh = heliumExe;
             "Mod+C".spawn-sh = "emacsclient -c -a 'emacs'";
-            "Mod+X".spawn-sh = "ghostty -e nvim";
-            "Ctrl+Shift+Escape".spawn-sh = "ghostty -e ${pkgs.btop}/bin/btop";
 
             # ===============================================================
             # D. WINDOW ACTIONS & COLUMN STACKING
@@ -143,56 +123,40 @@
             "Mod+Q".close-window = { };
             "Mod+F".maximize-column = { };
             "Mod+Shift+F".toggle-window-floating = { };
-            "Mod+Alt+Space".toggle-window-floating = { };
-            "Mod+Alt+C".center-column = { };
+            "Mod+Shift+C".center-column = { };
 
-            # Stacking: Consume into column & Expel out of column
+            # Column Stacking
             "Mod+Comma".consume-window-into-column = { };
             "Mod+Period".expel-window-from-column = { };
 
-            # Width presets (33%, 50%, 66%, 100%) & Height reset
+            # Width presets (33%, 50%, 66%, 100%)
             "Mod+R".switch-preset-column-width = { };
             "Mod+Shift+R".reset-window-height = { };
 
-            # ===============================================================
-            # E. FOCUS & NAVIGATION (Vim HJKL & Arrows)
-            # ===============================================================
+            # Focus Navigation (H & L, Left & Right)
             "Mod+H".focus-column-left = { };
             "Mod+L".focus-column-right = { };
-            "Mod+K".focus-window-up = { };
-            "Mod+J".focus-window-down = { };
-
             "Mod+Left".focus-column-left = { };
             "Mod+Right".focus-column-right = { };
-            "Mod+Up".focus-window-up = { };
-            "Mod+Down".focus-window-down = { };
-
-            # First / Last Column in ribbon
-            "Mod+Home".focus-column-first = { };
-            "Mod+End".focus-column-last = { };
 
             # Move Columns in Ribbon
             "Mod+Shift+H".move-column-left = { };
             "Mod+Shift+L".move-column-right = { };
-            "Mod+Shift+K".move-window-up = { };
-            "Mod+Shift+J".move-window-down = { };
-
             "Mod+Shift+Left".move-column-left = { };
             "Mod+Shift+Right".move-column-right = { };
-            "Mod+Shift+Up".move-window-up = { };
-            "Mod+Shift+Down".move-window-down = { };
 
+            # First / Last Column in ribbon
+            "Mod+Home".focus-column-first = { };
+            "Mod+End".focus-column-last = { };
             "Mod+Shift+Home".move-column-to-first = { };
             "Mod+Shift+End".move-column-to-last = { };
 
-            # Manual Resizing
+            # Manual Resize
             "Mod+Ctrl+H".set-column-width = "-5%";
             "Mod+Ctrl+L".set-column-width = "+5%";
-            "Mod+Ctrl+J".set-window-height = "-5%";
-            "Mod+Ctrl+K".set-window-height = "+5%";
 
             # ===============================================================
-            # F. MOUSE & 2-FINGER TRACKPAD SCROLLING
+            # E. MOUSE WHEEL & TOUCHPAD SCROLLING
             # ===============================================================
             "Mod+WheelScrollDown".focus-column-left = { };
             "Mod+WheelScrollUp".focus-column-right = { };
@@ -207,7 +171,7 @@
             "Mod+Ctrl+TouchpadScrollUp".focus-workspace-up = { };
 
             # ===============================================================
-            # G. SCREENSHOTS & HARDWARE KEYS
+            # F. SCREENSHOTS & HARDWARE KEYS
             # ===============================================================
             "Mod+Shift+S".spawn-sh = lib.getExe (config.pkgs.writeShellApplication {
               name = "screenshot-area";
@@ -225,24 +189,19 @@
             "XF86AudioLowerVolume".spawn-sh = "wpctl set-volume -l 1.4 @DEFAULT_AUDIO_SINK@ 2%-";
             "XF86AudioMute".spawn-sh = "wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle";
             "Mod+Shift+M".spawn-sh = "wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle";
-
             "XF86AudioMicMute".spawn-sh = "wpctl set-mute @DEFAULT_AUDIO_SOURCE@ toggle";
-            "Mod+Alt+M".spawn-sh = "wpctl set-mute @DEFAULT_AUDIO_SOURCE@ toggle";
 
             "Mod+Shift+P".spawn-sh = "playerctl play-pause";
             "XF86AudioPlay".spawn-sh = "playerctl play-pause";
             "XF86AudioPause".spawn-sh = "playerctl play-pause";
             "Mod+Shift+N".spawn-sh = "playerctl next";
             "XF86AudioNext".spawn-sh = "playerctl next";
-            "Mod+Shift+B".spawn-sh = "playerctl previous";
             "XF86AudioPrev".spawn-sh = "playerctl previous";
 
             # ===============================================================
-            # H. SESSION & POWER
+            # G. LOCK SCREEN
             # ===============================================================
-            "Mod+Alt+L".spawn-sh = "${lib.getExe pkgs.hyprlock}";
-            "Mod+Alt+Shift+L".spawn-sh = "${lib.getExe pkgs.hyprlock} & sleep 0.5 && systemctl suspend";
-            "Ctrl+Shift+Alt+Mod+Delete".spawn-sh = "systemctl poweroff || loginctl poweroff";
+            "Mod+Shift+L".spawn-sh = "${lib.getExe pkgs.hyprlock}";
           };
 
           layout = {

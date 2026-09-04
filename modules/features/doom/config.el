@@ -10,9 +10,9 @@
 (setq doom-font (font-spec :family "Maple Mono NF" :size 14))
 (setq display-line-numbers-type 'relative)
 
-;; Cursor Shapes: Normal = Block (box), Insert = Underline (hbar . 3)
+;; Cursor Shapes: Normal = Block (box), Insert = Vertical Line (bar . 2)
 (setq evil-normal-state-cursor '(box "white")
-      evil-insert-state-cursor '((hbar . 3) "white")
+      evil-insert-state-cursor '((bar . 2) "white")
       evil-visual-state-cursor '(hollow "white")
       evil-replace-state-cursor '((hbar . 3) "white"))
 (setq-default cursor-type 'box)

@@ -11,9 +11,10 @@ A production-grade, modular NixOS workstation engineered with **`flake-parts`**,
 3. [Dendritic File Tree](#3-dendritic-file-tree)
 4. [Master Keybinding & Input Architecture](#4-master-keybinding--input-architecture)
    - [A. Kanata Hardware Layer (Home Row Mods & Combos)](#a-kanata-hardware-layer-home-row-mods--combos)
-   - [B. Niri Window Manager & Column Stacking](#b-niri-window-manager--column-stacking)
+   - [B. Niri Window Manager & Navigation](#b-niri-window-manager--navigation)
    - [C. Noctalia Shell & Overlays](#c-noctalia-shell--overlays)
    - [D. Doom Emacs & Native Ghostel Runner](#d-doom-emacs--native-ghostel-runner)
+   - [E. Shell Abbreviations & Aliases](#e-shell-abbreviations--aliases)
 5. [Daily Upkeep & Maintenance Guide](#5-daily-upkeep--maintenance-guide)
 6. [Developer Workflow (Isolated DevShells)](#6-developer-workflow-isolated-devshells)
 7. [Portability & Standalone Execution (`nix run`)](#7-portability--standalone-execution-nix-run)
@@ -43,7 +44,7 @@ Global system packages contain only base terminal essentials. All compilers (Cla
 | **Operating System** | **NixOS (Unstable)** | Deterministic, declarative Linux distribution |
 | **Compositor** | **Niri** | Fluid, infinite scrollable-tiling Wayland window manager |
 | **Desktop Shell** | **Noctalia** | Modern Qt/QML status bar, widget overlay, and launcher |
-| **Keyboard Engine** | **Kanata** | Kernel-level evdev remapper (Home Row Mods + 25ms Chords) |
+| **Keyboard Engine** | **Kanata** | Kernel-level evdev remapper (200ms HRM + 35ms Chords) |
 | **Editor** | **Doom Emacs** | Native Wayland (`pgtk`), N Λ N O Light theme, Eglot/LSP |
 | **Shell** | **Nushell** | Structured data shell with Catppuccin Mocha Starship & Vi mode |
 | **Terminal** | **Ghostty** & **Foot** | GPU-accelerated Wayland terminal emulators |
@@ -51,7 +52,7 @@ Global system packages contain only base terminal essentials. All compilers (Cla
 | **Browser** | **Helium Browser** | Lightweight, modern Wayland browser |
 | **Display Manager** | **Greetd** | Silent autologin directly into `niri` |
 | **Audio** | **PipeWire** | Real-time audio engine with WirePlumber and RTKit |
-| **Typography** | **Maple Mono NF** | Rounded monospace font with ligatures and Nerd Font glyphs |
+| **Typography** | **Maple Mono NF** | Monospace font with ligatures and Nerd Font glyphs |
 | **Cursor** | **Bibata Modern** | Minimal, sleek 16px cursor across all surfaces |
 
 ---
@@ -62,7 +63,7 @@ Global system packages contain only base terminal essentials. All compilers (Cla
 /etc/nixos/
 ├── flake.nix                                # Root entry point (flake-parts + import-tree)
 ├── flake.lock                               # Pinned Nixpkgs & flake inputs
-├── README.md                                # This documentation
+├── README.md                                # System documentation
 └── modules/
     ├── systems.nix                          # Supported architectures (x86_64-linux, aarch64-linux)
     ├── hosts/
@@ -73,18 +74,10 @@ Global system packages contain only base terminal essentials. All compilers (Cla
     └── features/
         ├── niri.nix                         # Wrapped Niri compositor (packages.niri)
         ├── noctalia.nix                     # Wrapped Noctalia shell & JSON state parser
-        ├── noctalia.json                    # Exported persistent GUI widget & bar state
         ├── emacs.nix                        # Wrapped Emacs with C++ stdlib headers & tools
         ├── doom/                            # Bundled Doom Emacs configuration
-        │   ├── init.el                      # Core modules (corfu, eglot, tree-sitter, etc.)
-        │   ├── config.el                    # N Λ N O Light, Projectile, Ghostel runner, Avy
-        │   ├── packages.el                  # doom-nano-modeline, doom-nano-themes, eca
-        │   └── themes/                      # doom-nano-dark & doom-nano-light theme files
         ├── nushell.nix                      # Wrapped Nushell (packages.myNushell)
         ├── nushell/                         # Bundled Shell configuration
-        │   ├── config.nu                    # Nushell aliases, dark theme, vi mode
-        │   ├── env.nu                       # Environment & completions setup
-        │   └── starship.toml                # Catppuccin Mocha Starship prompt with Nerd Icons
         ├── helium.nix                       # Helium Browser module
         ├── kanata.nix                       # Kanata kernel input daemon (HRM & Chords)
         └── desktop.nix                      # Base CLI tools (bat, fd, ripgrep, btop, cava, yazi, fetch)
@@ -95,13 +88,11 @@ Global system packages contain only base terminal essentials. All compilers (Cla
 ## 4. Master Keybinding & Input Architecture
 
 ### A. Kanata Hardware Layer (Home Row Mods & Combos)
-Kanata intercepts physical keyboard events at the kernel `evdev` layer, meaning these shortcuts work universally across the entire operating system, TTYs, terminals, and games:
-
 - **Caps Lock:** Acts purely as a dedicated **`Escape`** key.
-- **Home Row Mods (150ms hold window):**
+- **Home Row Mods (200ms hold window):**
   - Left Hand: **`A`** (Alt) | **`S`** (Ctrl) | **`D`** (Super / Mod) | **`F`** (Shift)
   - Right Hand: **`J`** (Shift) | **`K`** (Super / Mod) | **`L`** (Ctrl) | **`;`** (Alt)
-- **Simultaneous Combos (Strict 25ms window):**
+- **Simultaneous Combos (35ms window):**
   - **`U + I`** $\rightarrow$ `Backspace`
   - **`I + O`** $\rightarrow$ `Delete`
   - **`M + ,`** $\rightarrow$ `Tab`
@@ -116,77 +107,65 @@ Kanata intercepts physical keyboard events at the kernel `evdev` layer, meaning 
 
 ---
 
-### B. Niri Window Manager & Column Stacking
+### B. Niri Window Manager & Navigation
 *(Modifier: **`Mod`** / **`SUPER`** / **`Hold D`** / **`Hold K`**)*
 
 #### Window Actions & Stacking
 - **`SUPER + Q`**: Close focused window
 - **`SUPER + F`**: Maximize active column
-- **`SUPER + Shift + F`** or **`SUPER + Alt + Space`**: Toggle floating / tiling window
-- **`SUPER + Alt + C`**: Center active column on screen
-- **`SUPER + ,` (Comma)**: **Consume Window** (pulls window to the right into the current column, stacking vertically)
-- **`SUPER + .` (Period)**: **Expel Window** (ejects bottom window to a new column on the right)
+- **`SUPER + Shift + F`**: Toggle floating / tiling window
+- **`SUPER + Shift + C`**: Center active column on screen
+- **`SUPER + ,` (Comma)**: **Consume Window** (stack window to the right into current column)
+- **`SUPER + .` (Period)**: **Expel Window** (eject bottom window to a new column on the right)
 - **`SUPER + R`**: Cycle preset column widths (33% $\rightarrow$ 50% $\rightarrow$ 66% $\rightarrow$ 100%)
 - **`SUPER + Shift + R`**: Reset window height
 
-#### Navigation (Vim HJKL & Arrows)
+#### Navigation & Workspace Cycling (H, J, K, L)
 - **`SUPER + H`** / **`Left Arrow`**: Focus column left
 - **`SUPER + L`** / **`Right Arrow`**: Focus column right
-- **`SUPER + K`** / **`Up Arrow`**: Focus window up (inside stacked column)
-- **`SUPER + J`** / **`Down Arrow`**: Focus window down (inside stacked column)
-- **`SUPER + Home`** / **`End`**: Jump to first / last column in the ribbon
-- **`SUPER + Shift + H / J / K / L`**: Move active column/window in direction
+- **`SUPER + J`**: Switch workspace **down** ($1 \rightarrow 2 \rightarrow 3$)
+- **`SUPER + K`**: Switch workspace **up** ($3 \rightarrow 2 \rightarrow 1$)
+- **`SUPER + Shift + J`**: Move column **down** to next workspace
+- **`SUPER + Shift + K`**: Move column **up** to previous workspace
+- **`SUPER + Shift + H / L`**: Move column left / right
+- **`SUPER + Home` / `End`**: Jump to first / last column in the ribbon
 - **`SUPER + Shift + Home / End`**: Move column to the very beginning / end of the ribbon
-
-#### Resizing
 - **`SUPER + Ctrl + H / L`**: Shrink / expand column width (-5% / +5%)
-- **`SUPER + Ctrl + J / K`**: Shrink / expand window height (-5% / +5%)
-
-#### Workspaces
-- **`SUPER + 0..9`**: Jump to workspace `w0` through `w9`
+- **`SUPER + 0..9`**: Jump directly to workspace `w0` through `w9`
 - **`SUPER + Shift + 0..9`**: Move column to workspace `w0` through `w9`
-- **`SUPER + Page_Down`**: Move to next workspace ($1 \rightarrow 2 \rightarrow 3$)
-- **`SUPER + Page_Up`**: Move to previous workspace ($3 \rightarrow 2 \rightarrow 1$)
-- **`SUPER + Shift + Page_Down / Up`**: Move column down / up to next workspace
 
-#### Touchpad & Mouse Gestures
+#### Touchpad Gestures
 - **3-Finger Swipe Left / Right**: Smooth, continuous horizontal ribbon panning
 - **3-Finger Swipe Up / Down**: Smooth workspace transitions
 - **4-Finger Swipe Up**: Zoomed-out workspace overview
 - **`SUPER` + 2-Finger Trackpad Scroll**: Step through columns
-- **`SUPER + Ctrl` + 2-Finger Trackpad Scroll**: Step through workspaces
 
 ---
 
 ### C. Noctalia Shell & Overlays
 - **`SUPER + D`**: **Toggle Noctalia App Launcher**
-- **`SUPER + Tab`**: Toggle Workspace Overview
-- **`SUPER + A`**: Toggle Left Sidebar
-- **`SUPER + N`**: Toggle Right Sidebar (Control Center & Notifications)
-- **`SUPER + Alt + B`**: Toggle Top Bar visibility
+- **`SUPER + Tab`**: **Toggle Workspace Overview** (Native Niri Zoomed Overview)
+- **`SUPER + N`**: Toggle Control Center & Notifications
+- **`SUPER + Shift + B`**: Toggle Top Bar visibility
 - **`SUPER + V`**: Toggle Clipboard Manager
 - **`SUPER + I`**: Toggle Noctalia Settings
-- **`Ctrl + Alt + Delete`**: Toggle Session / Power Menu
-- **`SUPER + Alt + L`**: Lock screen (via **Hyprlock**)
-- **`SUPER + Alt + Shift + L`**: Lock screen and Suspend / Sleep
-- **`Ctrl + Shift + Alt + SUPER + Delete`**: Power off / Shutdown
+- **`SUPER + P`**: Toggle Session / Power Menu
+- **`SUPER + Shift + L`**: Lock screen (via **Hyprlock**)
 
 ---
 
 ### D. Applications
-- **`SUPER + Return`** or **`SUPER + T`**: Open **Ghostty** (running Nushell + Starship)
+- **`SUPER + Return`**: Open **Ghostty** (Nushell + Starship)
 - **`SUPER + E`**: Open **Yazi** (Terminal File Manager)
 - **`SUPER + W`**: Open **Helium Browser**
 - **`SUPER + C`**: Open **Doom Emacs** (`emacsclient` instant launch)
-- **`SUPER + X`**: Open **Neovim**
-- **`Ctrl + Shift + Escape`**: Open **btop** (Task Manager)
-- **`SUPER + Shift + S`**: Interactive area screenshot (copied to clipboard via `grim + slurp`)
+- **`SUPER + Shift + S`**: Interactive area screenshot (copied to clipboard)
 - **`Print`**: Full-screen screenshot to clipboard
 
 ---
 
 ### E. Doom Emacs (Leader: `SPC`)
-- **`SPC r r`**: **Smart Ghostel Runner** (automatically detects CMake project or single `.cpp` file, compiles, and runs interactively in a bottom popup terminal with full `std::cin` support)
+- **`SPC r r`**: **Smart Ghostel Runner** (compiles & runs C++/CMake/Python interactively in bottom popup terminal)
 - **`SPC r c`**: Compile project (`compile`)
 - **`SPC p p`**: Switch Projectile workspace
 - **`SPC p f`**: Find file in project
@@ -195,68 +174,64 @@ Kanata intercepts physical keyboard events at the kernel `evdev` layer, meaning 
 - **`SPC g g`**: Open **Magit** (Interactive Git dashboard)
 - **`SPC o t`**: Toggle **Ghostel** terminal popup (running Nushell)
 - **`SPC h t`**: Switch Theme (`doom-nano-light` $\leftrightarrow$ `doom-nano-dark`)
-- **`SPC j j` / `j w` / `j l`**: **Avy Jump** to char / word / line
-- **`SPC a p`**: Open **ECA** AI prompt
+
+---
+
+### F. Shell Abbreviations & Aliases
+| Abbreviation | Expanded Command |
+| :--- | :--- |
+| **`nr`** | `sudo nixos-rebuild switch --flake /etc/nixos#castor` |
+| **`nfu`** | `nix flake update --flake /etc/nixos` |
+| **`ncd`** | `cd /etc/nixos` |
+| **`z <dir>`** / **`zi`** | Fast directory jumping via Zoxide / Interactive jump |
+| **`za <dir>`** | `zoxide add <dir>` |
+| **`e`** | `emacsclient -c -a 'emacs'` |
+| **`y`** | `yazi` |
+| **`f`** | `fetch` (3D animated rotating NixOS logo) |
+| **`cat`** | `bat --paging=never` |
+| **`ga`** | `git add -A` |
+| **`gc "msg"`** | `git commit -m "msg"` |
+| **`gp`** / **`gpu`** | `git push` / `git pull` |
+| **`gst`** / **`gd`** | `git status` / `git diff` |
+| **`glog`** | `git log --oneline --graph --decorate` |
 
 ---
 
 ## 5. Daily Upkeep & Maintenance Guide
 
-Because `/etc/nixos/` is a Git repository, **Nix only evaluates files tracked by Git**. Follow this workflow whenever you make modifications:
-
-### A. Updating System Configurations (Niri, Kanata, Packages, Hosts)
+### A. Updating System Configurations
 1. Edit any file inside `/etc/nixos/modules/` (e.g. `v /etc/nixos/modules/features/niri.nix`).
-2. Stage all changes to Git:
+2. Stage and commit:
    ```bash
-   cd /etc/nixos
-   git add -A
-   git commit -m "feat: describe your change"
+   ncd
+   ga
+   gc "feat: describe your change"
    ```
-3. Rebuild and activate your system:
+3. Rebuild:
    ```bash
-   sudo nixos-rebuild switch --flake /etc/nixos#castor
+   nr
    ```
-4. Push your changes to GitHub:
+4. Push to GitHub:
    ```bash
-   git push
+   gp
    ```
 
 ### B. Updating Doom Emacs (`~/.config/doom/`)
-`~/.config/doom/` is directly symlinked to `/etc/nixos/modules/features/doom/`. Editing in one updates both automatically.
-
-- **If you edit `config.el`** (themes, keys, settings):
+- **Edit settings / themes (`config.el`)**:
   ```bash
   systemctl --user restart emacs.service
   ```
-- **If you edit `init.el` or `packages.el`** (adding/removing packages):
+- **Add / remove packages (`init.el` or `packages.el`)**:
   ```bash
   doom sync
   systemctl --user restart emacs.service
   ```
-- Commit the changes:
-  ```bash
-  cd /etc/nixos && git add -A && git commit -m "feat(emacs): update config" && git push
-  ```
-
-### C. Persisting Noctalia GUI Adjustments
-If you modify your Noctalia bar, widgets, or colors using the graphical settings menu:
-```bash
-# Dump active GUI settings to JSON
-noctalia-shell ipc call state all > /etc/nixos/modules/features/noctalia.json 2>/dev/null || \
-noctalia msg state-get > /etc/nixos/modules/features/noctalia.json
-
-# Commit & rebuild so it becomes permanent
-cd /etc/nixos
-git add -A
-git commit -m "style(noctalia): save persistent GUI state"
-sudo nixos-rebuild switch --flake /etc/nixos#castor
-```
 
 ---
 
 ## 6. Developer Workflow (Isolated DevShells)
 
-This system contains a ready-to-use modern C++20 starter template at **`~/Projects/Templates/cpp-starter`**.
+A modern C++20 starter template is available at **`~/Projects/Templates/cpp-starter`**.
 
 ### Initializing a new project:
 ```nu
@@ -265,45 +240,39 @@ cd ~/Projects/MyProject
 direnv allow
 ```
 
-### What happens automatically:
-1. **`direnv`** activates the project `flake.nix` devshell containing Clang 18, LLDB, CMake, and Ninja.
-2. `shellHook` generates `build/compile_commands.json` and supplies `CPLUS_INCLUDE_PATH`.
-3. Open the project in Doom Emacs (**`SUPER + C`** $\rightarrow$ **`SPC p p`**). `clangd` provides instant autocomplete and zero missing `<iostream>` header errors.
-4. Press **`SPC r r`** to run your code interactively.
+`direnv` automatically injects Clang 18, LLDB, CMake, and Ninja into your shell and sets up `clangd` header indexing. Open in Doom Emacs (**`SUPER + C`** $\rightarrow$ **`SPC p p`**) and press **`SPC r r`** to run code interactively.
 
 ---
 
 ## 7. Portability & Standalone Execution (`nix run`)
 
-Every component in this repository is packaged as a standalone derivation under `perSystem.packages`. You can execute these on **any Linux distribution** (Arch, Ubuntu, Fedora) that has Nix installed:
+Every component is packaged as a standalone derivation. Execute directly on **any Linux distribution** (Arch, Ubuntu, Fedora) with Nix installed:
 
 ```bash
-# Launch the complete Doom Emacs configuration on any machine:
-nix run github:<YOUR_USERNAME>/<REPO_NAME>
+# Launch Doom Emacs:
+nix run github:McKaigne/dotfiles
 
-# Launch the Catppuccin Nushell + Starship environment:
-nix run github:<YOUR_USERNAME>/<REPO_NAME>#myNushell
+# Launch Catppuccin Nushell + Starship:
+nix run github:McKaigne/dotfiles#myNushell
 
-# Launch the wrapped Niri compositor:
-nix run github:<YOUR_USERNAME>/<REPO_NAME>#niri
+# Launch wrapped Niri compositor:
+nix run github:McKaigne/dotfiles#niri
 ```
 
 ---
 
 ## 8. Fresh Machine Installation
 
-To deploy this exact operating system on a new machine:
+To deploy on a new machine:
 
 1. Boot any NixOS Live USB.
-2. Partition and format your disks:
-   - Partition 1: EFI System Partition (FAT32, mounted at `/mnt/boot`).
-   - Partition 2: Root Filesystem (ext4/btrfs, mounted at `/mnt`).
-3. Generate hardware config and copy the flake:
+2. Partition and mount disks (`/mnt/boot` for EFI, `/mnt` for root).
+3. Clone configuration:
    ```bash
    nixos-generate-config --root /mnt
-   git clone https://github.com/<YOUR_USERNAME>/<REPO_NAME>.git /mnt/etc/nixos
+   git clone https://github.com/McKaigne/dotfiles.git /mnt/etc/nixos
    ```
-4. Update `modules/hosts/castor/hardware.nix` with the new machine's disk UUIDs.
+4. Update `modules/hosts/castor/hardware.nix` with the machine's disk UUIDs.
 5. Install and reboot:
    ```bash
    nixos-install --flake /mnt/etc/nixos#castor

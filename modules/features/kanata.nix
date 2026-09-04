@@ -1,7 +1,6 @@
 
 { self, inputs, ... }: {
   flake.nixosModules.kanata = { pkgs, ... }: {
-    # Enable uinput permissions for virtual input injection
     hardware.uinput.enable = true;
     users.groups.uinput.members = [ "pollux" ];
     users.groups.input.members = [ "pollux" ];
@@ -15,7 +14,6 @@
         '';
 
         config = ''
-          ;; Physical source keys intercepted by Kanata
           (defsrc
             caps
             u    i    o
@@ -23,14 +21,13 @@
             z    x    c    v    m    ,    .    /
           )
 
-          ;; Timing: 150ms for Home Row Mods, 25ms strict window for combos
+          ;; Timing: 200ms hold time for Home Row Mods, 35ms combo window
           (defvar
-            tap-time 150
-            hold-time 150
-            combo-time 25
+            tap-time 200
+            hold-time 200
+            combo-time 35
           )
 
-          ;; Home Row Mod Aliases
           (defalias
             ;; Left Hand: A (Alt), S (Ctrl), D (GUI/Super), F (Shift)
             a-mod (tap-hold-release $tap-time $hold-time a lalt)
@@ -45,7 +42,6 @@
             scl-mod (tap-hold-release $tap-time $hold-time ; ralt)
           )
 
-          ;; Base Layer Mapping (Caps Lock is purely Escape)
           (deflayer base
             esc
             u    i    o
@@ -53,9 +49,8 @@
             z    x    c    v    m    ,    .    /
           )
 
-          ;; Combos (Stricter 25ms simultaneous press window)
+          ;; Combos
           (defchordsv2
-            ;; Clipboard & History
             (a z) C-S-z  $combo-time first-release ()  ;; Redo
             (z x) C-z    $combo-time first-release ()  ;; Undo
             (x c) C-c    $combo-time first-release ()  ;; Copy
@@ -63,12 +58,11 @@
             (x v) C-x    $combo-time first-release ()  ;; Cut
             (z v) C-a    $combo-time first-release ()  ;; Select All
 
-            ;; Navigation & Editing
             (u i) bspc   $combo-time first-release ()  ;; Backspace
             (i o) del    $combo-time first-release ()  ;; Delete
             (m ,) tab    $combo-time first-release ()  ;; Tab
-            (, .) C-pgup $combo-time first-release ()  ;; Tab Left (Previous Tab)
-            (. /) C-pgdn $combo-time first-release ()  ;; Tab Right (Next Tab)
+            (, .) C-pgup $combo-time first-release ()  ;; Tab Left
+            (. /) C-pgdn $combo-time first-release ()  ;; Tab Right
           )
         '';
       };

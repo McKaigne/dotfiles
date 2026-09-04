@@ -15,11 +15,14 @@
 
     networking.hostName = "castor";
 
+    # Timezone: Philippines, Manila
+    time.timeZone = "Asia/Manila";
+
     # Bootloader
     boot.loader.systemd-boot.enable = true;
     boot.loader.efi.canTouchEfiVariables = true;
 
-    # System-wide Unified Cursor Environment Variables
+    # System-wide Cursor
     environment.sessionVariables = {
       XCURSOR_THEME = "Bibata-Modern-Classic";
       XCURSOR_SIZE = "16";
