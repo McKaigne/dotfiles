@@ -19,6 +19,14 @@
     boot.loader.systemd-boot.enable = true;
     boot.loader.efi.canTouchEfiVariables = true;
 
+    # System-wide Unified Cursor Environment Variables
+    environment.sessionVariables = {
+      XCURSOR_THEME = "Bibata-Modern-Classic";
+      XCURSOR_SIZE = "16";
+      HYPRCURSOR_THEME = "Bibata-Modern-Classic";
+      HYPRCURSOR_SIZE = "16";
+    };
+
     # Bluetooth
     hardware.bluetooth = {
       enable = true;
