@@ -33,7 +33,7 @@
       ];
 
       myEmacs = pkgs.symlinkJoin {
-        name = "my-doom-emacs";
+        name = "emacs-env";
         paths = [ pkgs.emacs-pgtk ];
         buildInputs = [ pkgs.makeWrapper ];
         postBuild = ''
