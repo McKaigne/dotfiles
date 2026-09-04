@@ -53,40 +53,21 @@
           };
 
           binds = {
-            # ===============================================================
-            # A. NOCTALIA SHELL & OVERLAYS
-            # ===============================================================
-            # Launcher (SUPER + D)
+            # --- 1. Noctalia Shell & Overlays ---
             "Mod+D".spawn-sh = "${noctaliaExe} ipc call launcher toggle || noctalia msg panel-toggle launcher";
-
-            # Control Center & Notifications (SUPER + N)
             "Mod+N".spawn-sh = "${noctaliaExe} ipc call controlCenter toggle || ${noctaliaExe} ipc call control-center toggle || qs -c noctalia-shell ipc call controlCenter toggle || noctalia msg panel-toggle control-center";
-
-            # Top Bar (SUPER + Shift + B)
             "Mod+Shift+B".spawn-sh = "${noctaliaExe} ipc call bar toggle || noctalia msg bar-toggle";
-
-            # Clipboard Manager (SUPER + V)
             "Mod+V".spawn-sh = "${noctaliaExe} ipc call launcher clipboard || ${noctaliaExe} ipc call clipboard toggle || qs -c noctalia-shell ipc call launcher clipboard || noctalia msg panel-toggle clipboard";
-
-            # Noctalia Settings (SUPER + I)
             "Mod+I".spawn-sh = "${noctaliaExe} ipc call settings toggle || noctalia msg settings-toggle";
-
-            # Session / Power Menu (SUPER + P)
             "Mod+P".spawn-sh = "${noctaliaExe} ipc call sessionMenu toggle || ${noctaliaExe} ipc call session-menu toggle || qs -c noctalia-shell ipc call sessionMenu toggle || noctalia msg panel-toggle session-menu";
 
-            # ===============================================================
-            # B. NATIVE NIRI OVERVIEW & WORKSPACES
-            # ===============================================================
-            # Native Niri Zoomed Overview (SUPER + Tab)
+            # --- 2. Overview & Workspaces ---
             "Mod+Tab".toggle-overview = { };
-
-            # Workspaces using J and K
             "Mod+J".focus-workspace-down = { };
             "Mod+K".focus-workspace-up = { };
             "Mod+Shift+J".move-column-to-workspace-down = { };
             "Mod+Shift+K".move-column-to-workspace-up = { };
 
-            # Direct Workspaces (0-9)
             "Mod+1".focus-workspace = "w0";
             "Mod+2".focus-workspace = "w1";
             "Mod+3".focus-workspace = "w2";
@@ -109,55 +90,42 @@
             "Mod+Shift+9".move-column-to-workspace = "w8";
             "Mod+Shift+0".move-column-to-workspace = "w9";
 
-            # ===============================================================
-            # C. APPLICATIONS
-            # ===============================================================
+            # --- 3. Applications ---
             "Mod+Return".spawn = config.terminal;
             "Mod+E".spawn-sh = "ghostty -e ${pkgs.yazi}/bin/yazi";
             "Mod+W".spawn-sh = heliumExe;
             "Mod+C".spawn-sh = "emacsclient -c -a 'emacs'";
 
-            # ===============================================================
-            # D. WINDOW ACTIONS & COLUMN STACKING
-            # ===============================================================
+            # --- 4. Window Actions & Stacking ---
             "Mod+Q".close-window = { };
             "Mod+F".maximize-column = { };
             "Mod+Shift+F".toggle-window-floating = { };
             "Mod+Shift+C".center-column = { };
 
-            # Column Stacking
             "Mod+Comma".consume-window-into-column = { };
             "Mod+Period".expel-window-from-column = { };
-
-            # Width presets (33%, 50%, 66%, 100%)
             "Mod+R".switch-preset-column-width = { };
             "Mod+Shift+R".reset-window-height = { };
 
-            # Focus Navigation (H & L, Left & Right)
             "Mod+H".focus-column-left = { };
             "Mod+L".focus-column-right = { };
             "Mod+Left".focus-column-left = { };
             "Mod+Right".focus-column-right = { };
 
-            # Move Columns in Ribbon
             "Mod+Shift+H".move-column-left = { };
             "Mod+Shift+L".move-column-right = { };
             "Mod+Shift+Left".move-column-left = { };
             "Mod+Shift+Right".move-column-right = { };
 
-            # First / Last Column in ribbon
             "Mod+Home".focus-column-first = { };
             "Mod+End".focus-column-last = { };
             "Mod+Shift+Home".move-column-to-first = { };
             "Mod+Shift+End".move-column-to-last = { };
 
-            # Manual Resize
             "Mod+Ctrl+H".set-column-width = "-5%";
             "Mod+Ctrl+L".set-column-width = "+5%";
 
-            # ===============================================================
-            # E. MOUSE WHEEL & TOUCHPAD SCROLLING
-            # ===============================================================
+            # --- 5. Mouse Wheel & Trackpad ---
             "Mod+WheelScrollDown".focus-column-left = { };
             "Mod+WheelScrollUp".focus-column-right = { };
             "Mod+Ctrl+WheelScrollDown".focus-workspace-down = { };
@@ -170,9 +138,7 @@
             "Mod+Ctrl+TouchpadScrollDown".focus-workspace-down = { };
             "Mod+Ctrl+TouchpadScrollUp".focus-workspace-up = { };
 
-            # ===============================================================
-            # F. SCREENSHOTS & HARDWARE KEYS
-            # ===============================================================
+            # --- 6. Screenshots & Media ---
             "Mod+Shift+S".spawn-sh = lib.getExe (config.pkgs.writeShellApplication {
               name = "screenshot-area";
               runtimeInputs = with config.pkgs; [ grim slurp wl-clipboard ];
@@ -198,9 +164,7 @@
             "XF86AudioNext".spawn-sh = "playerctl next";
             "XF86AudioPrev".spawn-sh = "playerctl previous";
 
-            # ===============================================================
-            # G. LOCK SCREEN (Ctrl+Alt+L & Mod+Escape)
-            # ===============================================================
+            # --- 7. Lock Screen ---
             "Ctrl+Alt+L".spawn-sh = "${lib.getExe pkgs.hyprlock}";
             "Mod+Escape".spawn-sh = "${lib.getExe pkgs.hyprlock}";
           };
@@ -246,10 +210,16 @@
     };
   };
 
-  perSystem = { pkgs, ... }: {
+  perSystem = { pkgs, self', ... }: {
     packages.niri = inputs.wrapper-modules.wrappers.niri.wrap {
       inherit pkgs;
       imports = [ self.wrappersModules.niri ];
+    };
+
+    # Allows `nix run .#niri`
+    apps.niri = {
+      type = "app";
+      program = "${self'.packages.niri}/bin/niri";
     };
   };
 }

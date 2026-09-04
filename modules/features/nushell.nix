@@ -1,14 +1,13 @@
+
 { self, inputs, ... }: {
   # 1. NixOS Module
   flake.nixosModules.nushell = { pkgs, ... }: {
     programs.nushell.enable = true;
 
-    # Register wrapped nushell as a valid system login shell
     environment.shells = [
       self.packages.${pkgs.stdenv.hostPlatform.system}.myNushell
     ];
 
-    # Set as default shell for pollux
     users.users.pollux.shell = self.packages.${pkgs.stdenv.hostPlatform.system}.myNushell;
 
     environment.systemPackages = [
@@ -16,7 +15,7 @@
     ];
   };
 
-  # 2. Package Wrapper
+  # 2. Package & App Wrapper
   perSystem = { pkgs, lib, ... }:
     let
       shellTools = with pkgs; [
@@ -39,7 +38,6 @@
         name = "my-nushell";
         paths = [ pkgs.nushell ];
         buildInputs = [ pkgs.makeWrapper ];
-        # Tells NixOS where the shell binary lives
         passthru = {
           shellPath = "/bin/nu";
         };
@@ -53,5 +51,11 @@
     in
     {
       packages.myNushell = myNushell;
+
+      # Allows `nix run .#myNushell`
+      apps.myNushell = {
+        type = "app";
+        program = "${myNushell}/bin/nu";
+      };
     };
 }
