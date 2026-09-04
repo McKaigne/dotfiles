@@ -9,13 +9,14 @@
     services.kanata = {
       enable = true;
       keyboards.internal = {
-        config = ''
-          (defcfg
-            process-unmapped-keys yes
-            concurrent-tap-hold yes
-          )
+        # Extra configuration options injected into NixOS's generated defcfg
+        extraDefCfg = ''
+          process-unmapped-keys yes
+          concurrent-tap-hold yes
+        '';
 
-          ;; The physical source keys we intercept
+        config = ''
+          ;; Physical source keys intercepted by Kanata
           (defsrc
             caps
             u    i    o
@@ -33,13 +34,13 @@
           (defalias
             cap (tap-hold $tap-time $hold-time esc lctl)
 
-            ;; Left Hand: A (Alt), S (Ctrl), D (GUI), F (Shift)
+            ;; Left Hand: A (Alt), S (Ctrl), D (GUI/Super), F (Shift)
             a-mod (tap-hold-release $tap-time $hold-time a lalt)
             s-mod (tap-hold-release $tap-time $hold-time s lctl)
             d-mod (tap-hold-release $tap-time $hold-time d lmet)
             f-mod (tap-hold-release $tap-time $hold-time f lsft)
 
-            ;; Right Hand: J (Shift), K (GUI), L (Ctrl), ; (Alt)
+            ;; Right Hand: J (Shift), K (GUI/Super), L (Ctrl), ; (Alt)
             j-mod (tap-hold-release $tap-time $hold-time j rsft)
             k-mod (tap-hold-release $tap-time $hold-time k rmet)
             l-mod (tap-hold-release $tap-time $hold-time l rctl)
@@ -54,22 +55,22 @@
             z    x    c    v    m    ,    .    /
           )
 
-          ;; Combos (50ms timeout window)
-          (defchordsv2
-            ;; Undo / Redo / Clipboard Combos
-            (a z)   C-S-z  50 first-release ()  ;; Redo
-            (z x)   C-z    50 first-release ()  ;; Undo
-            (x c)   C-c    50 first-release ()  ;; Copy
-            (c v)   C-v    50 first-release ()  ;; Paste
-            (x v)   C-x    50 first-release ()  ;; Cut
-            (z v)   C-a    50 first-release ()  ;; Select All
+          ;; Combos (50ms simultaneous press window)
+          (defchords mychords 50
+            ;; Clipboard & History
+            (a z) C-S-z  ;; Redo
+            (z x) C-z    ;; Undo
+            (x c) C-c    ;; Copy
+            (c v) C-v    ;; Paste
+            (x v) C-x    ;; Cut
+            (z v) C-a    ;; Select All
 
-            ;; Navigation & Editing Combos
-            (u i)   bspc   50 first-release ()  ;; Backspace
-            (i o)   del    50 first-release ()  ;; Delete
-            (m ,)   tab    50 first-release ()  ;; Tab
-            (, .)   C-pgup 50 first-release ()  ;; Tab Left (Previous Tab)
-            (. /)   C-pgdn 50 first-release ()  ;; Tab Right (Next Tab)
+            ;; Navigation & Editing
+            (u i) bspc   ;; Backspace
+            (i o) del    ;; Delete
+            (m ,) tab    ;; Tab
+            (, .) C-pgup ;; Tab Left (Previous Browser Tab)
+            (. /) C-pgdn ;; Tab Right (Next Browser Tab)
           )
         '';
       };
