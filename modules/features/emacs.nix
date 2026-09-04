@@ -33,7 +33,7 @@
       ];
 
       myEmacs = pkgs.symlinkJoin {
-        name = "emacs-env";
+        name = "emacs";
         paths = [ pkgs.emacs-pgtk ];
         buildInputs = [ pkgs.makeWrapper ];
         postBuild = ''
