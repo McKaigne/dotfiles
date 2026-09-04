@@ -16,6 +16,7 @@
     let
       llvm = pkgs.llvmPackages_18;
       cxxHeaders = "${llvm.libcxx}/include/c++/v1";
+      iconPath = "/run/current-system/sw/share/icons:/home/pollux/.icons:/home/pollux/.local/share/icons";
 
       doomRuntimeDeps = with pkgs; [
         git
@@ -30,6 +31,8 @@
         python3
         direnv
         zig_0_15
+        bibata-cursors
+        glib # provides gsettings
       ];
 
       myEmacs = pkgs.symlinkJoin {
@@ -40,12 +43,18 @@
           wrapProgram $out/bin/emacs \
             --prefix PATH : ${lib.makeBinPath doomRuntimeDeps} \
             --prefix CPLUS_INCLUDE_PATH : "${cxxHeaders}" \
-            --prefix CPATH : "${cxxHeaders}"
+            --prefix CPATH : "${cxxHeaders}" \
+            --set XCURSOR_THEME "Bibata-Modern-Classic" \
+            --set XCURSOR_SIZE "16" \
+            --prefix XCURSOR_PATH : "${iconPath}"
 
           wrapProgram $out/bin/emacsclient \
             --prefix PATH : ${lib.makeBinPath doomRuntimeDeps} \
             --prefix CPLUS_INCLUDE_PATH : "${cxxHeaders}" \
-            --prefix CPATH : "${cxxHeaders}"
+            --prefix CPATH : "${cxxHeaders}" \
+            --set XCURSOR_THEME "Bibata-Modern-Classic" \
+            --set XCURSOR_SIZE "16" \
+            --prefix XCURSOR_PATH : "${iconPath}"
         '';
       };
     in

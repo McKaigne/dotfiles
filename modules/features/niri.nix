@@ -203,8 +203,13 @@
 
           xwayland-satellite.path = lib.getExe config.pkgs.xwayland-satellite;
 
+          # Auto-start Noctalia & enforce Bibata GSettings on startup
           spawn-at-startup = [
             noctaliaExe
+            (lib.getExe (pkgs.writeShellScriptBin "set-gtk-cursor" ''
+              ${pkgs.glib}/bin/gsettings set org.gnome.desktop.interface cursor-theme 'Bibata-Modern-Classic'
+              ${pkgs.glib}/bin/gsettings set org.gnome.desktop.interface cursor-size 16
+            ''))
           ];
         };
     };
@@ -216,7 +221,6 @@
       imports = [ self.wrappersModules.niri ];
     };
 
-    # Allows `nix run .#niri`
     apps.niri = {
       type = "app";
       program = "${self'.packages.niri}/bin/niri";

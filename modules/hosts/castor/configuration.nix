@@ -17,20 +17,20 @@
     nix.settings.experimental-features = [ "nix-command" "flakes" ];
 
     networking.hostName = "castor";
-
-    # Timezone: Philippines, Manila
     time.timeZone = "Asia/Manila";
 
     # Bootloader
     boot.loader.systemd-boot.enable = true;
     boot.loader.efi.canTouchEfiVariables = true;
 
-    # System-wide Cursor
+    # System-wide Unified Cursor Environment Variables
     environment.sessionVariables = {
       XCURSOR_THEME = "Bibata-Modern-Classic";
       XCURSOR_SIZE = "16";
       HYPRCURSOR_THEME = "Bibata-Modern-Classic";
       HYPRCURSOR_SIZE = "16";
+      XCURSOR_PATH = "/home/pollux/.icons:/home/pollux/.local/share/icons:/run/current-system/sw/share/icons";
+      NIXOS_OZONE_WL = "1"; # Ensures Helium/Chromium runs pure Wayland and uses Wayland cursor
     };
 
     # Bluetooth
