@@ -8,6 +8,7 @@
       self.nixosModules.emacs
       self.nixosModules.helium
       self.nixosModules.desktop
+      self.nixosModules.kanata
     ];
 
     nixpkgs.config.allowUnfree = true;
@@ -18,9 +19,7 @@
     boot.loader.systemd-boot.enable = true;
     boot.loader.efi.canTouchEfiVariables = true;
 
-    # -----------------------------------------------------------------
-    # Bluetooth Configuration
-    # -----------------------------------------------------------------
+    # Bluetooth
     hardware.bluetooth = {
       enable = true;
       powerOnBoot = true;
@@ -32,13 +31,6 @@
     services.power-profiles-daemon.enable = true;
     services.upower.enable = true;
     services.openssh.enable = true;
-
-    # Keyboard & Key Remap
-    services.xserver.xkb = {
-      layout = "us";
-      options = "caps:escape";
-    };
-    console.useXkbConfig = true;
 
     # Display Manager (Autologin to Niri)
     services.greetd = {
@@ -64,7 +56,7 @@
     # User Account
     users.users.pollux = {
       isNormalUser = true;
-      extraGroups = [ "wheel" "networkmanager" "video" "audio" "input" ];
+      extraGroups = [ "wheel" "networkmanager" "video" "audio" "input" "uinput" ];
     };
 
     networking.networkmanager.enable = true;

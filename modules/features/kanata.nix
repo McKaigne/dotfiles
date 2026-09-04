@@ -1,0 +1,78 @@
+
+{ self, inputs, ... }: {
+  flake.nixosModules.kanata = { pkgs, ... }: {
+    # Enable uinput permissions for virtual input injection
+    hardware.uinput.enable = true;
+    users.groups.uinput.members = [ "pollux" ];
+    users.groups.input.members = [ "pollux" ];
+
+    services.kanata = {
+      enable = true;
+      keyboards.internal = {
+        config = ''
+          (defcfg
+            process-unmapped-keys yes
+            concurrent-tap-hold yes
+          )
+
+          ;; The physical source keys we intercept
+          (defsrc
+            caps
+            u    i    o
+            a    s    d    f    j    k    l    ;
+            z    x    c    v    m    ,    .    /
+          )
+
+          ;; 150ms timing for Home Row Mods
+          (defvar
+            tap-time 150
+            hold-time 150
+          )
+
+          ;; Home Row Mod & Dual-Function Aliases
+          (defalias
+            cap (tap-hold $tap-time $hold-time esc lctl)
+
+            ;; Left Hand: A (Alt), S (Ctrl), D (GUI), F (Shift)
+            a-mod (tap-hold-release $tap-time $hold-time a lalt)
+            s-mod (tap-hold-release $tap-time $hold-time s lctl)
+            d-mod (tap-hold-release $tap-time $hold-time d lmet)
+            f-mod (tap-hold-release $tap-time $hold-time f lsft)
+
+            ;; Right Hand: J (Shift), K (GUI), L (Ctrl), ; (Alt)
+            j-mod (tap-hold-release $tap-time $hold-time j rsft)
+            k-mod (tap-hold-release $tap-time $hold-time k rmet)
+            l-mod (tap-hold-release $tap-time $hold-time l rctl)
+            scl-mod (tap-hold-release $tap-time $hold-time ; ralt)
+          )
+
+          ;; Base Layer Mapping
+          (deflayer base
+            @cap
+            u    i    o
+            @a-mod @s-mod @d-mod @f-mod @j-mod @k-mod @l-mod @scl-mod
+            z    x    c    v    m    ,    .    /
+          )
+
+          ;; Combos (50ms timeout window)
+          (defchordsv2
+            ;; Undo / Redo / Clipboard Combos
+            (a z)   C-S-z  50 first-release ()  ;; Redo
+            (z x)   C-z    50 first-release ()  ;; Undo
+            (x c)   C-c    50 first-release ()  ;; Copy
+            (c v)   C-v    50 first-release ()  ;; Paste
+            (x v)   C-x    50 first-release ()  ;; Cut
+            (z v)   C-a    50 first-release ()  ;; Select All
+
+            ;; Navigation & Editing Combos
+            (u i)   bspc   50 first-release ()  ;; Backspace
+            (i o)   del    50 first-release ()  ;; Delete
+            (m ,)   tab    50 first-release ()  ;; Tab
+            (, .)   C-pgup 50 first-release ()  ;; Tab Left (Previous Tab)
+            (. /)   C-pgdn 50 first-release ()  ;; Tab Right (Next Tab)
+          )
+        '';
+      };
+    };
+  };
+}
