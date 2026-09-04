@@ -13,6 +13,9 @@
 
     nixpkgs.config.allowUnfree = true;
 
+    # Enable Flakes & nix-command permanently
+    nix.settings.experimental-features = [ "nix-command" "flakes" ];
+
     networking.hostName = "castor";
 
     # Timezone: Philippines, Manila
