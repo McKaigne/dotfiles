@@ -9,7 +9,7 @@
     services.kanata = {
       enable = true;
       keyboards.internal = {
-        # Extra configuration options injected into NixOS's generated defcfg
+        # Extra configuration options injected into defcfg
         extraDefCfg = ''
           process-unmapped-keys yes
           concurrent-tap-hold yes
@@ -55,22 +55,22 @@
             z    x    c    v    m    ,    .    /
           )
 
-          ;; Combos (50ms simultaneous press window)
-          (defchords mychords 50
+          ;; Combos (50ms simultaneous press window with defchordsv2)
+          (defchordsv2
             ;; Clipboard & History
-            (a z) C-S-z  ;; Redo
-            (z x) C-z    ;; Undo
-            (x c) C-c    ;; Copy
-            (c v) C-v    ;; Paste
-            (x v) C-x    ;; Cut
-            (z v) C-a    ;; Select All
+            (a z) C-S-z  50 first-release ()  ;; Redo
+            (z x) C-z    50 first-release ()  ;; Undo
+            (x c) C-c    50 first-release ()  ;; Copy
+            (c v) C-v    50 first-release ()  ;; Paste
+            (x v) C-x    50 first-release ()  ;; Cut
+            (z v) C-a    50 first-release ()  ;; Select All
 
             ;; Navigation & Editing
-            (u i) bspc   ;; Backspace
-            (i o) del    ;; Delete
-            (m ,) tab    ;; Tab
-            (, .) C-pgup ;; Tab Left (Previous Browser Tab)
-            (. /) C-pgdn ;; Tab Right (Next Browser Tab)
+            (u i) bspc   50 first-release ()  ;; Backspace
+            (i o) del    50 first-release ()  ;; Delete
+            (m ,) tab    50 first-release ()  ;; Tab
+            (, .) C-pgup 50 first-release ()  ;; Tab Left (Previous Browser Tab)
+            (. /) C-pgdn 50 first-release ()  ;; Tab Right (Next Browser Tab)
           )
         '';
       };
