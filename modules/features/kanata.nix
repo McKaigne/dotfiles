@@ -9,7 +9,6 @@
     services.kanata = {
       enable = true;
       keyboards.internal = {
-        # Extra configuration options injected into defcfg
         extraDefCfg = ''
           process-unmapped-keys yes
           concurrent-tap-hold yes
@@ -24,16 +23,15 @@
             z    x    c    v    m    ,    .    /
           )
 
-          ;; 150ms timing for Home Row Mods
+          ;; Timing: 150ms for Home Row Mods, 25ms strict window for combos
           (defvar
             tap-time 150
             hold-time 150
+            combo-time 25
           )
 
-          ;; Home Row Mod & Dual-Function Aliases
+          ;; Home Row Mod Aliases
           (defalias
-            cap (tap-hold $tap-time $hold-time esc lctl)
-
             ;; Left Hand: A (Alt), S (Ctrl), D (GUI/Super), F (Shift)
             a-mod (tap-hold-release $tap-time $hold-time a lalt)
             s-mod (tap-hold-release $tap-time $hold-time s lctl)
@@ -47,30 +45,30 @@
             scl-mod (tap-hold-release $tap-time $hold-time ; ralt)
           )
 
-          ;; Base Layer Mapping
+          ;; Base Layer Mapping (Caps Lock is purely Escape)
           (deflayer base
-            @cap
+            esc
             u    i    o
             @a-mod @s-mod @d-mod @f-mod @j-mod @k-mod @l-mod @scl-mod
             z    x    c    v    m    ,    .    /
           )
 
-          ;; Combos (50ms simultaneous press window with defchordsv2)
+          ;; Combos (Stricter 25ms simultaneous press window)
           (defchordsv2
             ;; Clipboard & History
-            (a z) C-S-z  50 first-release ()  ;; Redo
-            (z x) C-z    50 first-release ()  ;; Undo
-            (x c) C-c    50 first-release ()  ;; Copy
-            (c v) C-v    50 first-release ()  ;; Paste
-            (x v) C-x    50 first-release ()  ;; Cut
-            (z v) C-a    50 first-release ()  ;; Select All
+            (a z) C-S-z  $combo-time first-release ()  ;; Redo
+            (z x) C-z    $combo-time first-release ()  ;; Undo
+            (x c) C-c    $combo-time first-release ()  ;; Copy
+            (c v) C-v    $combo-time first-release ()  ;; Paste
+            (x v) C-x    $combo-time first-release ()  ;; Cut
+            (z v) C-a    $combo-time first-release ()  ;; Select All
 
             ;; Navigation & Editing
-            (u i) bspc   50 first-release ()  ;; Backspace
-            (i o) del    50 first-release ()  ;; Delete
-            (m ,) tab    50 first-release ()  ;; Tab
-            (, .) C-pgup 50 first-release ()  ;; Tab Left (Previous Browser Tab)
-            (. /) C-pgdn 50 first-release ()  ;; Tab Right (Next Browser Tab)
+            (u i) bspc   $combo-time first-release ()  ;; Backspace
+            (i o) del    $combo-time first-release ()  ;; Delete
+            (m ,) tab    $combo-time first-release ()  ;; Tab
+            (, .) C-pgup $combo-time first-release ()  ;; Tab Left (Previous Tab)
+            (. /) C-pgdn $combo-time first-release ()  ;; Tab Right (Next Tab)
           )
         '';
       };
