@@ -190,3 +190,6 @@ $env.config.cursor_shape = {
     vi_normal: block
     emacs: underscore
 }
+
+# Alias cat to bat
+alias cat = bat --paging=never

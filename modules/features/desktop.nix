@@ -1,22 +1,23 @@
 
 { self, inputs, ... }: {
   flake.nixosModules.desktop = { pkgs, ... }: {
-    # Enable PAM authentication for screen lockers
     security.pam.services.hyprlock = {};
 
     environment.systemPackages = with pkgs; [
-      # Screen Locker
-      hyprlock
-
-      # 3D fetch tool
-      fetch
-
-      # CLI & Monitoring
+      # CLI & Monitoring Tools
+      bat
       fd
       ripgrep
       btop
       cava
       yazi
+      fetch
+
+      # Screen Locker & Bluetooth
+      hyprlock
+      overskride
+      bluez
+      bluez-tools
 
       # Base Utilities & Media
       git
