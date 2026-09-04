@@ -1,19 +1,19 @@
+
 { self, inputs, ... }: {
   perSystem = { pkgs, ... }: {
     packages.noctalia-shell = inputs.wrapper-modules.wrappers.noctalia-shell.wrap {
-      inherit pkgs; # VERY IMPORTANT
+      inherit pkgs;
       outOfStoreConfig = "/home/pollux/.config/noctalia/";
-      settings =
-        if builtins.pathExists ./noctalia.json then
-          let
-            json = builtins.fromJSON (builtins.readFile ./noctalia.json);
-          in
-          if json ? settings then json.settings else json
-        else
-          {
-            bar.position = "top";
-            theme.dark = true;
-          };
+      settings = {
+        bar = {
+          position = "top";
+          height = 36;
+        };
+        theme = {
+          dark = false;
+          rounding = 12;
+        };
+      };
     };
   };
 }
