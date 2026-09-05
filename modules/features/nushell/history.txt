@@ -57,3 +57,32 @@ ga<\n>gc "docs: update README for Antigravity, system-wide zoxide, app renames, 
 bat flake.lock flake.nix modules/features/desktop.nix modules/features/doom/config.el modules/features/doom/custom.el modules/features/doom/init.el modules/features/doom/packages.el modules/features/emacs.nix modules/features/helium.nix modules/features/kanata.nix modules/features/niri.nix modules/features/noctalia.nix modules/features/nushell.nix modules/features/nushell/config.nu modules/features/nushell/env.nu modules/features/nushell/starship.toml | wl-copy
 r#'<\n>{ self, inputs, ... }: {<\n>  flake.nixosModules.kanata = { pkgs, ... }: {<\n>    hardware.uinput.enable = true;<\n>    users.groups.uinput.members = [ "pollux" ];<\n>    users.groups.input.members = [ "pollux" ];<\n><\n>    services.kanata = {<\n>      enable = true;<\n>      keyboards.internal = {<\n>        extraDefCfg = ''<\n>          process-unmapped-keys yes<\n>          concurrent-tap-hold yes<\n>        '';<\n><\n>        config = ''<\n>          (defsrc<\n>            caps<\n>            u    i    o<\n>            a    s    d    f    j    k    l    ;<\n>            n    z    x    c    v    m    ,    .    /<\n>          )<\n><\n>          ;; Timing: 200ms hold time for Home Row Mods, 35ms combo window<\n>          (defvar<\n>            tap-time 200<\n>            hold-time 200<\n>            combo-time 35<\n>          )<\n><\n>          (defalias<\n>            ;; Left Hand: A (Alt), S (Ctrl), D (GUI/Super), F (Shift)<\n>            a-mod (tap-hold-release $tap-time $hold-time a lalt)<\n>            s-mod (tap-hold-release $tap-time $hold-time s lctl)<\n>            d-mod (tap-hold-release $tap-time $hold-time d lmet)<\n>            f-mod (tap-hold-release $tap-time $hold-time f lsft)<\n><\n>            ;; Right Hand: J (Shift), K (GUI/Super), L (Ctrl), ; (Alt)<\n>            j-mod (tap-hold-release $tap-time 120 j rsft)<\n>            k-mod (tap-hold-release $tap-time 120 k rmet)<\n>            l-mod (tap-hold-release $tap-time $hold-time l rctl)<\n>            scl-mod (tap-hold-release $tap-time $hold-time ; ralt)<\n>          )<\n><\n>          (deflayer base<\n>            esc<\n>            u    i    o<\n>            @a-mod @s-mod @d-mod @f-mod @j-mod @k-mod @l-mod @scl-mod<\n>            n    z    x    c    v    m    ,    .    /<\n>          )<\n><\n>          ;; Combos<\n>          (defchordsv2<\n>            (a z) C-S-z  $combo-time first-release ()  ;; Redo<\n>            (z x) C-z    $combo-time first-release ()  ;; Undo<\n>            (x c) C-c    $combo-time first-release ()  ;; Copy<\n>            (c v) C-v    $combo-time first-release ()  ;; Paste<\n>            (x v) C-x    $combo-time first-release ()  ;; Cut<\n>            (z v) C-a    $combo-time first-release ()  ;; Select All<\n><\n>            (u i) bspc   $combo-time first-release ()  ;; Backspace<\n>            (i o) del    $combo-time first-release ()  ;; Delete<\n>            (n m) tab    $combo-time first-release ()  ;; Tab<\n>            (m ,) C-pgup $combo-time first-release ()  ;; Tab Left<\n>            (, .) C-pgdn $combo-time first-release ()  ;; Tab Right<\n>          )<\n>        '';<\n>      };<\n>    };<\n>  };<\n>}<\n>'# | save -f /etc/nixos/modules/features/kanata.nix
 sed -i 's@\*\*`M + ,`\*\* \$\\rightarrow\$ `Tab`@**`N + M`** $\\rightarrow$ `Tab`@' README.md<\n>sed -i 's@\*\*`, + .`\*\* \$\\rightarrow\$ Switch browser tab left (`Ctrl + PageUp`)@**`M + ,`** $\\rightarrow$ Switch browser tab left (`Ctrl + PageUp`)@' README.md<\n>sed -i 's@\*\*`. + /`\*\* \$\\rightarrow\$ Switch browser tab right (`Ctrl + PageDown`)@**`, + .`** $\\rightarrow$ Switch browser tab right (`Ctrl + PageDown`)@' README.md
+ga<\n>gc "feat(kanata): remap tab combos (n+m tab, m+comma tab-left, comma+period tab-right)"<\n>nr<\n>gp
+cd ~/.config
+l
+z .config
+z btop/
+ls ~/.config | each { |it| {name: $it.name, real: (readlink -f $"~/.config/($it.name)" | str replace $env.HOME "~")} }
+cleear
+ncd
+ls ~/.config | each { |it| {name: $it.name, real: (readlink -f $"($env.HOME)/.config/($it.name)")} }
+ls ~/.config | each { |it|<\n>  let target = (readlink -f $"($env.HOME)/.config/($it.name)")<\n>  {name: $it.name, managed: ($target | str starts-with "/nix/store"), target: $target}<\n>}
+ls ~/.config | each { |it|<\n>  let result = (do { ^readlink -f $"($env.HOME)/.config/($it.name)" } | complete)<\n>  {<\n>    name: $it.name<\n>    managed: ($result.stdout | str trim | str starts-with "/nix/store")<\n>    target: ($result.stdout | str trim)<\n>    error: $result.stderr<\n>  }<\n>}
+ls ~/.config | each { |it|<\n>  let result = (do { ^readlink -f $it.name } | complete)<\n>  {<\n>    name: ($it.name | path basename)<\n>    managed: ($result.stdout | str trim | str starts-with "/nix/store")<\n>    target: ($result.stdout | str trim)<\n>  }<\n>}
+gp
+echo $env.IN_NIX_SHELL<\n>echo $env.name<\n>direnv status<\n>ls -la /etc/nixos/.envrc  # does your nixos repo itself have a stray .envrc?
+cat /etc/nixos/.envrc | wl-copy
+cat /etc/nixos/.envrc
+rm /etc/nixos/.envrc<\n>direnv reload
+ls -la /etc/nixos/.envrc
+sudo rm /etc/nixos/.envrc<\n>direnv reload
+ls
+cat /etc/nixos/.envrc
+cd .<\n>direnv status
+ncd
+cd
+ncd
+cd
+echo $env.IN_NIX_SHELL<\n>echo $env.name
+ncd
+gp
