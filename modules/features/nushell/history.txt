@@ -115,3 +115,21 @@ nr
 r#'<\n>{ self, inputs, ... }: {<\n>  flake.nixosModules.homeManager = { inputs, ... }: {<\n>    imports = [ inputs.home-manager.nixosModules.home-manager ];<\n><\n>    home-manager.useGlobalPkgs = true;<\n>    home-manager.useUserPackages = true;<\n><\n>    home-manager.users.pollux = { pkgs, ... }: {<\n>      home.stateVersion = "25.05";<\n><\n>      xdg.configFile."starship/starship.toml".source = ./nushell/starship.toml;<\n><\n>      # Per-app xdg.configFile entries get added here as we migrate<\n>      # each ~/.config/<app> dir.<\n>    };<\n>  };<\n>}<\n>'# | save -f /etc/nixos/modules/features/home-manager.nix
 git status<\n>nr
 readlink -f /home/pollux/.config/starship/starship.toml
+git add -A<\n>gc "feat(home-manager): manage starship.toml declaratively"<\n>gp
+which foot
+foot
+cd ~/.config
+l
+rm -rf ~/.config/foot
+rm -rf ~/.config/noctalia.bak
+ls ~/.config
+cat ~/.config/fuzzel/fuzzel.ini<\n>cat ~/.config/cava/config
+ls ~/.config/fuzzel<\n>ls ~/.config/fuzzel/themes<\n>cat ~/.config/fuzzel/themes/noctalia<\n>ls ~/.config/cava
+cava
+ls ~/.config/fuzzel<\n>ls ~/.config/fuzzel/themes<\n>cat ~/.config/fuzzel/themes/noctalia<\n>ls ~/.config/cava
+cat ~/.config/cava/config<\n>ls ~/.config/cava/themes
+mkdir /etc/nixos/modules/features/fuzzel<\n>cp ~/.config/fuzzel/fuzzel.ini /etc/nixos/modules/features/fuzzel/fuzzel.ini
+r#'<\n>{ self, inputs, ... }: {<\n>  flake.nixosModules.homeManager = { inputs, ... }: {<\n>    imports = [ inputs.home-manager.nixosModules.home-manager ];<\n><\n>    home-manager.useGlobalPkgs = true;<\n>    home-manager.useUserPackages = true;<\n><\n>    home-manager.users.pollux = { pkgs, ... }: {<\n>      home.stateVersion = "25.05";<\n><\n>      xdg.configFile."starship/starship.toml".source = ./nushell/starship.toml;<\n>      xdg.configFile."fuzzel/fuzzel.ini".source = ./fuzzel/fuzzel.ini;<\n><\n>      # Per-app xdg.configFile entries get added here as we migrate<\n>      # each ~/.config/<app> dir.<\n>    };<\n>  };<\n>}<\n>'# | save -f /etc/nixos/modules/features/home-manager.nix
+cd /etc/nixos<\n>mkdir /etc/nixos/modules/features/cava<\n>cp ~/.config/cava/config /etc/nixos/modules/features/cava/config
+r#'<\n>{ self, inputs, ... }: {<\n>  flake.nixosModules.homeManager = { inputs, ... }: {<\n>    imports = [ inputs.home-manager.nixosModules.home-manager ];<\n><\n>    home-manager.useGlobalPkgs = true;<\n>    home-manager.useUserPackages = true;<\n><\n>    home-manager.users.pollux = { pkgs, ... }: {<\n>      home.stateVersion = "25.05";<\n><\n>      xdg.configFile."starship/starship.toml".source = ./nushell/starship.toml;<\n>      xdg.configFile."fuzzel/fuzzel.ini".source = ./fuzzel/fuzzel.ini;<\n>      xdg.configFile."cava/config".source = ./cava/config;<\n><\n>      # Per-app xdg.configFile entries get added here as we migrate<\n>      # each ~/.config/<app> dir.<\n>    };<\n>  };<\n>}<\n>'# | save -f /etc/nixos/modules/features/home-manager.nix
+rm ~/.config/fuzzel/fuzzel.ini<\n>rm ~/.config/cava/config
