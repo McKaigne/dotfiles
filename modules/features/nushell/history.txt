@@ -133,3 +133,12 @@ r#'<\n>{ self, inputs, ... }: {<\n>  flake.nixosModules.homeManager = { inputs, 
 cd /etc/nixos<\n>mkdir /etc/nixos/modules/features/cava<\n>cp ~/.config/cava/config /etc/nixos/modules/features/cava/config
 r#'<\n>{ self, inputs, ... }: {<\n>  flake.nixosModules.homeManager = { inputs, ... }: {<\n>    imports = [ inputs.home-manager.nixosModules.home-manager ];<\n><\n>    home-manager.useGlobalPkgs = true;<\n>    home-manager.useUserPackages = true;<\n><\n>    home-manager.users.pollux = { pkgs, ... }: {<\n>      home.stateVersion = "25.05";<\n><\n>      xdg.configFile."starship/starship.toml".source = ./nushell/starship.toml;<\n>      xdg.configFile."fuzzel/fuzzel.ini".source = ./fuzzel/fuzzel.ini;<\n>      xdg.configFile."cava/config".source = ./cava/config;<\n><\n>      # Per-app xdg.configFile entries get added here as we migrate<\n>      # each ~/.config/<app> dir.<\n>    };<\n>  };<\n>}<\n>'# | save -f /etc/nixos/modules/features/home-manager.nix
 rm ~/.config/fuzzel/fuzzel.ini<\n>rm ~/.config/cava/config
+git add -A<\n>nr
+readlink -f ~/.config/fuzzel/fuzzel.ini<\n>readlink -f ~/.config/cava/config
+gc "feat(home-manager): manage fuzzel.ini and cava config declaratively"<\n>gp
+nr
+grep -rl "starship" ~/.config/noctalia 2>/dev/null<\n>find ~/.config/noctalia -iname "*template*"
+grep -rl "starship" ~/.config/noctalia<\n>^find ~/.config/noctalia -iname "*template*"
+grep -B2 -A5 "starship" ~/.config/noctalia/settings.json
+r#'<\n>{ self, inputs, ... }: {<\n>  flake.nixosModules.homeManager = { inputs, ... }: {<\n>    imports = [ inputs.home-manager.nixosModules.home-manager ];<\n><\n>    home-manager.useGlobalPkgs = true;<\n>    home-manager.useUserPackages = true;<\n><\n>    home-manager.users.pollux = { pkgs, ... }: {<\n>      home.stateVersion = "25.05";<\n><\n>      xdg.configFile."fuzzel/fuzzel.ini".source = ./fuzzel/fuzzel.ini;<\n>      xdg.configFile."cava/config".source = ./cava/config;<\n><\n>      # Per-app xdg.configFile entries get added here as we migrate<\n>      # each ~/.config/<app> dir. Apps enabled as Noctalia color-scheme<\n>      # templates (starship, btop, emacs, ghostty, gtk, niri, qt, yazi)<\n>      # are intentionally excluded here since Noctalia writes directly<\n>      # into them on theme change.<\n>    };<\n>  };<\n>}<\n>'# | save -f /etc/nixos/modules/features/home-manager.nix
+nr
