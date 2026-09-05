@@ -61,7 +61,7 @@
     {
       packages.myEmacs = myEmacs;
       packages.default = myEmacs;
-      apps.default = {
+      apps.emacs = {
         type = "app";
         program = "${myEmacs}/bin/emacs";
       };

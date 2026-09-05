@@ -36,8 +36,8 @@
             f-mod (tap-hold-release $tap-time $hold-time f lsft)
 
             ;; Right Hand: J (Shift), K (GUI/Super), L (Ctrl), ; (Alt)
-            j-mod (tap-hold-release $tap-time $hold-time j rsft)
-            k-mod (tap-hold-release $tap-time $hold-time k rmet)
+            j-mod (tap-hold-release $tap-time 120 j rsft)
+            k-mod (tap-hold-release $tap-time 120 k rmet)
             l-mod (tap-hold-release $tap-time $hold-time l rctl)
             scl-mod (tap-hold-release $tap-time $hold-time ; ralt)
           )

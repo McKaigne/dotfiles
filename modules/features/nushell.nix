@@ -52,8 +52,8 @@
     {
       packages.myNushell = myNushell;
 
-      # Allows `nix run .#myNushell`
-      apps.myNushell = {
+      # Allows `nix run .#nushell`
+      apps.nushell = {
         type = "app";
         program = "${myNushell}/bin/nu";
       };

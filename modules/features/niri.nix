@@ -53,7 +53,6 @@
           };
 
           binds = {
-            # --- 1. Noctalia Shell & Overlays ---
             "Mod+D".spawn-sh = "${noctaliaExe} ipc call launcher toggle || noctalia msg panel-toggle launcher";
             "Mod+N".spawn-sh = "${noctaliaExe} ipc call controlCenter toggle || ${noctaliaExe} ipc call control-center toggle || qs -c noctalia-shell ipc call controlCenter toggle || noctalia msg panel-toggle control-center";
             "Mod+Shift+B".spawn-sh = "${noctaliaExe} ipc call bar toggle || noctalia msg bar-toggle";
@@ -61,7 +60,6 @@
             "Mod+I".spawn-sh = "${noctaliaExe} ipc call settings toggle || noctalia msg settings-toggle";
             "Mod+P".spawn-sh = "${noctaliaExe} ipc call sessionMenu toggle || ${noctaliaExe} ipc call session-menu toggle || qs -c noctalia-shell ipc call sessionMenu toggle || noctalia msg panel-toggle session-menu";
 
-            # --- 2. Overview & Workspaces ---
             "Mod+Tab".toggle-overview = { };
             "Mod+J".focus-workspace-down = { };
             "Mod+K".focus-workspace-up = { };
@@ -90,13 +88,11 @@
             "Mod+Shift+9".move-column-to-workspace = "w8";
             "Mod+Shift+0".move-column-to-workspace = "w9";
 
-            # --- 3. Applications ---
             "Mod+Return".spawn = config.terminal;
             "Mod+E".spawn-sh = "ghostty -e ${pkgs.yazi}/bin/yazi";
             "Mod+W".spawn-sh = heliumExe;
             "Mod+C".spawn-sh = "emacsclient -c -a 'emacs'";
 
-            # --- 4. Window Actions & Stacking ---
             "Mod+Q".close-window = { };
             "Mod+F".maximize-column = { };
             "Mod+Shift+F".toggle-window-floating = { };
@@ -125,7 +121,6 @@
             "Mod+Ctrl+H".set-column-width = "-5%";
             "Mod+Ctrl+L".set-column-width = "+5%";
 
-            # --- 5. Mouse Wheel & Trackpad ---
             "Mod+WheelScrollDown".focus-column-left = { };
             "Mod+WheelScrollUp".focus-column-right = { };
             "Mod+Ctrl+WheelScrollDown".focus-workspace-down = { };
@@ -138,7 +133,6 @@
             "Mod+Ctrl+TouchpadScrollDown".focus-workspace-down = { };
             "Mod+Ctrl+TouchpadScrollUp".focus-workspace-up = { };
 
-            # --- 6. Screenshots & Media ---
             "Mod+Shift+S".spawn-sh = lib.getExe (config.pkgs.writeShellApplication {
               name = "screenshot-area";
               runtimeInputs = with config.pkgs; [ grim slurp wl-clipboard ];
@@ -164,7 +158,6 @@
             "XF86AudioNext".spawn-sh = "playerctl next";
             "XF86AudioPrev".spawn-sh = "playerctl previous";
 
-            # --- 7. Lock Screen ---
             "Ctrl+Alt+L".spawn-sh = "${lib.getExe pkgs.hyprlock}";
             "Mod+Escape".spawn-sh = "${lib.getExe pkgs.hyprlock}";
           };
@@ -203,9 +196,12 @@
 
           xwayland-satellite.path = lib.getExe config.pkgs.xwayland-satellite;
 
-          # Auto-start Noctalia & enforce Bibata GSettings on startup
           spawn-at-startup = [
             noctaliaExe
+            (lib.getExe (pkgs.writeShellScriptBin "set-wallpaper" ''
+              sleep 1
+              ${noctaliaExe} ipc call wallpaper set "$HOME/Pictures/Wallpapers/wallpaper.jpg"
+            ''))
             (lib.getExe (pkgs.writeShellScriptBin "set-gtk-cursor" ''
               ${pkgs.glib}/bin/gsettings set org.gnome.desktop.interface cursor-theme 'Bibata-Modern-Classic'
               ${pkgs.glib}/bin/gsettings set org.gnome.desktop.interface cursor-size 16
@@ -222,6 +218,11 @@
     };
 
     apps.niri = {
+      type = "app";
+      program = "${self'.packages.niri}/bin/niri";
+    };
+
+    apps.default = {
       type = "app";
       program = "${self'.packages.niri}/bin/niri";
     };

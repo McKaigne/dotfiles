@@ -46,6 +46,7 @@ Global system packages contain only base terminal essentials. All compilers (Cla
 | **Desktop Shell** | **Noctalia** | Modern Qt/QML status bar, widget overlay, and launcher |
 | **Keyboard Engine** | **Kanata** | Kernel-level evdev remapper (200ms HRM + 35ms Chords) |
 | **Editor** | **Doom Emacs** | Native Wayland (`pgtk`), N Λ N O Light theme, Eglot/LSP |
+| **IDE** | **Antigravity** | Electron-based dev environment (`antigravity-fhs`, FHS-wrapped, unfree) |
 | **Shell** | **Nushell** | Structured data shell with Catppuccin Mocha Starship & Vi mode |
 | **Terminal** | **Ghostty** & **Foot** | GPU-accelerated Wayland terminal emulators |
 | **File Manager** | **Yazi** | Blazing-fast terminal file manager with async preview |
@@ -54,34 +55,34 @@ Global system packages contain only base terminal essentials. All compilers (Cla
 | **Audio** | **PipeWire** | Real-time audio engine with WirePlumber and RTKit |
 | **Typography** | **Maple Mono NF** | Monospace font with ligatures and Nerd Font glyphs |
 | **Cursor** | **Bibata Modern** | Minimal, sleek 16px cursor across all surfaces |
+| **Navigation** | **Zoxide** | System-wide fast directory jumping (`/run/current-system/sw/bin`) |
 
 ---
 
 ## 3. Dendritic File Tree
 
-```
 /etc/nixos/
-├── flake.nix                                # Root entry point (flake-parts + import-tree)
-├── flake.lock                               # Pinned Nixpkgs & flake inputs
-├── README.md                                # System documentation
+├── flake.nix # Root entry point (flake-parts + import-tree)
+├── flake.lock # Pinned Nixpkgs & flake inputs
+├── README.md # System documentation
 └── modules/
-    ├── systems.nix                          # Supported architectures (x86_64-linux, aarch64-linux)
-    ├── hosts/
-    │   └── castor/
-    │       ├── default.nix                  # Host definition: nixosConfigurations.castor
-    │       ├── configuration.nix            # System services, bluetooth, pipewire, greetd, user
-    │       └── hardware.nix                 # Intel VMD early driver, NVMe UUIDs, CPU microcode
-    └── features/
-        ├── niri.nix                         # Wrapped Niri compositor (packages.niri)
-        ├── noctalia.nix                     # Wrapped Noctalia shell & JSON state parser
-        ├── emacs.nix                        # Wrapped Emacs with C++ stdlib headers & tools
-        ├── doom/                            # Bundled Doom Emacs configuration
-        ├── nushell.nix                      # Wrapped Nushell (packages.myNushell)
-        ├── nushell/                         # Bundled Shell configuration
-        ├── helium.nix                       # Helium Browser module
-        ├── kanata.nix                       # Kanata kernel input daemon (HRM & Chords)
-        └── desktop.nix                      # Base CLI tools (bat, fd, ripgrep, btop, cava, yazi, fetch)
-```
+├── systems.nix # Supported architectures (x86_64-linux, aarch64-linux)
+├── hosts/
+│ └── castor/
+│ ├── default.nix # Host definition: nixosConfigurations.castor
+│ ├── configuration.nix # System services, bluetooth, pipewire, greetd, user
+│ └── hardware.nix # Intel VMD early driver, NVMe UUIDs, CPU microcode
+└── features/
+├── niri.nix # Wrapped Niri compositor (packages.niri, apps.niri, apps.default), wallpaper-on-startup
+├── noctalia.nix # Wrapped Noctalia shell & JSON state parser
+├── emacs.nix # Wrapped Emacs with C++ stdlib headers & tools (apps.emacs)
+├── doom/ # Bundled Doom Emacs configuration
+├── nushell.nix # Wrapped Nushell (packages.nushell, apps.nushell)
+├── nushell/ # Bundled Shell configuration
+├── helium.nix # Helium Browser module
+├── kanata.nix # Kanata kernel input daemon (HRM & Chords)
+└── desktop.nix # Base CLI tools (bat, fd, ripgrep, btop, cava, yazi, fetch, zoxide) + Antigravity (unfree allowlisted)
+
 
 ---
 
@@ -140,6 +141,9 @@ Global system packages contain only base terminal essentials. All compilers (Cla
 - **4-Finger Swipe Up**: Zoomed-out workspace overview
 - **`SUPER` + 2-Finger Trackpad Scroll**: Step through columns
 
+#### Startup
+- On login, niri auto-starts Noctalia, applies the Bibata cursor theme via `gsettings`, and sets the desktop wallpaper from `~/Pictures/Wallpapers/wallpaper.jpg` via Noctalia's IPC.
+
 ---
 
 ### C. Noctalia Shell & Overlays
@@ -161,6 +165,7 @@ Global system packages contain only base terminal essentials. All compilers (Cla
 - **`SUPER + C`**: Open **Doom Emacs** (`emacsclient` instant launch)
 - **`SUPER + Shift + S`**: Interactive area screenshot (copied to clipboard)
 - **`Print`**: Full-screen screenshot to clipboard
+- **Antigravity**: Launch via terminal (`antigravity-ide`), installed system-wide as `antigravity-fhs`
 
 ---
 
@@ -183,7 +188,7 @@ Global system packages contain only base terminal essentials. All compilers (Cla
 | **`nr`** | `sudo nixos-rebuild switch --flake /etc/nixos#castor` |
 | **`nfu`** | `nix flake update --flake /etc/nixos` |
 | **`ncd`** | `cd /etc/nixos` |
-| **`z <dir>`** / **`zi`** | Fast directory jumping via Zoxide / Interactive jump |
+| **`z <dir>`** / **`zi`** | Fast directory jumping via Zoxide / Interactive jump (system-wide) |
 | **`za <dir>`** | `zoxide add <dir>` |
 | **`e`** | `emacsclient -c -a 'emacs'` |
 | **`y`** | `yazi` |
@@ -202,30 +207,30 @@ Global system packages contain only base terminal essentials. All compilers (Cla
 ### A. Updating System Configurations
 1. Edit any file inside `/etc/nixos/modules/` (e.g. `v /etc/nixos/modules/features/niri.nix`).
 2. Stage and commit:
-   ```bash
+```bash
    ncd
    ga
    gc "feat: describe your change"
-   ```
+```
 3. Rebuild:
-   ```bash
+```bash
    nr
-   ```
+```
 4. Push to GitHub:
-   ```bash
+```bash
    gp
-   ```
+```
 
 ### B. Updating Doom Emacs (`~/.config/doom/`)
 - **Edit settings / themes (`config.el`)**:
-  ```bash
+```bash
   systemctl --user restart emacs.service
-  ```
+```
 - **Add / remove packages (`init.el` or `packages.el`)**:
-  ```bash
+```bash
   doom sync
   systemctl --user restart emacs.service
-  ```
+```
 
 ---
 
@@ -249,14 +254,15 @@ direnv allow
 Every component is packaged as a standalone derivation. Execute directly on **any Linux distribution** (Arch, Ubuntu, Fedora) with Nix installed:
 
 ```bash
-# Launch Doom Emacs:
+# Launch wrapped Niri compositor (also the default app):
 nix run github:McKaigne/dotfiles
+nix run github:McKaigne/dotfiles#niri
+
+# Launch Doom Emacs:
+nix run github:McKaigne/dotfiles#emacs
 
 # Launch Catppuccin Nushell + Starship:
-nix run github:McKaigne/dotfiles#myNushell
-
-# Launch wrapped Niri compositor:
-nix run github:McKaigne/dotfiles#niri
+nix run github:McKaigne/dotfiles#nushell
 ```
 
 ---
@@ -268,13 +274,13 @@ To deploy on a new machine:
 1. Boot any NixOS Live USB.
 2. Partition and mount disks (`/mnt/boot` for EFI, `/mnt` for root).
 3. Clone configuration:
-   ```bash
+```bash
    nixos-generate-config --root /mnt
    git clone https://github.com/McKaigne/dotfiles.git /mnt/etc/nixos
-   ```
+```
 4. Update `modules/hosts/castor/hardware.nix` with the machine's disk UUIDs.
 5. Install and reboot:
-   ```bash
+```bash
    nixos-install --flake /mnt/etc/nixos#castor
    reboot
-   ```
+```

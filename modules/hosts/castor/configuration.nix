@@ -1,6 +1,6 @@
 
 { self, ... }: {
-  flake.nixosModules.castorConfiguration = { pkgs, ... }: {
+  flake.nixosModules.castorConfiguration = { pkgs, lib, ... }: {
     imports = [
       self.nixosModules.castorHardware
       self.nixosModules.niri
@@ -29,7 +29,7 @@
       XCURSOR_SIZE = "16";
       HYPRCURSOR_THEME = "Bibata-Modern-Classic";
       HYPRCURSOR_SIZE = "16";
-      XCURSOR_PATH = "/home/pollux/.icons:/home/pollux/.local/share/icons:/run/current-system/sw/share/icons";
+      XCURSOR_PATH = lib.mkForce [ "$HOME/.icons" "$HOME/.local/share/icons" "/run/current-system/sw/share/icons" ];
       NIXOS_OZONE_WL = "1"; # Ensures Helium/Chromium runs pure Wayland and uses Wayland cursor
     };
 
