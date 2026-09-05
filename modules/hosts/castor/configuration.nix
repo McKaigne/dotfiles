@@ -3,6 +3,7 @@
   flake.nixosModules.castorConfiguration = { pkgs, lib, ... }: {
     imports = [
       self.nixosModules.castorHardware
+      self.nixosModules.dotfiles
       self.nixosModules.niri
       self.nixosModules.nushell
       self.nixosModules.emacs

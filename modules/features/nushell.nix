@@ -30,9 +30,9 @@
         atuin
       ];
 
-      configFile = ./nushell/config.nu;
-      envFile = ./nushell/env.nu;
-      starshipConfig = ./nushell/starship.toml;
+      configFile = ../../dotfiles/nushell/config.nu;
+      envFile = ../../dotfiles/nushell/env.nu;
+      starshipConfig = ../../dotfiles/starship/starship.toml;
 
       myNushell = pkgs.symlinkJoin {
         name = "my-nushell";
