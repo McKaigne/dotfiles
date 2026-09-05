@@ -142,3 +142,14 @@ grep -rl "starship" ~/.config/noctalia<\n>^find ~/.config/noctalia -iname "*temp
 grep -B2 -A5 "starship" ~/.config/noctalia/settings.json
 r#'<\n>{ self, inputs, ... }: {<\n>  flake.nixosModules.homeManager = { inputs, ... }: {<\n>    imports = [ inputs.home-manager.nixosModules.home-manager ];<\n><\n>    home-manager.useGlobalPkgs = true;<\n>    home-manager.useUserPackages = true;<\n><\n>    home-manager.users.pollux = { pkgs, ... }: {<\n>      home.stateVersion = "25.05";<\n><\n>      xdg.configFile."fuzzel/fuzzel.ini".source = ./fuzzel/fuzzel.ini;<\n>      xdg.configFile."cava/config".source = ./cava/config;<\n><\n>      # Per-app xdg.configFile entries get added here as we migrate<\n>      # each ~/.config/<app> dir. Apps enabled as Noctalia color-scheme<\n>      # templates (starship, btop, emacs, ghostty, gtk, niri, qt, yazi)<\n>      # are intentionally excluded here since Noctalia writes directly<\n>      # into them on theme change.<\n>    };<\n>  };<\n>}<\n>'# | save -f /etc/nixos/modules/features/home-manager.nix
 nr
+git add -A<\n>gc "fix(home-manager): revert starship.toml, Noctalia templates it directly"<\n>gp
+readlink -f ~/.config/starship/starship.toml
+ls ~/.config/starship
+cp /etc/nixos/modules/features/nushell/starship.toml ~/.config/starship/starship.toml
+mkdir ~/.config/starship<\n>cp /etc/nixos/modules/features/nushell/starship.toml ~/.config/starship/starship.toml
+ls -la ~/.config/starship/starship.toml
+rm /etc/nixos/modules/features/home-manager.nix
+sed -i '/self.nixosModules.homeManager/d' /etc/nixos/modules/hosts/castor/configuration.nix
+r#'<\n>{<\n>  inputs = {<\n>    nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";<\n>    flake-parts.url = "github:hercules-ci/flake-parts";<\n>    import-tree.url = "github:vic/import-tree";<\n>    wrapper-modules.url = "github:BirdeeHub/nix-wrapper-modules";<\n><\n>    helium = {<\n>      url = "github:oxcl/nix-flake-helium-browser";<\n>      inputs.nixpkgs.follows = "nixpkgs";<\n>    };<\n>  };<\n><\n>  outputs = inputs: inputs.flake-parts.lib.mkFlake<\n>    { inherit inputs; }<\n>    (inputs.import-tree ./modules);<\n>}<\n>'# | save -f /etc/nixos/flake.nix
+nix flake lock
+mkdir ~/.config/fuzzel<\n>mkdir ~/.config/cava<\n>cp /etc/nixos/modules/features/fuzzel/fuzzel.ini ~/.config/fuzzel/fuzzel.ini<\n>cp /etc/nixos/modules/features/cava/config ~/.config/cava/config<\n>ls -la ~/.config/starship/starship.toml<\n>ls -la ~/.config/fuzzel/fuzzel.ini<\n>ls -la ~/.config/cava/config
