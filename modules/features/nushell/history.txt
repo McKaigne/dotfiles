@@ -103,3 +103,15 @@ r#'<\n>{<\n>  inputs = {<\n>    nixpkgs.url = "github:nixos/nixpkgs/nixos-unstab
 nix flake lock --update-input home-manager<\n>nr
 cat /etc/nixos/modules/features/home-manager.nix
 nix eval /etc/nixos#nixosModules --apply builtins.attrNames
+cd /etc/nixos<\n>git add -A<\n>git status
+nix eval /etc/nixos#nixosModules --apply builtins.attrNames
+nr
+gc "feat: add Home Manager for declarative ~/.config management"<\n>gp
+diff /home/pollux/.config/starship/starship.toml /etc/nixos/modules/features/nushell/starship.toml
+ls /home/pollux/.config/starship
+ls -la /home/pollux/.config/starship/starship.toml<\n>readlink -f /home/pollux/.config/starship/starship.toml
+r#'<\n>{ self, inputs, ... }: {<\n>  flake.nixosModules.homeManager = { inputs, ... }: {<\n>    imports = [ inputs.home-manager.nixosModules.home-manager ];<\n><\n>    home-manager.useGlobalPkgs = true;<\n>    home-manager.useUserPackages = true;<\n><\n>    home-manager.users.pollux = { pkgs, ... }: {<\n>      home.stateVersion = "25.05";<\n><\n>      xdg.configFile."starship/starship.toml".source = ../nushell/starship.toml;<\n><\n>      # Per-app xdg.configFile entries get added here as we migrate<\n>      # each ~/.config/<app> dir.<\n>    };<\n>  };<\n>}<\n>'# | save -f /etc/nixos/modules/features/home-manager.nix
+nr
+r#'<\n>{ self, inputs, ... }: {<\n>  flake.nixosModules.homeManager = { inputs, ... }: {<\n>    imports = [ inputs.home-manager.nixosModules.home-manager ];<\n><\n>    home-manager.useGlobalPkgs = true;<\n>    home-manager.useUserPackages = true;<\n><\n>    home-manager.users.pollux = { pkgs, ... }: {<\n>      home.stateVersion = "25.05";<\n><\n>      xdg.configFile."starship/starship.toml".source = ./nushell/starship.toml;<\n><\n>      # Per-app xdg.configFile entries get added here as we migrate<\n>      # each ~/.config/<app> dir.<\n>    };<\n>  };<\n>}<\n>'# | save -f /etc/nixos/modules/features/home-manager.nix
+git status<\n>nr
+readlink -f /home/pollux/.config/starship/starship.toml

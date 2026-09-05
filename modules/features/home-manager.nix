@@ -9,8 +9,10 @@
     home-manager.users.pollux = { pkgs, ... }: {
       home.stateVersion = "25.05";
 
-      # Per-app xdg.configFile entries get added here (or split into
-      # their own modules) as we migrate each ~/.config/<app> dir.
+      xdg.configFile."starship/starship.toml".source = ./nushell/starship.toml;
+
+      # Per-app xdg.configFile entries get added here as we migrate
+      # each ~/.config/<app> dir.
     };
   };
 }
