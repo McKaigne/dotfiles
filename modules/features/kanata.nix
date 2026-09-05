@@ -18,7 +18,7 @@
             caps
             u    i    o
             a    s    d    f    j    k    l    ;
-            z    x    c    v    m    ,    .    /
+            n    z    x    c    v    m    ,    .    /
           )
 
           ;; Timing: 200ms hold time for Home Row Mods, 35ms combo window
@@ -46,7 +46,7 @@
             esc
             u    i    o
             @a-mod @s-mod @d-mod @f-mod @j-mod @k-mod @l-mod @scl-mod
-            z    x    c    v    m    ,    .    /
+            n    z    x    c    v    m    ,    .    /
           )
 
           ;; Combos
@@ -60,9 +60,9 @@
 
             (u i) bspc   $combo-time first-release ()  ;; Backspace
             (i o) del    $combo-time first-release ()  ;; Delete
-            (m ,) tab    $combo-time first-release ()  ;; Tab
-            (, .) C-pgup $combo-time first-release ()  ;; Tab Left
-            (. /) C-pgdn $combo-time first-release ()  ;; Tab Right
+            (n m) tab    $combo-time first-release ()  ;; Tab
+            (m ,) C-pgup $combo-time first-release ()  ;; Tab Left
+            (, .) C-pgdn $combo-time first-release ()  ;; Tab Right
           )
         '';
       };

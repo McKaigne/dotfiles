@@ -96,9 +96,9 @@ Global system packages contain only base terminal essentials. All compilers (Cla
 - **Simultaneous Combos (35ms window):**
   - **`U + I`** $\rightarrow$ `Backspace`
   - **`I + O`** $\rightarrow$ `Delete`
-  - **`M + ,`** $\rightarrow$ `Tab`
-  - **`, + .`** $\rightarrow$ Switch browser tab left (`Ctrl + PageUp`)
-  - **`. + /`** $\rightarrow$ Switch browser tab right (`Ctrl + PageDown`)
+  - **`N + M`** $\rightarrow$ `Tab`
+  - **`M + ,`** $\rightarrow$ Switch browser tab left (`Ctrl + PageUp`)
+  - **`, + .`** $\rightarrow$ Switch browser tab right (`Ctrl + PageDown`)
   - **`Z + X`** $\rightarrow$ Undo (`Ctrl + Z`)
   - **`A + Z`** $\rightarrow$ Redo (`Ctrl + Shift + Z`)
   - **`X + C`** $\rightarrow$ Copy (`Ctrl + C`)
