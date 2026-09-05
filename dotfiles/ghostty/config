@@ -1,0 +1,7 @@
+
+font-family = "Maple Mono NF"
+font-size = 14
+theme = noctalia
+window-decoration = false
+cursor-style = block
+confirm-close-surface = false
