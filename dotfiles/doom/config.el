@@ -67,12 +67,6 @@
           (ghostel-send-string (concat cmd "\n")))
       (compile cmd))))
 
-(after! ghostel
-  (setq ghostel-default-shell "/run/current-system/sw/bin/nu")
-  (map! :leader
-        (:prefix "o"
-         :desc "Ghostel popup" "t" #'+ghostel/toggle
-         :desc "Ghostel full"  "T" #'+ghostel/open)))
 
 ;; Bind SPC r r to the Ghostel Runner
 (map! :leader
