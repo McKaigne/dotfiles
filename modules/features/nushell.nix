@@ -1,4 +1,3 @@
-
 { self, inputs, ... }: {
   # 1. NixOS Module
   flake.nixosModules.nushell = { pkgs, ... }: {
@@ -8,7 +7,7 @@
       self.packages.${pkgs.stdenv.hostPlatform.system}.myNushell
     ];
 
-    users.users.pollux.shell = self.packages.${pkgs.stdenv.hostPlatform.system}.myNushell;
+    users.defaultUserShell = self.packages.${pkgs.stdenv.hostPlatform.system}.myNushell;
 
     environment.systemPackages = [
       self.packages.${pkgs.stdenv.hostPlatform.system}.myNushell
@@ -44,8 +43,8 @@
         postBuild = ''
           wrapProgram $out/bin/nu \
             --prefix PATH : ${lib.makeBinPath shellTools} \
-            --set-default STARSHIP_CONFIG "${starshipConfig}" \
-            --add-flags "--config ${configFile} --env-config ${envFile}"
+            --run '[ -f "$HOME/.config/starship/starship.toml" ] && export STARSHIP_CONFIG="$HOME/.config/starship/starship.toml" || export STARSHIP_CONFIG="${starshipConfig}"' \
+            --run '[ -f "$HOME/.config/nushell/config.nu" ] || set -- --config "${configFile}" --env-config "${envFile}" "$@"'
         '';
       };
     in

@@ -4,7 +4,10 @@
     nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
     flake-parts.url = "github:hercules-ci/flake-parts";
     import-tree.url = "github:vic/import-tree";
-    wrapper-modules.url = "github:BirdeeHub/nix-wrapper-modules";
+    wrapper-modules = {
+      url = "github:BirdeeHub/nix-wrapper-modules";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
 
     helium = {
       url = "github:oxcl/nix-flake-helium-browser";

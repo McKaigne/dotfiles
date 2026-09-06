@@ -11,7 +11,10 @@
       self.nixosModules.desktop
       self.nixosModules.kanata
       self.nixosModules.thunar
+      self.nixosModules.cursor
     ];
+
+    dotfiles.path = "/etc/nixos/dotfiles";
 
     nixpkgs.config.allowUnfree = true;
 
@@ -24,16 +27,6 @@
     # Bootloader
     boot.loader.systemd-boot.enable = true;
     boot.loader.efi.canTouchEfiVariables = true;
-
-    # System-wide Unified Cursor Environment Variables
-    environment.sessionVariables = {
-      XCURSOR_THEME = "Bibata-Modern-Classic";
-      XCURSOR_SIZE = "16";
-      HYPRCURSOR_THEME = "Bibata-Modern-Classic";
-      HYPRCURSOR_SIZE = "16";
-      XCURSOR_PATH = lib.mkForce [ "$HOME/.icons" "$HOME/.local/share/icons" "/run/current-system/sw/share/icons" ];
-      NIXOS_OZONE_WL = "1"; # Ensures Helium/Chromium runs pure Wayland and uses Wayland cursor
-    };
 
     # Bluetooth
     hardware.bluetooth = {

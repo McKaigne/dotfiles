@@ -16,7 +16,7 @@
     let
       llvm = pkgs.llvmPackages_18;
       cxxHeaders = "${llvm.libcxx}/include/c++/v1";
-      iconPath = "/run/current-system/sw/share/icons:/home/pollux/.icons:/home/pollux/.local/share/icons";
+      iconPath = "${pkgs.bibata-cursors}/share/icons:/run/current-system/sw/share/icons";
 
       doomRuntimeDeps = with pkgs; [
         git

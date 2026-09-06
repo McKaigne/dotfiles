@@ -1,13 +1,6 @@
-
-{ inputs, self, ... }: {
-  flake.nixosModules.niri = { pkgs, ... }: {
-    programs.niri = {
-      enable = true;
-      package = self.packages.${pkgs.stdenv.hostPlatform.system}.niri;
-    };
-  };
-
-  flake.wrappersModules.niri = { config, lib, pkgs, ... }: {
+{ inputs, self, ... }:
+let
+  niriWrapper = { config, lib, pkgs, ... }: {
     options.terminal = lib.mkOption {
       type = lib.types.str;
       default = "ghostty";
@@ -17,7 +10,6 @@
       settings =
         let
           noctaliaExe = lib.getExe self.packages.${config.pkgs.stdenv.hostPlatform.system}.noctalia-shell;
-          heliumExe = "${inputs.helium.packages.${config.pkgs.stdenv.hostPlatform.system}.default}/bin/helium";
         in
         {
           prefer-no-csd = { };
@@ -91,7 +83,7 @@
             "Mod+Return".spawn = config.terminal;
             "Mod+E".spawn = "thunar";
             "Mod+Shift+E".spawn-sh = "ghostty -e ${pkgs.yazi}/bin/yazi";
-            "Mod+W".spawn-sh = heliumExe;
+            "Mod+W".spawn = "helium";
             "Mod+C".spawn-sh = "emacsclient -c -a 'emacs'";
 
             "Mod+Q".close-window = { };
@@ -203,19 +195,23 @@
               sleep 1
               ${noctaliaExe} ipc call wallpaper set "$HOME/Pictures/Wallpapers/wallpaper.jpg"
             ''))
-            (lib.getExe (pkgs.writeShellScriptBin "set-gtk-cursor" ''
-              ${pkgs.glib}/bin/gsettings set org.gnome.desktop.interface cursor-theme 'Bibata-Modern-Classic'
-              ${pkgs.glib}/bin/gsettings set org.gnome.desktop.interface cursor-size 16
-            ''))
           ];
         };
+    };
+  };
+in
+{
+  flake.nixosModules.niri = { pkgs, ... }: {
+    programs.niri = {
+      enable = true;
+      package = self.packages.${pkgs.stdenv.hostPlatform.system}.niri;
     };
   };
 
   perSystem = { pkgs, self', ... }: {
     packages.niri = inputs.wrapper-modules.wrappers.niri.wrap {
       inherit pkgs;
-      imports = [ self.wrappersModules.niri ];
+      imports = [ niriWrapper ];
     };
 
     apps.niri = {

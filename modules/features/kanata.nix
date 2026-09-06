@@ -2,8 +2,6 @@
 { self, inputs, ... }: {
   flake.nixosModules.kanata = { pkgs, ... }: {
     hardware.uinput.enable = true;
-    users.groups.uinput.members = [ "pollux" ];
-    users.groups.input.members = [ "pollux" ];
 
     services.kanata = {
       enable = true;
