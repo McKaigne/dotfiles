@@ -97,3 +97,12 @@
        :desc "Jump to char" "j" #'avy-goto-char
        :desc "Jump to word" "w" #'avy-goto-word-1
        :desc "Jump to line" "l" #'avy-goto-line))
+
+
+;; Let clangd query the actual Nix-store compiler for system include paths,
+;; instead of relying on inherited CPLUS_INCLUDE_PATH/CPATH env vars (which
+;; don't reliably propagate through Emacs daemon + direnv + lsp-mode).
+(after! lsp-clangd
+  (setq lsp-clients-clangd-args
+        '("--header-insertion=never"
+          "--query-driver=/nix/store/**/bin/*")))

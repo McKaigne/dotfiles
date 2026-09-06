@@ -1,286 +1,341 @@
 
-# 🌌 Castor — Dendritic NixOS Flake
+# Castor — NixOS Workstation
 
-A production-grade, modular NixOS workstation engineered with **`flake-parts`**, **`import-tree`**, **`wrapper-modules`**, **Niri**, **Noctalia**, **Doom Emacs**, **Nushell**, and **Kanata**.
-
----
-
-## 📖 Table of Contents
-1. [Philosophy & Architecture](#1-philosophy--architecture)
-2. [System Stack Overview](#2-system-stack-overview)
-3. [Dendritic File Tree](#3-dendritic-file-tree)
-4. [Master Keybinding & Input Architecture](#4-master-keybinding--input-architecture)
-   - [A. Kanata Hardware Layer (Home Row Mods & Combos)](#a-kanata-hardware-layer-home-row-mods--combos)
-   - [B. Niri Window Manager & Navigation](#b-niri-window-manager--navigation)
-   - [C. Noctalia Shell & Overlays](#c-noctalia-shell--overlays)
-   - [D. Doom Emacs & Native Ghostel Runner](#d-doom-emacs--native-ghostel-runner)
-   - [E. Shell Abbreviations & Aliases](#e-shell-abbreviations--aliases)
-5. [Daily Upkeep & Maintenance Guide](#5-daily-upkeep--maintenance-guide)
-6. [Developer Workflow (Isolated DevShells)](#6-developer-workflow-isolated-devshells)
-7. [Portability & Standalone Execution (`nix run`)](#7-portability--standalone-execution-nix-run)
-8. [Fresh Machine Installation](#8-fresh-machine-installation)
+This flake sets up a full NixOS workstation. The workstation uses Niri, Noctalia, Doom Emacs, Nushell, and Kanata.
 
 ---
 
-## 1. Philosophy & Architecture
+## Table of Contents
 
-This configuration is structured around three core design principles:
-
-### A. The Dendritic Pattern (`flake-parts` + `import-tree`)
-Rather than maintaining bloated monolithic configuration files or fragile manual `imports = [ ... ]` arrays, the system uses **`import-tree`**. The root `flake.nix` automatically traverses `modules/`, turning every file into an isolated, composable node in the tree. Adding, removing, or testing a feature requires zero changes to the root flake.
-
-### B. Pure Application Wrapping (`wrapper-modules`)
-Applications (Niri, Noctalia, Doom Emacs, Nushell) are packaged as **self-contained derivations**. Their configuration files, runtime binaries, themes, and shell scripts are baked directly into `/nix/store`. This eliminates the *"works on my machine"* problem and allows running any app standalone on non-NixOS distributions (Arch, Ubuntu, Fedora) with a single `nix run` command.
-
-### C. Zero Global Pollution
-Global system packages contain only base terminal essentials. All compilers (Clang 18, GCC), build tools (CMake, Ninja), and Language Servers (`clangd`, `zls`, `rust-analyzer`) are injected **per-project on the fly** via `flake.nix` + `direnv`. When you exit a project directory, your environment returns to a completely clean state.
+1. [Design of this flake](#1-design-of-this-flake)
+2. [Software in this workstation](#2-software-in-this-workstation)
+3. [File structure](#3-file-structure)
+4. [The dotfiles system](#4-the-dotfiles-system)
+5. [Keybindings](#5-keybindings)
+6. [Daily tasks](#6-daily-tasks)
+7. [Run a program without NixOS](#7-run-a-program-without-nixos)
+8. [Install on a new machine](#8-install-on-a-new-machine)
 
 ---
 
-## 2. System Stack Overview
+## 1. Design of this flake
 
-| Component | Technology | Description |
-| :--- | :--- | :--- |
-| **Operating System** | **NixOS (Unstable)** | Deterministic, declarative Linux distribution |
-| **Compositor** | **Niri** | Fluid, infinite scrollable-tiling Wayland window manager |
-| **Desktop Shell** | **Noctalia** | Modern Qt/QML status bar, widget overlay, and launcher |
-| **Keyboard Engine** | **Kanata** | Kernel-level evdev remapper (200ms HRM + 35ms Chords) |
-| **Editor** | **Doom Emacs** | Native Wayland (`pgtk`), N Λ N O Light theme, Eglot/LSP |
-| **IDE** | **Antigravity** | Electron-based dev environment (`antigravity-fhs`, FHS-wrapped, unfree) |
-| **Shell** | **Nushell** | Structured data shell with Catppuccin Mocha Starship & Vi mode |
-| **Terminal** | **Ghostty** & **Foot** | GPU-accelerated Wayland terminal emulators |
-| **File Manager** | **Yazi** | Blazing-fast terminal file manager with async preview |
-| **Browser** | **Helium Browser** | Lightweight, modern Wayland browser |
-| **Display Manager** | **Greetd** | Silent autologin directly into `niri` |
-| **Audio** | **PipeWire** | Real-time audio engine with WirePlumber and RTKit |
-| **Typography** | **Maple Mono NF** | Monospace font with ligatures and Nerd Font glyphs |
-| **Cursor** | **Bibata Modern** | Minimal, sleek 16px cursor across all surfaces |
-| **Navigation** | **Zoxide** | System-wide fast directory jumping (`/run/current-system/sw/bin`) |
+This flake uses three tools together: `flake-parts`, `import-tree`, and `wrapper-modules`.
+
+### 1.1 flake-parts and import-tree
+
+`import-tree` finds every file in the folder `modules/`. `import-tree` adds each file to the flake automatically. You do not need to add new files to `flake.nix`. You only add new files to the folder `modules/`.
+
+### 1.2 wrapper-modules
+
+Some programs run through `wrapper-modules`. This tool builds a program together with its settings. The result is one package. You can run this package on any Linux system. You do not need NixOS to run it.
+
+### 1.3 Home Manager
+
+Home Manager manages the files in `~/.config`. Home Manager reads the folder `dotfiles/`. Home Manager creates a link from `~/.config` to each file in `dotfiles/`.
+
+Section 4 explains this system.
 
 ---
 
-## 3. Dendritic File Tree
+## 2. Software in this workstation
+
+| Function | Program |
+| :--- | :--- |
+| Operating system | NixOS (unstable channel) |
+| Window manager | Niri |
+| Desktop shell | Noctalia |
+| Key remapper | Kanata |
+| Text editor | Doom Emacs |
+| Shell | Nushell |
+| Terminal | Ghostty, Foot |
+| File manager | Yazi |
+| Web browser | Helium |
+| IDE | Antigravity |
+| Login manager | Greetd |
+| Audio server | PipeWire |
+| Font | Maple Mono NF |
+| Cursor theme | Bibata Modern Classic |
+| Directory jumper | Zoxide |
+
+---
+
+## 3. File structure
 
 /etc/nixos/
-├── flake.nix # Root entry point (flake-parts + import-tree)
-├── flake.lock # Pinned Nixpkgs & flake inputs
-├── README.md # System documentation
+├── flake.nix # Inputs and outputs for the flake
+├── flake.lock # Locked versions of all inputs
+├── README.md # This file
+├── dotfiles/ # Config files for Home Manager. See section 4.
+│ ├── doom/
+│ ├── nushell/
+│ ├── starship/
+│ ├── fuzzel/
+│ ├── cava/
+│ ├── ghostty/
+│ ├── gtk-3.0/
+│ ├── gtk-4.0/
+│ └── niri/
 └── modules/
-├── systems.nix # Supported architectures (x86_64-linux, aarch64-linux)
 ├── hosts/
 │ └── castor/
-│ ├── default.nix # Host definition: nixosConfigurations.castor
-│ ├── configuration.nix # System services, bluetooth, pipewire, greetd, user
-│ └── hardware.nix # Intel VMD early driver, NVMe UUIDs, CPU microcode
+│ ├── default.nix # Builds the system castor
+│ ├── configuration.nix # System settings and module list
+│ └── hardware.nix # Disk and CPU settings
 └── features/
-├── niri.nix # Wrapped Niri compositor (packages.niri, apps.niri, apps.default), wallpaper-on-startup
-├── noctalia.nix # Wrapped Noctalia shell & JSON state parser
-├── emacs.nix # Wrapped Emacs with C++ stdlib headers & tools (apps.emacs)
-├── doom/ # Bundled Doom Emacs configuration
-├── nushell.nix # Wrapped Nushell (packages.nushell, apps.nushell)
-├── nushell/ # Bundled Shell configuration
-├── helium.nix # Helium Browser module
-├── kanata.nix # Kanata kernel input daemon (HRM & Chords)
-└── desktop.nix # Base CLI tools (bat, fd, ripgrep, btop, cava, yazi, fetch, zoxide) + Antigravity (unfree allowlisted)
+├── home-manager.nix # Links files from dotfiles/ to ~/.config
+├── niri.nix # Niri settings and keybindings
+├── noctalia.nix # Noctalia shell settings
+├── emacs.nix # Emacs package
+├── nushell.nix # Nushell package
+├── helium.nix # Helium browser
+├── kanata.nix # Key remapper settings
+└── desktop.nix # Base tools and Antigravity
 
 
 ---
 
-## 4. Master Keybinding & Input Architecture
+## 4. The dotfiles system
 
-### A. Kanata Hardware Layer (Home Row Mods & Combos)
-- **Caps Lock:** Acts purely as a dedicated **`Escape`** key.
-- **Home Row Mods (200ms hold window):**
-  - Left Hand: **`A`** (Alt) | **`S`** (Ctrl) | **`D`** (Super / Mod) | **`F`** (Shift)
-  - Right Hand: **`J`** (Shift) | **`K`** (Super / Mod) | **`L`** (Ctrl) | **`;`** (Alt)
-- **Simultaneous Combos (35ms window):**
-  - **`U + I`** $\rightarrow$ `Backspace`
-  - **`I + O`** $\rightarrow$ `Delete`
-  - **`N + M`** $\rightarrow$ `Tab`
-  - **`M + ,`** $\rightarrow$ Switch browser tab left (`Ctrl + PageUp`)
-  - **`, + .`** $\rightarrow$ Switch browser tab right (`Ctrl + PageDown`)
-  - **`Z + X`** $\rightarrow$ Undo (`Ctrl + Z`)
-  - **`A + Z`** $\rightarrow$ Redo (`Ctrl + Shift + Z`)
-  - **`X + C`** $\rightarrow$ Copy (`Ctrl + C`)
-  - **`C + V`** $\rightarrow$ Paste (`Ctrl + V`)
-  - **`X + V`** $\rightarrow$ Cut (`Ctrl + X`)
-  - **`Z + V`** $\rightarrow$ Select All (`Ctrl + A`)
+### 4.1 Purpose
 
----
+The folder `dotfiles/` holds config files for programs. Home Manager reads this folder. Home Manager creates a link in `~/.config` for each file. This makes your config files work on a new machine.
 
-### B. Niri Window Manager & Navigation
-*(Modifier: **`Mod`** / **`SUPER`** / **`Hold D`** / **`Hold K`**)*
+### 4.2 Add a new config file
 
-#### Window Actions & Stacking
-- **`SUPER + Q`**: Close focused window
-- **`SUPER + F`**: Maximize active column
-- **`SUPER + Shift + F`**: Toggle floating / tiling window
-- **`SUPER + Shift + C`**: Center active column on screen
-- **`SUPER + ,` (Comma)**: **Consume Window** (stack window to the right into current column)
-- **`SUPER + .` (Period)**: **Expel Window** (eject bottom window to a new column on the right)
-- **`SUPER + R`**: Cycle preset column widths (33% $\rightarrow$ 50% $\rightarrow$ 66% $\rightarrow$ 100%)
-- **`SUPER + Shift + R`**: Reset window height
+Do these steps to add a new config file:
 
-#### Navigation & Workspace Cycling (H, J, K, L)
-- **`SUPER + H`** / **`Left Arrow`**: Focus column left
-- **`SUPER + L`** / **`Right Arrow`**: Focus column right
-- **`SUPER + J`**: Switch workspace **down** ($1 \rightarrow 2 \rightarrow 3$)
-- **`SUPER + K`**: Switch workspace **up** ($3 \rightarrow 2 \rightarrow 1$)
-- **`SUPER + Shift + J`**: Move column **down** to next workspace
-- **`SUPER + Shift + K`**: Move column **up** to previous workspace
-- **`SUPER + Shift + H / L`**: Move column left / right
-- **`SUPER + Home` / `End`**: Jump to first / last column in the ribbon
-- **`SUPER + Shift + Home / End`**: Move column to the very beginning / end of the ribbon
-- **`SUPER + Ctrl + H / L`**: Shrink / expand column width (-5% / +5%)
-- **`SUPER + 0..9`**: Jump directly to workspace `w0` through `w9`
-- **`SUPER + Shift + 0..9`**: Move column to workspace `w0` through `w9`
-
-#### Touchpad Gestures
-- **3-Finger Swipe Left / Right**: Smooth, continuous horizontal ribbon panning
-- **3-Finger Swipe Up / Down**: Smooth workspace transitions
-- **4-Finger Swipe Up**: Zoomed-out workspace overview
-- **`SUPER` + 2-Finger Trackpad Scroll**: Step through columns
-
-#### Startup
-- On login, niri auto-starts Noctalia, applies the Bibata cursor theme via `gsettings`, and sets the desktop wallpaper from `~/Pictures/Wallpapers/wallpaper.jpg` via Noctalia's IPC.
-
----
-
-### C. Noctalia Shell & Overlays
-- **`SUPER + D`**: **Toggle Noctalia App Launcher**
-- **`SUPER + Tab`**: **Toggle Workspace Overview** (Native Niri Zoomed Overview)
-- **`SUPER + N`**: Toggle Control Center & Notifications
-- **`SUPER + Shift + B`**: Toggle Top Bar visibility
-- **`SUPER + V`**: Toggle Clipboard Manager
-- **`SUPER + I`**: Toggle Noctalia Settings
-- **`SUPER + P`**: Toggle Session / Power Menu
-- **`SUPER + Shift + L`**: Lock screen (via **Hyprlock**)
-
----
-
-### D. Applications
-- **`SUPER + Return`**: Open **Ghostty** (Nushell + Starship)
-- **`SUPER + E`**: Open **Yazi** (Terminal File Manager)
-- **`SUPER + W`**: Open **Helium Browser**
-- **`SUPER + C`**: Open **Doom Emacs** (`emacsclient` instant launch)
-- **`SUPER + Shift + S`**: Interactive area screenshot (copied to clipboard)
-- **`Print`**: Full-screen screenshot to clipboard
-- **Antigravity**: Launch via terminal (`antigravity-ide`), installed system-wide as `antigravity-fhs`
-
----
-
-### E. Doom Emacs (Leader: `SPC`)
-- **`SPC r r`**: **Smart Ghostel Runner** (compiles & runs C++/CMake/Python interactively in bottom popup terminal)
-- **`SPC r c`**: Compile project (`compile`)
-- **`SPC p p`**: Switch Projectile workspace
-- **`SPC p f`**: Find file in project
-- **`SPC f f`** or **`SPC .`**: Open / find any file
-- **`SPC f p`**: Open private Doom config (`~/.config/doom/`)
-- **`SPC g g`**: Open **Magit** (Interactive Git dashboard)
-- **`SPC o t`**: Toggle **Ghostel** terminal popup (running Nushell)
-- **`SPC h t`**: Switch Theme (`doom-nano-light` $\leftrightarrow$ `doom-nano-dark`)
-
----
-
-### F. Shell Abbreviations & Aliases
-| Abbreviation | Expanded Command |
-| :--- | :--- |
-| **`nr`** | `sudo nixos-rebuild switch --flake /etc/nixos#castor` |
-| **`nfu`** | `nix flake update --flake /etc/nixos` |
-| **`ncd`** | `cd /etc/nixos` |
-| **`z <dir>`** / **`zi`** | Fast directory jumping via Zoxide / Interactive jump (system-wide) |
-| **`za <dir>`** | `zoxide add <dir>` |
-| **`e`** | `emacsclient -c -a 'emacs'` |
-| **`y`** | `yazi` |
-| **`f`** | `fetch` (3D animated rotating NixOS logo) |
-| **`cat`** | `bat --paging=never` |
-| **`ga`** | `git add -A` |
-| **`gc "msg"`** | `git commit -m "msg"` |
-| **`gp`** / **`gpu`** | `git push` / `git pull` |
-| **`gst`** / **`gd`** | `git status` / `git diff` |
-| **`glog`** | `git log --oneline --graph --decorate` |
-
----
-
-## 5. Daily Upkeep & Maintenance Guide
-
-### A. Updating System Configurations
-1. Edit any file inside `/etc/nixos/modules/` (e.g. `v /etc/nixos/modules/features/niri.nix`).
-2. Stage and commit:
+1. Make a folder for the program inside `dotfiles/`.
 ```bash
-   ncd
-   ga
-   gc "feat: describe your change"
+   mkdir dotfiles/foo
 ```
-3. Rebuild:
+2. Put the config file inside this folder.
+```bash
+   cp ~/.config/foo/config.toml dotfiles/foo/config.toml
+```
+3. Remove the old config file from `~/.config`.
+```bash
+   rm ~/.config/foo/config.toml
+```
+4. Add the new files to Git.
+```bash
+   git add -A
+```
+5. Rebuild the system.
 ```bash
    nr
 ```
-4. Push to GitHub:
+
+After step 5, Home Manager creates a link from `~/.config/foo/config.toml` to `dotfiles/foo/config.toml`. You can edit this file at either path. Both paths point to the same file.
+
+### 4.3 Programs that are not in dotfiles/
+
+Some programs are not in `dotfiles/`. Noctalia changes the color theme of these programs. Noctalia writes new colors to these files each time you change the theme. These files stay as normal files in `~/.config`. They are not part of this flake.
+
+These programs include:
+- btop
+- GNOME/KDE theme settings (`dconf`, `kdeglobals`, `qt5ct`, `qt6ct`)
+- The Noctalia shell itself
+
+### 4.4 Why some files show as changed in Git
+
+Four files in `dotfiles/` also receive live updates from Noctalia:
+
+- `dotfiles/starship/starship.toml`
+- `dotfiles/doom/themes/noctalia-theme.el`
+- `dotfiles/fuzzel/themes/noctalia` (not tracked)
+- `dotfiles/cava/themes/noctalia` (not tracked)
+
+When you change the Noctalia color theme, Noctalia writes new colors to these files. Git shows these files as changed. This is normal. Commit these changes if you want to keep the new colors. Do not worry if you do not commit them. The files still work.
+
+---
+
+## 5. Keybindings
+
+### 5.1 Kanata (keyboard layer)
+
+Kanata remaps your keyboard. Kanata runs before Niri sees your keypress.
+
+**Home row mods:**
+
+| Key | Tap | Hold |
+| :--- | :--- | :--- |
+| A | a | Left Alt |
+| S | s | Left Ctrl |
+| D | d | Left Super |
+| F | f | Left Shift |
+| J | j | Right Shift |
+| K | k | Right Super |
+| L | l | Right Ctrl |
+| ; | ; | Right Alt |
+
+Home row mods use a 200 ms hold time. J and K use a 120 ms hold time.
+
+**Combos (35 ms window):**
+
+| Keys | Action |
+| :--- | :--- |
+| U + I | Backspace |
+| I + O | Delete |
+| N + M | Tab |
+| M + , | Switch browser tab left |
+| , + . | Switch browser tab right |
+| Z + X | Undo |
+| A + Z | Redo |
+| X + C | Copy |
+| C + V | Paste |
+| X + V | Cut |
+| Z + V | Select all |
+
+### 5.2 Niri (window manager)
+
+The main modifier key is `Mod`. `Mod` responds to the left Super key and the right Super key equally.
+
+**Windows:**
+
+| Keys | Action |
+| :--- | :--- |
+| Mod + Q | Close the focused window |
+| Mod + F | Maximize the focused column |
+| Mod + Shift + F | Toggle floating mode |
+| Mod + Shift + C | Center the focused column |
+| Mod + R | Change the column width |
+
+**Move focus:**
+
+| Keys | Action |
+| :--- | :--- |
+| Mod + H / Left | Focus the column on the left |
+| Mod + L / Right | Focus the column on the right |
+| Mod + J | Go to the workspace below |
+| Mod + K | Go to the workspace above |
+| Mod + 0-9 | Go to workspace 0-9 |
+
+**Apps:**
+
+| Keys | Action |
+| :--- | :--- |
+| Mod + Return | Open Ghostty |
+| Mod + E | Open Yazi |
+| Mod + W | Open Helium |
+| Mod + C | Open Emacs |
+| Mod + Shift + S | Take a screenshot of an area |
+
+**On startup**, Niri runs three actions:
+1. Niri starts Noctalia.
+2. Niri sets the wallpaper from `~/Pictures/Wallpapers/wallpaper.jpg`.
+3. Niri sets the cursor theme to Bibata Modern Classic.
+
+### 5.3 Doom Emacs
+
+Doom Emacs uses the leader key `SPC`.
+
+| Keys | Action |
+| :--- | :--- |
+| SPC r r | Run the current project |
+| SPC p p | Switch to a different project |
+| SPC p f | Find a file in the project |
+| SPC f f | Find any file |
+| SPC g g | Open Magit |
+
+### 5.4 Shell abbreviations (Nushell)
+
+| Command | Action |
+| :--- | :--- |
+| `nr` | Rebuild the system |
+| `nfu` | Update flake inputs |
+| `ncd` | Go to `/etc/nixos` |
+| `z <dir>` | Jump to a directory |
+| `ga` | `git add -A` |
+| `gc "msg"` | `git commit -m "msg"` |
+| `gp` | `git push` |
+
+---
+
+## 6. Daily tasks
+
+### 6.1 Change a system setting
+
+Do these steps to change a system setting:
+
+1. Edit a file in `modules/features/`.
+2. Add your changes to Git.
+```bash
+   ga
+```
+3. Commit your changes.
+```bash
+   gc "describe your change here"
+```
+4. Rebuild the system.
+```bash
+   nr
+```
+5. Push your changes to GitHub.
 ```bash
    gp
 ```
 
-### B. Updating Doom Emacs (`~/.config/doom/`)
-- **Edit settings / themes (`config.el`)**:
+### 6.2 Change a program's config
+
+Do these steps to change a program's config that is in `dotfiles/`:
+
+1. Edit the file inside `dotfiles/`.
+2. Your change applies right away. You do not need to rebuild for most programs.
+3. Commit and push your changes when you are ready.
+
+Doom Emacs and Nushell need extra steps for some changes:
+
+- For Doom Emacs, restart the Emacs service.
 ```bash
   systemctl --user restart emacs.service
 ```
-- **Add / remove packages (`init.el` or `packages.el`)**:
+- For Nushell, rebuild the system. Nushell reads its config file at build time.
 ```bash
-  doom sync
-  systemctl --user restart emacs.service
+  nr
 ```
 
 ---
 
-## 6. Developer Workflow (Isolated DevShells)
+## 7. Run a program without NixOS
 
-A modern C++20 starter template is available at **`~/Projects/Templates/cpp-starter`**.
-
-### Initializing a new project:
-```nu
-cp -r ~/Projects/Templates/cpp-starter ~/Projects/MyProject
-cd ~/Projects/MyProject
-direnv allow
-```
-
-`direnv` automatically injects Clang 18, LLDB, CMake, and Ninja into your shell and sets up `clangd` header indexing. Open in Doom Emacs (**`SUPER + C`** $\rightarrow$ **`SPC p p`**) and press **`SPC r r`** to run code interactively.
-
----
-
-## 7. Portability & Standalone Execution (`nix run`)
-
-Every component is packaged as a standalone derivation. Execute directly on **any Linux distribution** (Arch, Ubuntu, Fedora) with Nix installed:
+Some programs in this flake build as standalone packages. You can run these packages on any Linux system with Nix installed. You do not need NixOS.
 
 ```bash
-# Launch wrapped Niri compositor (also the default app):
+# Run Niri (the default program)
 nix run github:McKaigne/dotfiles
-nix run github:McKaigne/dotfiles#niri
 
-# Launch Doom Emacs:
+# Run Doom Emacs
 nix run github:McKaigne/dotfiles#emacs
 
-# Launch Catppuccin Nushell + Starship:
+# Run Nushell
 nix run github:McKaigne/dotfiles#nushell
 ```
 
 ---
 
-## 8. Fresh Machine Installation
+## 8. Install on a new machine
 
-To deploy on a new machine:
+Do these steps to install this system on a new machine:
 
-1. Boot any NixOS Live USB.
-2. Partition and mount disks (`/mnt/boot` for EFI, `/mnt` for root).
-3. Clone configuration:
+1. Start the machine from a NixOS live USB.
+2. Set up your disk partitions. Mount the EFI partition at `/mnt/boot`. Mount the root partition at `/mnt`.
+3. Generate a hardware config.
 ```bash
    nixos-generate-config --root /mnt
+```
+4. Clone this repository to `/mnt/etc/nixos`.
+```bash
    git clone https://github.com/McKaigne/dotfiles.git /mnt/etc/nixos
 ```
-4. Update `modules/hosts/castor/hardware.nix` with the machine's disk UUIDs.
-5. Install and reboot:
+5. Open the file `modules/hosts/castor/hardware.nix`. Update the disk IDs for the new machine.
+6. Install the system.
 ```bash
    nixos-install --flake /mnt/etc/nixos#castor
+```
+7. Restart the machine.
+```bash
    reboot
 ```
+
+After you restart, Home Manager creates the links in `~/.config` automatically. You do not need extra steps for your dotfiles.
