@@ -1,6 +1,9 @@
 { self, inputs, ... }: {
   flake.nixosModules.cursor = { pkgs, lib, ... }:
     let
+      cursorTheme = "Bibata-Modern-Classic";
+      cursorSize  = 16;
+
       bibataFixed = pkgs.runCommand "bibata-modern-classic-fixed" { } ''
         mkdir -p $out/share/icons
         cp -r ${pkgs.bibata-cursors}/share/icons/Bibata-Modern-Classic $out/share/icons/Bibata-Modern-Classic
@@ -14,35 +17,36 @@
     {
       environment.systemPackages = [ bibataFixed ];
 
-      # Unified cursor environment variables
+      # Unified cursor environment variables (single source of truth)
       environment.sessionVariables = {
-        XCURSOR_THEME = "Bibata-Modern-Classic";
-        XCURSOR_SIZE = "16";
-        HYPRCURSOR_THEME = "Bibata-Modern-Classic";
-        HYPRCURSOR_SIZE = "16";
-        XCURSOR_PATH = "${bibataFixed}/share/icons:/run/current-system/sw/share/icons";
+        XCURSOR_THEME  = cursorTheme;
+        XCURSOR_SIZE   = toString cursorSize;
+        HYPRCURSOR_THEME = cursorTheme;
+        HYPRCURSOR_SIZE  = toString cursorSize;
+        XCURSOR_PATH   = "${bibataFixed}/share/icons:/run/current-system/sw/share/icons";
         NIXOS_OZONE_WL = "1";
       };
 
-      # System-wide X11/Wayland cursor fallback configuration
+      # System-wide X11/Wayland cursor fallback
       environment.etc."xdg/icons/default/index.theme".text = ''
         [Icon Theme]
         Name=Default
         Comment=Default Cursor Theme
-        Inherits=Bibata-Modern-Classic
+        Inherits=${cursorTheme}
       '';
 
-      # Declarative Dconf/GSettings for GNOME/GTK/Ozone cursor discovery
+      # Declarative dconf/GSettings for GTK/GNOME cursor discovery
       programs.dconf = {
         enable = true;
         profiles.user.databases = [{
           settings = {
             "org/gnome/desktop/interface" = {
-              cursor-theme = "Bibata-Modern-Classic";
-              cursor-size = lib.gvariant.mkInt32 16;
+              cursor-theme = cursorTheme;
+              cursor-size  = lib.gvariant.mkInt32 cursorSize;
             };
           };
         }];
       };
     };
 }
+

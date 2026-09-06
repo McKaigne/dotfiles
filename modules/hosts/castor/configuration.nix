@@ -1,6 +1,6 @@
 
 { self, ... }: {
-  flake.nixosModules.castorConfiguration = { pkgs, lib, ... }: {
+  flake.nixosModules.castorConfiguration = { config, pkgs, lib, ... }: {
     imports = [
       self.nixosModules.castorHardware
       self.nixosModules.homeManager
@@ -47,7 +47,7 @@
       settings = {
         default_session = {
           command = "niri";
-          user = "pollux";
+          user = config.mainUser;
         };
       };
     };
@@ -63,7 +63,7 @@
     };
 
     # User Account
-    users.users.pollux = {
+    users.users.${config.mainUser} = {
       isNormalUser = true;
       extraGroups = [ "wheel" "networkmanager" "video" "audio" "input" "uinput" ];
     };
