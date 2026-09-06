@@ -87,7 +87,7 @@
       maximum-scroll-margin 0.5)
 
 (map! :leader
-      (:prefix ("j" . "jump")
+      (:prefix "j"
        :desc "Jump to char" "j" #'avy-goto-char
        :desc "Jump to word" "w" #'avy-goto-word-1
        :desc "Jump to line" "l" #'avy-goto-line))
@@ -100,3 +100,13 @@
   (setq lsp-clients-clangd-args
         '("--header-insertion=never"
           "--query-driver=/nix/store/**/bin/*")))
+
+
+
+
+;; Ghostel: size the popup instead of letting it open fullscreen.
+(set-popup-rule! "^\\*doom:ghostel-popup:" :size 0.35 :vslot -4 :select t :quit nil :ttl nil)
+
+(map! :leader
+      :desc "Ghostel popup" "o t" #'+ghostel/toggle
+      :desc "Ghostel here"  "o T" #'+ghostel/here)
