@@ -70,7 +70,7 @@
 (after! ghostel
   (setq ghostel-default-shell "/run/current-system/sw/bin/nu")
   (map! :leader
-        (:prefix ("o" . "open")
+        (:prefix "o"
          :desc "Ghostel popup" "t" #'+ghostel/toggle
          :desc "Ghostel full"  "T" #'+ghostel/open)))
 
