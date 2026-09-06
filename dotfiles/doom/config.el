@@ -110,3 +110,25 @@
 (map! :leader
       :desc "Ghostel popup" "o t" #'+ghostel/toggle
       :desc "Ghostel here"  "o T" #'+ghostel/here)
+
+
+;; Ghostel: proper toggle that reuses a window instead of opening a new frame.
+(set-popup-rule! "^\\*doom:ghostel-popup:" :size 0.35 :vslot -4 :select t :quit nil :ttl nil)
+
+(defun +my/ghostel-toggle ()
+  "Toggle a Ghostel popup window in the current frame, instead of a new frame."
+  (interactive)
+  (let* ((buffer-name (format "*doom:ghostel-popup:%s*"
+                               (if (bound-and-true-p persp-mode)
+                                   (safe-persp-name (get-current-persp))
+                                 "main")))
+         (window (get-buffer-window buffer-name)))
+    (if (window-live-p window)
+        (delete-window window)
+      (require (quote ghostel))
+      (let ((ghostel-buffer-name buffer-name))
+        (pop-to-buffer (save-window-excursion (ghostel) (current-buffer)))))))
+
+(map! :leader
+      :desc "Ghostel popup" "o t" #'+my/ghostel-toggle
+      :desc "Ghostel here"  "o T" #'+ghostel/here)
