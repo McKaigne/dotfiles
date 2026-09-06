@@ -30,7 +30,7 @@
         shellcheck
         python3
         direnv
-        zig_0_15
+        zig_0_16
         bibata-cursors
         glib # provides gsettings
       ];
