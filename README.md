@@ -49,7 +49,7 @@ Section 4 explains this system.
 | Text editor | Doom Emacs |
 | Shell | Nushell |
 | Terminal | Ghostty, Foot |
-| File manager | Yazi |
+| File manager | Thunar (default GUI), Yazi (terminal) |
 | Web browser | Helium |
 | IDE | Antigravity |
 | Login manager | Greetd |
@@ -77,20 +77,21 @@ Section 4 explains this system.
 │ ├── gtk-4.0/
 │ └── niri/
 └── modules/
-├── hosts/
-│ └── castor/
-│ ├── default.nix # Builds the system castor
-│ ├── configuration.nix # System settings and module list
-│ └── hardware.nix # Disk and CPU settings
-└── features/
-├── home-manager.nix # Links files from dotfiles/ to ~/.config
-├── niri.nix # Niri settings and keybindings
-├── noctalia.nix # Noctalia shell settings
-├── emacs.nix # Emacs package
-├── nushell.nix # Nushell package
-├── helium.nix # Helium browser
-├── kanata.nix # Key remapper settings
-└── desktop.nix # Base tools and Antigravity
+    ├── hosts/
+    │ └── castor/
+    │ ├── default.nix # Builds the system castor
+    │ ├── configuration.nix # System settings and module list
+    │ └── hardware.nix # Disk and CPU settings
+    └── features/
+        ├── home-manager.nix # Links files from dotfiles/ to ~/.config
+        ├── niri.nix # Niri settings and keybindings
+        ├── noctalia.nix # Noctalia shell settings
+        ├── emacs.nix # Emacs package
+        ├── nushell.nix # Nushell package
+        ├── helium.nix # Helium browser
+        ├── kanata.nix # Key remapper settings
+        ├── thunar.nix # Thunar GUI file manager and plugins
+        └── desktop.nix # Base tools and Antigravity
 ```
 
 ---
@@ -216,7 +217,8 @@ The main modifier key is `Mod`. `Mod` responds to the left Super key and the rig
 | Keys | Action |
 | :--- | :--- |
 | Mod + Return | Open Ghostty |
-| Mod + E | Open Yazi |
+| Mod + E | Open Thunar (default file manager) |
+| Mod + Shift + E | Open Yazi (terminal file manager) |
 | Mod + W | Open Helium |
 | Mod + C | Open Emacs |
 | Mod + Shift + S | Take a screenshot of an area |

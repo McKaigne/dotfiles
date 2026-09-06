@@ -13,6 +13,16 @@
       {
         home.stateVersion = "25.05";
 
+        xdg.mimeApps = {
+          enable = true;
+          defaultApplications = {
+            "inode/directory" = [ "thunar.desktop" ];
+            "application/x-directory" = [ "thunar.desktop" ];
+            "inode/mount-point" = [ "thunar.desktop" ];
+            "x-scheme-handler/file" = [ "thunar.desktop" ];
+          };
+        };
+
         xdg.configFile = {
           "niri/config.kdl".source        = link "niri/config.kdl";
           "nushell/config.nu".source      = link "nushell/config.nu";

@@ -10,6 +10,7 @@
       self.nixosModules.helium
       self.nixosModules.desktop
       self.nixosModules.kanata
+      self.nixosModules.thunar
     ];
 
     nixpkgs.config.allowUnfree = true;

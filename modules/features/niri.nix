@@ -89,7 +89,8 @@
             "Mod+Shift+0".move-column-to-workspace = "w9";
 
             "Mod+Return".spawn = config.terminal;
-            "Mod+E".spawn-sh = "ghostty -e ${pkgs.yazi}/bin/yazi";
+            "Mod+E".spawn = "thunar";
+            "Mod+Shift+E".spawn-sh = "ghostty -e ${pkgs.yazi}/bin/yazi";
             "Mod+W".spawn-sh = heliumExe;
             "Mod+C".spawn-sh = "emacsclient -c -a 'emacs'";
 

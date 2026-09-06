@@ -153,6 +153,7 @@ alias v = nvim
 
 # App shortcuts
 alias e = emacsclient -c -a 'emacs'
+alias fm = thunar
 alias y = yazi
 alias f = fetch
 
