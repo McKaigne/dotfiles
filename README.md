@@ -61,7 +61,7 @@ Section 4 explains this system.
 ---
 
 ## 3. File structure
-
+```
 /etc/nixos/
 ├── flake.nix # Inputs and outputs for the flake
 ├── flake.lock # Locked versions of all inputs
@@ -91,7 +91,7 @@ Section 4 explains this system.
 ├── helium.nix # Helium browser
 ├── kanata.nix # Key remapper settings
 └── desktop.nix # Base tools and Antigravity
-
+```
 
 ---
 
