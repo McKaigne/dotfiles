@@ -82,7 +82,6 @@ let
 
             "Mod+Return".spawn = config.terminal;
             "Mod+E".spawn = "thunar";
-            "Mod+Shift+E".spawn-sh = "ghostty -e ${pkgs.yazi}/bin/yazi";
             "Mod+W".spawn = "helium";
             "Mod+C".spawn-sh = "emacsclient -c -a 'emacs'";
 
