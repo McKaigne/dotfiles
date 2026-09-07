@@ -35,7 +35,7 @@
         Inherits=${cursorTheme}
       '';
 
-      # Declarative dconf/GSettings for GTK/GNOME cursor discovery
+      # Declarative dconf/GSettings for GTK/GNOME cursor and icon discovery
       programs.dconf = {
         enable = true;
         profiles.user.databases = [{
@@ -43,10 +43,10 @@
             "org/gnome/desktop/interface" = {
               cursor-theme = cursorTheme;
               cursor-size  = lib.gvariant.mkInt32 cursorSize;
+              icon-theme   = "Adwaita";
             };
           };
         }];
       };
     };
 }
-

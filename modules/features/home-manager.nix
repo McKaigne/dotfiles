@@ -19,7 +19,7 @@
     config = {
       home-manager.useGlobalPkgs = true;
       home-manager.useUserPackages = true;
-      # Pass the NixOS dotfiles.path into the HM module via extraSpecialArgs
+      home-manager.backupFileExtension = "backup";
       home-manager.extraSpecialArgs = { dotfilesPath = config.dotfiles.path; };
       home-manager.users.${config.mainUser} = { config, dotfilesPath, ... }:
         let
