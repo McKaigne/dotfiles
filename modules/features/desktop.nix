@@ -34,6 +34,15 @@
       vim
       wget
       curl
+
+      # Audio control & diagnostics
+      pavucontrol
+      alsa-utils
+
+      # Media & Content Creation
+      kdePackages.kdenlive
+      mpv
+      obs-studio
     ];
 
     fonts.packages = with pkgs; [

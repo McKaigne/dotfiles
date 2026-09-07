@@ -1,4 +1,3 @@
-
 { self, ... }: {
   flake.nixosModules.castorConfiguration = { config, pkgs, lib, ... }: {
     imports = [
@@ -28,18 +27,24 @@
     boot.loader.systemd-boot.enable = true;
     boot.loader.efi.canTouchEfiVariables = true;
 
+    # Hardware & Audio DSP Firmware (Intel Tiger Lake SOF)
+    hardware.enableRedistributableFirmware = true;
+    hardware.firmware = with pkgs; [
+      sof-firmware
+      alsa-firmware
+    ];
+
+    hardware.graphics.enable = true;
+    services.power-profiles-daemon.enable = true;
+    services.upower.enable = true;
+    services.openssh.enable = true;
+
     # Bluetooth
     hardware.bluetooth = {
       enable = true;
       powerOnBoot = true;
     };
     services.blueman.enable = true;
-
-    # Hardware & Power
-    hardware.graphics.enable = true;
-    services.power-profiles-daemon.enable = true;
-    services.upower.enable = true;
-    services.openssh.enable = true;
 
     # Display Manager (Autologin to Niri)
     services.greetd = {
@@ -52,7 +57,7 @@
       };
     };
 
-    # Audio (PipeWire)
+    # Audio (PipeWire + WirePlumber)
     security.rtkit.enable = true;
     services.pipewire = {
       enable = true;
