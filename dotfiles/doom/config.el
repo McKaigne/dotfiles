@@ -1,4 +1,3 @@
-
 ;;; $DOOMDIR/config.el -*- lexical-binding: t; -*-
 
 ;;; Identity
@@ -6,7 +5,7 @@
       user-mail-address "pollux@castor.local")
 
 ;;; UI: theme, fonts, dashboard
-(setq doom-theme 'doom-winter-is-coming-light)
+(setq doom-theme 'doom-nano-light)
 (setq doom-font (font-spec :family "Maple Mono NF" :size 14))
 (setq display-line-numbers-type 'relative)
 
@@ -67,7 +66,6 @@
           (ghostel-send-string (concat cmd "\n")))
       (compile cmd))))
 
-
 ;; Bind SPC r r to the Ghostel Runner
 (map! :leader
       (:prefix ("r" . "Run")
@@ -92,27 +90,13 @@
        :desc "Jump to word" "w" #'avy-goto-word-1
        :desc "Jump to line" "l" #'avy-goto-line))
 
-
-;; Let clangd query the actual Nix-store compiler for system include paths,
-;; instead of relying on inherited CPLUS_INCLUDE_PATH/CPATH env vars (which
-;; don't reliably propagate through Emacs daemon + direnv + lsp-mode).
+;; Clangd query-driver for Nix store paths
 (after! lsp-clangd
   (setq lsp-clients-clangd-args
         '("--header-insertion=never"
           "--query-driver=/nix/store/**/bin/*")))
 
-
-
-
-;; Ghostel: size the popup instead of letting it open fullscreen.
-(set-popup-rule! "^\\*doom:ghostel-popup:" :size 0.35 :vslot -4 :select t :quit nil :ttl nil)
-
-(map! :leader
-      :desc "Ghostel popup" "o t" #'+ghostel/toggle
-      :desc "Ghostel here"  "o T" #'+ghostel/here)
-
-
-;; Ghostel: proper toggle that reuses a window instead of opening a new frame.
+;; Ghostel: popup configuration and reusable window toggle
 (set-popup-rule! "^\\*doom:ghostel-popup:" :size 0.35 :vslot -4 :select t :quit nil :ttl nil)
 
 (defun +my/ghostel-toggle ()
@@ -125,7 +109,7 @@
          (window (get-buffer-window buffer-name)))
     (if (window-live-p window)
         (delete-window window)
-      (require (quote ghostel))
+      (require 'ghostel)
       (let ((ghostel-buffer-name buffer-name))
         (pop-to-buffer (save-window-excursion (ghostel) (current-buffer)))))))
 
