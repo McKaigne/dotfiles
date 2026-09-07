@@ -23,7 +23,7 @@
         XCURSOR_SIZE   = toString cursorSize;
         HYPRCURSOR_THEME = cursorTheme;
         HYPRCURSOR_SIZE  = toString cursorSize;
-        XCURSOR_PATH   = "${bibataFixed}/share/icons:/run/current-system/sw/share/icons";
+        XCURSOR_PATH   = lib.mkForce "${bibataFixed}/share/icons:/run/current-system/sw/share/icons";
         NIXOS_OZONE_WL = "1";
       };
 
