@@ -216,11 +216,13 @@ in
     apps.niri = {
       type = "app";
       program = "${self'.packages.niri}/bin/niri";
+      meta.description = "Niri scrollable-tiling Wayland compositor";
     };
 
     apps.default = {
       type = "app";
       program = "${self'.packages.niri}/bin/niri";
+      meta.description = "Default session (Niri)";
     };
   };
 }

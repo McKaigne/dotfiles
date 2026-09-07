@@ -1,6 +1,3 @@
-
-# Nushell Config File (Dynamic Palette Integration)
-
 let dynamic_theme = {
     separator: white
     leading_trailing_space_bg: { attr: n }
@@ -107,7 +104,7 @@ $env.config = {
     }
     footer_mode: 25
     float_precision: 2
-    buffer_editor: "nvim"
+    buffer_editor: "emacsclient"
     use_ansi_coloring: true
     bracketed_paste: true
     shell_integration: {
@@ -125,7 +122,7 @@ $env.config = {
     recursion_limit: 50
 
     hooks: {
-        pre_prompt: [{|| 
+        pre_prompt: [{||
             if (which direnv | is-empty) { return }
             try {
                 direnv export json | from json | default {} | load-env
@@ -141,7 +138,6 @@ $env.config = {
     }
 }
 
-# --- Core Abbreviations & Aliases ---
 def --env cx [arg] { cd $arg; ls -l }
 
 alias c = clear
@@ -149,20 +145,18 @@ alias l = ls --all
 alias ll = ls -l
 alias lt = eza --tree --level=2 --long --icons --git
 alias cat = bat --paging=never
-alias v = nvim
+alias v = emacsclient -c -a 'emacs'
 
-# App shortcuts
 alias e = emacsclient -c -a 'emacs'
+alias et = emacsclient -t -a 'emacs'
 alias fm = thunar
 alias y = yazi
 alias f = fetch
 
-# Nix & Rebuild Abbreviations
 alias nr = sudo nixos-rebuild switch --flake /etc/nixos#castor
 alias nfu = nix flake update --flake /etc/nixos
 alias ncd = cd /etc/nixos
 
-# Git Abbreviations
 alias g = git
 alias ga = git add -A
 alias gc = git commit -m
@@ -175,14 +169,12 @@ alias gco = git checkout
 alias gb = git branch
 alias glog = git log --oneline --graph --decorate
 
-# Zoxide Abbreviations
 alias z = __zoxide_z
 alias zi = __zoxide_zi
 alias za = zoxide add
 
 $env.DIRENV_LOG_FORMAT = ""
 
-# --- Sourcing Tools ---
 if ("~/.zoxide.nu" | path expand | path exists) { source ~/.zoxide.nu }
 if ("~/.cache/carapace/init.nu" | path expand | path exists) { source ~/.cache/carapace/init.nu }
 if ("~/.cache/starship/init.nu" | path expand | path exists) { use ~/.cache/starship/init.nu }

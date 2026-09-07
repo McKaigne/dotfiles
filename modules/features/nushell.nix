@@ -1,5 +1,4 @@
 { self, inputs, ... }: {
-  # 1. NixOS Module
   flake.nixosModules.nushell = { pkgs, ... }: {
     programs.nushell.enable = true;
 
@@ -14,7 +13,6 @@
     ];
   };
 
-  # 2. Package & App Wrapper
   perSystem = { pkgs, lib, ... }:
     let
       shellTools = with pkgs; [
@@ -51,10 +49,10 @@
     {
       packages.myNushell = myNushell;
 
-      # Allows `nix run .#nushell`
       apps.nushell = {
         type = "app";
         program = "${myNushell}/bin/nu";
+        meta.description = "Nushell wrapped with custom CLI utilities and configs";
       };
     };
 }

@@ -1,4 +1,3 @@
-
 { self, inputs, ... }: {
   flake.nixosModules.emacs = { pkgs, ... }: {
     environment.systemPackages = [
@@ -26,13 +25,13 @@
         cmake
         ninja
         gnumake
-        nixfmt
+        nixfmt-rfc-style
         shellcheck
         python3
         direnv
         zig_0_16
         bibata-cursors
-        glib # provides gsettings
+        glib
       ];
 
       myEmacs = pkgs.symlinkJoin {
@@ -64,6 +63,7 @@
       apps.emacs = {
         type = "app";
         program = "${myEmacs}/bin/emacs";
+        meta.description = "Doom Emacs wrapped with build tools, LSP servers, and runtime dependencies";
       };
     };
 }

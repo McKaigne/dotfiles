@@ -1,9 +1,7 @@
 { self, inputs, ... }: {
-  flake.nixosModules.cursor = { pkgs, lib, ... }:
+  flake.nixosModules.cursor = { config, pkgs, lib, ... }:
     let
-      cursorTheme = "Bibata-Modern-Classic";
-      cursorSize  = 16;
-
+      cfg = config.cursor;
       bibataFixed = pkgs.runCommand "bibata-modern-classic-fixed" { } ''
         mkdir -p $out/share/icons
         cp -r ${pkgs.bibata-cursors}/share/icons/Bibata-Modern-Classic $out/share/icons/Bibata-Modern-Classic
@@ -15,38 +13,55 @@
       '';
     in
     {
-      environment.systemPackages = [ bibataFixed ];
-
-      # Unified cursor environment variables (single source of truth)
-      environment.sessionVariables = {
-        XCURSOR_THEME  = cursorTheme;
-        XCURSOR_SIZE   = toString cursorSize;
-        HYPRCURSOR_THEME = cursorTheme;
-        HYPRCURSOR_SIZE  = toString cursorSize;
-        XCURSOR_PATH   = lib.mkForce "${bibataFixed}/share/icons:/run/current-system/sw/share/icons";
-        NIXOS_OZONE_WL = "1";
+      options.cursor = {
+        theme = lib.mkOption {
+          type = lib.types.str;
+          default = "Bibata-Modern-Classic";
+          description = "System-wide cursor theme name";
+        };
+        size = lib.mkOption {
+          type = lib.types.int;
+          default = 16;
+          description = "System-wide cursor size";
+        };
+        package = lib.mkOption {
+          type = lib.types.package;
+          default = bibataFixed;
+          description = "Cursor package derivation";
+        };
       };
 
-      # System-wide X11/Wayland cursor fallback
-      environment.etc."xdg/icons/default/index.theme".text = ''
-        [Icon Theme]
-        Name=Default
-        Comment=Default Cursor Theme
-        Inherits=${cursorTheme}
-      '';
+      config = {
+        environment.systemPackages = [ cfg.package ];
 
-      # Declarative dconf/GSettings for GTK/GNOME cursor and icon discovery
-      programs.dconf = {
-        enable = true;
-        profiles.user.databases = [{
-          settings = {
-            "org/gnome/desktop/interface" = {
-              cursor-theme = cursorTheme;
-              cursor-size  = lib.gvariant.mkInt32 cursorSize;
-              icon-theme   = "Adwaita";
+        environment.sessionVariables = {
+          XCURSOR_THEME    = cfg.theme;
+          XCURSOR_SIZE     = toString cfg.size;
+          HYPRCURSOR_THEME = cfg.theme;
+          HYPRCURSOR_SIZE  = toString cfg.size;
+          XCURSOR_PATH     = lib.mkForce "${cfg.package}/share/icons:/run/current-system/sw/share/icons";
+          NIXOS_OZONE_WL   = "1";
+        };
+
+        environment.etc."xdg/icons/default/index.theme".text = ''
+          [Icon Theme]
+          Name=Default
+          Comment=Default Cursor Theme
+          Inherits=${cfg.theme}
+        '';
+
+        programs.dconf = {
+          enable = true;
+          profiles.user.databases = [{
+            settings = {
+              "org/gnome/desktop/interface" = {
+                cursor-theme = cfg.theme;
+                cursor-size  = lib.gvariant.mkInt32 cfg.size;
+                icon-theme   = "Adwaita";
+              };
             };
-          };
-        }];
+          }];
+        };
       };
     };
 }

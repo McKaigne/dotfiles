@@ -20,28 +20,22 @@
       home-manager.useGlobalPkgs = true;
       home-manager.useUserPackages = true;
       home-manager.backupFileExtension = "backup";
-      home-manager.extraSpecialArgs = { dotfilesPath = config.dotfiles.path; };
-      home-manager.users.${config.mainUser} = { config, dotfilesPath, ... }:
+      home-manager.extraSpecialArgs = {
+        dotfilesPath = config.dotfiles.path;
+        cursorConfig = config.cursor;
+      };
+      home-manager.users.${config.mainUser} = { config, dotfilesPath, cursorConfig, ... }:
         let
           link = path: config.lib.file.mkOutOfStoreSymlink "${dotfilesPath}/${path}";
         in {
           home.stateVersion = "25.05";
           home.pointerCursor = {
             enable = true;
-            name = "Bibata-Modern-Classic";
-            package = pkgs.bibata-cursors;
-            size = 16;
+            name = cursorConfig.theme;
+            package = cursorConfig.package;
+            size = cursorConfig.size;
             gtk.enable = true;
             x11.enable = true;
-          };
-          xdg.mimeApps = {
-            enable = true;
-            defaultApplications = {
-              "inode/directory" = [ "thunar.desktop" ];
-              "application/x-directory" = [ "thunar.desktop" ];
-              "inode/mount-point" = [ "thunar.desktop" ];
-              "x-scheme-handler/file" = [ "thunar.desktop" ];
-            };
           };
           xdg.configFile = {
             "niri/config.kdl".source = link "niri/config.kdl";
