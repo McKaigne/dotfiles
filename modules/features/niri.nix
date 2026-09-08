@@ -18,9 +18,12 @@ let
           cursor = {
             xcursor-theme = "Bibata-Modern-Classic";
             xcursor-size = 16;
+            hide-when-typing = { };
+            hide-after-inactive-ms = 1000;
           };
 
           input = {
+            warp-mouse-to-focus = { };
             focus-follows-mouse = { };
             keyboard = {
               xkb = {
