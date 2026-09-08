@@ -26,6 +26,13 @@
   (doom-nano-modeline-mode 1)
   (global-hide-mode-line-mode 1))
 
+;; Treemacs: allow window hopping (other-window, ace-window, evil-window) into treemacs
+(after! treemacs
+  (setq treemacs-is-never-other-window nil)
+  (setq treemacs-select-when-already-in-treemacs 'move-back)
+  (when (boundp 'aw-ignored-buffers)
+    (setq aw-ignored-buffers (remove 'treemacs-mode aw-ignored-buffers))))
+
 ;; Org
 (setq org-directory "~/org/")
 

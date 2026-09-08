@@ -21,6 +21,7 @@
         git
         ripgrep
         fd
+        gcc
         llvm.clang-tools
         cmake
         ninja
