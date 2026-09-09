@@ -168,7 +168,6 @@ let
             default-column-width = { proportion = 0.5; };
             focus-ring = {
               width = 2;
-              active-color = "#74c7ec";
             };
           };
 

@@ -5,6 +5,7 @@
     nixpkgs.config.allowUnfreePredicate = pkg:
       builtins.elem (lib.getName pkg) [
         "antigravity-cli"
+        "zed-editor"
       ];
 
     environment.systemPackages = with pkgs; [
@@ -43,6 +44,14 @@
       kdePackages.kdenlive
       mpv
       obs-studio
+
+      # Editors, Viewers, Browsers & Multiplexer
+      helix
+      zed-editor
+      zathura
+      feh
+      tmux
+      inputs.zen-browser.packages.${pkgs.stdenv.hostPlatform.system}.default
     ];
 
     fonts.packages = with pkgs; [

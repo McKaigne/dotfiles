@@ -1,11 +1,7 @@
 ;;; $DOOMDIR/config.el -*- lexical-binding: t; -*-
 
-;;; Identity
-(setq user-full-name "Pollux"
-      user-mail-address "pollux@castor.local")
-
 ;;; UI: theme, fonts, dashboard
-(setq doom-theme 'doom-nano-light)
+(setq doom-theme 'noctalia)
 (setq doom-font (font-spec :family "Maple Mono NF" :size 14))
 (setq display-line-numbers-type 'relative)
 
@@ -26,7 +22,7 @@
   (doom-nano-modeline-mode 1)
   (global-hide-mode-line-mode 1))
 
-;; Treemacs: allow window hopping (other-window, ace-window, evil-window) into treemacs
+;; Treemacs: allow window hopping into treemacs
 (after! treemacs
   (setq treemacs-is-never-other-window nil)
   (setq treemacs-select-when-already-in-treemacs 'move-back)

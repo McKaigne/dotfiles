@@ -1,0 +1,12 @@
+[opener]
+edit = [
+  { run = 'hx "$@"', block = true, desc = "Helix" }
+]
+
+[open]
+rules = [
+  { name = "*/", use = [ "edit", "open", "reveal" ] },
+  { mime = "text/*", use = [ "edit", "reveal" ] },
+  { mime = "application/{json,javascript,wine-extension-ini}", use = [ "edit", "reveal" ] },
+  { mime = "application/x-{bat,shellscript}", use = [ "edit", "reveal" ] },
+]
