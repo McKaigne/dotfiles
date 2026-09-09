@@ -21,7 +21,7 @@ in
         background = "#1e2326f0";
         color = "#d3c6aa";
         border = "#a7c080";
-        border_width = 1;
+        border_width = 2;
         corner_r = 4;
         padding = 15;
         rows_per_column = 6;
@@ -30,11 +30,6 @@ in
         separator = " ➜ ";
         inhibit_compositor_keyboard_shortcuts = true;
         menu = [
-          {
-            key = [ "󱁐" "space" ];
-            desc = "Launcher";
-            cmd = "${noctaliaBin} ipc call launcher toggle || noctalia msg panel-toggle launcher";
-          }
           {
             key = "t";
             desc = "Terminal";
