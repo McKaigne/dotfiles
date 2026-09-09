@@ -48,6 +48,18 @@ layout {
     }
 }
 
+// Pre-declared workspaces for Noctalia bar widget
+workspace "w0"
+workspace "w1"
+workspace "w2"
+workspace "w3"
+workspace "w4"
+workspace "w5"
+workspace "w6"
+workspace "w7"
+workspace "w8"
+workspace "w9"
+
 spawn-at-startup "noctalia-shell"
 spawn-at-startup "sh" "-c" "sleep 1 && noctalia-shell ipc call wallpaper set \"$HOME/Pictures/Wallpapers/wallpaper.jpg\""
 xwayland-satellite
@@ -120,7 +132,7 @@ binds {
     Mod+Shift+S { spawn "sh" "-c" "grim -g \"$(slurp -w 0)\" - | wl-copy"; }
     Print { spawn "sh" "-c" "grim -l 0 - | wl-copy"; }
 
-    // Audio & Brightness (snapped to multiples of 5%, min 5% to prevent blackout)
+    // Audio & Brightness (snapped to multiples of 5%, min 5%)
     XF86MonBrightnessUp { spawn "sh" "-c" "pct=$(brightnessctl -m | cut -d, -f4 | tr -d '%'); new=$(( (pct / 5 * 5) + 5 )); [ $new -gt 100 ] && new=100; brightnessctl set ${new}%"; }
     XF86MonBrightnessDown { spawn "sh" "-c" "pct=$(brightnessctl -m | cut -d, -f4 | tr -d '%'); new=$(( ((pct - 1) / 5 * 5) )); [ $new -lt 5 ] && new=5; brightnessctl set ${new}%"; }
     XF86AudioRaiseVolume { spawn "wpctl" "set-volume" "-l" "1.4" "@DEFAULT_AUDIO_SINK@" "5%+"; }
