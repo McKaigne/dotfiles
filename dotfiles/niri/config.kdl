@@ -119,11 +119,11 @@ binds {
     Mod+Shift+S { spawn "sh" "-c" "grim -g \"$(slurp -w 0)\" - | wl-copy"; }
     Print { spawn "sh" "-c" "grim -l 0 - | wl-copy"; }
 
-    // Audio & Brightness (with min-value guard to prevent screen blackouts)
-    XF86MonBrightnessUp { spawn "brightnessctl" "s" "5%+"; }
-    XF86MonBrightnessDown { spawn "brightnessctl" "s" "5%-" "-n" "1"; }
-    XF86AudioRaiseVolume { spawn "wpctl" "set-volume" "-l" "1.4" "@DEFAULT_AUDIO_SINK@" "2%+"; }
-    XF86AudioLowerVolume { spawn "wpctl" "set-volume" "-l" "1.4" "@DEFAULT_AUDIO_SINK@" "2%-"; }
+    // Audio & Brightness (snapped to multiples of 5%, min 5% to prevent blackout)
+    XF86MonBrightnessUp { spawn "sh" "-c" "pct=$(brightnessctl -m | cut -d, -f4 | tr -d '%'); new=$(( (pct / 5 * 5) + 5 )); [ $new -gt 100 ] && new=100; brightnessctl set ${new}%"; }
+    XF86MonBrightnessDown { spawn "sh" "-c" "pct=$(brightnessctl -m | cut -d, -f4 | tr -d '%'); new=$(( ((pct - 1) / 5 * 5) )); [ $new -lt 5 ] && new=5; brightnessctl set ${new}%"; }
+    XF86AudioRaiseVolume { spawn "wpctl" "set-volume" "-l" "1.4" "@DEFAULT_AUDIO_SINK@" "5%+"; }
+    XF86AudioLowerVolume { spawn "wpctl" "set-volume" "-l" "1.4" "@DEFAULT_AUDIO_SINK@" "5%-"; }
     XF86AudioMute { spawn "wpctl" "set-mute" "@DEFAULT_AUDIO_SINK@" "toggle"; }
     Mod+Shift+M { spawn "wpctl" "set-mute" "@DEFAULT_AUDIO_SINK@" "toggle"; }
     XF86AudioMicMute { spawn "wpctl" "set-mute" "@DEFAULT_AUDIO_SOURCE@" "toggle"; }
