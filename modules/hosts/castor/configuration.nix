@@ -2,20 +2,22 @@
   flake.nixosModules.castorConfiguration = { config, pkgs, lib, ... }: {
     imports = [
       self.nixosModules.castorHardware
-      self.nixosModules.homeManager
+      self.nixosModules.user
       self.nixosModules.niri
       self.nixosModules.nushell
       self.nixosModules.emacs
       self.nixosModules.helix
       self.nixosModules.tmux
+      self.nixosModules.ghostty
+      self.nixosModules.yazi
+      self.nixosModules.cava
+      self.nixosModules.fuzzel
       self.nixosModules.helium
       self.nixosModules.desktop
       self.nixosModules.kanata
       self.nixosModules.thunar
       self.nixosModules.cursor
     ];
-
-    dotfiles.path = "/etc/nixos/dotfiles";
 
     nixpkgs.config.allowUnfree = true;
 
@@ -24,11 +26,9 @@
     networking.hostName = "castor";
     time.timeZone = "Asia/Manila";
 
-    # Bootloader
     boot.loader.systemd-boot.enable = true;
     boot.loader.efi.canTouchEfiVariables = true;
 
-    # Hardware & Audio DSP Firmware (Intel Tiger Lake SOF)
     hardware.enableRedistributableFirmware = true;
     hardware.firmware = with pkgs; [
       sof-firmware
@@ -40,14 +40,12 @@
     services.upower.enable = true;
     services.openssh.enable = true;
 
-    # Bluetooth
     hardware.bluetooth = {
       enable = true;
       powerOnBoot = true;
     };
     services.blueman.enable = true;
 
-    # Display Manager (Autologin to Niri)
     services.greetd = {
       enable = true;
       settings = {
@@ -58,7 +56,6 @@
       };
     };
 
-    # Audio (PipeWire + WirePlumber)
     security.rtkit.enable = true;
     services.pipewire = {
       enable = true;
@@ -68,7 +65,6 @@
       wireplumber.enable = true;
     };
 
-    # User Account
     users.users.${config.mainUser} = {
       isNormalUser = true;
       extraGroups = [ "wheel" "networkmanager" "video" "audio" "input" "uinput" ];

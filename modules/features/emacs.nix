@@ -1,4 +1,4 @@
-{ self, inputs, ... }: {
+{ self, ... }: {
   flake.nixosModules.emacs = { pkgs, ... }: {
     environment.systemPackages = [
       self.packages.${pkgs.stdenv.hostPlatform.system}.myEmacs
@@ -35,6 +35,8 @@
         glib
       ];
 
+      doomDir = ./emacs/doom;
+
       myEmacs = pkgs.symlinkJoin {
         name = "emacs";
         paths = [ pkgs.emacs-pgtk ];
@@ -44,6 +46,7 @@
             --prefix PATH : ${lib.makeBinPath doomRuntimeDeps} \
             --prefix CPLUS_INCLUDE_PATH : "${cxxHeaders}" \
             --prefix CPATH : "${cxxHeaders}" \
+            --set-default DOOMDIR "${doomDir}" \
             --set XCURSOR_THEME "Bibata-Modern-Classic" \
             --set XCURSOR_SIZE "16" \
             --prefix XCURSOR_PATH : "${iconPath}"
@@ -52,6 +55,7 @@
             --prefix PATH : ${lib.makeBinPath doomRuntimeDeps} \
             --prefix CPLUS_INCLUDE_PATH : "${cxxHeaders}" \
             --prefix CPATH : "${cxxHeaders}" \
+            --set-default DOOMDIR "${doomDir}" \
             --set XCURSOR_THEME "Bibata-Modern-Classic" \
             --set XCURSOR_SIZE "16" \
             --prefix XCURSOR_PATH : "${iconPath}"
@@ -64,7 +68,7 @@
       apps.emacs = {
         type = "app";
         program = "${myEmacs}/bin/emacs";
-        meta.description = "Doom Emacs wrapped with build tools, LSP servers, and runtime dependencies";
+        meta.description = "Doom Emacs wrapped with build tools, LSP servers, and in-store DOOMDIR";
       };
     };
 }

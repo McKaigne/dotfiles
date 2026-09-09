@@ -2,88 +2,104 @@
 
 ## Table of Contents
 
-1. [Dendritic system](#1-dendritic-system)
-2. [Software](#2-software)
-3. [File structure](#3-file-structure)
-4. [Key conventions](#4-key-conventions)
-5. [The dotfiles system](#5-the-dotfiles-system)
+1. [Dendritic & Hermetic Architecture](#1-dendritic--hermetic-architecture)
+2. [Software & Packaging](#2-software--packaging)
+3. [File Structure](#3-file-structure)
+4. [Key Conventions](#4-key-conventions)
+5. [Noctalia Theming Exception](#5-noctalia-theming-exception)
 6. [Keybindings](#6-keybindings)
-7. [Daily tasks](#7-daily-tasks)
+7. [Daily Tasks](#7-daily-tasks)
 8. [Run without NixOS](#8-run-without-nixos)
-9. [Install on new machine](#9-install-on-new-machine)
+9. [Install on New Machine](#9-install-on-new-machine)
 
 ---
 
-## 1. Dendritic system
+## 1. Dendritic & Hermetic Architecture
 
-Every file in `modules/` is discovered and imported automatically via `import-tree` into `flake-parts`.
+This workstation implements the **Dendritic Pattern** combined with the **Hermetic Wrapping Doctrine**:
 
-- `flake-parts`: Structures modular outputs (`flake.*`, `perSystem.*`).
-- `import-tree`: Recursively discovers `.nix` files without manual imports in `flake.nix`.
-- `wrapper-modules`: Packages applications (Niri, Noctalia, Nushell, Emacs, Helium) with bundled dependencies.
-- `home-manager`: Links `dotfiles/` to `~/.config` via out-of-store symlinks.
-
----
-
-## 2. Software
-
-| Function | Program |
-| :--- | :--- |
-| OS | NixOS (unstable) |
-| Window Manager | Niri (wrapped, mouse warp to center, auto-hide cursor) |
-| Shell Bar / UI | Noctalia (wrapped, persistent state in `~/.local/state/noctalia`) |
-| Key Remapper | Kanata |
-| Text Editor | Doom Emacs (wrapped with GCC, LSP tools, noctalia theme) |
-| Default Editor | `emacsclient` |
-| Shell | Nushell (wrapped) |
-| Terminal | Ghostty (smear cursor GLSL shader), Foot |
-| File Manager | Thunar (Adwaita icons + xfconf), Yazi |
-| Web Browser | Helium (wrapped Wayland + cursor) |
-| Video Editor | Kdenlive (`kdePackages.kdenlive`) |
-| Media Player | MPV |
-| Screen Recording | OBS Studio |
-| Audio Server | PipeWire + WirePlumber + Intel SOF Firmware |
-| Cursor Theme | Bibata Modern Classic (via `options.cursor` in `cursor.nix`) |
-| Font | Maple Mono NF |
+- **flake-parts + import-tree:** Every file in `modules/` is automatically discovered and imported as a flake-parts module. There are zero module imports in `flake.nix`.
+- **No Home Manager & No Dotfiles:** Static application configurations are not symlinked into `~/.config/`. Instead, every tool is hermetically wrapped with its runtime dependencies and in-store configuration files.
+- **Portability:** Applications can be run on any machine via `nix run github:McKaigne/dotfiles#<app>` without requiring NixOS or pre-existing home directory state.
 
 ---
 
-## 3. File structure
+## 2. Software & Packaging
 
-```
+| Function | Program | Implementation |
+| :--- | :--- | :--- |
+| OS | NixOS (unstable) | Dendritic system modules |
+| Window Manager | Niri | Wrapped with in-store `config.kdl` + runtime Noctalia hook |
+| Shell Bar / UI | Noctalia | Wrapped via `wrapper-modules` |
+| Key Remapper | Kanata | `services.kanata` (home-row mods, combos) |
+| Primary Editor | Doom Emacs | Wrapped with compiler/LSP toolchains & in-store `DOOMDIR` |
+| Secondary Editor | Helix (`hx`) | Wrapped with in-store `config.toml` (all-mode block cursors) |
+| Shell | Nushell | Wrapped with in-store `config.nu`, `env.nu`, and Starship |
+| Terminal | Ghostty | Wrapped with in-store config & GLSL smear shader |
+| Multiplexer | Tmux | Wrapped with in-store `tmux.conf` & `dotbar` plugin |
+| File Managers | Thunar, Yazi | Thunar via system `/etc/xdg`, Yazi hermetically wrapped |
+| Audio Visualizer | CAVA | Wrapped with in-store audio configuration |
+| Launcher | Fuzzel | Wrapped with in-store INI + runtime Noctalia hook |
+| Web Browser | Helium | Wrapped with Ozone Wayland and GSettings schemas |
+| Audio Server | PipeWire | PipeWire + WirePlumber + Intel SOF DSP Firmware |
+| Cursor Theme | Bibata Modern Classic | System-wide via `cursor.nix` (legacy X11 fixes) |
+| Font | Maple Mono NF | `fonts.packages` |
+
+---
+
+## 3. File Structure
 /etc/nixos/
-├── flake.nix            # Flake inputs and import-tree call
-├── flake.lock           # Pinned lockfile
-├── README.md            # System documentation
-├── dotfiles/            # Out-of-store live config files
+├── flake.nix # Flake inputs and import-tree call only
+├── flake.lock # Pinned lockfile
+├── README.md # System documentation
 └── modules/
-    ├── systems.nix      # Target architectures
-    ├── hosts/castor/    # Host config, hardware mounts, user
-    └── features/        # Dendritic system features
-```
+├── systems.nix # Target architectures (x86_64-linux, aarch64-linux)
+├── hosts/castor/ # Host configuration, hardware mounts, system default
+│ ├── configuration.nix
+│ ├── hardware.nix
+│ └── default.nix
+└── features/ # Dendritic feature modules:
+├── user.nix # options.mainUser (pollux)
+├── cursor.nix # options.cursor (Bibata-Modern-Classic, dconf)
+├── desktop.nix # Core desktop packages, fonts, MIME associations
+├── emacs/ # In-store Doom Emacs configuration tree
+├── emacs.nix # Wrapped Emacs derivation (LLVM 18, GCC, DOOMDIR)
+├── ghostty.nix # Wrapped Ghostty with embedded GLSL smear shader
+├── helix.nix # Wrapped Helix with in-store config.toml
+├── helium.nix # Wrapped browser with GTK3/GSettings support
+├── kanata.nix # Remapper (home-row mods, word navigation combos)
+├── niri.nix # Wrapped Niri compositor with in-store config.kdl
+├── noctalia.nix # Wrapped Noctalia shell package
+├── nushell.nix # Wrapped Nushell with in-store config.nu, env.nu, starship
+├── thunar.nix # Thunar + xfconf + archive backends + /etc/xdg actions
+├── tmux.nix # Wrapped Tmux with in-store tmux.conf and dotbar
+├── yazi.nix # Wrapped Yazi with in-store yazi.toml
+├── cava.nix # Wrapped CAVA with in-store audio config
+└── fuzzel.nix # Wrapped Fuzzel launcher with in-store fuzzel.ini
+---
+
+## 4. Key Conventions
+
+1. **User Parameterization:** Configured via `options.mainUser` in `modules/features/user.nix`. All modules reference `config.mainUser`.
+2. **Dendritic Cohesion:** Feature derivations, apps, packages, and system modules live together in `modules/features/<name>.nix`.
+3. **Nix Multiline String Escaping:** Literal `${...}` inside `'' ... ''` multiline strings must be escaped as `''${...}`.
+4. **No Static Dotfiles:** Do not create static files in `~/.config/`. Embed configurations into feature wrappers.
 
 ---
 
-## 4. Key conventions
+## 5. Noctalia Theming Exception
 
-1. **Username:** Set once in `options.mainUser` (`home-manager.nix`). All modules use `config.mainUser`.
-2. **Dotfiles Path:** Centralized as `config.dotfiles.path` (defaults to `/etc/nixos/dotfiles`).
-3. **Cursor:** Centralized in `cursor.nix` (`options.cursor.theme`, `options.cursor.size`, `options.cursor.package`).
-4. **Linter:** Always run `nix flake check --no-build` before committing.
+The only files residing in `~/.config/` are dynamic theme files generated at runtime by Noctalia shell when switching wallpapers:
 
----
-
-## 5. The dotfiles system
-
-Home Manager links `~/.config/<name>` directly to `/etc/nixos/dotfiles/<name>`. Changes in `dotfiles/` take effect immediately without rebuilds.
+- `~/.config/niri/noctalia.kdl` $\rightarrow$ Included dynamically by Niri (`include optional=true`).
+- `~/.config/fuzzel/themes/noctalia` $\rightarrow$ Included dynamically by Fuzzel.
+- `~/.config/gtk-3.0/noctalia.css` & `4.0` $\rightarrow$ Imported system-wide via `/etc/xdg/gtk-*/gtk.css`.
 
 ---
 
 ## 6. Keybindings
 
-### 6.1 Kanata
-
-**Home row mods:**
+### 6.1 Kanata Home-Row Mods & Combos
 
 | Key | Tap | Hold |
 | :--- | :--- | :--- |
@@ -91,30 +107,26 @@ Home Manager links `~/.config/<name>` directly to `/etc/nixos/dotfiles/<name>`. 
 | S | s | Left Ctrl |
 | D | d | Left Super |
 | F | f | Left Shift |
-| J | j | Right Shift |
-| K | k | Right Super |
+| J | j | Right Shift (120 ms) |
+| K | k | Right Super (120 ms) |
 | L | l | Right Ctrl |
 | ; | ; | Right Alt |
 
-Hold time: 200 ms (J and K use 120 ms). Combo window: 35 ms.
-
-**Combos:**
-
-| Keys | Action |
+| Combos | Action |
 | :--- | :--- |
 | U + I | Ctrl + Backspace (Delete Word Left) |
 | I + O | Ctrl + Delete (Delete Word Right) |
 | N + M | Tab |
-| M + , | Browser tab left (Ctrl+PgUp) |
-| , + . | Browser tab right (Ctrl+PgDn) |
+| M + , | Tab Left (Ctrl + PgUp) |
+| , + . | Tab Right (Ctrl + PgDn) |
 | Z + X | Undo |
 | A + Z | Redo |
 | X + C | Copy |
 | C + V | Paste |
 | X + V | Cut |
-| Z + V | Select all |
+| Z + V | Select All |
 
-### 6.2 Niri
+### 6.2 Niri Compositor
 
 | Key | Action |
 | :--- | :--- |
@@ -127,62 +139,48 @@ Hold time: 200 ms (J and K use 120 ms). Combo window: 35 ms.
 | Mod + V | Toggle Noctalia clipboard |
 | Mod + I | Toggle Noctalia settings |
 | Mod + P | Toggle Noctalia session menu |
+| Mod + T | Toggle Noctalia wallpaper switcher |
 | Mod + Shift + B | Toggle Noctalia bar |
 | Mod + Shift + S | Screenshot region |
 | Mod + Q | Close window |
 | Mod + F | Maximize column |
-| Mod + H / L | Focus left / right (warps mouse to center) |
+| Mod + H / L | Focus column left / right (pointer warps to center) |
 | Mod + J / K | Focus workspace down / up |
 | Mod + 0–9 | Switch workspace w0–w9 |
 
-### 6.3 Nushell Shortcuts
-
-| Command | Action |
-| :--- | :--- |
-| `nr` | Rebuild system (`sudo nixos-rebuild switch --flake /etc/nixos#castor`) |
-| `nfu` | Update flake inputs |
-| `ncd` | `cd /etc/nixos` |
-| `e <file>` | Open graphical Emacs client |
-| `et <file>` | Open terminal Emacs client |
-| `v <file>` | Alias to `e` |
-| `h <file>` / `h.` | Open Helix |
-| `t` / `ta` / `tls` | Tmux shortcuts |
-| `ga` | `git add -A` |
-| `gc "msg"` | `git commit -m "msg"` |
-| `gp` | `git push` |
-
 ---
 
-## 7. Daily tasks
+## 7. Daily Tasks
 
-### Edit system setting
+### Edit a Feature or App Configuration
 ```bash
-e /etc/nixos/modules/features/foo.nix
-nix flake check --no-build
+e /etc/nixos/modules/features/ghostty.nix
 ga
+nix flake check --no-build
 nr
-gc "feat(foo): describe change"
+gc "feat(ghostty): update terminal settings"
 gp
-```
-
-### Edit dotfile
-```bash
-e /etc/nixos/dotfiles/ghostty/config
 ```
 
 ---
 
 ## 8. Run without NixOS
 
+All primary tools can be run on any Linux distribution with Nix:
+
 ```bash
-nix run github:McKaigne/dotfiles          # Niri
-nix run github:McKaigne/dotfiles#emacs    # Doom Emacs
-nix run github:McKaigne/dotfiles#nushell  # Nushell
+nix run github:McKaigne/dotfiles#helix
+nix run github:McKaigne/dotfiles#ghostty
+nix run github:McKaigne/dotfiles#tmux
+nix run github:McKaigne/dotfiles#yazi
+nix run github:McKaigne/dotfiles#nushell
+nix run github:McKaigne/dotfiles#emacs
+nix run github:McKaigne/dotfiles          # Launch Niri session
 ```
 
 ---
 
-## 9. Install on new machine
+## 9. Install on New Machine
 
 1. Boot live USB and mount partitions to `/mnt`.
 2. Clone repository:
