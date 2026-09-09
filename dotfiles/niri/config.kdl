@@ -60,6 +60,7 @@ binds {
     Mod+V { spawn "sh" "-c" "noctalia-shell ipc call launcher clipboard || noctalia msg panel-toggle clipboard"; }
     Mod+I { spawn "sh" "-c" "noctalia-shell ipc call settings toggle || noctalia msg settings-toggle"; }
     Mod+P { spawn "sh" "-c" "noctalia-shell ipc call sessionMenu toggle || noctalia msg panel-toggle session-menu"; }
+    Mod+T { spawn "sh" "-c" "noctalia-shell ipc call wallpaper toggle || noctalia-shell ipc call wallpaperSelector toggle || noctalia msg panel-toggle wallpaper || noctalia msg panel-toggle wallpaper-selector"; }
 
     // Applications
     Mod+Return { spawn "ghostty"; }
