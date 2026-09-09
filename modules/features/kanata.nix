@@ -1,5 +1,6 @@
-{ self, inputs, ... }: {
-  flake.nixosModules.kanata = { pkgs, ... }: {
+{ ... }:
+let
+  kanataModule = { ... }: {
     hardware.uinput.enable = true;
 
     services.kanata = {
@@ -65,4 +66,8 @@
       };
     };
   };
+in
+{
+  flake.nixosModules.kanata = kanataModule;
+  flake.nixosModules.castorConfiguration = kanataModule;
 }

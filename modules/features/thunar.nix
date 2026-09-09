@@ -1,5 +1,6 @@
-{ self, ... }: {
-  flake.nixosModules.thunar = { pkgs, ... }: {
+{ ... }:
+let
+  thunarModule = { pkgs, ... }: {
     programs.thunar = {
       enable = true;
       plugins = with pkgs; [
@@ -89,4 +90,8 @@
       TERMINAL = "ghostty";
     };
   };
+in
+{
+  flake.nixosModules.thunar = thunarModule;
+  flake.nixosModules.castorConfiguration = thunarModule;
 }

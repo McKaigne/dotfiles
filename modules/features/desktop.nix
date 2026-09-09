@@ -1,5 +1,6 @@
-{ self, ... }: {
-  flake.nixosModules.desktop = { config, pkgs, lib, ... }: {
+{ self, ... }:
+let
+  desktopModule = { config, pkgs, lib, ... }: {
     security.pam.services.hyprlock = { };
 
     nixpkgs.config.allowUnfreePredicate = pkg:
@@ -78,4 +79,8 @@
       nerd-fonts.symbols-only
     ];
   };
+in
+{
+  flake.nixosModules.desktop = desktopModule;
+  flake.nixosModules.castorConfiguration = desktopModule;
 }

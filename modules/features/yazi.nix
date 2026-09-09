@@ -1,9 +1,14 @@
-{ self, ... }: {
-  flake.nixosModules.yazi = { pkgs, ... }: {
+{ self, ... }:
+let
+  nixosModule = { pkgs, ... }: {
     environment.systemPackages = [
       self.packages.${pkgs.stdenv.hostPlatform.system}.yazi
     ];
   };
+in
+{
+  flake.nixosModules.yazi = nixosModule;
+  flake.nixosModules.castorConfiguration = nixosModule;
 
   perSystem = { pkgs, ... }:
     let

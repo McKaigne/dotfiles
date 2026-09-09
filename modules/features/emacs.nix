@@ -1,15 +1,20 @@
-{ self, ... }: {
-  flake.nixosModules.emacs = { pkgs, ... }: {
+{ self, ... }:
+let
+  nixosModule = { pkgs, ... }: {
     environment.systemPackages = [
-      self.packages.${pkgs.stdenv.hostPlatform.system}.myEmacs
+      self.packages.${pkgs.stdenv.hostPlatform.system}.emacs
     ];
 
     services.emacs = {
       enable = true;
-      package = self.packages.${pkgs.stdenv.hostPlatform.system}.myEmacs;
+      package = self.packages.${pkgs.stdenv.hostPlatform.system}.emacs;
       defaultEditor = true;
     };
   };
+in
+{
+  flake.nixosModules.emacs = nixosModule;
+  flake.nixosModules.castorConfiguration = nixosModule;
 
   perSystem = { pkgs, lib, ... }:
     let
@@ -63,6 +68,7 @@
       };
     in
     {
+      packages.emacs = myEmacs;
       packages.myEmacs = myEmacs;
 
       apps.emacs = {

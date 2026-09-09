@@ -1,5 +1,6 @@
-{ self, inputs, ... }: {
-  flake.nixosModules.cursor = { config, pkgs, lib, ... }:
+{ self, inputs, ... }:
+let
+  cursorModule = { config, pkgs, lib, ... }:
     let
       cfg = config.cursor;
       bibataFixed = pkgs.runCommand "bibata-modern-classic-fixed" { } ''
@@ -66,4 +67,8 @@
         };
       };
     };
+in
+{
+  flake.nixosModules.cursor = cursorModule;
+  flake.nixosModules.castorConfiguration = cursorModule;
 }

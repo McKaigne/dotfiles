@@ -1,9 +1,14 @@
-{ self, ... }: {
-  flake.nixosModules.helix = { pkgs, ... }: {
+{ self, ... }:
+let
+  nixosModule = { pkgs, ... }: {
     environment.systemPackages = [
       self.packages.${pkgs.stdenv.hostPlatform.system}.helix
     ];
   };
+in
+{
+  flake.nixosModules.helix = nixosModule;
+  flake.nixosModules.castorConfiguration = nixosModule;
 
   perSystem = { pkgs, ... }:
     let

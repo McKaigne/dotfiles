@@ -1,9 +1,14 @@
-{ self, ... }: {
-  flake.nixosModules.fuzzel = { pkgs, ... }: {
+{ self, ... }:
+let
+  nixosModule = { pkgs, ... }: {
     environment.systemPackages = [
       self.packages.${pkgs.stdenv.hostPlatform.system}.fuzzel
     ];
   };
+in
+{
+  flake.nixosModules.fuzzel = nixosModule;
+  flake.nixosModules.castorConfiguration = nixosModule;
 
   perSystem = { pkgs, ... }:
     let

@@ -1,17 +1,22 @@
-{ self, ... }: {
-  flake.nixosModules.nushell = { pkgs, ... }: {
+{ self, ... }:
+let
+  nixosModule = { pkgs, ... }: {
     programs.nushell.enable = true;
 
     environment.shells = [
-      self.packages.${pkgs.stdenv.hostPlatform.system}.myNushell
+      self.packages.${pkgs.stdenv.hostPlatform.system}.nushell
     ];
 
-    users.defaultUserShell = self.packages.${pkgs.stdenv.hostPlatform.system}.myNushell;
+    users.defaultUserShell = self.packages.${pkgs.stdenv.hostPlatform.system}.nushell;
 
     environment.systemPackages = [
-      self.packages.${pkgs.stdenv.hostPlatform.system}.myNushell
+      self.packages.${pkgs.stdenv.hostPlatform.system}.nushell
     ];
   };
+in
+{
+  flake.nixosModules.nushell = nixosModule;
+  flake.nixosModules.castorConfiguration = nixosModule;
 
   perSystem = { pkgs, lib, ... }:
     let
@@ -133,10 +138,24 @@
         crust     = "#1e2326"
       '';
 
+      # In-store build-time pre-compilation (zero runtime home-directory pollution)
+      starshipInit = pkgs.runCommand "starship-init.nu" { } ''
+        ${pkgs.starship}/bin/starship init nu > $out
+      '';
+
+      zoxideInit = pkgs.runCommand "zoxide-init.nu" { } ''
+        ${pkgs.zoxide}/bin/zoxide init nushell > $out
+      '';
+
+      carapaceInit = pkgs.runCommand "carapace-init.nu" { } ''
+        ${pkgs.carapace}/bin/carapace _carapace nushell > $out
+      '';
+
       envNu = pkgs.writeText "env.nu" ''
         $env.STARSHIP_CONFIG = "${starshipConfig}"
         $env.EDITOR = "emacsclient -t -a 'emacs'"
         $env.VISUAL = "emacsclient -c -a 'emacs'"
+        $env.CARAPACE_BRIDGES = 'zsh,fish,bash,inshellisense'
 
         $env.ENV_CONVERSIONS = {
             "PATH": {
@@ -160,21 +179,6 @@
         path add ($env.HOME | path join ".nix-profile/bin")
         path add ($env.HOME | path join ".local/bin")
         path add ($env.HOME | path join ".config/emacs/bin")
-
-        let cache_dir = ($env.HOME | path join ".cache")
-        mkdir ($cache_dir | path join "starship")
-        mkdir ($cache_dir | path join "carapace")
-
-        if (which starship | is-not-empty) {
-            starship init nu | save -f ($cache_dir | path join "starship/init.nu")
-        }
-        if (which zoxide | is-not-empty) {
-            zoxide init nushell | save -f ($env.HOME | path join ".zoxide.nu")
-        }
-        if (which carapace | is-not-empty) {
-            $env.CARAPACE_BRIDGES = 'zsh,fish,bash,inshellisense'
-            carapace _carapace nushell | save --force ($cache_dir | path join "carapace/init.nu")
-        }
       '';
 
       configNu = pkgs.writeText "config.nu" ''
@@ -365,9 +369,9 @@
 
         $env.DIRENV_LOG_FORMAT = ""
 
-        if ("~/.zoxide.nu" | path expand | path exists) { source ~/.zoxide.nu }
-        if ("~/.cache/carapace/init.nu" | path expand | path exists) { source ~/.cache/carapace/init.nu }
-        if ("~/.cache/starship/init.nu" | path expand | path exists) { use ~/.cache/starship/init.nu }
+        source ${zoxideInit}
+        source ${carapaceInit}
+        use ${starshipInit}
       '';
 
       myNushell = pkgs.symlinkJoin {
@@ -387,6 +391,7 @@
       };
     in
     {
+      packages.nushell = myNushell;
       packages.myNushell = myNushell;
 
       apps.nushell = {

@@ -1,9 +1,14 @@
-{ self, ... }: {
-  flake.nixosModules.cava = { pkgs, ... }: {
+{ self, ... }:
+let
+  nixosModule = { pkgs, ... }: {
     environment.systemPackages = [
       self.packages.${pkgs.stdenv.hostPlatform.system}.cava
     ];
   };
+in
+{
+  flake.nixosModules.cava = nixosModule;
+  flake.nixosModules.castorConfiguration = nixosModule;
 
   perSystem = { pkgs, ... }:
     let

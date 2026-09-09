@@ -1,11 +1,15 @@
 { inputs, self, ... }:
-{
-  flake.nixosModules.niri = { pkgs, ... }: {
+let
+  nixosModule = { pkgs, ... }: {
     programs.niri = {
       enable = true;
       package = self.packages.${pkgs.stdenv.hostPlatform.system}.niri;
     };
   };
+in
+{
+  flake.nixosModules.niri = nixosModule;
+  flake.nixosModules.castorConfiguration = nixosModule;
 
   perSystem = { pkgs, lib, ... }:
     let

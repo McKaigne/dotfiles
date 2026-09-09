@@ -1,24 +1,5 @@
-{ self, ... }: {
+{ ... }: {
   flake.nixosModules.castorConfiguration = { config, pkgs, lib, ... }: {
-    imports = [
-      self.nixosModules.castorHardware
-      self.nixosModules.user
-      self.nixosModules.niri
-      self.nixosModules.nushell
-      self.nixosModules.emacs
-      self.nixosModules.helix
-      self.nixosModules.tmux
-      self.nixosModules.ghostty
-      self.nixosModules.yazi
-      self.nixosModules.cava
-      self.nixosModules.fuzzel
-      self.nixosModules.helium
-      self.nixosModules.desktop
-      self.nixosModules.kanata
-      self.nixosModules.thunar
-      self.nixosModules.cursor
-    ];
-
     nixpkgs.config.allowUnfree = true;
 
     nix.settings.experimental-features = [ "nix-command" "flakes" ];

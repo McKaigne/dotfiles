@@ -1,5 +1,6 @@
-{ self, inputs, ... }: {
-  flake.nixosModules.castorHardware = { config, lib, pkgs, modulesPath, ... }: {
+{ self, inputs, ... }:
+let
+  hardwareModule = { config, lib, pkgs, modulesPath, ... }: {
     imports = [
       (modulesPath + "/installer/scan/not-detected.nix")
     ];
@@ -26,4 +27,8 @@
     nixpkgs.hostPlatform = lib.mkDefault "x86_64-linux";
     hardware.cpu.intel.updateMicrocode = lib.mkDefault config.hardware.enableRedistributableFirmware;
   };
+in
+{
+  flake.nixosModules.castorHardware = hardwareModule;
+  flake.nixosModules.castorConfiguration = hardwareModule;
 }

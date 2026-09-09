@@ -1,9 +1,14 @@
-{ self, ... }: {
-  flake.nixosModules.ghostty = { pkgs, ... }: {
+{ self, ... }:
+let
+  nixosModule = { pkgs, ... }: {
     environment.systemPackages = [
       self.packages.${pkgs.stdenv.hostPlatform.system}.ghostty
     ];
   };
+in
+{
+  flake.nixosModules.ghostty = nixosModule;
+  flake.nixosModules.castorConfiguration = nixosModule;
 
   perSystem = { pkgs, ... }:
     let

@@ -1,9 +1,14 @@
-{ self, ... }: {
-  flake.nixosModules.tmux = { pkgs, ... }: {
+{ self, ... }:
+let
+  nixosModule = { pkgs, ... }: {
     environment.systemPackages = [
       self.packages.${pkgs.stdenv.hostPlatform.system}.tmux
     ];
   };
+in
+{
+  flake.nixosModules.tmux = nixosModule;
+  flake.nixosModules.castorConfiguration = nixosModule;
 
   perSystem = { pkgs, ... }:
     let
