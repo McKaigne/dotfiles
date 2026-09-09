@@ -48,6 +48,7 @@
               name = "Adwaita";
               package = pkgs.adwaita-icon-theme;
             };
+            gtk4.theme = null;
             gtk3.extraCss = ''
               @import url("file://${config.home.homeDirectory}/.config/gtk-3.0/noctalia.css");
             '';
