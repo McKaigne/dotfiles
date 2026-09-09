@@ -55,13 +55,14 @@ in
         inhibit_compositor_keyboard_shortcuts = true;
         menu = [
           {
-            key = [ "space" " " ];
-            desc = "󱓞  Noctalia Launcher";
+            key = [ "󱁐" "space" " " ];
+            desc = "󱓞  Launcher";
             cmd = "${noctaliaBin} ipc call launcher toggle || noctalia msg panel-toggle launcher";
           }
           {
             key = "t";
-            desc = "  Terminal & Tools";
+            name = "Terminal";
+            desc = "+  Terminal";
             submenu = [
               {
                 key = "a";
@@ -92,7 +93,8 @@ in
           }
           {
             key = "l";
-            desc = "󱅻  LocalSend Transfer";
+            name = "LocalSend";
+            desc = "+󱅻  LocalSend";
             submenu = [
               {
                 key = "c";
@@ -118,7 +120,8 @@ in
           }
           {
             key = "n";
-            desc = "󱨦  Noctalia & Controls";
+            name = "Noctalia";
+            desc = "+󱨦  Noctalia";
             submenu = [
               {
                 key = "l";
@@ -159,7 +162,8 @@ in
           }
           {
             key = "w";
-            desc = "󰖲  Window & Layout";
+            name = "Window";
+            desc = "+󰖲  Window";
             submenu = [
               {
                 key = "o";
@@ -183,7 +187,7 @@ in
               }
               {
                 key = "w";
-                desc = "󰹚  Maximize Column";
+                desc = "󰹚  Full Width (Maximize)";
                 cmd = "${niriBin} msg action maximize-column";
               }
               {
@@ -205,11 +209,12 @@ in
           }
           {
             key = "s";
-            desc = "󰐥  System & Power";
+            name = "System";
+            desc = "+󰐥  System";
             submenu = [
               {
                 key = "s";
-                desc = "󰐥  Noctalia Power Menu";
+                desc = "󰐥  Power / Session Menu";
                 cmd = "${noctaliaBin} ipc call sessionMenu toggle || noctalia msg panel-toggle session-menu";
               }
               {
@@ -245,9 +250,9 @@ in
         # 1. Extract dynamic palette from live Noctalia theme
         FUZZEL_THEME="$HOME/.config/fuzzel/themes/noctalia"
         if [ -f "$FUZZEL_THEME" ]; then
-            raw_bg=$(${pkgs.gnugrep}/bin/grep -E '^background=' "$FUZZEL_THEME" 2>/dev/null | ${pkgs.coreutils}/bin/cut -d= -f2 | ${pkgs.coreutils}/bin/tr -d ' #' | ${pkgs.coreutils}/bin/cut -c1-6 || true)
-            raw_fg=$(${pkgs.gnugrep}/bin/grep -E '^text=' "$FUZZEL_THEME" 2>/dev/null | ${pkgs.coreutils}/bin/cut -d= -f2 | ${pkgs.coreutils}/bin/tr -d ' #' | ${pkgs.coreutils}/bin/cut -c1-6 || true)
-            raw_border=$(${pkgs.gnugrep}/bin/grep -E '^(match|border)=' "$FUZZEL_THEME" 2>/dev/null | ${pkgs.coreutils}/bin/head -n1 | ${pkgs.coreutils}/bin/cut -d= -f2 | ${pkgs.coreutils}/bin/tr -d ' #' | ${pkgs.coreutils}/bin/cut -c1-6 || true)
+            raw_bg=$(${pkgs.gnugrep}/bin/grep -E '^background=' "$FUZZEL_THEME" 2>/dev/null | ${pkgs.coreutils}/bin/cut -d= -f2 | ${pkgs.coreutils}/bin/tr -d ' #' | cut -c1-6 || true)
+            raw_fg=$(${pkgs.gnugrep}/bin/grep -E '^text=' "$FUZZEL_THEME" 2>/dev/null | ${pkgs.coreutils}/bin/cut -d= -f2 | ${pkgs.coreutils}/bin/tr -d ' #' | cut -c1-6 || true)
+            raw_border=$(${pkgs.gnugrep}/bin/grep -E '^(match|border)=' "$FUZZEL_THEME" 2>/dev/null | ${pkgs.coreutils}/bin/head -n1 | ${pkgs.coreutils}/bin/cut -d= -f2 | ${pkgs.coreutils}/bin/tr -d ' #' | cut -c1-6 || true)
 
             [ -n "$raw_bg" ] && [ "''${#raw_bg}" -eq 6 ] && BG="#''${raw_bg}f2"
             [ -n "$raw_fg" ] && [ "''${#raw_fg}" -eq 6 ] && FG="#''${raw_fg}"
