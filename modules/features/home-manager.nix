@@ -57,6 +57,25 @@
             '';
           };
 
+          xdg.mimeApps = {
+            enable = true;
+            defaultApplications = {
+              "inode/directory" = [ "thunar.desktop" ];
+              "application/x-directory" = [ "thunar.desktop" ];
+              "inode/mount-point" = [ "thunar.desktop" ];
+              "x-scheme-handler/file" = [ "thunar.desktop" ];
+              "text/plain" = [ "emacsclient.desktop" "dev.zed.Zed.desktop" ];
+              "text/x-c" = [ "emacsclient.desktop" "dev.zed.Zed.desktop" ];
+              "text/x-c++src" = [ "emacsclient.desktop" "dev.zed.Zed.desktop" ];
+              "text/x-c++hdr" = [ "emacsclient.desktop" "dev.zed.Zed.desktop" ];
+              "text/x-csrc" = [ "emacsclient.desktop" "dev.zed.Zed.desktop" ];
+              "text/x-chdr" = [ "emacsclient.desktop" "dev.zed.Zed.desktop" ];
+              "text/x-rust" = [ "emacsclient.desktop" "dev.zed.Zed.desktop" ];
+              "text/x-elixir" = [ "emacsclient.desktop" "dev.zed.Zed.desktop" ];
+              "application/json" = [ "emacsclient.desktop" "dev.zed.Zed.desktop" ];
+            };
+          };
+
           xdg.configFile = {
             "niri/config.kdl".source = link "niri/config.kdl";
             "nushell/config.nu".source = link "nushell/config.nu";

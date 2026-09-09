@@ -36,6 +36,10 @@
       wget
       curl
 
+      # Terminal emulation bridges for GLib/GIO/Thunar
+      (writeShellScriptBin "xterm" ''exec ghostty "$@"'')
+      (writeShellScriptBin "x-terminal-emulator" ''exec ghostty "$@"'')
+
       # Audio control & diagnostics
       pavucontrol
       alsa-utils
