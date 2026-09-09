@@ -5,8 +5,7 @@ edit = [
 
 [open]
 rules = [
-  { name = "*/", use = [ "edit", "open", "reveal" ] },
   { mime = "text/*", use = [ "edit", "reveal" ] },
-  { mime = "application/{json,javascript,wine-extension-ini}", use = [ "edit", "reveal" ] },
-  { mime = "application/x-{bat,shellscript}", use = [ "edit", "reveal" ] },
+  { mime = "application/{json,javascript,x-javascript,xml}", use = [ "edit", "reveal" ] },
+  { mime = "application/x-{bat,shellscript,python-code}", use = [ "edit", "reveal" ] },
 ]
