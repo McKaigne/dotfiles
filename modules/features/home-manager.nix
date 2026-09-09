@@ -83,7 +83,7 @@
             "starship/starship.toml".source = link "starship/starship.toml";
             "cava/config".source = link "cava/config";
             "ghostty/config".source = link "ghostty/config";
-            "ghostty/shaders/smear-cursor.glsl".source = link "ghostty/shaders/smear-cursor.glsl";
+            "ghostty/shaders/cursor_smear_fade.glsl".source = link "ghostty/shaders/cursor_smear_fade.glsl";
             "fuzzel/fuzzel.ini".source = link "fuzzel/fuzzel.ini";
             "yazi/yazi.toml".source = link "yazi/yazi.toml";
             "helix/config.toml".source = link "helix/config.toml";

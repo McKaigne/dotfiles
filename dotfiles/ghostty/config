@@ -4,5 +4,5 @@ theme = noctalia
 window-decoration = false
 cursor-style = block
 cursor-style-blink = false
-custom-shader = "shaders/smear-cursor.glsl"
+custom-shader = "shaders/cursor_smear_fade.glsl"
 confirm-close-surface = false
