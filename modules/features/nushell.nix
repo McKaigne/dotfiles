@@ -346,7 +346,8 @@ in
         alias et = emacsclient -t -a 'emacs'
         alias fm = thunar
         alias y = yazi
-        alias f = fastfetch
+        alias f = fetch
+        alias ff = fastfetch
 
         alias h = hx
         alias h. = hx .
