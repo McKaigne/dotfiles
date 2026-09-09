@@ -1,7 +1,8 @@
-
 font-family = "Maple Mono NF"
 font-size = 14
 theme = noctalia
 window-decoration = false
 cursor-style = block
+cursor-style-blink = false
+custom-shader = "shaders/smear-cursor.glsl"
 confirm-close-surface = false

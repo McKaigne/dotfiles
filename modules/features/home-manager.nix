@@ -46,7 +46,11 @@
             "gtk-4.0/gtk.css".source = link "gtk-4.0/gtk.css";
             "cava/config".source = link "cava/config";
             "ghostty/config".source = link "ghostty/config";
+            "ghostty/shaders/smear-cursor.glsl".source = link "ghostty/shaders/smear-cursor.glsl";
             "fuzzel/fuzzel.ini".source = link "fuzzel/fuzzel.ini";
+            "yazi/yazi.toml".source = link "yazi/yazi.toml";
+            "helix/config.toml".source = link "helix/config.toml";
+            "tmux/tmux.conf".source = link "tmux/tmux.conf";
             "doom/config.el".source = link "doom/config.el";
             "doom/init.el".source = link "doom/init.el";
             "doom/custom.el".source = link "doom/custom.el";

@@ -45,13 +45,13 @@
       mpv
       obs-studio
 
-      # Editors, Viewers, Browsers & Multiplexer
+      # Editors & Multiplexer
       helix
       zed-editor
       zathura
       feh
       tmux
-      inputs.zen-browser.packages.${pkgs.stdenv.hostPlatform.system}.default
+      tmuxPlugins.dotbar
     ];
 
     fonts.packages = with pkgs; [
