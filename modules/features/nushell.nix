@@ -28,6 +28,7 @@ in
         fd
         ripgrep
         fastfetch
+        fetch
         btop
         eza
         fzf
@@ -345,7 +346,6 @@ in
         alias et = emacsclient -t -a 'emacs'
         alias fm = thunar
         alias y = yazi
-        alias fetch = fastfetch
         alias f = fastfetch
 
         alias h = hx

@@ -42,187 +42,189 @@ in
 
       menuData = {
         font = "Maple Mono NF 13";
-        background = "@BG@e6";
+        background = "@BG@";
         color = "@FG@";
         border = "@BORDER@";
-        separator = " ➜ ";
+        separator = "  ";
         border_width = 2;
-        corner_r = 10;
-        padding = 16;
+        corner_r = 1234567;
+        padding = 22;
+        rows_per_column = 6;
+        column_padding = 32;
         anchor = "center";
         inhibit_compositor_keyboard_shortcuts = true;
         menu = [
           {
             key = [ "space" " " ];
-            desc = "Noctalia App Launcher";
+            desc = "󱓞  Noctalia Launcher";
             cmd = "${noctaliaBin} ipc call launcher toggle || noctalia msg panel-toggle launcher";
           }
           {
             key = "t";
-            desc = "Terminal & Tooling";
+            desc = "  Terminal & Tools";
             submenu = [
               {
                 key = "a";
-                desc = "Tmux Attach";
+                desc = "󰒍  Tmux Attach";
                 cmd = "${ghosttyBin} -e ${pkgs.tmux}/bin/tmux attach";
               }
               {
                 key = "g";
-                desc = "Lazygit";
+                desc = "  Lazygit";
                 cmd = "${ghosttyBin} -e ${pkgs.lazygit}/bin/lazygit";
               }
               {
                 key = "d";
-                desc = "Lazydocker";
+                desc = "󰡨  Lazydocker";
                 cmd = "${ghosttyBin} -e ${pkgs.lazydocker}/bin/lazydocker";
               }
               {
                 key = "h";
-                desc = "Herdr Multiplexer";
+                desc = "󰹑  Herdr Multiplexer";
                 cmd = "${ghosttyBin} -e sh -c 'command -v herdr >/dev/null 2>&1 && herdr || ${pkgs.tmux}/bin/tmux'";
               }
               {
                 key = "b";
-                desc = "Btop System Monitor";
+                desc = "󰄧  Btop Monitor";
                 cmd = "${ghosttyBin} -e ${pkgs.btop}/bin/btop";
               }
             ];
           }
           {
             key = "l";
-            desc = "LocalSend Transfer";
+            desc = "󱅻  LocalSend Transfer";
             submenu = [
               {
                 key = "c";
-                desc = "Send Clipboard Content";
+                desc = "󰅍  Send Clipboard";
                 cmd = "sh -c 'f=/tmp/localsend_clip.txt; ${pkgs.wl-clipboard}/bin/wl-paste > \"$f\" && ${pkgs.localsend}/bin/localsend \"$f\"'";
               }
               {
                 key = "f";
-                desc = "Send File";
+                desc = "󰈔  Send File";
                 cmd = "sh -c 'f=$(${pkgs.zenity}/bin/zenity --file-selection --title=\"Select File to Send\") && [ -n \"$f\" ] && ${pkgs.localsend}/bin/localsend \"$f\"'";
               }
               {
                 key = "d";
-                desc = "Send Folder";
+                desc = "󰉋  Send Folder";
                 cmd = "sh -c 'd=$(${pkgs.zenity}/bin/zenity --file-selection --directory --title=\"Select Folder to Send\") && [ -n \"$d\" ] && ${pkgs.localsend}/bin/localsend \"$d\"'";
               }
               {
                 key = "r";
-                desc = "Receive (Open App)";
+                desc = "󰇚  Receive (Open App)";
                 cmd = "${pkgs.localsend}/bin/localsend";
               }
             ];
           }
           {
             key = "n";
-            desc = "Noctalia & Controls";
+            desc = "󱨦  Noctalia & Controls";
             submenu = [
               {
                 key = "l";
-                desc = "Toggle Night Light";
+                desc = "󰖔  Toggle Night Light";
                 cmd = "sh -c '${noctaliaBin} ipc call nightLight toggle || ${pkgs.procps}/bin/pkill wlsunset || ${pkgs.wlsunset}/bin/wlsunset -T 4000 &'";
               }
               {
                 key = "a";
-                desc = "Night Light Auto Mode";
+                desc = "󰖕  Night Light Auto";
                 cmd = "sh -c '${noctaliaBin} ipc call nightLight auto || ${pkgs.wlsunset}/bin/wlsunset -l 14.6 -L 121.0 &'";
               }
               {
                 key = "s";
-                desc = "Silence Notifications (DND)";
+                desc = "󰂛  Silence Notifications";
                 cmd = "${noctaliaBin} ipc call notifications toggleSilence || noctalia msg dnd-toggle";
               }
               {
                 key = "c";
-                desc = "Clipboard History";
+                desc = "󱉥  Clipboard History";
                 cmd = "${noctaliaBin} ipc call launcher clipboard || noctalia msg panel-toggle clipboard";
               }
               {
                 key = "p";
-                desc = "Color Picker";
+                desc = "󰈋  Color Picker";
                 cmd = "sh -c 'color=$(${pkgs.hyprpicker}/bin/hyprpicker -a) && [ -n \"$color\" ] && ${pkgs.libnotify}/bin/notify-send \"Color Picked\" \"$color\" -i color-select'";
               }
               {
                 key = "o";
-                desc = "OCR Text Extraction";
+                desc = "󰚢  OCR Text Extraction";
                 cmd = "sh -c '${pkgs.grim}/bin/grim -g \"$(${pkgs.slurp}/bin/slurp)\" - | ${pkgs.tesseract}/bin/tesseract stdin stdout -l eng 2>/dev/null | ${pkgs.wl-clipboard}/bin/wl-copy && ${pkgs.libnotify}/bin/notify-send \"OCR Extracted\" \"Copied text to clipboard\"'";
               }
               {
                 key = "b";
-                desc = "Toggle Top Bar";
+                desc = "󱂬  Toggle Top Bar";
                 cmd = "${noctaliaBin} ipc call bar toggle || noctalia msg bar-toggle";
               }
             ];
           }
           {
             key = "w";
-            desc = "Window & Layout";
+            desc = "󰖲  Window & Layout";
             submenu = [
               {
                 key = "o";
-                desc = "Only Current Window";
+                desc = "󰖯  Only Current Window";
                 cmd = "sh -c 'cur=$(${niriBin} msg -j focused-window | ${pkgs.jq}/bin/jq -r .id); for id in $(${niriBin} msg -j windows | ${pkgs.jq}/bin/jq -r \".[] | select(.id != $cur) | .id\"); do ${niriBin} msg action close-window --id \"$id\"; done'";
               }
               {
                 key = "c";
-                desc = "Close All Windows";
+                desc = "󰅖  Close All Windows";
                 cmd = "sh -c 'for id in $(${niriBin} msg -j windows | ${pkgs.jq}/bin/jq -r \".[] | .id\"); do ${niriBin} msg action close-window --id \"$id\"; done'";
               }
               {
                 key = "t";
-                desc = "Toggle Float / Tile";
+                desc = "󰉈  Toggle Float / Tile";
                 cmd = "${niriBin} msg action toggle-window-floating";
               }
               {
                 key = "f";
-                desc = "Fullscreen Window";
+                desc = "󰊓  Fullscreen Window";
                 cmd = "${niriBin} msg action fullscreen-window";
               }
               {
                 key = "w";
-                desc = "Full Width (Maximize Column)";
+                desc = "󰹚  Maximize Column";
                 cmd = "${niriBin} msg action maximize-column";
               }
               {
                 key = "e";
-                desc = "Reset Window Height";
+                desc = "󰁌  Reset Window Height";
                 cmd = "${niriBin} msg action reset-window-height";
               }
               {
                 key = ",";
-                desc = "Consume Window into Column";
+                desc = "󰍡  Consume into Column";
                 cmd = "${niriBin} msg action consume-window-into-column";
               }
               {
                 key = ".";
-                desc = "Expel Window from Column";
+                desc = "󰍢  Expel from Column";
                 cmd = "${niriBin} msg action expel-window-from-column";
               }
             ];
           }
           {
             key = "s";
-            desc = "System & Power";
+            desc = "󰐥  System & Power";
             submenu = [
               {
                 key = "s";
-                desc = "Noctalia Power / Session Menu";
+                desc = "󰐥  Noctalia Power Menu";
                 cmd = "${noctaliaBin} ipc call sessionMenu toggle || noctalia msg panel-toggle session-menu";
               }
               {
                 key = "l";
-                desc = "Lock Screen";
+                desc = "󰌾  Lock Screen";
                 cmd = "sh -c 'loginctl lock-session || ${noctaliaBin} ipc call lockScreen lock'";
               }
               {
                 key = "z";
-                desc = "Suspend System";
+                desc = "󰒲  Suspend System";
                 cmd = "systemctl suspend";
               }
               {
                 key = "r";
-                desc = "Reboot System";
+                desc = "󰜉  Reboot System";
                 cmd = "systemctl reboot";
               }
             ];
@@ -235,31 +237,43 @@ in
       wrapperScript = pkgs.writeShellScriptBin "wlr-which-key-menu" ''
         set -euo pipefail
 
-        BG="1e2326"
-        FG="d3c6aa"
-        BORDER="7a8478"
-        ACCENT="a7c080"
+        BG="#1e2326f2"
+        FG="#d3c6aa"
+        BORDER="#a7c080"
+        RADIUS=12
 
+        # 1. Extract dynamic palette from live Noctalia theme
         FUZZEL_THEME="$HOME/.config/fuzzel/themes/noctalia"
         if [ -f "$FUZZEL_THEME" ]; then
-            f_bg=$(${pkgs.gnugrep}/bin/grep -E '^background=' "$FUZZEL_THEME" 2>/dev/null | ${pkgs.coreutils}/bin/cut -d= -f2 | ${pkgs.coreutils}/bin/tr -d ' ' | ${pkgs.coreutils}/bin/cut -c1-6 || true)
-            f_fg=$(${pkgs.gnugrep}/bin/grep -E '^text=' "$FUZZEL_THEME" 2>/dev/null | ${pkgs.coreutils}/bin/cut -d= -f2 | ${pkgs.coreutils}/bin/tr -d ' ' | ${pkgs.coreutils}/bin/cut -c1-6 || true)
-            f_border=$(${pkgs.gnugrep}/bin/grep -E '^border=' "$FUZZEL_THEME" 2>/dev/null | ${pkgs.coreutils}/bin/cut -d= -f2 | ${pkgs.coreutils}/bin/tr -d ' ' | ${pkgs.coreutils}/bin/cut -c1-6 || true)
-            f_match=$(${pkgs.gnugrep}/bin/grep -E '^match=' "$FUZZEL_THEME" 2>/dev/null | ${pkgs.coreutils}/bin/cut -d= -f2 | ${pkgs.coreutils}/bin/tr -d ' ' | ${pkgs.coreutils}/bin/cut -c1-6 || true)
-            [ -n "$f_bg" ] && BG="$f_bg"
-            [ -n "$f_fg" ] && FG="$f_fg"
-            [ -n "$f_border" ] && BORDER="$f_border"
-            [ -n "$f_match" ] && ACCENT="$f_match"
+            raw_bg=$(${pkgs.gnugrep}/bin/grep -E '^background=' "$FUZZEL_THEME" 2>/dev/null | ${pkgs.coreutils}/bin/cut -d= -f2 | ${pkgs.coreutils}/bin/tr -d ' #' | ${pkgs.coreutils}/bin/cut -c1-6 || true)
+            raw_fg=$(${pkgs.gnugrep}/bin/grep -E '^text=' "$FUZZEL_THEME" 2>/dev/null | ${pkgs.coreutils}/bin/cut -d= -f2 | ${pkgs.coreutils}/bin/tr -d ' #' | ${pkgs.coreutils}/bin/cut -c1-6 || true)
+            raw_border=$(${pkgs.gnugrep}/bin/grep -E '^(match|border)=' "$FUZZEL_THEME" 2>/dev/null | ${pkgs.coreutils}/bin/head -n1 | ${pkgs.coreutils}/bin/cut -d= -f2 | ${pkgs.coreutils}/bin/tr -d ' #' | ${pkgs.coreutils}/bin/cut -c1-6 || true)
+
+            [ -n "$raw_bg" ] && [ "''${#raw_bg}" -eq 6 ] && BG="#''${raw_bg}f2"
+            [ -n "$raw_fg" ] && [ "''${#raw_fg}" -eq 6 ] && FG="#''${raw_fg}"
+            [ -n "$raw_border" ] && [ "''${#raw_border}" -eq 6 ] && BORDER="#''${raw_border}"
+        fi
+
+        # 2. Extract container corner radius dynamically from Noctalia
+        if [ -f "$HOME/.config/noctalia/settings.json" ]; then
+            r=$(${pkgs.jq}/bin/jq -r '.radius // .["bar.default"].radius // .bar.default.radius // empty' "$HOME/.config/noctalia/settings.json" 2>/dev/null || true)
+            [ -n "$r" ] && [ "$r" != "null" ] && RADIUS="$r"
+        elif [ -f "$HOME/.config/niri/noctalia.kdl" ]; then
+            r=$(${pkgs.gnugrep}/bin/grep -m1 -oE 'geometry-corner-radius[ ]+[0-9]+' "$HOME/.config/niri/noctalia.kdl" 2>/dev/null | ${pkgs.gnugrep}/bin/grep -oE '[0-9]+' || true)
+            [ -n "$r" ] && RADIUS="$r"
+        elif [ -f "$HOME/.config/gtk-3.0/noctalia.css" ]; then
+            r=$(${pkgs.gnugrep}/bin/grep -m1 -oE 'border-radius:[ ]*[0-9]+' "$HOME/.config/gtk-3.0/noctalia.css" 2>/dev/null | ${pkgs.gnugrep}/bin/grep -oE '[0-9]+' || true)
+            [ -n "$r" ] && RADIUS="$r"
         fi
 
         RUN_DIR="''${XDG_RUNTIME_DIR:-/tmp}/wlr-which-key"
         ${pkgs.coreutils}/bin/mkdir -p "$RUN_DIR"
         LIVE_CONFIG="$RUN_DIR/config.yaml"
 
-        ${pkgs.gnused}/bin/sed -e "s/@BG@/#$BG/g" \
-            -e "s/@FG@/#$FG/g" \
-            -e "s/@BORDER@/#$BORDER/g" \
-            -e "s/@ACCENT@/#$ACCENT/g" \
+        ${pkgs.gnused}/bin/sed -e "s|@BG@|$BG|g" \
+            -e "s|@FG@|$FG|g" \
+            -e "s|@BORDER@|$BORDER|g" \
+            -e "s/1234567/$RADIUS/g" \
             "${baseConfigYaml}" > "$LIVE_CONFIG"
 
         exec "${pkgs.wlr-which-key}/bin/wlr-which-key" "$LIVE_CONFIG" "$@"
