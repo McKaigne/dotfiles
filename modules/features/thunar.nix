@@ -9,20 +9,15 @@
     };
 
     programs.xfconf.enable = true;
-
-    # Storage mounting, trash, and network filesystem services
     services.gvfs.enable = true;
-
-    # Thumbnail generation support for images and media files
     services.tumbler.enable = true;
 
-    # GUI archive utility and icon theme
     environment.systemPackages = with pkgs; [
       file-roller
       adwaita-icon-theme
+      adw-gtk3
     ];
 
-    # Set Thunar as the system-wide default handler for directories
     xdg.mime = {
       enable = true;
       defaultApplications = {

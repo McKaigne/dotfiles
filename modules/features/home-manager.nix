@@ -37,13 +37,30 @@
             gtk.enable = true;
             x11.enable = true;
           };
+
+          gtk = {
+            enable = true;
+            theme = {
+              name = "adw-gtk3-dark";
+              package = pkgs.adw-gtk3;
+            };
+            iconTheme = {
+              name = "Adwaita";
+              package = pkgs.adwaita-icon-theme;
+            };
+            gtk3.extraCss = ''
+              @import url("file://${config.home.homeDirectory}/.config/gtk-3.0/noctalia.css");
+            '';
+            gtk4.extraCss = ''
+              @import url("file://${config.home.homeDirectory}/.config/gtk-4.0/noctalia.css");
+            '';
+          };
+
           xdg.configFile = {
             "niri/config.kdl".source = link "niri/config.kdl";
             "nushell/config.nu".source = link "nushell/config.nu";
             "nushell/env.nu".source = link "nushell/env.nu";
             "starship/starship.toml".source = link "starship/starship.toml";
-            "gtk-3.0/gtk.css".source = link "gtk-3.0/gtk.css";
-            "gtk-4.0/gtk.css".source = link "gtk-4.0/gtk.css";
             "cava/config".source = link "cava/config";
             "ghostty/config".source = link "ghostty/config";
             "ghostty/shaders/smear-cursor.glsl".source = link "ghostty/shaders/smear-cursor.glsl";

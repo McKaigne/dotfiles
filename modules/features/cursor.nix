@@ -32,7 +32,7 @@
       };
 
       config = {
-        environment.systemPackages = [ cfg.package ];
+        environment.systemPackages = [ cfg.package pkgs.adw-gtk3 ];
 
         environment.sessionVariables = {
           XCURSOR_THEME    = cfg.theme;
@@ -58,6 +58,8 @@
                 cursor-theme = cfg.theme;
                 cursor-size  = lib.gvariant.mkInt32 cfg.size;
                 icon-theme   = "Adwaita";
+                gtk-theme    = "adw-gtk3-dark";
+                color-scheme = "prefer-dark";
               };
             };
           }];
