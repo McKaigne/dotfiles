@@ -31,6 +31,14 @@ in
         playerctl
       ];
 
+      noctaliaBin = "${self.packages.${pkgs.stdenv.hostPlatform.system}.noctalia-shell}/bin/noctalia-shell";
+      ghosttyBin = "${self.packages.${pkgs.stdenv.hostPlatform.system}.ghostty}/bin/ghostty";
+      thunarBin = "${self.packages.${pkgs.stdenv.hostPlatform.system}.thunar}/bin/thunar";
+      heliumBin = "${self.packages.${pkgs.stdenv.hostPlatform.system}.helium}/bin/helium";
+      emacsBin = "${self.packages.${pkgs.stdenv.hostPlatform.system}.emacs}/bin/emacsclient";
+      whichKeyBin = "${self.packages.${pkgs.stdenv.hostPlatform.system}.wlr-which-key}/bin/wlr-which-key-menu";
+      fuzzelBin = "${self.packages.${pkgs.stdenv.hostPlatform.system}.fuzzel}/bin/fuzzel";
+
       niriConfig = pkgs.writeText "config.kdl" ''
         prefer-no-csd
 
@@ -93,26 +101,28 @@ in
         workspace "w8"
         workspace "w9"
 
-        spawn-at-startup "${self.packages.${pkgs.stdenv.hostPlatform.system}.noctalia-shell}/bin/noctalia-shell"
-        spawn-at-startup "sh" "-c" "sleep 1 && ${self.packages.${pkgs.stdenv.hostPlatform.system}.noctalia-shell}/bin/noctalia-shell ipc call wallpaper set \"$HOME/Pictures/Wallpapers/wallpaper.jpg\""
+        spawn-at-startup "${noctaliaBin}"
+        spawn-at-startup "sh" "-c" "sleep 1 && ${noctaliaBin} ipc call wallpaper set \"$HOME/Pictures/Wallpapers/wallpaper.jpg\""
         xwayland-satellite
 
         binds {
-            // Modal Which-Key Leader & Quick Launch
-            Mod+Space { spawn "${self.packages.${pkgs.stdenv.hostPlatform.system}.wlr-which-key}/bin/wlr-which-key-menu"; }
-            Mod+D { spawn "sh" "-c" "${self.packages.${pkgs.stdenv.hostPlatform.system}.noctalia-shell}/bin/noctalia-shell ipc call launcher toggle || noctalia msg panel-toggle launcher"; }
+            // Modal Which-Key Leader & Desktop Shell Controls
+            Mod+Space { spawn "${whichKeyBin}"; }
+            Mod+D { spawn "sh" "-c" "${noctaliaBin} ipc call launcher toggle || noctalia msg panel-toggle launcher"; }
+            Mod+N { spawn "sh" "-c" "${noctaliaBin} ipc call controlCenter toggle || noctalia msg panel-toggle control-center"; }
+            Mod+I { spawn "sh" "-c" "${noctaliaBin} ipc call settings toggle || noctalia msg settings-toggle"; }
 
             // Core Applications (Direct Recovery / Muscle Memory)
-            Mod+Return { spawn "${self.packages.${pkgs.stdenv.hostPlatform.system}.ghostty}/bin/ghostty"; }
-            Mod+E { spawn "${self.packages.${pkgs.stdenv.hostPlatform.system}.thunar}/bin/thunar"; }
-            Mod+W { spawn "${self.packages.${pkgs.stdenv.hostPlatform.system}.helium}/bin/helium"; }
-            Mod+C { spawn "${self.packages.${pkgs.stdenv.hostPlatform.system}.emacs}/bin/emacsclient" "-c" "-a" "emacs"; }
+            Mod+Return { spawn "${ghosttyBin}"; }
+            Mod+E { spawn "${thunarBin}"; }
+            Mod+W { spawn "${heliumBin}"; }
+            Mod+C { spawn "${emacsBin}" "-c" "-a" "emacs"; }
 
             // Quick Access Desktop Helpers
             Mod+Minus { set-column-width "-5%"; }
             Mod+Equal { set-column-width "+5%"; }
-            Mod+Period { spawn "sh" "-c" "BEMOJI_PICKER_CMD='${self.packages.${pkgs.stdenv.hostPlatform.system}.fuzzel}/bin/fuzzel -d' ${pkgs.bemoji}/bin/bemoji -c"; }
-            Mod+Comma { spawn "sh" "-c" "${self.packages.${pkgs.stdenv.hostPlatform.system}.noctalia-shell}/bin/noctalia-shell ipc call notifications dismiss || noctalia msg notification-dismiss"; }
+            Mod+Period { spawn "sh" "-c" "BEMOJI_PICKER_CMD='${fuzzelBin} -d' ${pkgs.bemoji}/bin/bemoji -c"; }
+            Mod+Comma { spawn "sh" "-c" "${noctaliaBin} ipc call notifications dismiss || noctalia msg notification-dismiss"; }
 
             // Windows & Layout Actions
             Mod+Q { close-window; }
