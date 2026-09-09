@@ -36,26 +36,17 @@
       wget
       curl
 
-      # Terminal emulation bridges for GLib/GIO/Thunar
-      (writeShellScriptBin "xterm" ''exec ghostty "$@"'')
-      (writeShellScriptBin "x-terminal-emulator" ''exec ghostty "$@"'')
-
-      # Audio control & diagnostics
+      # Audio control
       pavucontrol
       alsa-utils
 
-      # Media & Content Creation
+      # Media & Viewers
       kdePackages.kdenlive
       mpv
       obs-studio
-
-      # Editors & Multiplexer
-      helix
       zed-editor
       zathura
       feh
-      tmux
-      tmuxPlugins.dotbar
     ];
 
     fonts.packages = with pkgs; [

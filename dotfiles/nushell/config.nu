@@ -66,9 +66,9 @@ $env.config = {
     show_banner: false
     edit_mode: vi
     cursor_shape: {
-        vi_insert: line
+        vi_insert: block
         vi_normal: block
-        emacs: line
+        emacs: block
     }
     color_config: $dynamic_theme
     ls: { use_ls_colors: true }
@@ -157,12 +157,11 @@ alias fm = thunar
 alias y = yazi
 alias f = fetch
 
-# Helix Abbreviations
-alias h = helix
-alias hx = helix
-alias h. = helix .
+# Helix shortcuts (hx and helix are now real binaries)
+alias h = hx
+alias h. = hx .
 
-# Tmux Abbreviations
+# Tmux shortcuts
 alias t = tmux
 alias ta = tmux attach
 alias tls = tmux list-sessions

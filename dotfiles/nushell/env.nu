@@ -21,7 +21,9 @@ $env.NU_PLUGIN_DIRS = [
 ]
 
 use std "path add"
+# Priority order: local user binaries -> wrappers (setuid sudo) -> system packages
 path add "/run/current-system/sw/bin"
+path add "/run/wrappers/bin"
 path add ($env.HOME | path join ".nix-profile/bin")
 path add ($env.HOME | path join ".local/bin")
 path add ($env.HOME | path join ".config/emacs/bin")

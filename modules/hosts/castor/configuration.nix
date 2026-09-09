@@ -6,6 +6,8 @@
       self.nixosModules.niri
       self.nixosModules.nushell
       self.nixosModules.emacs
+      self.nixosModules.helix
+      self.nixosModules.tmux
       self.nixosModules.helium
       self.nixosModules.desktop
       self.nixosModules.kanata
@@ -17,7 +19,6 @@
 
     nixpkgs.config.allowUnfree = true;
 
-    # Enable Flakes & nix-command permanently
     nix.settings.experimental-features = [ "nix-command" "flakes" ];
 
     networking.hostName = "castor";
