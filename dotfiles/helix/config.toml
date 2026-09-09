@@ -9,9 +9,9 @@ auto-pairs = true
 auto-format = true
 
 [editor.cursor-shape]
-insert = "bar"
+insert = "block"
 normal = "block"
-select = "underline"
+select = "block"
 
 [editor.indent-guides]
 render = true

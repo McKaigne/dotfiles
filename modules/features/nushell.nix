@@ -25,6 +25,8 @@
         direnv
         nix-direnv
         atuin
+        helix
+        tmux
       ];
 
       configFile = ../../dotfiles/nushell/config.nu;
