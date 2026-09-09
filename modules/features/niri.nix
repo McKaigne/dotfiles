@@ -16,12 +16,19 @@ in
       niriRuntimeDeps = with pkgs; [
         xwayland-satellite
         self.packages.${pkgs.stdenv.hostPlatform.system}.noctalia-shell
+        self.packages.${pkgs.stdenv.hostPlatform.system}.ghostty
+        self.packages.${pkgs.stdenv.hostPlatform.system}.thunar
+        self.packages.${pkgs.stdenv.hostPlatform.system}.helium
+        self.packages.${pkgs.stdenv.hostPlatform.system}.emacs
+        self.packages.${pkgs.stdenv.hostPlatform.system}.fuzzel
+        self.packages.${pkgs.stdenv.hostPlatform.system}.wlr-which-key
+        bemoji
         grim
         slurp
         wl-clipboard
         brightnessctl
+        wireplumber
         playerctl
-        hyprlock
       ];
 
       niriConfig = pkgs.writeText "config.kdl" ''
@@ -86,52 +93,46 @@ in
         workspace "w8"
         workspace "w9"
 
-        spawn-at-startup "noctalia-shell"
-        spawn-at-startup "sh" "-c" "sleep 1 && noctalia-shell ipc call wallpaper set \"$HOME/Pictures/Wallpapers/wallpaper.jpg\""
+        spawn-at-startup "${self.packages.${pkgs.stdenv.hostPlatform.system}.noctalia-shell}/bin/noctalia-shell"
+        spawn-at-startup "sh" "-c" "sleep 1 && ${self.packages.${pkgs.stdenv.hostPlatform.system}.noctalia-shell}/bin/noctalia-shell ipc call wallpaper set \"$HOME/Pictures/Wallpapers/wallpaper.jpg\""
         xwayland-satellite
 
         binds {
-            // Noctalia Integration
-            Mod+D { spawn "sh" "-c" "noctalia-shell ipc call launcher toggle || noctalia msg panel-toggle launcher"; }
-            Mod+N { spawn "sh" "-c" "noctalia-shell ipc call controlCenter toggle || noctalia msg panel-toggle control-center"; }
-            Mod+Shift+B { spawn "sh" "-c" "noctalia-shell ipc call bar toggle || noctalia msg bar-toggle"; }
-            Mod+V { spawn "sh" "-c" "noctalia-shell ipc call launcher clipboard || noctalia msg panel-toggle clipboard"; }
-            Mod+I { spawn "sh" "-c" "noctalia-shell ipc call settings toggle || noctalia msg settings-toggle"; }
-            Mod+P { spawn "sh" "-c" "noctalia-shell ipc call sessionMenu toggle || noctalia msg panel-toggle session-menu"; }
-            Mod+T { spawn "sh" "-c" "noctalia-shell ipc call wallpaper toggle || noctalia-shell ipc call wallpaperSelector toggle || noctalia msg panel-toggle wallpaper || noctalia msg panel-toggle wallpaper-selector"; }
+            // Modal Which-Key Leader & Quick Launch
+            Mod+Space { spawn "${self.packages.${pkgs.stdenv.hostPlatform.system}.wlr-which-key}/bin/wlr-which-key-menu"; }
+            Mod+D { spawn "sh" "-c" "${self.packages.${pkgs.stdenv.hostPlatform.system}.noctalia-shell}/bin/noctalia-shell ipc call launcher toggle || noctalia msg panel-toggle launcher"; }
 
-            // Applications
-            Mod+Return { spawn "ghostty"; }
-            Mod+E { spawn "thunar"; }
-            Mod+W { spawn "helium"; }
-            Mod+C { spawn "emacsclient" "-c" "-a" "emacs"; }
+            // Core Applications (Direct Recovery / Muscle Memory)
+            Mod+Return { spawn "${self.packages.${pkgs.stdenv.hostPlatform.system}.ghostty}/bin/ghostty"; }
+            Mod+E { spawn "${self.packages.${pkgs.stdenv.hostPlatform.system}.thunar}/bin/thunar"; }
+            Mod+W { spawn "${self.packages.${pkgs.stdenv.hostPlatform.system}.helium}/bin/helium"; }
+            Mod+C { spawn "${self.packages.${pkgs.stdenv.hostPlatform.system}.emacs}/bin/emacsclient" "-c" "-a" "emacs"; }
 
-            // Windows
+            // Quick Access Desktop Helpers
+            Mod+Minus { set-column-width "-5%"; }
+            Mod+Equal { set-column-width "+5%"; }
+            Mod+Period { spawn "sh" "-c" "BEMOJI_PICKER_CMD='${self.packages.${pkgs.stdenv.hostPlatform.system}.fuzzel}/bin/fuzzel -d' ${pkgs.bemoji}/bin/bemoji -c"; }
+            Mod+Comma { spawn "sh" "-c" "${self.packages.${pkgs.stdenv.hostPlatform.system}.noctalia-shell}/bin/noctalia-shell ipc call notifications dismiss || noctalia msg notification-dismiss"; }
+
+            // Windows & Layout Actions
             Mod+Q { close-window; }
             Mod+F { maximize-column; }
             Mod+Shift+F { toggle-window-floating; }
             Mod+Shift+C { center-column; }
             Mod+R { switch-preset-column-width; }
             Mod+Shift+R { reset-window-height; }
-            Mod+Comma { consume-window-into-column; }
-            Mod+Period { expel-window-from-column; }
-            Mod+Ctrl+H { set-column-width "-5%"; }
-            Mod+Ctrl+L { set-column-width "+5%"; }
 
-            // Navigation & Focus
+            // Column & Workspace Navigation (Strict Vim Semantics)
             Mod+H { focus-column-left; }
             Mod+L { focus-column-right; }
-            Mod+Left { focus-column-left; }
-            Mod+Right { focus-column-right; }
             Mod+Shift+H { move-column-left; }
             Mod+Shift+L { move-column-right; }
-            Mod+Shift+Left { move-column-left; }
-            Mod+Shift+Right { move-column-right; }
             Mod+J { focus-workspace-down; }
             Mod+K { focus-workspace-up; }
             Mod+Shift+J { move-column-to-workspace-down; }
             Mod+Shift+K { move-column-to-workspace-up; }
 
+            // Workspaces w0 - w9
             Mod+1 { focus-workspace "w0"; }
             Mod+2 { focus-workspace "w1"; }
             Mod+3 { focus-workspace "w2"; }
@@ -155,26 +156,20 @@ in
             Mod+Shift+0 { move-column-to-workspace "w9"; }
 
             // Screenshots
-            Mod+Shift+S { spawn "sh" "-c" "grim -g \"$(slurp -w 0)\" - | wl-copy"; }
-            Print { spawn "sh" "-c" "grim -l 0 - | wl-copy"; }
+            Mod+Shift+S { spawn "sh" "-c" "${pkgs.grim}/bin/grim -g \"$(${pkgs.slurp}/bin/slurp -w 0)\" - | ${pkgs.wl-clipboard}/bin/wl-copy"; }
+            Print { spawn "sh" "-c" "${pkgs.grim}/bin/grim -l 0 - | ${pkgs.wl-clipboard}/bin/wl-copy"; }
 
-            // Audio & Brightness (snapped to multiples of 5%, min 5%)
-            XF86MonBrightnessUp { spawn "sh" "-c" "pct=$(brightnessctl -m | cut -d, -f4 | tr -d '%'); new=$(( (pct / 5 * 5) + 5 )); [ $new -gt 100 ] && new=100; brightnessctl set ''${new}%"; }
-            XF86MonBrightnessDown { spawn "sh" "-c" "pct=$(brightnessctl -m | cut -d, -f4 | tr -d '%'); new=$(( ((pct - 1) / 5 * 5) )); [ $new -lt 5 ] && new=5; brightnessctl set ''${new}%"; }
-            XF86AudioRaiseVolume { spawn "wpctl" "set-volume" "-l" "1.4" "@DEFAULT_AUDIO_SINK@" "5%+"; }
-            XF86AudioLowerVolume { spawn "wpctl" "set-volume" "-l" "1.4" "@DEFAULT_AUDIO_SINK@" "5%-"; }
-            XF86AudioMute { spawn "wpctl" "set-mute" "@DEFAULT_AUDIO_SINK@" "toggle"; }
-            Mod+Shift+M { spawn "wpctl" "set-mute" "@DEFAULT_AUDIO_SINK@" "toggle"; }
-            XF86AudioMicMute { spawn "wpctl" "set-mute" "@DEFAULT_AUDIO_SOURCE@" "toggle"; }
-            Mod+Shift+P { spawn "playerctl" "play-pause"; }
-            XF86AudioPlay { spawn "playerctl" "play-pause"; }
-            XF86AudioPause { spawn "playerctl" "play-pause"; }
-            Mod+Shift+N { spawn "playerctl" "next"; }
-            XF86AudioNext { spawn "playerctl" "next"; }
-            XF86AudioPrev { spawn "playerctl" "previous"; }
-
-            Ctrl+Alt+L { spawn "hyprlock"; }
-            Mod+Escape { spawn "hyprlock"; }
+            // Hardware Display & Audio Controls
+            XF86MonBrightnessUp { spawn "sh" "-c" "pct=$(${pkgs.brightnessctl}/bin/brightnessctl -m | cut -d, -f4 | tr -d '%'); new=$(( (pct / 5 * 5) + 5 )); [ $new -gt 100 ] && new=100; ${pkgs.brightnessctl}/bin/brightnessctl set ''${new}%"; }
+            XF86MonBrightnessDown { spawn "sh" "-c" "pct=$(${pkgs.brightnessctl}/bin/brightnessctl -m | cut -d, -f4 | tr -d '%'); new=$(( ((pct - 1) / 5 * 5) )); [ $new -lt 5 ] && new=5; ${pkgs.brightnessctl}/bin/brightnessctl set ''${new}%"; }
+            XF86AudioRaiseVolume { spawn "${pkgs.wireplumber}/bin/wpctl" "set-volume" "-l" "1.4" "@DEFAULT_AUDIO_SINK@" "5%+"; }
+            XF86AudioLowerVolume { spawn "${pkgs.wireplumber}/bin/wpctl" "set-volume" "-l" "1.4" "@DEFAULT_AUDIO_SINK@" "5%-"; }
+            XF86AudioMute { spawn "${pkgs.wireplumber}/bin/wpctl" "set-mute" "@DEFAULT_AUDIO_SINK@" "toggle"; }
+            XF86AudioMicMute { spawn "${pkgs.wireplumber}/bin/wpctl" "set-mute" "@DEFAULT_AUDIO_SOURCE@" "toggle"; }
+            XF86AudioPlay { spawn "${pkgs.playerctl}/bin/playerctl" "play-pause"; }
+            XF86AudioPause { spawn "${pkgs.playerctl}/bin/playerctl" "play-pause"; }
+            XF86AudioNext { spawn "${pkgs.playerctl}/bin/playerctl" "next"; }
+            XF86AudioPrev { spawn "${pkgs.playerctl}/bin/playerctl" "previous"; }
         }
 
         // Live Noctalia Palette Runtime Hook
@@ -184,7 +179,7 @@ in
       wrappedNiri = pkgs.symlinkJoin {
         name = "niri";
         paths = [ pkgs.niri ];
-        buildInputs = [ pkgs.makeWrapper ];
+        nativeBuildInputs = [ pkgs.makeWrapper ];
         passthru = {
           providedSessions = [ "niri" ];
         };

@@ -12,10 +12,12 @@ in
 
   perSystem = { pkgs, ... }:
     let
+      wrappedHelixBin = "${self.packages.${pkgs.stdenv.hostPlatform.system}.helix}/bin/hx";
+
       yaziToml = pkgs.writeText "yazi.toml" ''
         [opener]
         edit = [
-          { run = 'hx "$@"', block = true, desc = "Helix" }
+          { run = '${wrappedHelixBin} "$@"', block = true, desc = "Helix" }
         ]
 
         [open]

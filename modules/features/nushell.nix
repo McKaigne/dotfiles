@@ -24,9 +24,13 @@ in
         starship
         zoxide
         carapace
+        bat
+        fd
+        ripgrep
+        fastfetch
+        btop
         eza
         fzf
-        neovim
         direnv
         nix-direnv
         atuin
@@ -138,7 +142,6 @@ in
         crust     = "#1e2326"
       '';
 
-      # In-store build-time pre-compilation (zero runtime home-directory pollution)
       starshipInit = pkgs.runCommand "starship-init.nu" { } ''
         ${pkgs.starship}/bin/starship init nu > $out
       '';
@@ -173,12 +176,19 @@ in
             ($nu.default-config-dir | path join 'plugins')
         ]
 
-        use std "path add"
-        path add "/run/current-system/sw/bin"
-        path add "/run/wrappers/bin"
-        path add ($env.HOME | path join ".nix-profile/bin")
-        path add ($env.HOME | path join ".local/bin")
-        path add ($env.HOME | path join ".config/emacs/bin")
+        # Preserve setuid wrappers priority (/run/wrappers/bin before /run/current-system/sw/bin)
+        $env.PATH = (
+            $env.PATH
+            | split row (char esep)
+            | prepend [
+                "/run/wrappers/bin"
+                "/run/current-system/sw/bin"
+                ($env.HOME | path join ".nix-profile/bin")
+                ($env.HOME | path join ".local/bin")
+                ($env.HOME | path join ".config/emacs/bin")
+              ]
+            | uniq
+        )
       '';
 
       configNu = pkgs.writeText "config.nu" ''
@@ -335,7 +345,8 @@ in
         alias et = emacsclient -t -a 'emacs'
         alias fm = thunar
         alias y = yazi
-        alias f = fetch
+        alias fetch = fastfetch
+        alias f = fastfetch
 
         alias h = hx
         alias h. = hx .
@@ -377,7 +388,7 @@ in
       myNushell = pkgs.symlinkJoin {
         name = "my-nushell";
         paths = [ pkgs.nushell ];
-        buildInputs = [ pkgs.makeWrapper ];
+        nativeBuildInputs = [ pkgs.makeWrapper ];
         passthru = {
           shellPath = "/bin/nu";
         };
@@ -397,7 +408,7 @@ in
       apps.nushell = {
         type = "app";
         program = "${myNushell}/bin/nu";
-        meta.description = "Hermetically wrapped Nushell with in-store configurations";
+        meta.description = "Hermetically wrapped Nushell";
       };
     };
 }

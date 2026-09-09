@@ -47,13 +47,13 @@ let
             n    z    x    c    v    m    ,    .    /
           )
 
-          ;; Combos
+          ;; Combos (Path A: Universal IBM CUA Standard Clipboard Keys)
           (defchordsv2
             (a z) C-S-z  $combo-time first-release ()  ;; Redo
             (z x) C-z    $combo-time first-release ()  ;; Undo
-            (x c) C-c    $combo-time first-release ()  ;; Copy
-            (c v) C-v    $combo-time first-release ()  ;; Paste
-            (x v) C-x    $combo-time first-release ()  ;; Cut
+            (x c) C-ins  $combo-time first-release ()  ;; Copy (Universal CUA: Ctrl+Insert)
+            (c v) S-ins  $combo-time first-release ()  ;; Paste (Universal CUA: Shift+Insert)
+            (x v) S-del  $combo-time first-release ()  ;; Cut (Universal CUA: Shift+Delete)
             (z v) C-a    $combo-time first-release ()  ;; Select All
 
             (u i) C-bspc $combo-time first-release ()  ;; Ctrl+Backspace (Delete Word Left)

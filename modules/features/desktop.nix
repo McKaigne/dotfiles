@@ -1,14 +1,6 @@
 { self, ... }:
 let
   desktopModule = { config, pkgs, lib, ... }: {
-    security.pam.services.hyprlock = { };
-
-    nixpkgs.config.allowUnfreePredicate = pkg:
-      builtins.elem (lib.getName pkg) [
-        "antigravity-cli"
-        "zed-editor"
-      ];
-
     xdg.mime = {
       enable = true;
       defaultApplications = {
@@ -16,15 +8,15 @@ let
         "application/x-directory" = "thunar.desktop";
         "inode/mount-point" = "thunar.desktop";
         "x-scheme-handler/file" = "thunar.desktop";
-        "text/plain" = [ "emacsclient.desktop" "dev.zed.Zed.desktop" ];
-        "text/x-c" = [ "emacsclient.desktop" "dev.zed.Zed.desktop" ];
-        "text/x-c++src" = [ "emacsclient.desktop" "dev.zed.Zed.desktop" ];
-        "text/x-c++hdr" = [ "emacsclient.desktop" "dev.zed.Zed.desktop" ];
-        "text/x-csrc" = [ "emacsclient.desktop" "dev.zed.Zed.desktop" ];
-        "text/x-chdr" = [ "emacsclient.desktop" "dev.zed.Zed.desktop" ];
-        "text/x-rust" = [ "emacsclient.desktop" "dev.zed.Zed.desktop" ];
-        "text/x-elixir" = [ "emacsclient.desktop" "dev.zed.Zed.desktop" ];
-        "application/json" = [ "emacsclient.desktop" "dev.zed.Zed.desktop" ];
+        "text/plain" = "emacsclient.desktop";
+        "text/x-c" = "emacsclient.desktop";
+        "text/x-c++src" = "emacsclient.desktop";
+        "text/x-c++hdr" = "emacsclient.desktop";
+        "text/x-csrc" = "emacsclient.desktop";
+        "text/x-chdr" = "emacsclient.desktop";
+        "text/x-rust" = "emacsclient.desktop";
+        "text/x-elixir" = "emacsclient.desktop";
+        "application/json" = "emacsclient.desktop";
       };
     };
 
@@ -36,40 +28,13 @@ let
       @import url("file:///home/${config.mainUser}/.config/gtk-4.0/noctalia.css");
     '';
 
+    # Baseline workstation infrastructure & audio utilities
     environment.systemPackages = with pkgs; [
-      bat
-      fd
-      ripgrep
-      btop
-      fetch
-      zoxide
-      antigravity-cli
-
-      hyprlock
-      overskride
-      bluez
-      bluez-tools
-
       git
-      foot
-      grim
-      slurp
-      wl-clipboard
-      brightnessctl
-      playerctl
-      vim
       wget
       curl
-
       pavucontrol
       alsa-utils
-
-      kdePackages.kdenlive
-      mpv
-      obs-studio
-      zed-editor
-      zathura
-      feh
     ];
 
     fonts.packages = with pkgs; [

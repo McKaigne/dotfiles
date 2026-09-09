@@ -31,7 +31,7 @@
       enable = true;
       settings = {
         default_session = {
-          command = "niri";
+          command = "${config.programs.niri.package}/bin/niri";
           user = config.mainUser;
         };
       };
