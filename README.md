@@ -33,10 +33,10 @@ Every file in `modules/` is discovered and imported automatically via `import-tr
 | Window Manager | Niri (wrapped, mouse warp to center, auto-hide cursor) |
 | Shell Bar / UI | Noctalia (wrapped, persistent state in `~/.local/state/noctalia`) |
 | Key Remapper | Kanata |
-| Text Editor | Doom Emacs (wrapped with GCC, LSP tools, doom-nano-light theme) |
+| Text Editor | Doom Emacs (wrapped with GCC, LSP tools, noctalia theme) |
 | Default Editor | `emacsclient` |
 | Shell | Nushell (wrapped) |
-| Terminal | Ghostty, Foot |
+| Terminal | Ghostty (smear cursor GLSL shader), Foot |
 | File Manager | Thunar (Adwaita icons + xfconf), Yazi |
 | Web Browser | Helium (wrapped Wayland + cursor) |
 | Video Editor | Kdenlive (`kdePackages.kdenlive`) |
@@ -81,7 +81,40 @@ Home Manager links `~/.config/<name>` directly to `/etc/nixos/dotfiles/<name>`. 
 
 ## 6. Keybindings
 
-### 6.1 Niri
+### 6.1 Kanata
+
+**Home row mods:**
+
+| Key | Tap | Hold |
+| :--- | :--- | :--- |
+| A | a | Left Alt |
+| S | s | Left Ctrl |
+| D | d | Left Super |
+| F | f | Left Shift |
+| J | j | Right Shift |
+| K | k | Right Super |
+| L | l | Right Ctrl |
+| ; | ; | Right Alt |
+
+Hold time: 200 ms (J and K use 120 ms). Combo window: 35 ms.
+
+**Combos:**
+
+| Keys | Action |
+| :--- | :--- |
+| U + I | Ctrl + Backspace (Delete Word Left) |
+| I + O | Ctrl + Delete (Delete Word Right) |
+| N + M | Tab |
+| M + , | Browser tab left (Ctrl+PgUp) |
+| , + . | Browser tab right (Ctrl+PgDn) |
+| Z + X | Undo |
+| A + Z | Redo |
+| X + C | Copy |
+| C + V | Paste |
+| X + V | Cut |
+| Z + V | Select all |
+
+### 6.2 Niri
 
 | Key | Action |
 | :--- | :--- |
@@ -102,7 +135,7 @@ Home Manager links `~/.config/<name>` directly to `/etc/nixos/dotfiles/<name>`. 
 | Mod + J / K | Focus workspace down / up |
 | Mod + 0–9 | Switch workspace w0–w9 |
 
-### 6.2 Nushell Shortcuts
+### 6.3 Nushell Shortcuts
 
 | Command | Action |
 | :--- | :--- |
@@ -112,6 +145,8 @@ Home Manager links `~/.config/<name>` directly to `/etc/nixos/dotfiles/<name>`. 
 | `e <file>` | Open graphical Emacs client |
 | `et <file>` | Open terminal Emacs client |
 | `v <file>` | Alias to `e` |
+| `h <file>` / `h.` | Open Helix |
+| `t` / `ta` / `tls` | Tmux shortcuts |
 | `ga` | `git add -A` |
 | `gc "msg"` | `git commit -m "msg"` |
 | `gp` | `git push` |
@@ -126,7 +161,8 @@ e /etc/nixos/modules/features/foo.nix
 nix flake check --no-build
 ga
 nr
-gc "feat(foo): describe change" && gp
+gc "feat(foo): describe change"
+gp
 ```
 
 ### Edit dotfile

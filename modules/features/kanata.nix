@@ -1,4 +1,3 @@
-
 { self, inputs, ... }: {
   flake.nixosModules.kanata = { pkgs, ... }: {
     hardware.uinput.enable = true;
@@ -56,8 +55,8 @@
             (x v) C-x    $combo-time first-release ()  ;; Cut
             (z v) C-a    $combo-time first-release ()  ;; Select All
 
-            (u i) bspc   $combo-time first-release ()  ;; Backspace
-            (i o) del    $combo-time first-release ()  ;; Delete
+            (u i) C-bspc $combo-time first-release ()  ;; Ctrl+Backspace (Delete Word Left)
+            (i o) C-del  $combo-time first-release ()  ;; Ctrl+Delete (Delete Word Right)
             (n m) tab    $combo-time first-release ()  ;; Tab
             (m ,) C-pgup $combo-time first-release ()  ;; Tab Left
             (, .) C-pgdn $combo-time first-release ()  ;; Tab Right
