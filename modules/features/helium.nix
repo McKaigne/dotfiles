@@ -2,6 +2,7 @@
   flake.nixosModules.helium = { pkgs, lib, ... }:
     let
       rawHelium = inputs.helium.packages.${pkgs.stdenv.hostPlatform.system}.default;
+      schemaDir = "${pkgs.gsettings-desktop-schemas}/share/gsettings-schemas/${pkgs.gsettings-desktop-schemas.name}/glib-2.0/schemas:${pkgs.gtk3}/share/gsettings-schemas/${pkgs.gtk3.name}/glib-2.0/schemas";
       wrappedHelium = pkgs.symlinkJoin {
         name = "helium";
         paths = [ rawHelium ];
@@ -11,8 +12,11 @@
             --set XCURSOR_THEME "Bibata-Modern-Classic" \
             --set XCURSOR_SIZE "16" \
             --prefix XCURSOR_PATH : "${pkgs.bibata-cursors}/share/icons:/run/current-system/sw/share/icons" \
-            --prefix XDG_DATA_DIRS : "${pkgs.gsettings-desktop-schemas}/share/gsettings-schemas/${pkgs.gsettings-desktop-schemas.name}:${pkgs.gtk3}/share/gsettings-schemas/${pkgs.gtk3.name}:${pkgs.bibata-cursors}/share:/run/current-system/sw/share" \
-            --add-flags "--ozone-platform=wayland"
+            --prefix GSETTINGS_SCHEMA_DIR : "${schemaDir}" \
+            --prefix XDG_DATA_DIRS : "${pkgs.gsettings-desktop-schemas}/share:${pkgs.gtk3}/share:${pkgs.adwaita-icon-theme}/share:${pkgs.bibata-cursors}/share:/run/current-system/sw/share" \
+            --set-default XDG_CURRENT_DESKTOP "GNOME" \
+            --add-flags "--ozone-platform=wayland" \
+            --add-flags "--gtk-version=3"
         '';
       };
     in
