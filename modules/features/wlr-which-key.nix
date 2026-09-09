@@ -12,57 +12,32 @@ in
 
   perSystem = { pkgs, lib, ... }:
     let
-      whichKeyRuntimeDeps = with pkgs; [
-        wlr-which-key
-        gnugrep
-        gnused
-        coreutils
-        ghostty
-        tmux
-        lazygit
-        lazydocker
-        btop
-        localsend
-        zenity
-        wl-clipboard
-        grim
-        slurp
-        tesseract
-        hyprpicker
-        libnotify
-        wlsunset
-        procps
-        niri
-        jq
-      ];
-
       noctaliaBin = "${self.packages.${pkgs.stdenv.hostPlatform.system}.noctalia-shell}/bin/noctalia-shell";
       ghosttyBin = "${self.packages.${pkgs.stdenv.hostPlatform.system}.ghostty}/bin/ghostty";
       niriBin = "${pkgs.niri}/bin/niri";
 
-      menuData = {
-        font = "Maple Mono NF 13";
-        background = "@BG@";
-        color = "@FG@";
-        border = "@BORDER@";
-        separator = "  ";
+      configFile = pkgs.writeText "config.yaml" (lib.generators.toYAML {} {
+        font = "Maple Mono NF 12";
+        background = "#1e2326f0";
+        color = "#d3c6aa";
+        border = "#a7c080";
         border_width = 2;
-        corner_r = 1234567;
-        padding = 22;
+        corner_r = 12;
+        padding = 15;
         rows_per_column = 6;
-        column_padding = 32;
+        column_padding = 30;
         anchor = "center";
+        separator = " ➜ ";
         inhibit_compositor_keyboard_shortcuts = true;
         menu = [
           {
-            key = [ "󱁐" "space" " " ];
-            desc = "󱓞  Launcher";
+            key = "space";
+            desc = "󱓞  Launcher (␣)";
             cmd = "${noctaliaBin} ipc call launcher toggle || noctalia msg panel-toggle launcher";
           }
           {
             key = "t";
-            name = "Terminal";
-            desc = "+  Terminal";
+            desc = "+terminal (  Terminal & Tools)";
             submenu = [
               {
                 key = "a";
@@ -81,7 +56,7 @@ in
               }
               {
                 key = "h";
-                desc = "󰹑  Herdr Multiplexer";
+                desc = "󰹑  Herdr";
                 cmd = "${ghosttyBin} -e sh -c 'command -v herdr >/dev/null 2>&1 && herdr || ${pkgs.tmux}/bin/tmux'";
               }
               {
@@ -93,8 +68,7 @@ in
           }
           {
             key = "l";
-            name = "LocalSend";
-            desc = "+󱅻  LocalSend";
+            desc = "+transfer (󱅻  LocalSend)";
             submenu = [
               {
                 key = "c";
@@ -120,8 +94,7 @@ in
           }
           {
             key = "n";
-            name = "Noctalia";
-            desc = "+󱨦  Noctalia";
+            desc = "+noctalia (󱨦  Controls & UI)";
             submenu = [
               {
                 key = "l";
@@ -130,7 +103,7 @@ in
               }
               {
                 key = "a";
-                desc = "󰖕  Night Light Auto";
+                desc = "󰖕  Auto Night Light";
                 cmd = "sh -c '${noctaliaBin} ipc call nightLight auto || ${pkgs.wlsunset}/bin/wlsunset -l 14.6 -L 121.0 &'";
               }
               {
@@ -150,20 +123,19 @@ in
               }
               {
                 key = "o";
-                desc = "󰚢  OCR Text Extraction";
+                desc = "󰚢  OCR Extraction";
                 cmd = "sh -c '${pkgs.grim}/bin/grim -g \"$(${pkgs.slurp}/bin/slurp)\" - | ${pkgs.tesseract}/bin/tesseract stdin stdout -l eng 2>/dev/null | ${pkgs.wl-clipboard}/bin/wl-copy && ${pkgs.libnotify}/bin/notify-send \"OCR Extracted\" \"Copied text to clipboard\"'";
               }
               {
                 key = "b";
-                desc = "󱂬  Toggle Top Bar";
+                desc = "󱂬  Toggle Bar";
                 cmd = "${noctaliaBin} ipc call bar toggle || noctalia msg bar-toggle";
               }
             ];
           }
           {
             key = "w";
-            name = "Window";
-            desc = "+󰖲  Window";
+            desc = "+window (󰖲  Layout & Focus)";
             submenu = [
               {
                 key = "o";
@@ -187,7 +159,7 @@ in
               }
               {
                 key = "w";
-                desc = "󰹚  Full Width (Maximize)";
+                desc = "󰹚  Maximize Column";
                 cmd = "${niriBin} msg action maximize-column";
               }
               {
@@ -209,8 +181,7 @@ in
           }
           {
             key = "s";
-            name = "System";
-            desc = "+󰐥  System";
+            desc = "+system (󰐥  Power & Session)";
             submenu = [
               {
                 key = "s";
@@ -235,73 +206,19 @@ in
             ];
           }
         ];
-      };
+      });
 
-      baseConfigYaml = pkgs.writeText "wlr-which-key-template.yaml" (lib.generators.toYAML {} menuData);
-
-      wrapperScript = pkgs.writeShellScriptBin "wlr-which-key-menu" ''
-        set -euo pipefail
-
-        BG="#1e2326f2"
-        FG="#d3c6aa"
-        BORDER="#a7c080"
-        RADIUS=12
-
-        # 1. Extract dynamic palette from live Noctalia theme
-        FUZZEL_THEME="$HOME/.config/fuzzel/themes/noctalia"
-        if [ -f "$FUZZEL_THEME" ]; then
-            raw_bg=$(${pkgs.gnugrep}/bin/grep -E '^background=' "$FUZZEL_THEME" 2>/dev/null | ${pkgs.coreutils}/bin/cut -d= -f2 | ${pkgs.coreutils}/bin/tr -d ' #' | cut -c1-6 || true)
-            raw_fg=$(${pkgs.gnugrep}/bin/grep -E '^text=' "$FUZZEL_THEME" 2>/dev/null | ${pkgs.coreutils}/bin/cut -d= -f2 | ${pkgs.coreutils}/bin/tr -d ' #' | cut -c1-6 || true)
-            raw_border=$(${pkgs.gnugrep}/bin/grep -E '^(match|border)=' "$FUZZEL_THEME" 2>/dev/null | ${pkgs.coreutils}/bin/head -n1 | ${pkgs.coreutils}/bin/cut -d= -f2 | ${pkgs.coreutils}/bin/tr -d ' #' | cut -c1-6 || true)
-
-            [ -n "$raw_bg" ] && [ "''${#raw_bg}" -eq 6 ] && BG="#''${raw_bg}f2"
-            [ -n "$raw_fg" ] && [ "''${#raw_fg}" -eq 6 ] && FG="#''${raw_fg}"
-            [ -n "$raw_border" ] && [ "''${#raw_border}" -eq 6 ] && BORDER="#''${raw_border}"
-        fi
-
-        # 2. Extract container corner radius dynamically from Noctalia
-        if [ -f "$HOME/.config/noctalia/settings.json" ]; then
-            r=$(${pkgs.jq}/bin/jq -r '.radius // .["bar.default"].radius // .bar.default.radius // empty' "$HOME/.config/noctalia/settings.json" 2>/dev/null || true)
-            [ -n "$r" ] && [ "$r" != "null" ] && RADIUS="$r"
-        elif [ -f "$HOME/.config/niri/noctalia.kdl" ]; then
-            r=$(${pkgs.gnugrep}/bin/grep -m1 -oE 'geometry-corner-radius[ ]+[0-9]+' "$HOME/.config/niri/noctalia.kdl" 2>/dev/null | ${pkgs.gnugrep}/bin/grep -oE '[0-9]+' || true)
-            [ -n "$r" ] && RADIUS="$r"
-        elif [ -f "$HOME/.config/gtk-3.0/noctalia.css" ]; then
-            r=$(${pkgs.gnugrep}/bin/grep -m1 -oE 'border-radius:[ ]*[0-9]+' "$HOME/.config/gtk-3.0/noctalia.css" 2>/dev/null | ${pkgs.gnugrep}/bin/grep -oE '[0-9]+' || true)
-            [ -n "$r" ] && RADIUS="$r"
-        fi
-
-        RUN_DIR="''${XDG_RUNTIME_DIR:-/tmp}/wlr-which-key"
-        ${pkgs.coreutils}/bin/mkdir -p "$RUN_DIR"
-        LIVE_CONFIG="$RUN_DIR/config.yaml"
-
-        ${pkgs.gnused}/bin/sed -e "s|@BG@|$BG|g" \
-            -e "s|@FG@|$FG|g" \
-            -e "s|@BORDER@|$BORDER|g" \
-            -e "s/1234567/$RADIUS/g" \
-            "${baseConfigYaml}" > "$LIVE_CONFIG"
-
-        exec "${pkgs.wlr-which-key}/bin/wlr-which-key" "$LIVE_CONFIG" "$@"
+      menuScript = pkgs.writeShellScriptBin "wlr-which-key-menu" ''
+        exec ${lib.getExe pkgs.wlr-which-key} "${configFile}"
       '';
-
-      wrappedWhichKey = pkgs.symlinkJoin {
-        name = "wlr-which-key";
-        paths = [ wrapperScript ];
-        nativeBuildInputs = [ pkgs.makeWrapper ];
-        postBuild = ''
-          wrapProgram $out/bin/wlr-which-key-menu \
-            --prefix PATH : ${lib.makeBinPath whichKeyRuntimeDeps}
-          ln -sf $out/bin/wlr-which-key-menu $out/bin/wlr-which-key
-        '';
-      };
     in
     {
-      packages.wlr-which-key = wrappedWhichKey;
+      packages.wlr-which-key = menuScript;
 
       apps.wlr-which-key = {
         type = "app";
-        program = "${wrappedWhichKey}/bin/wlr-which-key-menu";
-        meta.description = "Hermetically wrapped wlr-which-key menu with Noctalia theme bridge";
+        program = "${menuScript}/bin/wlr-which-key-menu";
+        meta.description = "Declarative wlr-which-key menu matching Vimjoyer pattern";
       };
     };
 }
