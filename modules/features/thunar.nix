@@ -16,6 +16,16 @@
       file-roller
       adwaita-icon-theme
       adw-gtk3
+
+      # Archive utilities for .zip, .tar, .7z
+      zip
+      unzip
+      p7zip
+      gnutar
+      gzip
+      bzip2
+      xz
+      zstd
     ];
 
     xdg.mime = {
@@ -30,6 +40,7 @@
 
     environment.sessionVariables = {
       FILEMANAGER = "thunar";
+      TERMINAL = "ghostty";
     };
   };
 }

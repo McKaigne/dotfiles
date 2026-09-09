@@ -69,6 +69,8 @@
             "yazi/yazi.toml".source = link "yazi/yazi.toml";
             "helix/config.toml".source = link "helix/config.toml";
             "tmux/tmux.conf".source = link "tmux/tmux.conf";
+            "Thunar/uca.xml".source = link "Thunar/uca.xml";
+            "xfce4/helpers.rc".source = link "xfce4/helpers.rc";
             "doom/config.el".source = link "doom/config.el";
             "doom/init.el".source = link "doom/init.el";
             "doom/custom.el".source = link "doom/custom.el";
