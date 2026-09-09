@@ -119,9 +119,9 @@ binds {
     Mod+Shift+S { spawn "sh" "-c" "grim -g \"$(slurp -w 0)\" - | wl-copy"; }
     Print { spawn "sh" "-c" "grim -l 0 - | wl-copy"; }
 
-    // Audio & Brightness
+    // Audio & Brightness (with min-value guard to prevent screen blackouts)
     XF86MonBrightnessUp { spawn "brightnessctl" "s" "5%+"; }
-    XF86MonBrightnessDown { spawn "brightnessctl" "s" "5%-"; }
+    XF86MonBrightnessDown { spawn "brightnessctl" "s" "5%-" "-n" "1"; }
     XF86AudioRaiseVolume { spawn "wpctl" "set-volume" "-l" "1.4" "@DEFAULT_AUDIO_SINK@" "2%+"; }
     XF86AudioLowerVolume { spawn "wpctl" "set-volume" "-l" "1.4" "@DEFAULT_AUDIO_SINK@" "2%-"; }
     XF86AudioMute { spawn "wpctl" "set-mute" "@DEFAULT_AUDIO_SINK@" "toggle"; }
