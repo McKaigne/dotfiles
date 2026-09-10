@@ -2,8 +2,10 @@
 
 {
   perSystem = { self', pkgs, lib, ... }: let
+    noctaliaShellBin = "${self'.packages.noctalia-shell}/bin/noctalia-shell";
+
     noctaliaEmoji = pkgs.writeShellScriptBin "castor-noctalia-emoji" ''
-      exec noctalia-shell ipc call launcher emoji
+      exec ${noctaliaShellBin} ipc call launcher emoji
     '';
 
     niriConfig = pkgs.writeText "config.kdl" ''
@@ -26,10 +28,10 @@
 
       binds {
         Mod+Space { spawn "${self'.packages.wlr-which-key}/bin/wlr-which-key-menu"; }
-        Mod+D     { spawn "noctalia-shell" "ipc" "call" "launcher" "toggle"; }
-        Mod+N     { spawn "noctalia-shell" "ipc" "call" "controlCenter" "toggle"; }
-        Mod+I     { spawn "noctalia-shell" "ipc" "call" "settings" "toggle"; }
-        Mod+Comma { spawn "noctalia-shell" "ipc" "call" "notifications" "dismiss"; }
+        Mod+D     { spawn "${noctaliaShellBin}" "ipc" "call" "launcher" "toggle"; }
+        Mod+N     { spawn "${noctaliaShellBin}" "ipc" "call" "controlCenter" "toggle"; }
+        Mod+I     { spawn "${noctaliaShellBin}" "ipc" "call" "settings" "toggle"; }
+        Mod+Comma { spawn "${noctaliaShellBin}" "ipc" "call" "notifications" "dismiss"; }
         Mod+Period { spawn "${noctaliaEmoji}/bin/castor-noctalia-emoji"; }
 
         Mod+Return { spawn "${self'.packages.ghostty}/bin/ghostty"; }
@@ -65,8 +67,8 @@
         Mod+0 { focus-workspace "w0"; }
         Mod+Shift+0 { move-column-to-workspace "w0"; }
 
-        Mod+Shift+S { spawn "${pkgs.grim}/bin/grim" "-g" "$(${pkgs.slurp}/bin/slurp)" "-" "|" "${pkgs.wl-clipboard}/bin/wl-copy"; }
-        Print       { spawn "${pkgs.grim}/bin/grim" "-" "|" "${pkgs.wl-clipboard}/bin/wl-copy"; }
+        Mod+Shift+S { spawn-sh "${pkgs.grim}/bin/grim -g \"$(${pkgs.slurp}/bin/slurp)\" - | ${pkgs.wl-clipboard}/bin/wl-copy"; }
+        Print       { spawn-sh "${pkgs.grim}/bin/grim - | ${pkgs.wl-clipboard}/bin/wl-copy"; }
 
         XF86MonBrightnessUp   { spawn-sh "${pkgs.brightnessctl}/bin/brightnessctl set +5%"; }
         XF86MonBrightnessDown { spawn-sh "curr=$(${pkgs.brightnessctl}/bin/brightnessctl get); max=$(${pkgs.brightnessctl}/bin/brightnessctl max); new=$((curr - max * 5 / 100)); [ ''${new} -lt $((max * 5 / 100)) ] && ${pkgs.brightnessctl}/bin/brightnessctl set 5% || ${pkgs.brightnessctl}/bin/brightnessctl set 5%-"; }
@@ -86,7 +88,10 @@
     packages.niri = pkgs.symlinkJoin {
       name = "niri-wrapped";
       paths = [ pkgs.niri ];
-      buildInputs = [ pkgs.makeWrapper ];
+      nativeBuildInputs = [ pkgs.makeWrapper ];
+      passthru = (pkgs.niri.passthru or { }) // {
+        providedSessions = [ "niri" ];
+      };
       postBuild = ''
         wrapProgram $out/bin/niri \
           --add-flags "--config ${niriConfig}"
@@ -102,7 +107,10 @@
 
   flake.nixosModules.niri = { pkgs, ... }: {
     environment.systemPackages = [ self.packages.${pkgs.stdenv.hostPlatform.system}.niri ];
-    programs.niri.enable = true;
+    programs.niri = {
+      enable = true;
+      package = self.packages.${pkgs.stdenv.hostPlatform.system}.niri;
+    };
   };
 
   flake.nixosModules.castorConfiguration = { ... }: {

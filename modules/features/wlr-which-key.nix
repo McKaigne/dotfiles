@@ -3,6 +3,9 @@
 {
   perSystem = { self', pkgs, ... }: let
     niriBin = "${pkgs.niri}/bin/niri";
+    noctaliaBin = "${self'.packages.noctalia-shell}/bin/noctalia-shell";
+    systemctlBin = "${pkgs.systemd}/bin/systemctl";
+    loginctlBin = "${pkgs.systemd}/bin/loginctl";
 
     whichKeyConfig = pkgs.writeText "config.yaml" ''
       font: "JetBrainsMono Nerd Font 11"
@@ -18,7 +21,7 @@
           submenu:
             - key: "a"
               label: "Tmux Attach"
-              cmd: "${self'.packages.ghostty}/bin/ghostty -e ${pkgs.tmux}/bin/tmux attach"
+              cmd: "${self'.packages.ghostty}/bin/ghostty -e ${self'.packages.tmux}/bin/tmux attach"
             - key: "g"
               label: "Lazygit"
               cmd: "${self'.packages.ghostty}/bin/ghostty -e ${pkgs.lazygit}/bin/lazygit"
@@ -42,13 +45,13 @@
           submenu:
             - key: "s"
               label: "Silence Notifications"
-              cmd: "noctalia-shell ipc call notifications toggleSilence"
+              cmd: "${noctaliaBin} ipc call notifications toggleSilence"
             - key: "c"
               label: "Clipboard History"
-              cmd: "noctalia-shell ipc call launcher clipboard"
+              cmd: "${noctaliaBin} ipc call launcher clipboard"
             - key: "b"
               label: "Toggle Shell Bar"
-              cmd: "noctalia-shell ipc call bar toggle"
+              cmd: "${noctaliaBin} ipc call bar toggle"
         - key: "w"
           label: "Window"
           submenu:
@@ -69,16 +72,16 @@
           submenu:
             - key: "s"
               label: "Power / Session Menu"
-              cmd: "noctalia-shell ipc call sessionMenu toggle"
+              cmd: "${noctaliaBin} ipc call sessionMenu toggle"
             - key: "l"
               label: "Lock Screen"
-              cmd: "loginctl lock-session"
+              cmd: "${loginctlBin} lock-session"
             - key: "z"
               label: "Suspend System"
-              cmd: "systemctl suspend"
+              cmd: "${systemctlBin} suspend"
             - key: "r"
               label: "Reboot System"
-              cmd: "systemctl reboot"
+              cmd: "${systemctlBin} reboot"
     '';
   in {
     packages.wlr-which-key = pkgs.symlinkJoin {

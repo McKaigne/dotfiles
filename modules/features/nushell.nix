@@ -11,6 +11,15 @@
           vi_normal: 'block'
           emacs: 'block'
         }
+        keybindings: [
+          {
+            name: delete_one_word_backward
+            modifier: control
+            keycode: char_w
+            mode: [emacs, vi_insert]
+            event: { edit: backspaceword }
+          }
+        ]
       }
 
       $env.config.abbreviations = {
@@ -27,6 +36,8 @@
         e: "emacsclient -c -a 'emacs'"
         et: "emacsclient -t -a 'emacs'"
         v: "emacsclient -c -a 'emacs'"
+        doom: "doom"
+        ds: "doom sync"
         h: "hx"
         hx: "hx"
         "h.": "hx ."
@@ -51,10 +62,8 @@
 
     envNu = pkgs.writeText "env.nu" ''
       $env.PATH = (
-        $env.PATH
-        | split row (char esep)
-        | prepend "/run/wrappers/bin"
-        | prepend "/run/current-system/sw/bin"
+        ["/run/wrappers/bin", "/run/current-system/sw/bin"]
+        | append ($env.PATH | split row (char esep))
         | uniq
       )
     '';

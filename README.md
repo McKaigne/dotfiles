@@ -20,8 +20,9 @@ This workstation implements the **Dendritic Pattern** combined with the **Hermet
 
 - **flake-parts + import-tree:** Every file in `modules/` is automatically discovered and imported as a flake-parts module. There are zero module imports in `flake.nix`.
 - **No Home Manager & No Dotfiles:** Static application configurations are not symlinked into `~/.config/`. Instead, every tool is hermetically wrapped with its runtime dependencies and in-store configuration files.
-- **Declarative Keymap Generation:** Follows Vimjoyer's declarative pattern (`pkgs.writeText` + `lib.generators.toYAML` + `pkgs.writeShellScriptBin`), compiling YAML configs directly into `/nix/store/` without runtime scripting or file mutations.
-- **Hermetic Store Interpolation:** Keybindings, system actions, and openers reference exact `/nix/store` binary derivations (`${lib.getExe ...}`), eliminating ambient `$PATH` dependency.
+- **Declarative Keymap Generation:** Follows the Vimjoyer declarative pattern (`pkgs.writeText` + `lib.generators.toYAML` + `pkgs.writeShellScriptBin`), compiling YAML configs directly into `/nix/store/` without runtime scripting or file mutations.
+- **Hermetic Store Interpolation:** Keybindings, system actions, and openers reference exact `/nix/store` binary derivations (`${lib.getExe ...}` or direct store derivations), eliminating ambient `$PATH` dependency.
+- **Self-Bootstrapping Doom Emacs:** Doom CLI and runtime are bundled into `/nix/store/` derivations. If launched on a fresh host or via `nix run`, it automatically checks and bootstraps Doom core with the in-store `DOOMDIR`.
 - **Portability:** Applications can be run on any machine via `nix run github:McKaigne/dotfiles#<app>` without requiring NixOS or pre-existing home directory state.
 
 ---
@@ -31,13 +32,13 @@ This workstation implements the **Dendritic Pattern** combined with the **Hermet
 | Function | Program | Implementation |
 | :--- | :--- | :--- |
 | OS | NixOS (unstable) | Dendritic system modules |
-| Window Manager | Niri | Wrapped with in-store `config.kdl` + runtime Noctalia hook |
+| Window Manager | Niri | Wrapped with in-store `config.kdl`, `providedSessions` passthru, & runtime Noctalia hook |
 | Modal Keymap Menu | wlr-which-key | Declaratively wrapped with in-store YAML (centered 2-column grid, sharp 4px corners, thin 1px border) |
 | Shell Bar / UI | Noctalia | Wrapped via `wrapper-modules` |
-| Key Remapper | Kanata | `services.kanata` (home-row mods, universal CUA clipboard combos) |
-| Primary Editor | Doom Emacs | Wrapped with compiler/LSP toolchains & in-store `DOOMDIR` |
-| Secondary Editor | Helix (`hx`) | Wrapped with in-store `config.toml` (all-mode block cursors) |
-| Shell | Nushell | Wrapped with in-store `config.nu`, `env.nu`, and Starship |
+| Key Remapper | Kanata | `services.kanata` (home-row mods, universal CUA clipboard combos, parameterized hardware) |
+| Primary Editor | Doom Emacs | Wrapped with compiler/LSP toolchains, in-store `DOOMDIR`, and wrapped `doom` CLI |
+| Secondary Editor | Helix (`hx`) | Wrapped with in-store `config.toml` (all-mode block cursors, dynamic Noctalia palette) |
+| Shell | Nushell | Wrapped with in-store `config.nu` (`Ctrl + W` word deletion), `env.nu`, and setuid wrapper precedence |
 | Terminal | Ghostty | Wrapped with in-store config & GLSL smear shader |
 | Multiplexer | Tmux | Wrapped with in-store `tmux.conf` & `dotbar` plugin |
 | System Fetchers | fetch, fastfetch | `fetch` (3D animated spinning Nix relief, alias `f`) & `fastfetch` (alias `ff`) |
@@ -69,15 +70,15 @@ This workstation implements the **Dendritic Pattern** combined with the **Hermet
         ├── cursor.nix         # options.cursor (Bibata-Modern-Classic, dconf)
         ├── desktop.nix        # Core desktop packages, fonts, MIME associations
         ├── emacs/             # In-store Doom Emacs configuration tree
-        ├── emacs.nix          # Wrapped Emacs derivation (LLVM 18, GCC, DOOMDIR)
+        ├── emacs.nix          # Wrapped Emacs + Doom CLI (LLVM 18, GCC, DOOMDIR)
         ├── ghostty.nix        # Wrapped Ghostty with embedded GLSL smear shader
-        ├── helix.nix          # Wrapped Helix with in-store config.toml
+        ├── helix.nix          # Wrapped Helix with in-store config.toml & Noctalia theme
         ├── helium.nix         # Wrapped browser with GTK3/GSettings support
-        ├── kanata.nix         # Remapper (home-row mods, CUA clipboard combos)
-        ├── niri.nix           # Wrapped Niri compositor with in-store config.kdl
+        ├── kanata.nix         # Remapper (home-row mods, CUA clipboard combos, parameterized hardware)
+        ├── niri.nix           # Wrapped Niri compositor with in-store config.kdl & providedSessions
         ├── wlr-which-key.nix  # Declaratively wrapped modal menu (Vimjoyer pattern)
         ├── noctalia.nix       # Wrapped Noctalia shell package
-        ├── nushell.nix        # Wrapped Nushell with in-store config.nu, env.nu, starship
+        ├── nushell.nix        # Wrapped Nushell (Ctrl+W word deletion, Starship, setuid PATH priority)
         ├── thunar.nix         # Thunar + xfconf + archive backends + interpolated uca.xml
         ├── tmux.nix           # Wrapped Tmux with in-store tmux.conf and dotbar
         ├── yazi.nix           # Wrapped Yazi with interpolated Helix opener
@@ -93,7 +94,8 @@ This workstation implements the **Dendritic Pattern** combined with the **Hermet
 2. **Dendritic Cohesion:** Feature derivations, apps, packages, and system modules live together in `modules/features/<name>.nix`.
 3. **Nix Multiline String Escaping:** Literal `${...}` inside `'' ... ''` multiline strings must be escaped as `''${...}`.
 4. **No Static Dotfiles:** Do not create static files in `~/.config/`. Embed configurations into feature wrappers.
-5. **Direct Store Interpolation:** Keybindings in Niri and launcher configurations interpolate direct `/nix/store` paths (`${lib.getExe ...}`) to eliminate ambient `$PATH` dependency.
+5. **Direct Store Interpolation:** Keybindings in Niri and launcher configurations interpolate direct `/nix/store` paths to eliminate ambient `$PATH` dependency.
+6. **Setuid PATH Priority:** In the wrapped `env.nu`, `/run/wrappers/bin` strictly precedes `/run/current-system/sw/bin` to preserve setuid wrappers (`sudo`).
 
 ---
 
@@ -103,6 +105,7 @@ The only files residing in `~/.config/` are dynamic theme files generated at run
 
 - `~/.config/niri/noctalia.kdl` $\rightarrow$ Included dynamically by Niri (`include optional=true`).
 - `~/.config/fuzzel/themes/noctalia` $\rightarrow$ Included dynamically by Fuzzel.
+- `~/.config/helix/themes/noctalia.toml` $\rightarrow$ Evaluated dynamically by Helix modal editor.
 - `~/.config/gtk-3.0/noctalia.css` & `4.0` $\rightarrow$ Imported system-wide via `/etc/xdg/gtk-*/gtk.css`.
 
 ---
@@ -150,14 +153,15 @@ The only files residing in `~/.config/` are dynamic theme files generated at run
 | `Mod + D` | Quick toggle Noctalia app launcher |
 | `Mod + -` | Expand window width left (`set-column-width "-5%"`) |
 | `Mod + =` | Expand window width right (`set-column-width "+5%"`) |
-| `Mod + .` | Open emoji picker (`bemoji` via Fuzzel) |
+| `Mod + .` | Open emoji picker (`castor-noctalia-emoji`) |
 | `Mod + ,` | Dismiss most recent desktop notification |
 | `Mod + Q` | Close window |
 | `Mod + F` | Maximize column |
 | `Mod + Shift + F` | Toggle window floating |
 | `Mod + Shift + C` | Center column |
-| `Mod + R` | Switch preset column width |
-| `Mod + Shift + R` | Reset window height |
+| `Mod + R` | Reset window height |
+| `Mod + Alt + H` | Switch preset column width backward |
+| `Mod + Alt + L` | Switch preset column width forward |
 | `Mod + H` / `L` | Focus column left / right (pointer warps to center) |
 | `Mod + Shift + H` / `L` | Move column left / right |
 | `Mod + J` / `K` | Focus workspace down / up |
@@ -181,36 +185,25 @@ Triggered via `Mod + Space`, the on-screen menu opens a centered, 2-column grid 
  │    ├── a: Tmux Attach (Ghostty)
  │    ├── g: Lazygit (Ghostty)
  │    ├── d: Lazydocker (Ghostty)
- │    ├── h: Herdr Multiplexer
  │    └── b: Btop System Monitor
  │
  ├── [l] ──> LocalSend
  │    ├── c: Send Clipboard Content
- │    ├── f: Send File (via Zenity chooser)
- │    ├── d: Send Folder (via Zenity chooser)
  │    └── r: Receive (Open App)
  │
  ├── [n] ──> Noctalia
- │    ├── l: Night Light Toggle (Manual 4000K)
- │    ├── a: Night Light Auto (Geo-coordinates)
  │    ├── s: Silence Notifications (DND Toggle)
  │    ├── c: Clipboard History
- │    ├── p: Color Picker (Hyprpicker $\rightarrow$ notification & clipboard)
- │    ├── o: OCR Extraction (Slurp $\rightarrow$ Tesseract $\rightarrow$ clipboard)
- │    └── b: Toggle Bar
+ │    └── b: Toggle Shell Bar
  │
  ├── [w] ──> Window
- │    ├── o: Only Current Window (Close all other windows in workspace)
- │    ├── c: Close All Windows in Column
  │    ├── t: Toggle Float / Tile
  │    ├── f: Fullscreen Window
  │    ├── w: Maximize Width (Full column)
- │    ├── e: Reset Height
- │    ├── ,: Consume into Column
- │    └── .: Expel from Column
+ │    └── e: Reset Height
  │
  └── [s] ──> System
-      ├── s: Power Menu (Noctalia session menu via Leader + s + s)
+      ├── s: Power Menu (Noctalia session menu)
       ├── l: Lock Screen
       ├── z: Suspend System
       └── r: Reboot System
@@ -222,6 +215,8 @@ Triggered via `Mod + Space`, the on-screen menu opens a centered, 2-column grid 
 
 | Command / Alias | Action |
 | :--- | :--- |
+| `Ctrl + W` | Delete word backward in Nushell (equivalent to `Ctrl + Backspace`) |
+| `doom` / `ds` | Wrapped Doom CLI / `doom sync` (pre-wired with all toolchains & in-store `DOOMDIR`) |
 | `f` or `fetch` | Render animated 3D rotating NixOS logo (`areofyl/fetch`) |
 | `ff` | Run Fastfetch |
 | `lt` | Tree listing via `eza` |
@@ -239,12 +234,12 @@ Triggered via `Mod + Space`, the on-screen menu opens a centered, 2-column grid 
 ## 7. Daily Tasks
 
 ### Edit a Feature or App Configuration
-```bash
-e /etc/nixos/modules/features/wlr-which-key.nix
+```nu
+e /etc/nixos/modules/features/nushell.nix
 ga
 nix flake check --no-build
 nr
-gc "feat(which-key): update custom workflow chords"
+gc "feat(nushell): update custom settings"
 gp
 ```
 
@@ -254,7 +249,7 @@ gp
 
 All primary tools can be run on any Linux distribution with Nix:
 
-```bash
+```nu
 nix run github:McKaigne/dotfiles#helix
 nix run github:McKaigne/dotfiles#ghostty
 nix run github:McKaigne/dotfiles#tmux
@@ -262,6 +257,7 @@ nix run github:McKaigne/dotfiles#yazi
 nix run github:McKaigne/dotfiles#wlr-which-key
 nix run github:McKaigne/dotfiles#nushell
 nix run github:McKaigne/dotfiles#emacs
+nix run github:McKaigne/dotfiles#doom -- sync
 nix run github:McKaigne/dotfiles          # Launch Niri session
 ```
 
@@ -271,11 +267,11 @@ nix run github:McKaigne/dotfiles          # Launch Niri session
 
 1. Boot live USB and mount partitions to `/mnt`.
 2. Clone repository:
-   ```bash
+   ```nu
    git clone https://github.com/McKaigne/dotfiles.git /mnt/etc/nixos
    ```
 3. Update disk UUIDs in `modules/hosts/castor/hardware.nix`.
 4. Install:
-   ```bash
+   ```nu
    nixos-install --flake /mnt/etc/nixos#castor
    ```

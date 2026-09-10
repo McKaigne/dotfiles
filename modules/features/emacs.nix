@@ -45,9 +45,26 @@ in
 
       doomDir = ./emacs/doom;
 
+      doomCliScript = pkgs.writeShellScriptBin "doom" ''
+        set -eo pipefail
+        export PATH="${lib.makeBinPath doomRuntimeDeps}:$PATH"
+        export CPLUS_INCLUDE_PATH="${cxxHeaders}:${glibcHeaders}''${CPLUS_INCLUDE_PATH:+:$CPLUS_INCLUDE_PATH}"
+        export CPATH="${cxxHeaders}:${glibcHeaders}''${CPATH:+:$CPATH}"
+        export DOOMDIR="''${DOOMDIR:-${doomDir}}"
+        export EMACSDIR="''${EMACSDIR:-$HOME/.config/emacs}"
+
+        if [ ! -d "$EMACSDIR" ]; then
+          echo "❄ [Doom Emacs] Core not found: bootstrapping Doom repository to $EMACSDIR..."
+          ${pkgs.git}/bin/git clone --depth 1 https://github.com/doomemacs/doomemacs "$EMACSDIR"
+          "$EMACSDIR/bin/doom" install --no-config --no-env
+        fi
+
+        exec "$EMACSDIR/bin/doom" "$@"
+      '';
+
       myEmacs = pkgs.symlinkJoin {
         name = "emacs";
-        paths = [ pkgs.emacs-pgtk ];
+        paths = [ pkgs.emacs-pgtk doomCliScript ];
         nativeBuildInputs = [ pkgs.makeWrapper ];
         postBuild = ''
           wrapProgram $out/bin/emacs \
@@ -55,15 +72,25 @@ in
             --prefix CPLUS_INCLUDE_PATH : "${cxxHeaders}:${glibcHeaders}" \
             --prefix CPATH : "${cxxHeaders}:${glibcHeaders}" \
             --set-default DOOMDIR "${doomDir}" \
+            --set-default EMACSDIR "$HOME/.config/emacs" \
             --set XCURSOR_THEME "Bibata-Modern-Classic" \
             --set XCURSOR_SIZE "16" \
-            --prefix XCURSOR_PATH : "${iconPath}"
+            --prefix XCURSOR_PATH : "${iconPath}" \
+            --run '
+              EMACSDIR="''${EMACSDIR:-$HOME/.config/emacs}"
+              if [ ! -f "$EMACSDIR/early-init.el" ]; then
+                echo "❄ [Doom Emacs] Bootstrapping Doom core framework into $EMACSDIR..."
+                ${pkgs.git}/bin/git clone --depth 1 https://github.com/doomemacs/doomemacs "$EMACSDIR"
+                DOOMDIR="''${DOOMDIR:-${doomDir}}" "$EMACSDIR/bin/doom" sync
+              fi
+            '
 
           wrapProgram $out/bin/emacsclient \
             --prefix PATH : ${lib.makeBinPath doomRuntimeDeps} \
             --prefix CPLUS_INCLUDE_PATH : "${cxxHeaders}:${glibcHeaders}" \
             --prefix CPATH : "${cxxHeaders}:${glibcHeaders}" \
             --set-default DOOMDIR "${doomDir}" \
+            --set-default EMACSDIR "$HOME/.config/emacs" \
             --set XCURSOR_THEME "Bibata-Modern-Classic" \
             --set XCURSOR_SIZE "16" \
             --prefix XCURSOR_PATH : "${iconPath}"
@@ -73,11 +100,18 @@ in
     {
       packages.emacs = myEmacs;
       packages.myEmacs = myEmacs;
+      packages.doom = doomCliScript;
 
       apps.emacs = {
         type = "app";
         program = "${myEmacs}/bin/emacs";
         meta.description = "Doom Emacs wrapped with build tools, LSP servers, and in-store DOOMDIR";
+      };
+
+      apps.doom = {
+        type = "app";
+        program = "${doomCliScript}/bin/doom";
+        meta.description = "Doom Emacs CLI manager wrapped with runtime dependencies and in-store DOOMDIR";
       };
     };
 }
