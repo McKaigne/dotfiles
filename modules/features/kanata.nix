@@ -1,73 +1,55 @@
-{ ... }:
-let
-  kanataModule = { ... }: {
-    hardware.uinput.enable = true;
+{ self, ... }:
 
+{
+  flake.nixosModules.kanata = { ... }: {
     services.kanata = {
       enable = true;
-      keyboards.internal = {
+      keyboards.default = {
+        devices = [ "/dev/input/by-path/platform-i8042-serio-0-event-kbd" ];
         extraDefCfg = ''
           process-unmapped-keys yes
           concurrent-tap-hold yes
         '';
-
         config = ''
           (defsrc
-            caps
-            u    i    o
-            a    s    d    f    j    k    l    ;
-            n    z    x    c    v    m    ,    .    /
-          )
-
-          ;; Timing: 200ms hold time for Home Row Mods, 35ms combo window
-          (defvar
-            tap-time 200
-            hold-time 200
-            combo-time 35
+            caps a s d f j k l ; u i o z x c v n m , .
           )
 
           (defalias
-            ;; Left Hand: A (Alt), S (Ctrl), D (GUI/Super), F (Shift)
-            a-mod (tap-hold-release $tap-time $hold-time a lalt)
-            s-mod (tap-hold-release $tap-time $hold-time s lctl)
-            d-mod (tap-hold-release $tap-time $hold-time d lmet)
-            f-mod (tap-hold-release $tap-time $hold-time f lsft)
-
-            ;; Right Hand: J (Shift), K (GUI/Super), L (Ctrl), ; (Alt)
-            j-mod (tap-hold-release $tap-time 120 j rsft)
-            k-mod (tap-hold-release $tap-time 120 k rmet)
-            l-mod (tap-hold-release $tap-time $hold-time l rctl)
-            scl-mod (tap-hold-release $tap-time $hold-time ; ralt)
+            cap (tap-hold 200 200 esc esc)
+            a (tap-hold 200 200 a lalt)
+            s (tap-hold 200 200 s lctl)
+            d (tap-hold 200 200 d lmet)
+            f (tap-hold 200 200 f lsft)
+            j (tap-hold 120 120 j rsft)
+            k (tap-hold 120 120 k rmet)
+            l (tap-hold 200 200 l rctl)
+            scln (tap-hold 200 200 ; ralt)
           )
 
           (deflayer base
-            esc
-            u    i    o
-            @a-mod @s-mod @d-mod @f-mod @j-mod @k-mod @l-mod @scl-mod
-            n    z    x    c    v    m    ,    .    /
+            @cap @a @s @d @f @j @k @l @scln _ _ _ _ _ _ _ _ _ _ _
           )
 
-          ;; Combos (Path A: Universal IBM CUA Standard Clipboard Keys)
           (defchordsv2
-            (a z) C-S-z  $combo-time first-release ()  ;; Redo
-            (z x) C-z    $combo-time first-release ()  ;; Undo
-            (x c) C-ins  $combo-time first-release ()  ;; Copy (Universal CUA: Ctrl+Insert)
-            (c v) S-ins  $combo-time first-release ()  ;; Paste (Universal CUA: Shift+Insert)
-            (x v) S-del  $combo-time first-release ()  ;; Cut (Universal CUA: Shift+Delete)
-            (z v) C-a    $combo-time first-release ()  ;; Select All
-
-            (u i) C-bspc $combo-time first-release ()  ;; Ctrl+Backspace (Delete Word Left)
-            (i o) C-del  $combo-time first-release ()  ;; Ctrl+Delete (Delete Word Right)
-            (n m) tab    $combo-time first-release ()  ;; Tab
-            (m ,) C-pgup $combo-time first-release ()  ;; Tab Left
-            (, .) C-pgdn $combo-time first-release ()  ;; Tab Right
+            (a z) C-S-z 35 all-released ()
+            (z x) C-z   35 all-released ()
+            (x c) C-ins 35 all-released ()
+            (c v) S-ins 35 all-released ()
+            (x v) S-del 35 all-released ()
+            (z v) C-a   35 all-released ()
+            (u i) C-bspc 35 all-released ()
+            (i o) C-del  35 all-released ()
+            (n m) tab   35 all-released ()
+            (m ,) C-pgup 35 all-released ()
+            (, .) C-pgdn 35 all-released ()
           )
         '';
       };
     };
   };
-in
-{
-  flake.nixosModules.kanata = kanataModule;
-  flake.nixosModules.castorConfiguration = kanataModule;
+
+  flake.nixosModules.castorConfiguration = { ... }: {
+    imports = [ self.nixosModules.kanata ];
+  };
 }

@@ -49,7 +49,7 @@ in
       wrappedHelix = pkgs.symlinkJoin {
         name = "helix";
         paths = [ pkgs.helix ];
-        buildInputs = [ pkgs.makeWrapper ];
+        nativeBuildInputs = [ pkgs.makeWrapper ];
         postBuild = ''
           wrapProgram $out/bin/hx \
             --add-flags "--config ${helixConfig}"

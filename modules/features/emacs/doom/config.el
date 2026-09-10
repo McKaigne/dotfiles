@@ -32,11 +32,12 @@
 ;; Org
 (setq org-directory "~/org/")
 
-;; Shells
-(setq shell-file-name (executable-find "bash"))
-(setq explicit-shell-file-name "/run/current-system/sw/bin/nu")
-(setq-default explicit-shell-file-name "/run/current-system/sw/bin/nu")
-(setq-default vterm-shell "/run/current-system/sw/bin/nu")
+;; Shells: Dynamic toolchain lookup (preserves portability outside NixOS)
+(setq shell-file-name (or (executable-find "bash") "/bin/sh"))
+(let ((nu-bin (executable-find "nu")))
+  (when nu-bin
+    (setq explicit-shell-file-name nu-bin)
+    (setq-default explicit-shell-file-name nu-bin)))
 
 ;; =================================================================
 ;; Native Ghostel Terminal & Smart Code Runner

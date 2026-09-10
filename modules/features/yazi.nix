@@ -36,7 +36,7 @@ in
       wrappedYazi = pkgs.symlinkJoin {
         name = "yazi";
         paths = [ pkgs.yazi ];
-        buildInputs = [ pkgs.makeWrapper ];
+        nativeBuildInputs = [ pkgs.makeWrapper ];
         postBuild = ''
           wrapProgram $out/bin/yazi \
             --set YAZI_CONFIG_HOME "${yaziConfigDir}"

@@ -44,7 +44,7 @@ in
       wrappedCava = pkgs.symlinkJoin {
         name = "cava";
         paths = [ pkgs.cava ];
-        buildInputs = [ pkgs.makeWrapper ];
+        nativeBuildInputs = [ pkgs.makeWrapper ];
         postBuild = ''
           wrapProgram $out/bin/cava \
             --add-flags "-p ${cavaConfig}"

@@ -124,7 +124,7 @@ in
       wrappedTmux = pkgs.symlinkJoin {
         name = "tmux";
         paths = [ pkgs.tmux ];
-        buildInputs = [ pkgs.makeWrapper ];
+        nativeBuildInputs = [ pkgs.makeWrapper ];
         postBuild = ''
           wrapProgram $out/bin/tmux \
             --add-flags "-f ${tmuxConf}"

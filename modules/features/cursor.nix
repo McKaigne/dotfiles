@@ -3,15 +3,6 @@ let
   cursorModule = { config, pkgs, lib, ... }:
     let
       cfg = config.cursor;
-      bibataFixed = pkgs.runCommand "bibata-modern-classic-fixed" { } ''
-        mkdir -p $out/share/icons
-        cp -r ${pkgs.bibata-cursors}/share/icons/Bibata-Modern-Classic $out/share/icons/Bibata-Modern-Classic
-        chmod -R u+w $out/share/icons/Bibata-Modern-Classic
-        cd $out/share/icons/Bibata-Modern-Classic/cursors
-        [ -e hand2 ] || ln -sf pointer hand2
-        [ -e sb_v_double_arrow ] || ln -sf ns-resize sb_v_double_arrow
-        [ -e sb_h_double_arrow ] || ln -sf ew-resize sb_h_double_arrow
-      '';
     in
     {
       options.cursor = {
@@ -27,7 +18,7 @@ let
         };
         package = lib.mkOption {
           type = lib.types.package;
-          default = bibataFixed;
+          default = self.packages.${pkgs.stdenv.hostPlatform.system}.bibata-cursors-fixed;
           description = "Cursor package derivation";
         };
       };
@@ -71,4 +62,20 @@ in
 {
   flake.nixosModules.cursor = cursorModule;
   flake.nixosModules.castorConfiguration = cursorModule;
+
+  perSystem = { pkgs, ... }:
+    let
+      bibataFixed = pkgs.runCommand "bibata-modern-classic-fixed" { } ''
+        mkdir -p $out/share/icons
+        cp -r ${pkgs.bibata-cursors}/share/icons/Bibata-Modern-Classic $out/share/icons/Bibata-Modern-Classic
+        chmod -R u+w $out/share/icons/Bibata-Modern-Classic
+        cd $out/share/icons/Bibata-Modern-Classic/cursors
+        [ -e hand2 ] || ln -sf pointer hand2
+        [ -e sb_v_double_arrow ] || ln -sf ns-resize sb_v_double_arrow
+        [ -e sb_h_double_arrow ] || ln -sf ew-resize sb_h_double_arrow
+      '';
+    in
+    {
+      packages.bibata-cursors-fixed = bibataFixed;
+    };
 }

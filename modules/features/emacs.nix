@@ -20,7 +20,9 @@ in
     let
       llvm = pkgs.llvmPackages_18;
       cxxHeaders = "${llvm.libcxx}/include/c++/v1";
-      iconPath = "${pkgs.bibata-cursors}/share/icons:/run/current-system/sw/share/icons";
+      glibcHeaders = "${pkgs.glibc.dev}/include";
+      fixedCursor = self.packages.${pkgs.stdenv.hostPlatform.system}.bibata-cursors-fixed;
+      iconPath = "${fixedCursor}/share/icons:/run/current-system/sw/share/icons";
 
       doomRuntimeDeps = with pkgs; [
         git
@@ -31,13 +33,14 @@ in
         cmake
         ninja
         gnumake
-        nixfmt
+        nixfmt-rfc-style
         shellcheck
         python3
         direnv
         zig_0_16
-        bibata-cursors
         glib
+        pkgs.nushell
+        fixedCursor
       ];
 
       doomDir = ./emacs/doom;
@@ -45,12 +48,12 @@ in
       myEmacs = pkgs.symlinkJoin {
         name = "emacs";
         paths = [ pkgs.emacs-pgtk ];
-        buildInputs = [ pkgs.makeWrapper ];
+        nativeBuildInputs = [ pkgs.makeWrapper ];
         postBuild = ''
           wrapProgram $out/bin/emacs \
             --prefix PATH : ${lib.makeBinPath doomRuntimeDeps} \
-            --prefix CPLUS_INCLUDE_PATH : "${cxxHeaders}" \
-            --prefix CPATH : "${cxxHeaders}" \
+            --prefix CPLUS_INCLUDE_PATH : "${cxxHeaders}:${glibcHeaders}" \
+            --prefix CPATH : "${cxxHeaders}:${glibcHeaders}" \
             --set-default DOOMDIR "${doomDir}" \
             --set XCURSOR_THEME "Bibata-Modern-Classic" \
             --set XCURSOR_SIZE "16" \
@@ -58,8 +61,8 @@ in
 
           wrapProgram $out/bin/emacsclient \
             --prefix PATH : ${lib.makeBinPath doomRuntimeDeps} \
-            --prefix CPLUS_INCLUDE_PATH : "${cxxHeaders}" \
-            --prefix CPATH : "${cxxHeaders}" \
+            --prefix CPLUS_INCLUDE_PATH : "${cxxHeaders}:${glibcHeaders}" \
+            --prefix CPATH : "${cxxHeaders}:${glibcHeaders}" \
             --set-default DOOMDIR "${doomDir}" \
             --set XCURSOR_THEME "Bibata-Modern-Classic" \
             --set XCURSOR_SIZE "16" \

@@ -4,7 +4,7 @@
       name = "castor-dotfiles-shell";
       nativeBuildInputs = with pkgs; [
         git
-        nixfmt
+        nixfmt-rfc-style
         nixos-rebuild
       ];
 

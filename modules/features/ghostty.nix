@@ -128,7 +128,7 @@ in
       wrappedGhostty = pkgs.symlinkJoin {
         name = "ghostty";
         paths = [ pkgs.ghostty ];
-        buildInputs = [ pkgs.makeWrapper ];
+        nativeBuildInputs = [ pkgs.makeWrapper ];
         postBuild = ''
           wrapProgram $out/bin/ghostty \
             --add-flags "--config-file=${ghosttyConfig}"
