@@ -29,7 +29,7 @@ in
         ripgrep
         fastfetch
         fetch
-        btop
+        self.packages.${pkgs.stdenv.hostPlatform.system}.btop
         eza
         fzf
         direnv
@@ -178,6 +178,7 @@ in
         ]
 
         # Preserve setuid wrappers priority (/run/wrappers/bin before /run/current-system/sw/bin)
+        # Includes ~/.local/bin and ~/.antigravity/bin for agy (Google Antigravity CLI)
         $env.PATH = (
             $env.PATH
             | split row (char esep)
@@ -186,6 +187,7 @@ in
                 "/run/current-system/sw/bin"
                 ($env.HOME | path join ".nix-profile/bin")
                 ($env.HOME | path join ".local/bin")
+                ($env.HOME | path join ".antigravity/bin")
                 ($env.HOME | path join ".config/emacs/bin")
               ]
             | uniq

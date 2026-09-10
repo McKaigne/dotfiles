@@ -10,6 +10,9 @@
     boot.loader.systemd-boot.enable = true;
     boot.loader.efi.canTouchEfiVariables = true;
 
+    # Enable nix-ld so precompiled CLI binaries (like Google Antigravity / agy) run seamlessly
+    programs.nix-ld.enable = true;
+
     hardware.enableRedistributableFirmware = true;
     hardware.firmware = with pkgs; [
       sof-firmware

@@ -16,20 +16,37 @@ in
       ghosttyBin = "${self.packages.${pkgs.stdenv.hostPlatform.system}.ghostty}/bin/ghostty";
       niriBin = "${pkgs.niri}/bin/niri";
 
-      configFile = pkgs.writeText "config.yaml" (lib.generators.toYAML {} {
-        font = "Maple Mono NF 12";
-        background = "#1e2326f0";
-        color = "#d3c6aa";
-        border = "#a7c080";
-        border_width = 2;
-        corner_r = 4;
-        padding = 15;
-        rows_per_column = 6;
-        column_padding = 30;
-        anchor = "center";
-        separator = " ➜ ";
-        inhibit_compositor_keyboard_shortcuts = true;
+      whichKeyRuntimeDeps = with pkgs; [
+        wlr-which-key
+        gnugrep
+        gnused
+        coreutils
+        ghostty
+        tmux
+        lazygit
+        lazydocker
+        self.packages.${pkgs.stdenv.hostPlatform.system}.btop
+        localsend
+        zenity
+        wl-clipboard
+        grim
+        slurp
+        tesseract
+        hyprpicker
+        libnotify
+        wlsunset
+        procps
+        niri
+        jq
+      ];
+
+      menuSnippetYaml = pkgs.writeText "menu-snippet.yaml" (lib.generators.toYAML {} {
         menu = [
+          {
+            key = [ "󱁐" "space" ];
+            desc = "Launcher";
+            cmd = "${noctaliaBin} ipc call launcher toggle || noctalia msg panel-toggle launcher";
+          }
           {
             key = "t";
             desc = "Terminal";
@@ -57,7 +74,7 @@ in
               {
                 key = "b";
                 desc = "Btop";
-                cmd = "${ghosttyBin} -e ${pkgs.btop}/bin/btop";
+                cmd = "${ghosttyBin} -e ${self.packages.${pkgs.stdenv.hostPlatform.system}.btop}/bin/btop";
               }
             ];
           }
@@ -204,16 +221,64 @@ in
       });
 
       menuScript = pkgs.writeShellScriptBin "wlr-which-key-menu" ''
-        exec ${lib.getExe pkgs.wlr-which-key} "${configFile}"
+        set -euo pipefail
+
+        BG="#1e2326f0"
+        FG="#d3c6aa"
+        BORDER="#a7c080"
+
+        # Dynamically auto-theme from live Noctalia wallpaper palette
+        FUZZEL_THEME="$HOME/.config/fuzzel/themes/noctalia"
+        if [ -f "$FUZZEL_THEME" ]; then
+            raw_bg=$(${pkgs.gnugrep}/bin/grep -E '^background=' "$FUZZEL_THEME" 2>/dev/null | ${pkgs.coreutils}/bin/cut -d= -f2 | ${pkgs.coreutils}/bin/tr -d ' #' | cut -c1-6 || true)
+            raw_fg=$(${pkgs.gnugrep}/bin/grep -E '^text=' "$FUZZEL_THEME" 2>/dev/null | ${pkgs.coreutils}/bin/cut -d= -f2 | ${pkgs.coreutils}/bin/tr -d ' #' | cut -c1-6 || true)
+            raw_border=$(${pkgs.gnugrep}/bin/grep -E '^(match|border)=' "$FUZZEL_THEME" 2>/dev/null | ${pkgs.coreutils}/bin/head -n1 | ${pkgs.coreutils}/bin/cut -d= -f2 | ${pkgs.coreutils}/bin/tr -d ' #' | cut -c1-6 || true)
+
+            [ -n "$raw_bg" ] && [ "''${#raw_bg}" -eq 6 ] && BG="#''${raw_bg}f0"
+            [ -n "$raw_fg" ] && [ "''${#raw_fg}" -eq 6 ] && FG="#''${raw_fg}"
+            [ -n "$raw_border" ] && [ "''${#raw_border}" -eq 6 ] && BORDER="#''${raw_border}"
+        fi
+
+        LIVE_CONFIG="''${XDG_RUNTIME_DIR:-/tmp}/wlr-which-key-live.yaml"
+
+        ${pkgs.coreutils}/bin/cat << EOF > "$LIVE_CONFIG"
+        font: Maple Mono NF 12
+        background: "$BG"
+        color: "$FG"
+        border: "$BORDER"
+        border_width: 1
+        corner_r: 1.5
+        padding: 15
+        rows_per_column: 6
+        column_padding: 30
+        anchor: center
+        separator: " ➜ "
+        inhibit_compositor_keyboard_shortcuts: true
+        EOF
+
+        ${pkgs.coreutils}/bin/cat "${menuSnippetYaml}" >> "$LIVE_CONFIG"
+
+        exec ${pkgs.lib.getExe pkgs.wlr-which-key} "$LIVE_CONFIG"
       '';
+
+      wrappedWhichKey = pkgs.symlinkJoin {
+        name = "wlr-which-key";
+        paths = [ menuScript ];
+        nativeBuildInputs = [ pkgs.makeWrapper ];
+        postBuild = ''
+          wrapProgram $out/bin/wlr-which-key-menu \
+            --prefix PATH : ${lib.makeBinPath whichKeyRuntimeDeps}
+          ln -sf $out/bin/wlr-which-key-menu $out/bin/wlr-which-key
+        '';
+      };
     in
     {
-      packages.wlr-which-key = menuScript;
+      packages.wlr-which-key = wrappedWhichKey;
 
       apps.wlr-which-key = {
         type = "app";
-        program = "${menuScript}/bin/wlr-which-key-menu";
-        meta.description = "Declarative wlr-which-key menu matching Vimjoyer pattern";
+        program = "${wrappedWhichKey}/bin/wlr-which-key-menu";
+        meta.description = "Auto-themed wlr-which-key modal menu matching Noctalia palette";
       };
     };
 }
