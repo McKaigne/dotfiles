@@ -33,7 +33,7 @@ in
         cmake
         ninja
         gnumake
-        nixfmt-rfc-style
+        nixfmt
         shellcheck
         python3
         direnv
