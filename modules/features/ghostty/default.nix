@@ -16,9 +16,6 @@ in
         font-size = 14
         theme = noctalia
         window-decoration = false
-        window-padding-x = 12
-        window-padding-y = 10
-        window-padding-balance = true
         cursor-style = block
         cursor-style-blink = false
         cursor-color = "#ffffff"
