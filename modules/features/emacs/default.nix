@@ -14,7 +14,6 @@ let
 in
 {
   flake.nixosModules.emacs = nixosModule;
-  flake.nixosModules.castorConfiguration = nixosModule;
 
   perSystem = { self', pkgs, lib, ... }:
     let
@@ -37,7 +36,7 @@ in
         fixedCursor
       ];
 
-      doomDir = ./emacs/doom;
+      doomDir = ./doom;
 
       doomCliScript = pkgs.writeShellScriptBin "doom" ''
         set -eo pipefail

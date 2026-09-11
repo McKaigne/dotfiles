@@ -1,6 +1,6 @@
-{ self, inputs, ... }:
+{ self, ... }:
 let
-  cursorModule = { config, pkgs, lib, ... }:
+  themeModule = { config, pkgs, lib, ... }:
     let
       cfg = config.cursor;
     in
@@ -42,6 +42,14 @@ let
           Inherits=${cfg.theme}
         '';
 
+        # Live Noctalia CSS Bridge for GTK 3 & 4
+        environment.etc."xdg/gtk-3.0/gtk.css".text = ''
+          @import url("file:///home/${config.mainUser}/.config/gtk-3.0/noctalia.css");
+        '';
+        environment.etc."xdg/gtk-4.0/gtk.css".text = ''
+          @import url("file:///home/${config.mainUser}/.config/gtk-4.0/noctalia.css");
+        '';
+
         programs.dconf = {
           enable = true;
           profiles.user.databases = [{
@@ -60,8 +68,8 @@ let
     };
 in
 {
-  flake.nixosModules.cursor = cursorModule;
-  flake.nixosModules.castorConfiguration = cursorModule;
+  flake.nixosModules.theme = themeModule;
+  flake.nixosModules.cursor = themeModule;
 
   perSystem = { pkgs, ... }:
     let

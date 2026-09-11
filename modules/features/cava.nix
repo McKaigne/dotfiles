@@ -8,7 +8,6 @@ let
 in
 {
   flake.nixosModules.cava = nixosModule;
-  flake.nixosModules.castorConfiguration = nixosModule;
 
   perSystem = { pkgs, ... }:
     let

@@ -10,5 +10,4 @@ let
 in
 {
   flake.nixosModules.user = userModule;
-  flake.nixosModules.castorConfiguration = userModule;
 }

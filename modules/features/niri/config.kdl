@@ -1,0 +1,124 @@
+prefer-no-csd
+
+hotkey-overlay {
+  skip-at-startup
+}
+
+input {
+  warp-mouse-to-focus
+  focus-follows-mouse
+  touchpad {
+    tap
+    natural-scroll
+  }
+}
+
+cursor {
+  xcursor-theme "Bibata-Modern-Classic"
+  xcursor-size 16
+  hide-when-typing
+}
+
+environment {
+  XCURSOR_THEME "Bibata-Modern-Classic"
+  XCURSOR_SIZE "16"
+}
+
+layout {
+  gaps 8
+  focus-ring {
+    width 2
+  }
+  preset-column-widths {
+    proportion 0.33333
+    proportion 0.5
+    proportion 0.66667
+    proportion 1.0
+  }
+}
+
+workspace "w0"
+workspace "w1"
+workspace "w2"
+workspace "w3"
+workspace "w4"
+workspace "w5"
+workspace "w6"
+workspace "w7"
+workspace "w8"
+workspace "w9"
+
+spawn-at-startup "@noctaliaShell@"
+spawn-at-startup "@xwaylandSatellite@"
+spawn-at-startup "@systemctl@" "--user" "import-environment" "WAYLAND_DISPLAY" "XDG_CURRENT_DESKTOP"
+
+binds {
+  Mod+Space { spawn "@whichKey@"; }
+  Mod+D     { spawn "@noctaliaShell@" "ipc" "call" "launcher" "toggle"; }
+  Mod+N     { spawn "@noctaliaShell@" "ipc" "call" "controlCenter" "toggle"; }
+  Mod+I     { spawn "@noctaliaShell@" "ipc" "call" "settings" "toggle"; }
+  Mod+Comma { spawn "@noctaliaShell@" "ipc" "call" "notifications" "dismiss"; }
+  Mod+Period { spawn "@noctaliaShell@" "ipc" "call" "launcher" "emoji"; }
+
+  Mod+Return { spawn "@ghostty@"; }
+  Mod+E      { spawn "@thunar@"; }
+  Mod+W      { spawn "@helium@"; }
+  Mod+C      { spawn "@emacsclient@" "-c" "-a" "emacs"; }
+
+  Mod+Q       { close-window; }
+  Mod+F       { maximize-column; }
+  Mod+Shift+F { toggle-window-floating; }
+  Mod+Shift+C { center-column; }
+  Mod+Minus   { set-column-width "-5%"; }
+  Mod+Equal   { set-column-width "+5%"; }
+
+  Mod+R       { reset-window-height; }
+  Mod+Alt+H   { switch-preset-column-width-back; }
+  Mod+Alt+L   { switch-preset-column-width; }
+
+  Mod+H { focus-column-left; }
+  Mod+L { focus-column-right; }
+  Mod+Shift+H { move-column-left; }
+  Mod+Shift+L { move-column-right; }
+  Mod+J { focus-workspace-down; }
+  Mod+K { focus-workspace-up; }
+  Mod+Shift+J { move-column-to-workspace-down; }
+  Mod+Shift+K { move-column-to-workspace-up; }
+
+  Mod+1 { focus-workspace "w1"; }
+  Mod+Shift+1 { move-column-to-workspace "w1"; }
+  Mod+2 { focus-workspace "w2"; }
+  Mod+Shift+2 { move-column-to-workspace "w2"; }
+  Mod+3 { focus-workspace "w3"; }
+  Mod+Shift+3 { move-column-to-workspace "w3"; }
+  Mod+4 { focus-workspace "w4"; }
+  Mod+Shift+4 { move-column-to-workspace "w4"; }
+  Mod+5 { focus-workspace "w5"; }
+  Mod+Shift+5 { move-column-to-workspace "w5"; }
+  Mod+6 { focus-workspace "w6"; }
+  Mod+Shift+6 { move-column-to-workspace "w6"; }
+  Mod+7 { focus-workspace "w7"; }
+  Mod+Shift+7 { move-column-to-workspace "w7"; }
+  Mod+8 { focus-workspace "w8"; }
+  Mod+Shift+8 { move-column-to-workspace "w8"; }
+  Mod+9 { focus-workspace "w9"; }
+  Mod+Shift+9 { move-column-to-workspace "w9"; }
+  Mod+0 { focus-workspace "w0"; }
+  Mod+Shift+0 { move-column-to-workspace "w0"; }
+
+  Mod+Shift+S { spawn-sh "@grim@ -g \"$(@slurp@)\" - | @wlCopy@"; }
+  Print       { spawn-sh "@grim@ - | @wlCopy@"; }
+
+  XF86MonBrightnessUp   { spawn-sh "@brightnessctl@ set +5%"; }
+  XF86MonBrightnessDown { spawn-sh "curr=$(@brightnessctl@ get); max=$(@brightnessctl@ max); new=$((curr - max * 5 / 100)); [ ${new} -lt $((max * 5 / 100)) ] && @brightnessctl@ set 5% || @brightnessctl@ set 5%-"; }
+
+  XF86AudioRaiseVolume  { spawn "@wpctl@" "set-volume" "-l" "1.4" "@DEFAULT_AUDIO_SINK@" "5%+"; }
+  XF86AudioLowerVolume  { spawn "@wpctl@" "set-volume" "-l" "1.4" "@DEFAULT_AUDIO_SINK@" "5%-"; }
+  XF86AudioMute         { spawn "@wpctl@" "set-mute" "@DEFAULT_AUDIO_SINK@" "toggle"; }
+  XF86AudioMicMute      { spawn "@wpctl@" "set-mute" "@DEFAULT_AUDIO_SOURCE@" "toggle"; }
+  XF86AudioPlay         { spawn "@playerctl@" "play-pause"; }
+  XF86AudioNext         { spawn "@playerctl@" "next"; }
+  XF86AudioPrev         { spawn "@playerctl@" "previous"; }
+}
+
+include optional=true "~/.config/niri/noctalia.kdl"

@@ -9,7 +9,6 @@ let
 in
 {
   flake.nixosModules.viewers = nixosModule;
-  flake.nixosModules.castorConfiguration = nixosModule;
 
   perSystem = { pkgs, ... }: {
     packages.zathura = pkgs.zathura;

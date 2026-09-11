@@ -8,25 +8,12 @@ let
 in
 {
   flake.nixosModules.yazi = nixosModule;
-  flake.nixosModules.castorConfiguration = nixosModule;
 
   perSystem = { self', pkgs, ... }:
     let
-      wrappedHelixBin = "${self'.packages.helix}/bin/hx";
-
-      yaziToml = pkgs.writeText "yazi.toml" ''
-        [opener]
-        edit = [
-          { run = '${wrappedHelixBin} "$@"', block = true, desc = "Helix" }
-        ]
-
-        [open]
-        rules = [
-          { mime = "text/*", use = [ "edit", "reveal" ] },
-          { mime = "application/{json,javascript,x-javascript,xml}", use = [ "edit", "reveal" ] },
-          { mime = "application/x-{bat,shellscript,python-code}", use = [ "edit", "reveal" ] },
-        ]
-      '';
+      yaziToml = pkgs.writeText "yazi.toml" (
+        builtins.replaceStrings [ "@helix@" ] [ "${self'.packages.helix}/bin/hx" ] (builtins.readFile ./yazi.toml)
+      );
 
       yaziConfigDir = pkgs.runCommand "yazi-config-dir" {} ''
         mkdir -p $out

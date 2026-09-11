@@ -8,7 +8,6 @@ let
 in
 {
   flake.nixosModules.helium = nixosModule;
-  flake.nixosModules.castorConfiguration = nixosModule;
 
   perSystem = { self', pkgs, ... }:
     let

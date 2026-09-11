@@ -1,5 +1,5 @@
 { ... }: {
-  flake.nixosModules.castorConfiguration = { config, pkgs, lib, ... }: {
+  flake.nixosModules.castorConfiguration = { config, pkgs, ... }: {
     nixpkgs.config.allowUnfree = true;
 
     nix.settings = {

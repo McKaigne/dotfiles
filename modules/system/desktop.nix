@@ -1,6 +1,6 @@
-{ self, ... }:
+{ ... }:
 let
-  desktopModule = { config, pkgs, lib, ... }: {
+  desktopModule = { pkgs, ... }: {
     xdg.mime = {
       enable = true;
       defaultApplications = {
@@ -19,14 +19,6 @@ let
         "application/json" = "emacsclient.desktop";
       };
     };
-
-    # Live Noctalia CSS Bridge for GTK 3 & 4
-    environment.etc."xdg/gtk-3.0/gtk.css".text = ''
-      @import url("file:///home/${config.mainUser}/.config/gtk-3.0/noctalia.css");
-    '';
-    environment.etc."xdg/gtk-4.0/gtk.css".text = ''
-      @import url("file:///home/${config.mainUser}/.config/gtk-4.0/noctalia.css");
-    '';
 
     # Baseline workstation infrastructure & core utilities
     environment.systemPackages = with pkgs; [
@@ -57,5 +49,4 @@ let
 in
 {
   flake.nixosModules.desktop = desktopModule;
-  flake.nixosModules.castorConfiguration = desktopModule;
 }

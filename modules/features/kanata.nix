@@ -1,5 +1,4 @@
-{ self, lib, ... }:
-
+{ lib, ... }:
 let
   kanataModule = { config, ... }: {
     options.hardware.kanata = {
@@ -61,5 +60,4 @@ let
 in
 {
   flake.nixosModules.kanata = kanataModule;
-  flake.nixosModules.castorConfiguration = kanataModule;
 }

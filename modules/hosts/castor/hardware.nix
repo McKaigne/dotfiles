@@ -30,5 +30,4 @@ let
 in
 {
   flake.nixosModules.castorHardware = hardwareModule;
-  flake.nixosModules.castorConfiguration = hardwareModule;
 }

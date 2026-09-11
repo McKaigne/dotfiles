@@ -8,7 +8,6 @@ let
 in
 {
   flake.nixosModules.fuzzel = nixosModule;
-  flake.nixosModules.castorConfiguration = nixosModule;
 
   perSystem = { pkgs, ... }:
     let

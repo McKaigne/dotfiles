@@ -7,8 +7,8 @@ let
   };
 in
 {
+  flake.nixosModules.mpv = nixosModule;
   flake.nixosModules.media = nixosModule;
-  flake.nixosModules.castorConfiguration = nixosModule;
 
   perSystem = { pkgs, ... }: {
     packages.mpv = pkgs.mpv;
