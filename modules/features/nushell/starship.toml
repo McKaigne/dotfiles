@@ -16,7 +16,7 @@ right_format = """$kubernetes$aws$rust$python$golang$nodejs$c$zig$nix_shell$elix
 [os]
 disabled = false
 style = "fg:black bg:bright-white bold"
-format = "[ $symbol ]($style)"
+format = "[$symbol ]($style)"
 
 [os.symbols]
 NixOS = ""
