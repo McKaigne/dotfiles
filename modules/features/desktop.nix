@@ -38,7 +38,8 @@ let
       wl-clipboard
       eza
       bat
-      fastfetch
+      fetch
+      antigravity-cli
       adwaita-icon-theme
       hicolor-icon-theme
       pavucontrol

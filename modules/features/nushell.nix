@@ -130,7 +130,7 @@ in
         tls: "tmux list-sessions"
         tn: "tmux new -s"
         tk: "tmux kill-session -t"
-        ff: "fastfetch"
+        f: "fetch"
         lt: "eza --tree --level=2 --long --icons --git"
         cat: "bat --paging=never"
       }
@@ -138,22 +138,6 @@ in
       def cx [dir: path] {
         cd $dir
         ls -l
-      }
-
-      def f [...args] {
-        if (which ^fetch | is-not-empty) {
-          ^fetch ...$args
-        } else {
-          fastfetch ...$args
-        }
-      }
-
-      def fetch [...args] {
-        if (which ^fetch | is-not-empty) {
-          ^fetch ...$args
-        } else {
-          fastfetch ...$args
-        }
       }
 
       source ${starshipInit}
