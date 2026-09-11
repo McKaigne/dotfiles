@@ -1,10 +1,9 @@
-add_newline = true
+add_newline = false
 
 # Left Ribbon (Light -> Dark):
 # (Logo) ~ ) [git) ] time )
-format = """
-[](fg:bright-white)$os[](fg:bright-white bg:white)$directory[](fg:white bg:bright-black)$git_branch$git_status[](fg:bright-black bg:black)$time[](fg:black)
-$character"""
+format = """\
+[](fg:bright-white)$os[](fg:bright-white bg:white)$directory[](fg:white bg:bright-black)$git_branch$git_status[](fg:bright-black bg:black)$time[](fg:black)"""
 
 # Right Prompt in Reverse Luminance Order (Dark -> Bright):
 # [k8s(black)] [aws(bright-black)] [lang(white)] [duration(bright-white)]
@@ -129,9 +128,7 @@ symbol = " "
 format = '[](fg:bright-black)[ $symbol$profile ](fg:yellow bg:bright-black bold)[](fg:bright-black) '
 
 # -----------------------------------------------------------------------------
-# Line 2 Execution Prompt
+# Line 2 Handled Dynamically by Nushell
 # -----------------------------------------------------------------------------
 [character]
-success_symbol = "[✓](bold green) "
-error_symbol = "[✗](bold red) "
-vicmd_symbol = "[✓](bold yellow) "
+disabled = true

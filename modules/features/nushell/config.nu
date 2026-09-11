@@ -6,6 +6,10 @@ $env.config.cursor_shape = {
   emacs: 'block'
 }
 
+$env.config.hooks = ($env.config.hooks? | default {} | merge {
+  pre_prompt: [ { print "" } ]
+})
+
 $env.config.keybindings = (
   $env.config.keybindings? | default [] | append [
     {
@@ -55,3 +59,17 @@ def cx [dir: path] {
 }
 
 source @starshipInit@
+
+# Dynamic Vi indicators: \n drops to line 2, color reflects last exit code
+def prompt_status_color [] {
+  if (($env.LAST_EXIT_CODE? | default 0) == 0) {
+    (ansi green_bold)
+  } else {
+    (ansi red_bold)
+  }
+}
+
+$env.PROMPT_INDICATOR = {|| $"\n(prompt_status_color) -> (ansi reset)" }
+$env.PROMPT_INDICATOR_VI_INSERT = {|| $"\n(prompt_status_color) -> (ansi reset)" }
+$env.PROMPT_INDICATOR_VI_NORMAL = {|| $"\n(prompt_status_color) => (ansi reset)" }
+$env.PROMPT_MULTILINE_INDICATOR = {|| $" ::: (ansi reset)" }
