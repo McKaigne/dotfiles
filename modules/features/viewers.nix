@@ -1,30 +1,29 @@
 { self, ... }:
+let
+  nixosModule = { pkgs, ... }: {
+    environment.systemPackages = [
+      self.packages.${pkgs.stdenv.hostPlatform.system}.zathura
+      self.packages.${pkgs.stdenv.hostPlatform.system}.imv
+    ];
+  };
+in
 {
+  flake.nixosModules.viewers = nixosModule;
+  flake.nixosModules.castorConfiguration = nixosModule;
+
   perSystem = { pkgs, ... }: {
     packages.zathura = pkgs.zathura;
-    packages.feh = pkgs.feh;
+    packages.imv = pkgs.imv;
 
     apps.zathura = {
       type = "app";
       program = "${pkgs.zathura}/bin/zathura";
       meta.description = "Document viewer";
     };
-    apps.feh = {
+    apps.imv = {
       type = "app";
-      program = "${pkgs.feh}/bin/feh";
-      meta.description = "Image viewer";
+      program = "${pkgs.imv}/bin/imv";
+      meta.description = "Wayland native image viewer";
     };
-  };
-
-  flake = let
-    nixosModule = { pkgs, ... }: {
-      environment.systemPackages = [
-        self.packages.${pkgs.stdenv.hostPlatform.system}.zathura
-        self.packages.${pkgs.stdenv.hostPlatform.system}.feh
-      ];
-    };
-  in {
-    nixosModules.viewers = nixosModule;
-    nixosModules.castorConfiguration = nixosModule;
   };
 }

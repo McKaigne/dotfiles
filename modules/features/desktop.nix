@@ -31,7 +31,6 @@ let
     # Baseline workstation infrastructure & core utilities
     environment.systemPackages = with pkgs; [
       git
-      wget
       curl
       ripgrep
       fd

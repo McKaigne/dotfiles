@@ -60,7 +60,6 @@
 
       environment.systemPackages = [
         self.packages.${pkgs.stdenv.hostPlatform.system}.thunar
-        pkgs.file-roller
       ];
 
       environment.etc."xdg/xfce4/helpers.rc".text = ''

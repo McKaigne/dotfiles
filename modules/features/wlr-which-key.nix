@@ -12,8 +12,6 @@ in
   flake.nixosModules.castorConfiguration = nixosModule;
 
   perSystem = { self', pkgs, ... }: let
-    # Use pkgs.niri to break the derivation cycle (niri -> wlr-which-key -> niri).
-    # Since packages.niri wraps pkgs.niri, both share the exact same store closure.
     niriBin = "${pkgs.niri}/bin/niri";
     noctaliaBin = "${self'.packages.noctalia-shell}/bin/noctalia-shell";
     systemctlBin = "${pkgs.systemd}/bin/systemctl";
@@ -40,9 +38,6 @@ in
             - key: "g"
               desc: "Lazygit"
               cmd: "${self'.packages.ghostty}/bin/ghostty -e ${pkgs.lazygit}/bin/lazygit"
-            - key: "d"
-              desc: "Lazydocker"
-              cmd: "${self'.packages.ghostty}/bin/ghostty -e ${pkgs.lazygit}/bin/lazydocker"
             - key: "b"
               desc: "Btop Monitor"
               cmd: "${self'.packages.ghostty}/bin/ghostty -e ${self'.packages.btop}/bin/btop"

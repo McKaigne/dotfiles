@@ -18,8 +18,6 @@ in
 
   perSystem = { self', pkgs, lib, ... }:
     let
-      llvm = pkgs.llvmPackages_18;
-      cxxHeaders = "${llvm.libcxx}/include/c++/v1";
       glibcHeaders = "${pkgs.glibc.dev}/include";
       fixedCursor = self'.packages.bibata-cursors-fixed;
       iconPath = "${fixedCursor}/share/icons:/run/current-system/sw/share/icons";
@@ -29,15 +27,11 @@ in
         ripgrep
         fd
         gcc
-        llvm.clang-tools
-        cmake
-        ninja
         gnumake
         nixfmt
         shellcheck
         python3
         direnv
-        zig_0_16
         glib
         self'.packages.nushell
         fixedCursor
@@ -48,8 +42,7 @@ in
       doomCliScript = pkgs.writeShellScriptBin "doom" ''
         set -eo pipefail
         export PATH="${lib.makeBinPath doomRuntimeDeps}:$PATH"
-        export CPLUS_INCLUDE_PATH="${cxxHeaders}:${glibcHeaders}''${CPLUS_INCLUDE_PATH:+:$CPLUS_INCLUDE_PATH}"
-        export CPATH="${cxxHeaders}:${glibcHeaders}''${CPATH:+:$CPATH}"
+        export CPATH="${glibcHeaders}''${CPATH:+:$CPATH}"
         export DOOMDIR="''${DOOMDIR:-${doomDir}}"
         export EMACSDIR="''${EMACSDIR:-$HOME/.config/emacs}"
 
@@ -69,8 +62,7 @@ in
         postBuild = ''
           wrapProgram $out/bin/emacs \
             --prefix PATH : ${lib.makeBinPath doomRuntimeDeps} \
-            --prefix CPLUS_INCLUDE_PATH : "${cxxHeaders}:${glibcHeaders}" \
-            --prefix CPATH : "${cxxHeaders}:${glibcHeaders}" \
+            --prefix CPATH : "${glibcHeaders}" \
             --set-default DOOMDIR "${doomDir}" \
             --set-default EMACSDIR "$HOME/.config/emacs" \
             --set XCURSOR_THEME "Bibata-Modern-Classic" \
@@ -87,8 +79,7 @@ in
 
           wrapProgram $out/bin/emacsclient \
             --prefix PATH : ${lib.makeBinPath doomRuntimeDeps} \
-            --prefix CPLUS_INCLUDE_PATH : "${cxxHeaders}:${glibcHeaders}" \
-            --prefix CPATH : "${cxxHeaders}:${glibcHeaders}" \
+            --prefix CPATH : "${glibcHeaders}" \
             --set-default DOOMDIR "${doomDir}" \
             --set-default EMACSDIR "$HOME/.config/emacs" \
             --set XCURSOR_THEME "Bibata-Modern-Classic" \
@@ -105,7 +96,7 @@ in
       apps.emacs = {
         type = "app";
         program = "${myEmacs}/bin/emacs";
-        meta.description = "Doom Emacs wrapped with build tools, LSP servers, and in-store DOOMDIR";
+        meta.description = "Doom Emacs wrapped with core build tools, git, and in-store DOOMDIR";
       };
 
       apps.doom = {
