@@ -1,64 +1,137 @@
-add_newline = false
-format = """$directory$character"""
-palette = "catppuccin_mocha"
-right_format = """$all"""
-command_timeout = 1000
+add_newline = true
 
-[character]
-vicmd_symbol = "[N] >>>"
-success_symbol = '[➜](bold green)'
+# Left Ribbon (Light -> Dark):
+# (Logo) ~ ) [git) ] time )
+format = """
+[](fg:bright-white)$os[](fg:bright-white bg:white)$directory[](fg:white bg:bright-black)$git_branch$git_status[](fg:bright-black bg:black)$time[](fg:black)
+$character"""
 
-[directory.substitutions]
-'~/tests/starship-custom' = 'work-project'
+# Right Prompt in Reverse Luminance Order (Dark -> Bright):
+# [k8s(black)] [aws(bright-black)] [lang(white)] [duration(bright-white)]
+right_format = """$kubernetes$aws$rust$python$golang$nodejs$c$zig$nix_shell$elixir$java$lua$cmd_duration"""
 
-[git_branch]
-format = '[$symbol$branch(:$remote_branch)]($style)'
-
-[aws]
-format = '[$symbol(profile: "$profile" )(\(region: $region\) )]($style)'
+# -----------------------------------------------------------------------------
+# Logo (bright-white) - Padded on both sides for full optical size
+# -----------------------------------------------------------------------------
+[os]
 disabled = false
-style = 'bold blue'
-symbol = " "
+style = "fg:black bg:bright-white bold"
+format = "[ $symbol ]($style)"
+
+[os.symbols]
+NixOS = ""
+Linux = "󰌽"
+Debian = ""
+
+# -----------------------------------------------------------------------------
+# Directory (white / beige)
+# -----------------------------------------------------------------------------
+[directory]
+style = "fg:black bg:white bold"
+format = "[ $path ]($style)"
+truncation_length = 3
+truncation_symbol = "…/"
+home_symbol = "~"
+
+# -----------------------------------------------------------------------------
+# Git Branch & Status (bright-black tier)
+# -----------------------------------------------------------------------------
+[git_branch]
+symbol = " "
+style = "fg:white bg:bright-black bold"
+format = "[ $symbol$branch(:$remote_branch) ]($style)"
+
+[git_status]
+style = "fg:white bg:bright-black"
+format = "([$all_status$ahead_behind ]($style))"
+conflicted = "󰳤 "
+ahead = "⇡${count}"
+behind = "⇣${count}"
+diverged = "⇕"
+untracked = "?${count}"
+stashed = "󰠦 "
+modified = "!${count}"
+staged = "+${count}"
+renamed = "»${count}"
+deleted = "✘${count}"
+
+# -----------------------------------------------------------------------------
+# Time (black tier)
+# -----------------------------------------------------------------------------
+[time]
+disabled = false
+format = "[ $time ]($style)"
+time_format = "%R"
+style = "fg:white bg:black"
+
+# -----------------------------------------------------------------------------
+# Right Side: Languages (Icons Only, white tier)
+# -----------------------------------------------------------------------------
+[rust]
+symbol = ""
+format = "[](fg:white)[ $symbol ](fg:black bg:white bold)[](fg:white) "
+
+[python]
+symbol = ""
+format = "[](fg:white)[ $symbol ](fg:black bg:white bold)[](fg:white) "
 
 [golang]
-format = '[ ](bold cyan)'
+symbol = ""
+format = "[](fg:white)[ $symbol ](fg:black bg:white bold)[](fg:white) "
 
+[nodejs]
+symbol = "󰎙"
+format = "[](fg:white)[ $symbol ](fg:black bg:white bold)[](fg:white) "
+
+[c]
+symbol = ""
+format = "[](fg:white)[ $symbol ](fg:black bg:white bold)[](fg:white) "
+
+[zig]
+symbol = ""
+format = "[](fg:white)[ $symbol ](fg:black bg:white bold)[](fg:white) "
+
+[nix_shell]
+symbol = ""
+format = "[](fg:white)[ $symbol ](fg:black bg:white bold)[](fg:white) "
+
+[elixir]
+symbol = ""
+format = "[](fg:white)[ $symbol ](fg:black bg:white bold)[](fg:white) "
+
+[lua]
+symbol = ""
+format = "[](fg:white)[ $symbol ](fg:black bg:white bold)[](fg:white) "
+
+[java]
+symbol = ""
+format = "[](fg:white)[ $symbol ](fg:black bg:white bold)[](fg:white) "
+
+# -----------------------------------------------------------------------------
+# Right Side: Execution Duration (Far Right: bright-white)
+# -----------------------------------------------------------------------------
+[cmd_duration]
+min_time = 2_000
+show_milliseconds = false
+format = '[](fg:bright-white)[ 󱎫 $duration ](fg:black bg:bright-white bold)[](fg:bright-white)'
+
+# -----------------------------------------------------------------------------
+# Right Side: Cloud Contexts (Darker Tiers: black and bright-black)
+# -----------------------------------------------------------------------------
 [kubernetes]
-symbol = '☸ '
-disabled = true
-detect_files = ['Dockerfile']
-format = '[$symbol$context( \($namespace\))]($style) '
-contexts = [
-  { context_pattern = "arn:aws:eks:us-west-2:577926974532:cluster/zd-pvc-omer", style = "green", context_alias = "omerxx", symbol = " " },
-]
+disabled = false
+symbol = "☸ "
+format = '[](fg:black)[ $symbol$context ](fg:blue bg:black bold)[](fg:black) '
 
-[docker_context]
-disabled = true
+[aws]
+disabled = false
+symbol = " "
+format = '[](fg:bright-black)[ $symbol$profile ](fg:yellow bg:bright-black bold)[](fg:bright-black) '
 
-[palettes.catppuccin_mocha]
-rosewater = "#f5e0dc"
-flamingo = "#f2cdcd"
-pink = "#f5c2e7"
-mauve = "#cba6f7"
-red = "#f38ba8"
-maroon = "#eba0ac"
-peach = "#fab387"
-yellow = "#f9e2af"
-green = "#a6e3a1"
-teal = "#94e2d5"
-sky = "#89dceb"
-sapphire = "#74c7ec"
-blue = "#89b4fa"
-lavender = "#b4befe"
-text = "#cdd6f4"
-subtext1 = "#bac2de"
-subtext0 = "#a6adc8"
-overlay2 = "#9399b2"
-overlay1 = "#7f849c"
-overlay0 = "#6c7086"
-surface2 = "#585b70"
-surface1 = "#45475a"
-surface0 = "#313244"
-base = "#1e1e2e"
-mantle = "#181825"
-crust = "#11111b"
+# -----------------------------------------------------------------------------
+# Line 2 Execution Prompt
+# -----------------------------------------------------------------------------
+[character]
+success_symbol = "[✓](bold green) "
+error_symbol = "[✗](bold red) "
+vicmd_symbol = "[✓](bold yellow) "

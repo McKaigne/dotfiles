@@ -9,14 +9,24 @@ in
 {
   flake.nixosModules.tmux = nixosModule;
 
-  perSystem = { pkgs, ... }:
+  perSystem = { self', pkgs, lib, ... }:
     let
+      tmuxDeps = [
+        pkgs.fzf
+        pkgs.lazygit
+        pkgs.python3
+        self'.packages.yazi
+        self'.packages.helix
+        self'.packages.nushell
+      ];
+
       wrappedTmux = pkgs.symlinkJoin {
         name = "tmux";
         paths = [ pkgs.tmux ];
         nativeBuildInputs = [ pkgs.makeWrapper ];
         postBuild = ''
           wrapProgram $out/bin/tmux \
+            --prefix PATH : ${lib.makeBinPath tmuxDeps} \
             --set TMUX_CONF "${./tmux.conf}" \
             --add-flags "-f ${./tmux.conf}"
         '';
@@ -28,7 +38,7 @@ in
       apps.tmux = {
         type = "app";
         program = "${wrappedTmux}/bin/tmux";
-        meta.description = "Hermetically wrapped Tmux terminal multiplexer";
+        meta.description = "Hermetically wrapped Tmux terminal multiplexer with popups and statusline";
       };
     };
 }
