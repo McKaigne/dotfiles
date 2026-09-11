@@ -16,12 +16,12 @@ in
   flake.nixosModules.emacs = nixosModule;
   flake.nixosModules.castorConfiguration = nixosModule;
 
-  perSystem = { pkgs, lib, ... }:
+  perSystem = { self', pkgs, lib, ... }:
     let
       llvm = pkgs.llvmPackages_18;
       cxxHeaders = "${llvm.libcxx}/include/c++/v1";
       glibcHeaders = "${pkgs.glibc.dev}/include";
-      fixedCursor = self.packages.${pkgs.stdenv.hostPlatform.system}.bibata-cursors-fixed;
+      fixedCursor = self'.packages.bibata-cursors-fixed;
       iconPath = "${fixedCursor}/share/icons:/run/current-system/sw/share/icons";
 
       doomRuntimeDeps = with pkgs; [
@@ -39,7 +39,7 @@ in
         direnv
         zig_0_16
         glib
-        pkgs.nushell
+        self'.packages.nushell
         fixedCursor
       ];
 

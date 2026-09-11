@@ -1,111 +1,125 @@
 { self, ... }:
 
+let
+  nixosModule = { pkgs, ... }: {
+    environment.systemPackages = [
+      self.packages.${pkgs.stdenv.hostPlatform.system}.wlr-which-key
+    ];
+  };
+in
 {
+  flake.nixosModules.wlrWhichKey = nixosModule;
+  flake.nixosModules.castorConfiguration = nixosModule;
+
   perSystem = { self', pkgs, ... }: let
+    # Use pkgs.niri to break the derivation cycle (niri -> wlr-which-key -> niri).
+    # Since packages.niri wraps pkgs.niri, both share the exact same store closure.
     niriBin = "${pkgs.niri}/bin/niri";
     noctaliaBin = "${self'.packages.noctalia-shell}/bin/noctalia-shell";
     systemctlBin = "${pkgs.systemd}/bin/systemctl";
     loginctlBin = "${pkgs.systemd}/bin/loginctl";
 
     whichKeyConfig = pkgs.writeText "config.yaml" ''
-      font: "JetBrainsMono Nerd Font 11"
-      background: "#1e1e2e"
+      font: "Maple Mono NF 12"
+      background: "#1e1e2ed0"
       color: "#cdd6f4"
       border: "#89b4fa"
+      separator: " ➜ "
       border_width: 1
-      corner_radius: 4
-      column_spacing: 20
+      corner_r: 4
+      padding: 15
+      column_padding: 20
+      anchor: center
       menu:
         - key: "t"
-          label: "Terminal"
+          desc: "Terminal"
           submenu:
             - key: "a"
-              label: "Tmux Attach"
+              desc: "Tmux Attach"
               cmd: "${self'.packages.ghostty}/bin/ghostty -e ${self'.packages.tmux}/bin/tmux attach"
             - key: "g"
-              label: "Lazygit"
+              desc: "Lazygit"
               cmd: "${self'.packages.ghostty}/bin/ghostty -e ${pkgs.lazygit}/bin/lazygit"
             - key: "d"
-              label: "Lazydocker"
-              cmd: "${self'.packages.ghostty}/bin/ghostty -e ${pkgs.lazydocker}/bin/lazydocker"
+              desc: "Lazydocker"
+              cmd: "${self'.packages.ghostty}/bin/ghostty -e ${pkgs.lazygit}/bin/lazydocker"
             - key: "b"
-              label: "Btop Monitor"
+              desc: "Btop Monitor"
               cmd: "${self'.packages.ghostty}/bin/ghostty -e ${self'.packages.btop}/bin/btop"
         - key: "l"
-          label: "LocalSend"
+          desc: "LocalSend"
           submenu:
             - key: "c"
-              label: "Send Clipboard"
+              desc: "Send Clipboard"
               cmd: "${pkgs.wl-clipboard}/bin/wl-paste | ${pkgs.localsend}/bin/localsend"
             - key: "r"
-              label: "Receive (Open App)"
+              desc: "Receive (Open App)"
               cmd: "${pkgs.localsend}/bin/localsend"
         - key: "n"
-          label: "Noctalia"
+          desc: "Noctalia"
           submenu:
             - key: "s"
-              label: "Silence Notifications"
+              desc: "Silence Notifications"
               cmd: "${noctaliaBin} ipc call notifications toggleSilence"
             - key: "c"
-              label: "Clipboard History"
+              desc: "Clipboard History"
               cmd: "${noctaliaBin} ipc call launcher clipboard"
             - key: "b"
-              label: "Toggle Shell Bar"
+              desc: "Toggle Shell Bar"
               cmd: "${noctaliaBin} ipc call bar toggle"
         - key: "w"
-          label: "Window"
+          desc: "Window"
           submenu:
             - key: "t"
-              label: "Toggle Float / Tile"
+              desc: "Toggle Float / Tile"
               cmd: "${niriBin} msg action toggle-window-floating"
             - key: "f"
-              label: "Fullscreen Window"
+              desc: "Fullscreen Window"
               cmd: "${niriBin} msg action fullscreen-window"
             - key: "w"
-              label: "Maximize Width"
+              desc: "Maximize Width"
               cmd: "${niriBin} msg action maximize-column"
             - key: "e"
-              label: "Reset Window Height"
+              desc: "Reset Window Height"
               cmd: "${niriBin} msg action reset-window-height"
         - key: "s"
-          label: "System"
+          desc: "System"
           submenu:
             - key: "s"
-              label: "Power / Session Menu"
+              desc: "Power / Session Menu"
               cmd: "${noctaliaBin} ipc call sessionMenu toggle"
             - key: "l"
-              label: "Lock Screen"
+              desc: "Lock Screen"
               cmd: "${loginctlBin} lock-session"
             - key: "z"
-              label: "Suspend System"
+              desc: "Suspend System"
               cmd: "${systemctlBin} suspend"
             - key: "r"
-              label: "Reboot System"
+              desc: "Reboot System"
               cmd: "${systemctlBin} reboot"
     '';
-  in {
-    packages.wlr-which-key = pkgs.symlinkJoin {
+
+    whichKeyDir = pkgs.runCommand "wlr-which-key-config-dir" {} ''
+      mkdir -p $out/wlr-which-key
+      cp ${whichKeyConfig} $out/wlr-which-key/config.yaml
+    '';
+
+    wrappedWhichKey = pkgs.symlinkJoin {
       name = "wlr-which-key-wrapped";
       paths = [ pkgs.wlr-which-key ];
-      buildInputs = [ pkgs.makeWrapper ];
+      nativeBuildInputs = [ pkgs.makeWrapper ];
       postBuild = ''
-        makeWrapper ${pkgs.wlr-which-key}/bin/wlr-which-key $out/bin/wlr-which-key-menu \
-          --add-flags "--config ${whichKeyConfig}"
+        wrapProgram $out/bin/wlr-which-key \
+          --set XDG_CONFIG_HOME "${whichKeyDir}"
       '';
     };
+  in {
+    packages.wlr-which-key = wrappedWhichKey;
 
     apps.wlr-which-key = {
       type = "app";
-      program = "${self'.packages.wlr-which-key}/bin/wlr-which-key-menu";
+      program = "${wrappedWhichKey}/bin/wlr-which-key";
       meta.description = "Modal which-key menu overlay wrapped with hermetic config";
     };
-  };
-
-  flake.nixosModules.wlrWhichKey = { pkgs, ... }: {
-    environment.systemPackages = [ self.packages.${pkgs.stdenv.hostPlatform.system}.wlr-which-key ];
-  };
-
-  flake.nixosModules.castorConfiguration = { ... }: {
-    imports = [ self.nixosModules.wlrWhichKey ];
   };
 }

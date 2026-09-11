@@ -10,9 +10,9 @@ in
   flake.nixosModules.yazi = nixosModule;
   flake.nixosModules.castorConfiguration = nixosModule;
 
-  perSystem = { pkgs, ... }:
+  perSystem = { self', pkgs, ... }:
     let
-      wrappedHelixBin = "${self.packages.${pkgs.stdenv.hostPlatform.system}.helix}/bin/hx";
+      wrappedHelixBin = "${self'.packages.helix}/bin/hx";
 
       yaziToml = pkgs.writeText "yazi.toml" ''
         [opener]

@@ -1,20 +1,52 @@
 { self, ... }:
 
+let
+  nixosModule = { pkgs, ... }: {
+    environment.systemPackages = [
+      self.packages.${pkgs.stdenv.hostPlatform.system}.niri
+      pkgs.xwayland-satellite
+    ];
+    programs.niri = {
+      enable = true;
+      package = self.packages.${pkgs.stdenv.hostPlatform.system}.niri;
+    };
+  };
+in
 {
+  flake.nixosModules.niri = nixosModule;
+  flake.nixosModules.castorConfiguration = nixosModule;
+
   perSystem = { self', pkgs, lib, ... }: let
     noctaliaShellBin = "${self'.packages.noctalia-shell}/bin/noctalia-shell";
 
-    noctaliaEmoji = pkgs.writeShellScriptBin "castor-noctalia-emoji" ''
-      exec ${noctaliaShellBin} ipc call launcher emoji
-    '';
-
     niriConfig = pkgs.writeText "config.kdl" ''
+      prefer-no-csd
+
+      hotkey-overlay {
+        skip-at-startup
+      }
+
       input {
         warp-mouse-to-focus
         focus-follows-mouse
+        touchpad {
+          tap
+          natural-scroll
+        }
+      }
+
+      cursor {
+        xcursor-theme "Bibata-Modern-Classic"
+        xcursor-size 16
+      }
+
+      environment {
+        XCURSOR_THEME "Bibata-Modern-Classic"
+        XCURSOR_SIZE "16"
       }
 
       layout {
+        gaps 8
         focus-ring {
           width 2
         }
@@ -26,13 +58,28 @@
         }
       }
 
+      workspace "w0"
+      workspace "w1"
+      workspace "w2"
+      workspace "w3"
+      workspace "w4"
+      workspace "w5"
+      workspace "w6"
+      workspace "w7"
+      workspace "w8"
+      workspace "w9"
+
+      spawn-at-startup "${noctaliaShellBin}"
+      spawn-at-startup "${pkgs.xwayland-satellite}/bin/xwayland-satellite"
+      spawn-at-startup "${pkgs.systemd}/bin/systemctl" "--user" "import-environment" "WAYLAND_DISPLAY" "XDG_CURRENT_DESKTOP"
+
       binds {
-        Mod+Space { spawn "${self'.packages.wlr-which-key}/bin/wlr-which-key-menu"; }
+        Mod+Space { spawn "${self'.packages.wlr-which-key}/bin/wlr-which-key"; }
         Mod+D     { spawn "${noctaliaShellBin}" "ipc" "call" "launcher" "toggle"; }
         Mod+N     { spawn "${noctaliaShellBin}" "ipc" "call" "controlCenter" "toggle"; }
         Mod+I     { spawn "${noctaliaShellBin}" "ipc" "call" "settings" "toggle"; }
         Mod+Comma { spawn "${noctaliaShellBin}" "ipc" "call" "notifications" "dismiss"; }
-        Mod+Period { spawn "${noctaliaEmoji}/bin/castor-noctalia-emoji"; }
+        Mod+Period { spawn "${noctaliaShellBin}" "ipc" "call" "launcher" "emoji"; }
 
         Mod+Return { spawn "${self'.packages.ghostty}/bin/ghostty"; }
         Mod+E      { spawn "${self'.packages.thunar}/bin/thunar"; }
@@ -103,17 +150,5 @@
       program = "${self'.packages.niri}/bin/niri";
       meta.description = "Scrollable-tiling Wayland compositor wrapped with hermetic config";
     };
-  };
-
-  flake.nixosModules.niri = { pkgs, ... }: {
-    environment.systemPackages = [ self.packages.${pkgs.stdenv.hostPlatform.system}.niri ];
-    programs.niri = {
-      enable = true;
-      package = self.packages.${pkgs.stdenv.hostPlatform.system}.niri;
-    };
-  };
-
-  flake.nixosModules.castorConfiguration = { ... }: {
-    imports = [ self.nixosModules.niri ];
   };
 }

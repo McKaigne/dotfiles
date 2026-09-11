@@ -10,11 +10,11 @@ in
   flake.nixosModules.helium = nixosModule;
   flake.nixosModules.castorConfiguration = nixosModule;
 
-  perSystem = { pkgs, ... }:
+  perSystem = { self', pkgs, ... }:
     let
       rawHelium = inputs.helium.packages.${pkgs.stdenv.hostPlatform.system}.default;
       schemaDir = "${pkgs.gsettings-desktop-schemas}/share/gsettings-schemas/${pkgs.gsettings-desktop-schemas.name}/glib-2.0/schemas:${pkgs.gtk3}/share/gsettings-schemas/${pkgs.gtk3.name}/glib-2.0/schemas";
-      fixedCursor = self.packages.${pkgs.stdenv.hostPlatform.system}.bibata-cursors-fixed;
+      fixedCursor = self'.packages.bibata-cursors-fixed;
       wrappedHelium = pkgs.symlinkJoin {
         name = "helium";
         paths = [ rawHelium ];

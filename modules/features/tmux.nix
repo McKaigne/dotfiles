@@ -18,9 +18,9 @@ in
         set -g prefix2 C-b
         bind -N "Send prefix" C-Space send-prefix
 
-        # Config and help
-        bind -N "Reload configuration" q source-file ~/.config/tmux/tmux.conf \; display "Configuration reloaded"
-        bind -N "Show Tmux keybindings" ? display-popup -E -w 80% -h 70% -T "Tmux keybindings" "omarchy-menu-tmux-keybindings --print | less -R"
+        # Config and help (runtime expansion of $TMUX_CONF avoids Nix self-recursion)
+        bind -N "Reload configuration" q run-shell 'tmux source-file "$TMUX_CONF" && tmux display "Configuration reloaded from Nix store"'
+        bind -N "Show Tmux keybindings" ? display-popup -E -w 80% -h 70% -T "Tmux keybindings" "tmux list-keys -N | less -R"
 
         # Vi mode for copy
         setw -g mode-keys vi
@@ -127,6 +127,7 @@ in
         nativeBuildInputs = [ pkgs.makeWrapper ];
         postBuild = ''
           wrapProgram $out/bin/tmux \
+            --set TMUX_CONF "${tmuxConf}" \
             --add-flags "-f ${tmuxConf}"
         '';
       };

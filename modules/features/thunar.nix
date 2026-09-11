@@ -21,13 +21,16 @@
         p7zip
       ];
 
+      iconDirs = "${pkgs.adwaita-icon-theme}/share:${pkgs.hicolor-icon-theme}/share:/run/current-system/sw/share";
+
       wrappedThunar = pkgs.symlinkJoin {
         name = "thunar";
         paths = [ thunarWithPlugins ];
         nativeBuildInputs = [ pkgs.makeWrapper ];
         postBuild = ''
           wrapProgram $out/bin/thunar \
-            --prefix PATH : ${lib.makeBinPath archiveTools}
+            --prefix PATH : ${lib.makeBinPath archiveTools} \
+            --prefix XDG_DATA_DIRS : "${iconDirs}"
         '';
       };
     in

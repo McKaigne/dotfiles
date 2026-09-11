@@ -2,7 +2,10 @@
   flake.nixosModules.castorConfiguration = { config, pkgs, lib, ... }: {
     nixpkgs.config.allowUnfree = true;
 
-    nix.settings.experimental-features = [ "nix-command" "flakes" ];
+    nix.settings = {
+      experimental-features = [ "nix-command" "flakes" ];
+      warn-dirty = false;
+    };
 
     networking.hostName = "castor";
     time.timeZone = "Asia/Manila";
@@ -10,7 +13,7 @@
     boot.loader.systemd-boot.enable = true;
     boot.loader.efi.canTouchEfiVariables = true;
 
-    # Enable nix-ld so precompiled CLI binaries (like Google Antigravity / agy) run seamlessly
+    # Enable nix-ld so precompiled CLI binaries run seamlessly
     programs.nix-ld.enable = true;
 
     hardware.enableRedistributableFirmware = true;

@@ -28,13 +28,23 @@ let
       @import url("file:///home/${config.mainUser}/.config/gtk-4.0/noctalia.css");
     '';
 
-    # Baseline workstation infrastructure & audio utilities
+    # Baseline workstation infrastructure & core utilities
     environment.systemPackages = with pkgs; [
       git
       wget
       curl
+      ripgrep
+      fd
+      findutils
+      wl-clipboard
+      eza
+      bat
+      fastfetch
+      adwaita-icon-theme
+      hicolor-icon-theme
       pavucontrol
       alsa-utils
+      libnotify
     ];
 
     fonts.packages = with pkgs; [
