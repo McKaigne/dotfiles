@@ -1,9 +1,10 @@
 add_newline = false
 
-# Left Ribbon (Light -> Dark):
-# (Logo) ~ ) [git) ] time )
+# Line 1: Left Ribbon (Light -> Dark)
+# Line 2: $character (Status icon)
 format = """\
-[](fg:bright-white)$os[](fg:bright-white bg:white)$directory[](fg:white bg:bright-black)$git_branch$git_status[](fg:bright-black bg:black)$time[](fg:black)"""
+[](fg:bright-white)$os[](fg:bright-white bg:white)$directory[](fg:white bg:bright-black)$git_branch$git_status[](fg:bright-black bg:black)$time[](fg:black)
+$character"""
 
 # Right Prompt in Reverse Luminance Order (Dark -> Bright):
 # [k8s(black)] [aws(bright-black)] [lang(white)] [duration(bright-white)]
@@ -128,7 +129,9 @@ symbol = " "
 format = '[](fg:bright-black)[ $symbol$profile ](fg:yellow bg:bright-black bold)[](fg:bright-black) '
 
 # -----------------------------------------------------------------------------
-# Line 2 Handled Dynamically by Nushell
+# Line 2 Status Indicator
 # -----------------------------------------------------------------------------
 [character]
-disabled = true
+disabled = false
+success_symbol = "[ ](bold green)"
+error_symbol = "[ ](bold red)"

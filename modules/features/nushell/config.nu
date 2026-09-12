@@ -60,16 +60,9 @@ def cx [dir: path] {
 
 source @starshipInit@
 
-# Dynamic Vi indicators: \n drops to line 2, color reflects last exit code
-def prompt_status_color [] {
-  if (($env.LAST_EXIT_CODE? | default 0) == 0) {
-    (ansi green_bold)
-  } else {
-    (ansi red_bold)
-  }
-}
-
-$env.PROMPT_INDICATOR = {|| $"\n(prompt_status_color) -> (ansi reset)" }
-$env.PROMPT_INDICATOR_VI_INSERT = {|| $"\n(prompt_status_color) -> (ansi reset)" }
-$env.PROMPT_INDICATOR_VI_NORMAL = {|| $"\n(prompt_status_color) => (ansi reset)" }
-$env.PROMPT_MULTILINE_INDICATOR = {|| $" ::: (ansi reset)" }
+# Modal & Multiline indicators:
+# Insert -> Bold Cyan () | Normal -> Bold Magenta () | Multiline -> Bold Yellow ()
+$env.PROMPT_INDICATOR = $"(ansi cyan_bold)    (ansi reset)"
+$env.PROMPT_INDICATOR_VI_INSERT = $"(ansi cyan_bold)    (ansi reset)"
+$env.PROMPT_INDICATOR_VI_NORMAL = $"(ansi magenta_bold)    (ansi reset)"
+$env.PROMPT_MULTILINE_INDICATOR = $"(ansi yellow_bold)    (ansi reset)"
