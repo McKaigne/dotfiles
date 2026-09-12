@@ -19,6 +19,20 @@ $env.config.keybindings = (
       mode: [emacs, vi_insert]
       event: { edit: backspaceword }
     }
+    {
+      name: newline_shift_enter
+      modifier: shift
+      keycode: enter
+      mode: [emacs, vi_insert]
+      event: { edit: insertnewline }
+    }
+    {
+      name: newline_alt_enter
+      modifier: alt
+      keycode: enter
+      mode: [emacs, vi_insert]
+      event: { edit: insertnewline }
+    }
   ]
 )
 
