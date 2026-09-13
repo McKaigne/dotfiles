@@ -1,17 +1,19 @@
 add_newline = false
 
-# Line 1: Left Ribbon (Light -> Dark)
-# Line 2: $character (Status icon)
+# Line 1: Left Ribbon -> Fill Space -> Right Status Pill ($cmd_duration)
+# Line 2: Clean input line ($character)
 format = """\
-[](fg:bright-white)$os[](fg:bright-white bg:white)$directory[](fg:white bg:bright-black)$git_branch$git_status[](fg:bright-black bg:black)$time[](fg:black)
+[](fg:bright-white)$os[](fg:bright-white bg:white)$directory[](fg:white bg:bright-black)$git_branch$git_status[](fg:bright-black bg:black)$time[](fg:black)$fill$cmd_duration
 $character"""
 
-# Right Prompt in Reverse Luminance Order (Dark -> Bright):
-# [k8s(black)] [aws(bright-black)] [lang(white)] [duration(bright-white)]
-right_format = """$kubernetes$aws$rust$python$golang$nodejs$c$zig$nix_shell$elixir$java$lua$cmd_duration"""
+# Empty right_format so Reedline leaves Line 2 completely blank
+right_format = ""
+
+[fill]
+symbol = " "
 
 # -----------------------------------------------------------------------------
-# Logo (bright-white) - Padded on both sides for full optical size
+# Logo (bright-white)
 # -----------------------------------------------------------------------------
 [os]
 disabled = false
@@ -65,68 +67,12 @@ time_format = "%R"
 style = "fg:white bg:black"
 
 # -----------------------------------------------------------------------------
-# Right Side: Languages (Icons Only, white tier)
-# -----------------------------------------------------------------------------
-[rust]
-symbol = ""
-format = "[](fg:white)[ $symbol ](fg:black bg:white bold)[](fg:white) "
-
-[python]
-symbol = ""
-format = "[](fg:white)[ $symbol ](fg:black bg:white bold)[](fg:white) "
-
-[golang]
-symbol = ""
-format = "[](fg:white)[ $symbol ](fg:black bg:white bold)[](fg:white) "
-
-[nodejs]
-symbol = "󰎙"
-format = "[](fg:white)[ $symbol ](fg:black bg:white bold)[](fg:white) "
-
-[c]
-symbol = ""
-format = "[](fg:white)[ $symbol ](fg:black bg:white bold)[](fg:white) "
-
-[zig]
-symbol = ""
-format = "[](fg:white)[ $symbol ](fg:black bg:white bold)[](fg:white) "
-
-[nix_shell]
-symbol = ""
-format = "[](fg:white)[ $symbol ](fg:black bg:white bold)[](fg:white) "
-
-[elixir]
-symbol = ""
-format = "[](fg:white)[ $symbol ](fg:black bg:white bold)[](fg:white) "
-
-[lua]
-symbol = ""
-format = "[](fg:white)[ $symbol ](fg:black bg:white bold)[](fg:white) "
-
-[java]
-symbol = ""
-format = "[](fg:white)[ $symbol ](fg:black bg:white bold)[](fg:white) "
-
-# -----------------------------------------------------------------------------
-# Right Side: Execution Duration (Far Right: bright-white)
+# Execution Duration (Far Right of Line 1)
 # -----------------------------------------------------------------------------
 [cmd_duration]
 min_time = 2_000
 show_milliseconds = false
 format = '[](fg:bright-white)[ 󱎫 $duration ](fg:black bg:bright-white bold)[](fg:bright-white)'
-
-# -----------------------------------------------------------------------------
-# Right Side: Cloud Contexts (Darker Tiers: black and bright-black)
-# -----------------------------------------------------------------------------
-[kubernetes]
-disabled = false
-symbol = "☸ "
-format = '[](fg:black)[ $symbol$context ](fg:blue bg:black bold)[](fg:black) '
-
-[aws]
-disabled = false
-symbol = " "
-format = '[](fg:bright-black)[ $symbol$profile ](fg:yellow bg:bright-black bold)[](fg:bright-black) '
 
 # -----------------------------------------------------------------------------
 # Line 2 Status Indicator

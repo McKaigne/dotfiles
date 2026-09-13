@@ -23,34 +23,58 @@ let
               caps a s d f j k l ; u i o z x c v n m , .
             )
 
+            ;; Right-hand key list (triggers left-hand modifiers)
+            (defvar
+              right-hand-keys (
+                y u i o p
+                h j k l ; '
+                n m , . /
+                ret bspc del
+                up down left right
+                pgup pgdn home end
+              )
+              left-hand-keys (
+                q w e r t
+                a s d f g
+                z x c v b
+                tab esc
+              )
+            )
+
+            ;; Bilateral tap-hold-release-keys:
+            ;; Left-hand modifiers ONLY activate when pressing a right-hand key.
+            ;; Right-hand modifiers ONLY activate when pressing a left-hand key.
+            ;; Same-hand rolls (like typing "as" or "fa") output plain letters!
             (defalias
-              cap (tap-hold 200 200 esc esc)
-              a (tap-hold 200 200 a lalt)
-              s (tap-hold 200 200 s lctl)
-              d (tap-hold 200 200 d lmet)
-              f (tap-hold 200 200 f lsft)
-              j (tap-hold 120 120 j rsft)
-              k (tap-hold 120 120 k rmet)
-              l (tap-hold 200 200 l rctl)
-              scln (tap-hold 200 200 ; ralt)
+              cap  (tap-hold 200 200 esc esc)
+              a    (tap-hold-release-keys 200 200 a lalt $right-hand-keys)
+              s    (tap-hold-release-keys 200 200 s lctl $right-hand-keys)
+              d    (tap-hold-release-keys 200 200 d lmet $right-hand-keys)
+              f    (tap-hold-release-keys 200 200 f lsft $right-hand-keys)
+
+              j    (tap-hold-release-keys 200 200 j rsft $left-hand-keys)
+              k    (tap-hold-release-keys 200 200 k rmet $left-hand-keys)
+              l    (tap-hold-release-keys 200 200 l rctl $left-hand-keys)
+              scln (tap-hold-release-keys 200 200 ; ralt $left-hand-keys)
             )
 
             (deflayer base
               @cap @a @s @d @f @j @k @l @scln _ _ _ _ _ _ _ _ _ _ _
             )
 
+            ;; Chords tightened to 20ms to prevent accidental roll triggers
             (defchordsv2
-              (a z) C-S-z 35 all-released ()
-              (z x) C-z   35 all-released ()
-              (x c) C-ins 35 all-released ()
-              (c v) S-ins 35 all-released ()
-              (x v) S-del 35 all-released ()
-              (z v) C-a   35 all-released ()
-              (u i) C-bspc 35 all-released ()
-              (i o) C-del  35 all-released ()
-              (n m) tab   35 all-released ()
-              (m ,) C-pgup 35 all-released ()
-              (, .) C-pgdn 35 all-released ()
+              (a z) C-S-z 20 all-released ()
+              (z x) C-z   20 all-released ()
+              (x c) C-ins 20 all-released ()
+              (c v) S-ins 20 all-released ()
+              (x v) S-del 20 all-released ()
+              (z v) C-a   20 all-released ()
+              (u i) C-bspc 20 all-released ()
+              (i o) C-del  20 all-released ()
+              (n m) tab   20 all-released ()
+              (m ,) C-pgup 20 all-released ()
+              (, .) C-pgdn 20 all-released ()
             )
           '';
         };

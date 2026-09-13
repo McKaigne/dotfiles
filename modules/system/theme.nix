@@ -57,7 +57,7 @@ let
               "org/gnome/desktop/interface" = {
                 cursor-theme = cfg.theme;
                 cursor-size  = lib.gvariant.mkInt32 cfg.size;
-                icon-theme   = "Adwaita";
+                icon-theme   = "Papirus-Dark";
                 gtk-theme    = "adw-gtk3-dark";
                 color-scheme = "prefer-dark";
               };

@@ -42,6 +42,7 @@ This workstation implements the **Layered Dendritic Pattern** combined with the 
 | Key Remapper | Kanata | `services.kanata` (home-row mods, universal CUA clipboard chords, device path option) |
 | Primary Editor | Doom Emacs | Wrapped with native compilation toolchain, in-store `DOOMDIR`, and `doom` CLI |
 | Secondary Editor | Helix (`hx`) | Wrapped with in-store `config.toml` & all-mode block cursors |
+| GUI Code Editor | Zed (`zed`) | Wrapped with Helix mode, toolchains (Clangd, Dart/Flutter, Elixir-LS), & Noctalia theme |
 | Shell | Nushell | Wrapped with in-store `config.nu`, `env.nu`, Starship, & setuid wrapper priority |
 | Terminal | Ghostty | Wrapped with in-store config, auto-hide cursor on typing, & GLSL smear shader |
 | Multiplexer | Tmux | Wrapped with in-store `tmux.conf` & runtime `$TMUX_CONF` expansion |
@@ -74,6 +75,7 @@ The only mutable files permitted in `~/.config/` are live theme palettes generat
 - `~/.config/niri/noctalia.kdl` -> Included dynamically by Niri (`include optional=true`).
 - `~/.config/fuzzel/themes/noctalia` -> Included dynamically by Fuzzel.
 - `~/.config/helix/themes/noctalia.toml` -> Evaluated dynamically by Helix.
+- `~/.config/zed/themes/noctalia.json` -> Evaluated dynamically by Zed.
 - `~/.config/gtk-3.0/noctalia.css` & `4.0` -> Imported system-wide via `/etc/xdg/gtk-*/gtk.css`.
 
 ---
@@ -186,7 +188,10 @@ The only mutable files permitted in `~/.config/` are live theme palettes generat
 | `e` / `et` | Emacsclient GUI (`-c`) / Terminal (`-t`) |
 | `fm` | Open Thunar file manager |
 | `y` | Open Yazi file manager (with wrapped Helix opener) |
+| `cd <path>` / `z` | Smart directory jump via Zoxide |
+| `cdi` / `zi` | Interactive jump via `fzf` |
 | `h` / `hx` | Open Helix modal text editor |
+| `z` / `zed` | Open Zed GUI code editor (Helix mode) |
 | `nr` | Rebuild system (`sudo nixos-rebuild switch --flake /etc/nixos#castor`) |
 | `nfu` | Update flake inputs (`nix flake update --flake /etc/nixos`) |
 | `ncd` | Navigate to `/etc/nixos` |
