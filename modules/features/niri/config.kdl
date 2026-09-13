@@ -42,6 +42,7 @@ window-rule {
   clip-to-geometry true
 }
 
+// Workspaces 0-9 (Scratchpad eliminated)
 workspace "w0"
 workspace "w1"
 workspace "w2"
@@ -52,156 +53,124 @@ workspace "w6"
 workspace "w7"
 workspace "w8"
 workspace "w9"
-workspace "scratch"
 
 spawn-at-startup "@noctaliaShell@"
 spawn-at-startup "@xwaylandSatellite@"
 spawn-at-startup "@systemctl@" "--user" "import-environment" "PATH" "XDG_DATA_DIRS" "WAYLAND_DISPLAY" "XDG_CURRENT_DESKTOP"
 
 binds {
-  // ==========================================
-  // Core Applications & Window Operations
-  // ==========================================
-  Mod+W              { spawn "@helium@"; }
-  Mod+Q              { close-window; }
-  Mod+Return         { spawn "@ghostty@"; }
-  Mod+E              { spawn "@thunar@"; }
-  Mod+C              { spawn "@emacsclient@" "-c" "-a" "emacs"; }
-  Mod+Z              { spawn "@zed@"; }
+  // =========================================================================
+  // 1. LEFT-HAND HOME ROW: DAILY DRIVERS (Bilateral: Right Mod [k])
+  // =========================================================================
+  Mod+A                  hotkey-overlay-title="Tmux Sessionizer"           { spawn "@ghostty@" "-e" "@tmuxSessionizer@"; }
+  Mod+S                  hotkey-overlay-title="Spotify (Spicetify Player)" { spawn "@spotify@"; }
+  Mod+D                  hotkey-overlay-title="Code Editor: Doom Emacs"    { spawn "@emacsclient@" "-c" "-a" "emacs"; }
+  Mod+F                  hotkey-overlay-title="Maximize Column (Fit Width)"{ maximize-column; }
+  Mod+G                  hotkey-overlay-title="Git Client: Lazygit"        { spawn "@ghostty@" "-e" "@lazygit@"; }
 
-  // Launchers & Menus (Adjacent: Mod alone / Mod+Ctrl)
-  Mod+Space          { spawn "@noctaliaShell@" "ipc" "call" "launcher" "toggle"; }
-  Mod+Ctrl+Space     { spawn "@fuzzel@"; }
-  Mod+Escape         { spawn "@noctaliaShell@" "ipc" "call" "sessionMenu" "toggle"; }
-  Mod+Ctrl+L         { spawn "@loginctl@" "lock-session"; }
+  // =========================================================================
+  // 2. LEFT-HAND UPPER & BOTTOM ROWS: ESSENTIAL APPLICATIONS
+  // =========================================================================
+  Mod+Q                  hotkey-overlay-title="Close Focused Window"       { close-window; }
+  Mod+W                  hotkey-overlay-title="Browser: Helium"            { spawn "@helium@"; }
+  Mod+E                  hotkey-overlay-title="File Manager: Thunar"       { spawn "@thunar@"; }
+  Mod+Z                  hotkey-overlay-title="GUI Editor: Zed"            { spawn "@zed@"; }
+  Mod+X                  hotkey-overlay-title="Power & Session Menu"       { spawn "@noctaliaShell@" "ipc" "call" "sessionMenu" "toggle"; }
+  Mod+C                  hotkey-overlay-title="Center Column on Screen"    { center-column; }
+  Mod+V                  hotkey-overlay-title="Clipboard History"          { spawn "@noctaliaShell@" "ipc" "call" "launcher" "clipboard"; }
 
-  // Layout & Sizing (Adjacent: Mod / Mod+Ctrl / Mod+Shift)
-  Mod+F              { fullscreen-window; }
-  Mod+Ctrl+F         { maximize-column; }
-  Mod+Shift+F        { expand-column-to-available-width; }
-  Mod+T              { toggle-window-floating; }
-  Mod+P              { reset-window-height; }
-  Mod+Home           { switch-preset-column-width; }
-  Mod+Ctrl+Home      { reset-window-height; }
+  // =========================================================================
+  // 3. SYSTEM LAUNCHERS & NOCTALIA SHELL CONTROLS
+  // =========================================================================
+  Mod+Return             hotkey-overlay-title="Terminal: Ghostty"          { spawn "@ghostty@"; }
+  Mod+Space              hotkey-overlay-title="Application Launcher"       { spawn "@noctaliaShell@" "ipc" "call" "launcher" "toggle"; }
+  Mod+Shift+Space        hotkey-overlay-title="Toggle Window Floating"     { toggle-window-floating; }
+  Mod+Shift+F            hotkey-overlay-title="Fullscreen Window"          { fullscreen-window; }
 
-  // Directional Focus (Single Mod: Middle finger)
-  Mod+Left           { focus-column-left; }
-  Mod+Right          { focus-column-right; }
-  Mod+H              { focus-column-left; }
-  Mod+L              { focus-column-right; }
-  Mod+Down           { focus-workspace-down; }
-  Mod+Up             { focus-workspace-up; }
-  Mod+J              { focus-workspace-down; }
-  Mod+K              { focus-workspace-up; }
+  Mod+N                  hotkey-overlay-title="Control Center"             { spawn "@noctaliaShell@" "ipc" "call" "controlCenter" "toggle"; }
+  Mod+Comma              hotkey-overlay-title="Noctalia Settings"          { spawn "@noctaliaShell@" "ipc" "call" "settings" "toggle"; }
+  Mod+Period             hotkey-overlay-title="Emoji Picker"               { spawn "@noctaliaShell@" "ipc" "call" "launcher" "emoji"; }
+  Mod+Escape             hotkey-overlay-title="Lock Screen"                { spawn "@noctaliaShell@" "ipc" "call" "lockScreen" "lock"; }
+  Mod+B                  hotkey-overlay-title="Toggle Top Bar"             { spawn "@noctaliaShell@" "ipc" "call" "bar" "toggle"; }
 
-  // Move Column / Workspace (Adjacent: Mod+Shift [Middle+Index])
-  Mod+Shift+Left     { move-column-left; }
-  Mod+Shift+Right    { move-column-right; }
-  Mod+Shift+H        { move-column-left; }
-  Mod+Shift+L        { move-column-right; }
-  Mod+Shift+Down     { move-column-to-workspace-down; }
-  Mod+Shift+Up       { move-column-to-workspace-up; }
-  Mod+Shift+J        { move-column-to-workspace-down; }
-  Mod+Shift+K        { move-column-to-workspace-up; }
+  Mod+Backspace          hotkey-overlay-title="Dismiss Notification"       { spawn "@noctaliaShell@" "ipc" "call" "notifications" "dismiss"; }
+  Mod+Shift+Backspace    hotkey-overlay-title="Dismiss All Notifications"  { spawn "@noctaliaShell@" "ipc" "call" "notifications" "dismissAll"; }
+  Mod+Shift+N            hotkey-overlay-title="Notification Center Drawer" { spawn "@noctaliaShell@" "ipc" "call" "notifications" "toggleHistory"; }
+  Mod+Ctrl+N             hotkey-overlay-title="Toggle Do Not Disturb"      { spawn "@noctaliaShell@" "ipc" "call" "notifications" "toggleSilence"; }
+  Mod+Slash              hotkey-overlay-title="Hotkey Cheat Sheet"         { show-hotkey-overlay; }
 
-  // Quick Cycling (Adjacent: Mod+Shift / Mod+Ctrl)
-  Mod+Tab            { focus-workspace-down; }
-  Mod+Shift+Tab      { focus-workspace-up; }
-  Mod+Ctrl+Tab       { focus-workspace-previous; }
+  // =========================================================================
+  // 4. RIGHT-HAND HOME ROW: DIRECTIONAL NAVIGATION (Bilateral: Left Mod [d])
+  // =========================================================================
+  Mod+H                  hotkey-overlay-title="Focus Column Left"          { focus-column-left; }
+  Mod+L                  hotkey-overlay-title="Focus Column Right"         { focus-column-right; }
+  Mod+J                  hotkey-overlay-title="Focus Workspace Down"       { focus-workspace-down; }
+  Mod+K                  hotkey-overlay-title="Focus Workspace Up"         { focus-workspace-up; }
 
-  // Workspaces 0-9 (Single Mod / Mod+Shift)
-  Mod+1              { focus-workspace "w1"; }
-  Mod+2              { focus-workspace "w2"; }
-  Mod+3              { focus-workspace "w3"; }
-  Mod+4              { focus-workspace "w4"; }
-  Mod+5              { focus-workspace "w5"; }
-  Mod+6              { focus-workspace "w6"; }
-  Mod+7              { focus-workspace "w7"; }
-  Mod+8              { focus-workspace "w8"; }
-  Mod+9              { focus-workspace "w9"; }
-  Mod+0              { focus-workspace "w0"; }
+  Mod+Shift+H            hotkey-overlay-title="Move Column Left"           { move-column-left; }
+  Mod+Shift+L            hotkey-overlay-title="Move Column Right"          { move-column-right; }
+  Mod+Shift+J            hotkey-overlay-title="Move Column to WS Down"     { move-column-to-workspace-down; }
+  Mod+Shift+K            hotkey-overlay-title="Move Column to WS Up"       { move-column-to-workspace-up; }
 
-  Mod+Shift+1        { move-column-to-workspace "w1"; }
-  Mod+Shift+2        { move-column-to-workspace "w2"; }
-  Mod+Shift+3        { move-column-to-workspace "w3"; }
-  Mod+Shift+4        { move-column-to-workspace "w4"; }
-  Mod+Shift+5        { move-column-to-workspace "w5"; }
-  Mod+Shift+6        { move-column-to-workspace "w6"; }
-  Mod+Shift+7        { move-column-to-workspace "w7"; }
-  Mod+Shift+8        { move-column-to-workspace "w8"; }
-  Mod+Shift+9        { move-column-to-workspace "w9"; }
-  Mod+Shift+0        { move-column-to-workspace "w0"; }
+  Mod+Left               { focus-column-left; }
+  Mod+Right              { focus-column-right; }
+  Mod+Down               { focus-workspace-down; }
+  Mod+Up                 { focus-workspace-up; }
+  Mod+Shift+Left         { move-column-left; }
+  Mod+Shift+Right        { move-column-right; }
+  Mod+Shift+Down         { move-column-to-workspace-down; }
+  Mod+Shift+Up           { move-column-to-workspace-up; }
 
-  // Scratchpad (Adjacent: Mod / Mod+Ctrl / Mod+Shift)
-  Mod+S              { focus-workspace "scratch"; }
-  Mod+Grave          { focus-workspace "scratch"; }
-  Mod+Ctrl+S         { move-column-to-workspace "scratch"; }
-  Mod+Shift+Grave    { move-column-to-workspace "scratch"; }
+  // =========================================================================
+  // 5. WORKSPACES (0–9)
+  // =========================================================================
+  Mod+1                  { focus-workspace "w1"; }
+  Mod+2                  { focus-workspace "w2"; }
+  Mod+3                  { focus-workspace "w3"; }
+  Mod+4                  { focus-workspace "w4"; }
+  Mod+5                  { focus-workspace "w5"; }
+  Mod+6                  { focus-workspace "w6"; }
+  Mod+7                  { focus-workspace "w7"; }
+  Mod+8                  { focus-workspace "w8"; }
+  Mod+9                  { focus-workspace "w9"; }
+  Mod+0                  { focus-workspace "w0"; }
 
-  // Monitor Navigation (Adjacent: Mod+Ctrl+Alt [Middle+Ring+Pinky])
-  Mod+Ctrl+Alt+Left  { move-workspace-to-monitor-left; }
-  Mod+Ctrl+Alt+Right { move-workspace-to-monitor-right; }
-  Mod+Ctrl+Alt+Up    { move-workspace-to-monitor-up; }
-  Mod+Ctrl+Alt+Down  { move-workspace-to-monitor-down; }
-  Mod+Ctrl+Alt+H     { move-workspace-to-monitor-left; }
-  Mod+Ctrl+Alt+L     { move-workspace-to-monitor-right; }
-  Mod+Ctrl+Alt+K     { move-workspace-to-monitor-up; }
-  Mod+Ctrl+Alt+J     { move-workspace-to-monitor-down; }
+  Mod+Shift+1            { move-column-to-workspace "w1"; }
+  Mod+Shift+2            { move-column-to-workspace "w2"; }
+  Mod+Shift+3            { move-column-to-workspace "w3"; }
+  Mod+Shift+4            { move-column-to-workspace "w4"; }
+  Mod+Shift+5            { move-column-to-workspace "w5"; }
+  Mod+Shift+6            { move-column-to-workspace "w6"; }
+  Mod+Shift+7            { move-column-to-workspace "w7"; }
+  Mod+Shift+8            { move-column-to-workspace "w8"; }
+  Mod+Shift+9            { move-column-to-workspace "w9"; }
+  Mod+Shift+0            { move-column-to-workspace "w0"; }
 
-  // Resizing (Adjacent: Mod / Mod+Shift / Mod+Ctrl / Mod+Ctrl+Alt)
-  Mod+Minus          { set-column-width "-5%"; }
-  Mod+Equal          { set-column-width "+5%"; }
-  Mod+Shift+Minus    { set-window-height "-5%"; }
-  Mod+Shift+Equal    { set-window-height "+5%"; }
-  Mod+Ctrl+Minus     { set-column-width "-2%"; }
-  Mod+Ctrl+Equal     { set-column-width "+2%"; }
-  Mod+Ctrl+Alt+Minus { set-column-width "-10%"; }
-  Mod+Ctrl+Alt+Equal { set-column-width "+10%"; }
+  // =========================================================================
+  // 6. COLUMN SIZING & RESIZE CHORDS
+  // =========================================================================
+  Mod+Minus              hotkey-overlay-title="Column Width -5%"           { set-column-width "-5%"; }
+  Mod+Equal              hotkey-overlay-title="Column Width +5%"           { set-column-width "+5%"; }
+  Mod+Shift+Minus        hotkey-overlay-title="Window Height -5%"          { set-window-height "-5%"; }
+  Mod+Shift+Equal        hotkey-overlay-title="Window Height +5%"          { set-window-height "+5%"; }
 
-  // Window Grouping (Adjacent: Mod / Mod+Ctrl)
-  Mod+G              { consume-or-expel-window-left; }
-  Mod+Ctrl+G         { expel-window-from-column; }
-  Mod+Ctrl+Left      { consume-or-expel-window-left; }
-  Mod+Ctrl+Right     { consume-or-expel-window-right; }
-  Mod+Ctrl+H         { consume-or-expel-window-left; }
-  Mod+Ctrl+J         { focus-window-down; }
-  Mod+Ctrl+K         { focus-window-up; }
+  // =========================================================================
+  // 7. HARDWARE, MEDIA & DPMS
+  // =========================================================================
+  Mod+Shift+S            hotkey-overlay-title="Interactive Area Screenshot"{ spawn-sh "@grim@ -g \"$(@slurp@)\" - | @wlCopy@"; }
+  Print                  hotkey-overlay-title="Fullscreen Screenshot"      { spawn-sh "@grim@ - | @wlCopy@"; }
 
-  // Overview & Preset Navigation (Adjacent: Mod+Ctrl)
-  Mod+Ctrl+Z         { toggle-overview; }
-  Mod+Slash          { switch-preset-column-width; }
-  Mod+Ctrl+Slash     { switch-preset-column-width-back; }
+  XF86MonBrightnessUp    { spawn-sh "@brightnessctl@ set +5%"; }
+  XF86MonBrightnessDown  { spawn-sh "curr=$(@brightnessctl@ get); max=$(@brightnessctl@ max); new=$((curr - max * 5 / 100)); [ ''${new} -lt $((max * 5 / 100)) ] && @brightnessctl@ set 5% || @brightnessctl@ set 5%-"; }
+  XF86AudioRaiseVolume   { spawn "@wpctl@" "set-volume" "-l" "1.4" "@DEFAULT_AUDIO_SINK@" "5%+"; }
+  XF86AudioLowerVolume   { spawn "@wpctl@" "set-volume" "-l" "1.4" "@DEFAULT_AUDIO_SINK@" "5%-"; }
+  XF86AudioMute          { spawn "@wpctl@" "set-mute" "@DEFAULT_AUDIO_SINK@" "toggle"; }
+  XF86AudioMicMute       { spawn "@wpctl@" "set-mute" "@DEFAULT_AUDIO_SOURCE@" "toggle"; }
+  XF86AudioPlay          { spawn "@playerctl@" "play-pause"; }
+  XF86AudioNext          { spawn "@playerctl@" "next"; }
+  XF86AudioPrev          { spawn "@playerctl@" "previous"; }
 
-  // Mouse Gestures
-  Mod+WheelScrollDown { focus-workspace-down; }
-  Mod+WheelScrollUp   { focus-workspace-up; }
-
-  // Notifications (Adjacent: Mod / Mod+Shift / Mod+Ctrl)
-  Mod+Comma          { spawn "@noctaliaShell@" "ipc" "call" "notifications" "dismiss"; }
-  Mod+Shift+Comma    { spawn "@noctaliaShell@" "ipc" "call" "notifications" "dismissAll"; }
-  Mod+Ctrl+Comma     { spawn "@noctaliaShell@" "ipc" "call" "notifications" "toggleSilence"; }
-  Mod+N              { spawn "@noctaliaShell@" "ipc" "call" "controlCenter" "toggle"; }
-  Mod+I              { spawn "@noctaliaShell@" "ipc" "call" "controlCenter" "toggle"; }
-  Mod+Period         { spawn "@noctaliaShell@" "ipc" "call" "launcher" "emoji"; }
-
-  // System Toggles (Adjacent: Mod+Ctrl / Mod+Shift)
-  Mod+Ctrl+I         { spawn-sh "pkill -USR1 swayidle || true"; }
-  Mod+Ctrl+N         { spawn-sh "pkill wlsunset || @wlsunset@ -l 14.5995 -L 120.9842"; }
-  Mod+Ctrl+Delete    { spawn-sh "@niri@ msg output eDP-1 toggle"; }
-  Mod+Shift+Space    { spawn "@noctaliaShell@" "ipc" "call" "bar" "toggle"; }
-
-  // Hardware & Media Controls
-  Mod+Shift+S        { spawn-sh "@grim@ -g \"$(@slurp@)\" - | @wlCopy@"; }
-  Print              { spawn-sh "@grim@ - | @wlCopy@"; }
-  XF86MonBrightnessUp   { spawn-sh "@brightnessctl@ set +5%"; }
-  XF86MonBrightnessDown { spawn-sh "curr=$(@brightnessctl@ get); max=$(@brightnessctl@ max); new=$((curr - max * 5 / 100)); [ ${new} -lt $((max * 5 / 100)) ] && @brightnessctl@ set 5% || @brightnessctl@ set 5%-"; }
-  XF86AudioRaiseVolume  { spawn "@wpctl@" "set-volume" "-l" "1.4" "@DEFAULT_AUDIO_SINK@" "5%+"; }
-  XF86AudioLowerVolume  { spawn "@wpctl@" "set-volume" "-l" "1.4" "@DEFAULT_AUDIO_SINK@" "5%-"; }
-  XF86AudioMute         { spawn "@wpctl@" "set-mute" "@DEFAULT_AUDIO_SINK@" "toggle"; }
-  XF86AudioMicMute      { spawn "@wpctl@" "set-mute" "@DEFAULT_AUDIO_SOURCE@" "toggle"; }
-  XF86AudioPlay         { spawn "@playerctl@" "play-pause"; }
-  XF86AudioNext         { spawn "@playerctl@" "next"; }
-  XF86AudioPrev         { spawn "@playerctl@" "previous"; }
+  Mod+Ctrl+Escape        hotkey-overlay-title="Turn Off Monitors"          { power-off-monitors; }
 }
 
 include optional=true "~/.config/niri/noctalia.kdl"

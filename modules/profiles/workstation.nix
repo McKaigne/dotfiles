@@ -22,6 +22,7 @@
       self.nixosModules.mpv
       self.nixosModules.viewers
       self.nixosModules.zed
+      self.nixosModules.spotify
     ];
   };
 }

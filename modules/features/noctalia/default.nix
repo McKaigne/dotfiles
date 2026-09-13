@@ -9,7 +9,7 @@ in
 {
   flake.nixosModules.noctalia = nixosModule;
 
-  perSystem = { pkgs, ... }:
+  perSystem = { pkgs, lib, ... }:
     let
       rawNoctalia = inputs.wrapper-modules.wrappers.noctalia-shell.wrap {
         inherit pkgs;
@@ -21,7 +21,7 @@ in
         nativeBuildInputs = [ pkgs.makeWrapper ];
         postBuild = ''
           wrapProgram $out/bin/noctalia-shell \
-            --prefix PATH : "/run/wrappers/bin:/run/current-system/sw/bin" \
+            --prefix PATH : "${lib.makeBinPath [ pkgs.systemd pkgs.glib pkgs.coreutils pkgs.bash ]}:/run/wrappers/bin:/run/current-system/sw/bin" \
             --prefix XDG_DATA_DIRS : "/run/current-system/sw/share"
         '';
       };

@@ -40,6 +40,9 @@ in
         "@btop@"
         "@qalculate@"
         "@fuzzel@"
+        "@spotify@"
+        "@tmuxSessionizer@"
+        "@lazygit@"
       ]
       [
         "${self'.packages.noctalia-shell}/bin/noctalia-shell"
@@ -64,6 +67,9 @@ in
         "${self'.packages.btop}/bin/btop"
         "${pkgs.qalculate-gtk}/bin/qalculate-gtk"
         "${self'.packages.fuzzel}/bin/fuzzel"
+        "${self'.packages.spotify}/bin/spotify"
+        "${self'.packages.tmux-sessionizer}/bin/tmux-sessionizer"
+        "${pkgs.lazygit}/bin/lazygit"
       ]
       (builtins.readFile ./config.kdl)
     );
@@ -79,7 +85,7 @@ in
         wrapProgram $out/bin/niri \
           --prefix PATH : "/run/wrappers/bin:/run/current-system/sw/bin" \
           --prefix XDG_DATA_DIRS : "/run/current-system/sw/share" \
-          --add-flags "--config ${niriConfig}"
+          --set NIRI_CONFIG "${niriConfig}"
       '';
     };
 
