@@ -25,6 +25,19 @@ in
       ${pkgs.zoxide}/bin/zoxide init nushell > $out
     '';
 
+    noctaliaStarshipSync = pkgs.writeShellScriptBin "noctalia-starship-sync" ''
+      set -euo pipefail
+      CACHE_DIR="$HOME/.cache/noctalia"
+      PALETTE_FILE="$CACHE_DIR/starship-palette.toml"
+      OUT_FILE="$CACHE_DIR/starship.toml"
+
+      if [ -f "$PALETTE_FILE" ]; then
+        mkdir -p "$CACHE_DIR"
+        ${pkgs.gnused}/bin/sed '/\[palettes\.noctalia\]/,$d' "${starshipConfig}" > "$OUT_FILE"
+        cat "$PALETTE_FILE" >> "$OUT_FILE"
+      fi
+    '';
+
     configNu = pkgs.writeText "config.nu" (
       builtins.replaceStrings
         [ "@starshipInit@" "@zoxideInit@" ]
@@ -36,7 +49,7 @@ in
   in {
     packages.nushell = pkgs.symlinkJoin {
       name = "nushell-wrapped";
-      paths = [ pkgs.nushell pkgs.starship pkgs.zoxide pkgs.fzf ];
+      paths = [ pkgs.nushell pkgs.starship pkgs.zoxide pkgs.fzf noctaliaStarshipSync ];
       nativeBuildInputs = [ pkgs.makeWrapper ];
       passthru = {
         shellPath = "/bin/nu";
@@ -44,10 +57,12 @@ in
       postBuild = ''
         wrapProgram $out/bin/nu \
           --set STARSHIP_CONFIG "${starshipConfig}" \
-          --prefix PATH : "${lib.makeBinPath [ pkgs.starship pkgs.wl-clipboard pkgs.zoxide pkgs.fzf ]}" \
+          --prefix PATH : "${lib.makeBinPath [ pkgs.starship pkgs.wl-clipboard pkgs.zoxide pkgs.fzf noctaliaStarshipSync ]}" \
           --add-flags "--config ${configNu} --env-config ${envNu}"
       '';
     };
+
+    packages.noctalia-starship-sync = noctaliaStarshipSync;
 
     apps.nushell = {
       type = "app";

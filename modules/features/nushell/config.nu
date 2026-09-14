@@ -77,7 +77,7 @@ $env.config.abbreviations = {
   lt: "eza --tree --level=2 --long --icons --git"
   cat: "bat --paging=never"
 
-  # Zoxide Navigation (cd aliases & full command varieties)
+  # Zoxide Navigation
   cd: "z"
   cdi: "zi"
   cda: "zoxide add"
@@ -101,7 +101,7 @@ source @starshipInit@
 source @zoxideInit@
 
 # Modal & Multiline indicators:
-$env.PROMPT_INDICATOR = $"(ansi cyan_bold)    (ansi reset)"
-$env.PROMPT_INDICATOR_VI_INSERT = $"(ansi cyan_bold)    (ansi reset)"
-$env.PROMPT_INDICATOR_VI_NORMAL = $"(ansi magenta_bold)    (ansi reset)"
-$env.PROMPT_MULTILINE_INDICATOR = $"(ansi yellow_bold)    (ansi reset)"
+$env.PROMPT_INDICATOR = $"(ansi cyan_bold)> (ansi reset)"
+$env.PROMPT_INDICATOR_VI_INSERT = $"(ansi cyan_bold)> (ansi reset)"
+$env.PROMPT_INDICATOR_VI_NORMAL = $"(ansi magenta_bold): (ansi reset)"
+$env.PROMPT_MULTILINE_INDICATOR = $"(ansi dark_gray) (ansi reset)"

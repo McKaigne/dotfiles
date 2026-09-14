@@ -45,9 +45,19 @@ in
         export DOOMDIR="''${DOOMDIR:-${doomDir}}"
         export EMACSDIR="''${EMACSDIR:-$HOME/.config/emacs}"
 
-        if [ ! -d "$EMACSDIR" ]; then
+        if [ ! -f "$EMACSDIR/bin/doom" ]; then
           echo "❄ [Doom Emacs] Core not found: bootstrapping Doom repository to $EMACSDIR..."
-          ${pkgs.git}/bin/git clone --depth 1 https://github.com/doomemacs/doomemacs "$EMACSDIR"
+          if [ -d "$EMACSDIR" ] && [ ! -d "$EMACSDIR/.git" ]; then
+            TMP_BACKUP=$(mktemp -d /tmp/emacs-backup-XXXXXX)
+            cp -rf "$EMACSDIR/." "$TMP_BACKUP/"
+            rm -rf "$EMACSDIR"
+            ${pkgs.git}/bin/git clone --depth 1 https://github.com/doomemacs/doomemacs "$EMACSDIR"
+            cp -rn "$TMP_BACKUP/." "$EMACSDIR/" 2>/dev/null || true
+            rm -rf "$TMP_BACKUP"
+          else
+            rm -rf "$EMACSDIR"
+            ${pkgs.git}/bin/git clone --depth 1 https://github.com/doomemacs/doomemacs "$EMACSDIR"
+          fi
           "$EMACSDIR/bin/doom" install --no-config --no-env
         fi
 
@@ -69,9 +79,20 @@ in
             --prefix XCURSOR_PATH : "${iconPath}" \
             --run '
               EMACSDIR="''${EMACSDIR:-$HOME/.config/emacs}"
-              if [ ! -f "$EMACSDIR/early-init.el" ]; then
+              if [ ! -f "$EMACSDIR/bin/doom" ]; then
                 echo "❄ [Doom Emacs] Bootstrapping Doom core framework into $EMACSDIR..."
-                ${pkgs.git}/bin/git clone --depth 1 https://github.com/doomemacs/doomemacs "$EMACSDIR"
+                if [ -d "$EMACSDIR" ] && [ ! -d "$EMACSDIR/.git" ]; then
+                  TMP_BACKUP=$(mktemp -d /tmp/emacs-backup-XXXXXX)
+                  cp -rf "$EMACSDIR/." "$TMP_BACKUP/"
+                  rm -rf "$EMACSDIR"
+                  ${pkgs.git}/bin/git clone --depth 1 https://github.com/doomemacs/doomemacs "$EMACSDIR"
+                  cp -rn "$TMP_BACKUP/." "$EMACSDIR/" 2>/dev/null || true
+                  rm -rf "$TMP_BACKUP"
+                else
+                  rm -rf "$EMACSDIR"
+                  ${pkgs.git}/bin/git clone --depth 1 https://github.com/doomemacs/doomemacs "$EMACSDIR"
+                fi
+                DOOMDIR="''${DOOMDIR:-${doomDir}}" "$EMACSDIR/bin/doom" install --no-config --no-env
                 DOOMDIR="''${DOOMDIR:-${doomDir}}" "$EMACSDIR/bin/doom" sync
               fi
             '

@@ -1,7 +1,8 @@
 ;;; $DOOMDIR/config.el -*- lexical-binding: t; -*-
 
 ;;; UI: theme, fonts, dashboard
-(setq doom-theme 'noctalia)
+(setq doom-theme 'catppuccin)
+(setq catppuccin-flavor 'mocha)
 (setq doom-font (font-spec :family "Maple Mono NF" :size 14))
 (setq display-line-numbers-type 'relative)
 
@@ -22,7 +23,7 @@
   (doom-nano-modeline-mode 1)
   (global-hide-mode-line-mode 1))
 
-;; Treemacs: allow window hopping into treemacs
+;; Treemacs
 (after! treemacs
   (setq treemacs-is-never-other-window nil)
   (setq treemacs-select-when-already-in-treemacs 'move-back)
@@ -32,7 +33,7 @@
 ;; Org
 (setq org-directory "~/org/")
 
-;; Shells: Dynamic toolchain lookup (preserves portability outside NixOS)
+;; Shells: Dynamic toolchain lookup
 (setq shell-file-name (or (executable-find "bash") "/bin/sh"))
 (let ((nu-bin (executable-find "nu")))
   (when nu-bin
@@ -70,7 +71,6 @@
           (ghostel-send-string (concat cmd "\n")))
       (compile cmd))))
 
-;; Bind SPC r r to the Ghostel Runner
 (map! :leader
       (:prefix ("r" . "Run")
        :desc "Run code in terminal" "r" #'+my/run-code
@@ -100,11 +100,11 @@
         '("--header-insertion=never"
           "--query-driver=/nix/store/**/bin/*")))
 
-;; Ghostel: popup configuration and reusable window toggle
+;; Ghostel: popup configuration
 (set-popup-rule! "^\\*doom:ghostel-popup:" :size 0.35 :vslot -4 :select t :quit nil :ttl nil)
 
 (defun +my/ghostel-toggle ()
-  "Toggle a Ghostel popup window in the current frame, instead of a new frame."
+  "Toggle a Ghostel popup window in the current frame."
   (interactive)
   (let* ((buffer-name (format "*doom:ghostel-popup:%s*"
                                (if (bound-and-true-p persp-mode)

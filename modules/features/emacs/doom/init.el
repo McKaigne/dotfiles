@@ -1,18 +1,18 @@
-
 ;;; init.el -*- lexical-binding: t; -*-
 
 (doom! :input
 
        :completion
        (corfu +orderless)
-       vertico
+       (vertico +icons)
 
        :ui
        dashboard
        hl-todo
        ophints
+       (popup +defaults)
        treemacs
-       vc-gutter
+       (vc-gutter +pretty)
        vi-tilde-fringe
        workspaces
 
@@ -40,7 +40,7 @@
        editorconfig
        (eval +overlay)
        lookup
-       lsp               ; <-- Uses lsp-mode instead of eglot
+       lsp
        magit
        make
        tree-sitter

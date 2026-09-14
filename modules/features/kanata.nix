@@ -5,7 +5,7 @@ let
       keyboardDevice = lib.mkOption {
         type = lib.types.str;
         default = "/dev/input/by-path/platform-i8042-serio-0-event-kbd";
-        description = "Input event device path for Kanata keyboard interception";
+        description = "Input event device path for Kanata keyboard interception (laptop internal keyboard only)";
       };
     };
 
@@ -30,7 +30,7 @@ let
               lmet lalt       spc       ralt rctl
             )
 
-            ;; Hand letters only (bspc and ret excluded so Ctrl+Bspc/Enter work on both hands)
+            ;; Hand letters only
             (defvar
               left-letters (
                 q w e r t
@@ -44,28 +44,29 @@ let
               )
             )
 
-            ;; Miryoku Layer Switch Aliases & Home Row Mods
+            ;; Miryoku Layer Switch Aliases & Contralateral Home Row Mods
             (defalias
-              ;; Layer switches: Left Alt is NAV, Left Win is FUN, Right AltGr is NUM, Right Ctrl is SYM
+              ;; Layer switches
               ml_fun (tap-hold 200 200 lmet (layer-while-held fun))
               ml_nav (tap-hold 200 200 lalt (layer-while-held nav))
               mr_num (tap-hold 200 200 ralt (layer-while-held num))
               mr_sym (tap-hold 200 200 rctl (layer-while-held sym))
 
-              ;; Home Row Mods: Alt - Ctrl - GUI - Shift
-              a      (tap-hold-release-keys 200 200 a lalt $left-letters)
-              s      (tap-hold-release-keys 200 200 s lctl $left-letters)
-              d      (tap-hold-release-keys 200 200 d lmet $left-letters)
-              f      (tap-hold-release-keys 160 160 f lsft $left-letters (require-prior-idle 0))
+              ;; Home Row Mods (Alt - Ctrl - Mod - Shift)
+              ;; Outer fingers: 180ms | Index fingers: 140ms
+              a      (tap-hold-release-keys 180 180 a lalt $left-letters)
+              s      (tap-hold-release-keys 180 180 s lctl $left-letters)
+              d      (tap-hold-release-keys 180 180 d lmet $left-letters)
+              f      (tap-hold-release-keys 140 140 f lsft $left-letters (require-prior-idle 0))
 
-              j      (tap-hold-release-keys 160 160 j rsft $right-letters (require-prior-idle 0))
-              k      (tap-hold-release-keys 200 200 k rmet $right-letters)
-              l      (tap-hold-release-keys 200 200 l rctl $right-letters)
-              scln   (tap-hold-release-keys 200 200 ; ralt $right-letters)
+              j      (tap-hold-release-keys 140 140 j rsft $right-letters (require-prior-idle 0))
+              k      (tap-hold-release-keys 180 180 k rmet $right-letters)
+              l      (tap-hold-release-keys 180 180 l rctl $right-letters)
+              scln   (tap-hold-release-keys 180 180 ; ralt $right-letters)
             )
 
             ;; =========================================================================
-            ;; LAYER 1: BASE (Left Alt = Nav, Left Win = Fun, Right AltGr = Num, Right Ctrl = Sym)
+            ;; LAYER 1: BASE
             ;; =========================================================================
             (deflayer base
               esc    1      2      3      4      5 6 7      8      9      0      -      =    bspc
@@ -76,8 +77,7 @@ let
             )
 
             ;; =========================================================================
-            ;; LAYER 2: NAV (Hold Left Alt / lalt)
-            ;; Left hand: Clipboard | Right hand: Vim Navigation, Arrows & Del
+            ;; LAYER 2: NAV (Hold Left Alt)
             ;; =========================================================================
             (deflayer nav
               _      _      _      _      _      _ _ _      _      _      _      _      _    _
@@ -88,8 +88,7 @@ let
             )
 
             ;; =========================================================================
-            ;; LAYER 3: NUM (Hold Right AltGr / ralt)
-            ;; Left hand: Numpad | Right hand: Operators
+            ;; LAYER 3: NUM (Hold Right AltGr)
             ;; =========================================================================
             (deflayer num
               _      _      _      _      _      _ _ _      _      _      _      _      _    _
@@ -100,7 +99,7 @@ let
             )
 
             ;; =========================================================================
-            ;; LAYER 4: SYM (Hold Right Ctrl / rctl) - Valid Unshifted Keysyms
+            ;; LAYER 4: SYM (Hold Right Ctrl)
             ;; =========================================================================
             (deflayer sym
               _      _      _      _      _      _ _ _      _      _      _      _      _    _
@@ -111,8 +110,7 @@ let
             )
 
             ;; =========================================================================
-            ;; LAYER 5: FUN / MEDIA (Hold Left Win / lmet)
-            ;; Top: F1-F12 | Right hand: Volume, Playback
+            ;; LAYER 5: FUN / MEDIA (Hold Left Win)
             ;; =========================================================================
             (deflayer fun
               _      f1     f2     f3     f4     f5 f6 f7     f8     f9     f10    f11    f12  _
@@ -123,10 +121,9 @@ let
             )
 
             ;; =========================================================================
-            ;; HARD BILATERAL OVERRIDES: Enforces contralateral modifier usage
+            ;; BILATERAL OVERRIDES: Enforces contralateral modifier usage
             ;; =========================================================================
             (defoverrides
-              ;; Left Shift cannot shift Left-Hand letters
               (lsft a) (a)
               (lsft s) (s)
               (lsft d) (d)
@@ -143,26 +140,6 @@ let
               (lsft v) (v)
               (lsft b) (b)
 
-              ;; Left Ctrl cannot Ctrl Left-Hand letters (c, v, x, z)
-              (lctl c) (c)
-              (lctl v) (v)
-              (lctl x) (x)
-              (lctl z) (z)
-              (lctl a) (a)
-              (lctl s) (s)
-              (lctl d) (d)
-
-              ;; Left Alt cannot Alt s
-              (lalt s) (s)
-              (lalt a) (a)
-              (lalt d) (d)
-
-              ;; Left Super cannot Super e, w, q
-              (lmet e) (e)
-              (lmet w) (w)
-              (lmet q) (q)
-
-              ;; Right Shift cannot shift Right-Hand letters
               (rsft y) (y)
               (rsft u) (u)
               (rsft i) (i)
@@ -175,30 +152,21 @@ let
               (rsft ;) (;)
               (rsft n) (n)
               (rsft m) (m)
-
-              ;; Right Ctrl cannot Ctrl Right-Hand letters
-              (rctl h) (h)
-              (rctl j) (j)
-              (rctl k) (k)
-              (rctl l) (l)
-              (rctl ;) (;)
-              (rctl n) (n)
-              (rctl m) (m)
             )
 
-            ;; Universal CUA clipboard & navigation chords (Active ONLY on base layer)
+            ;; Universal Bigrams & Chords (15ms timer)
             (defchordsv2
-              (a z) C-S-z 20 all-released (nav num sym fun)
-              (z x) C-z   20 all-released (nav num sym fun)
-              (x c) C-ins 20 all-released (nav num sym fun)
-              (c v) S-ins 20 all-released (nav num sym fun)
-              (x v) S-del 20 all-released (nav num sym fun)
-              (z v) C-a   20 all-released (nav num sym fun)
-              (u i) C-bspc 20 all-released (nav num sym fun)
-              (i o) C-del  20 all-released (nav num sym fun)
-              (n m) tab   20 all-released (nav num sym fun)
-              (m ,) C-pgup 20 all-released (nav num sym fun)
-              (, .) C-pgdn 20 all-released (nav num sym fun)
+              (u i) bspc  15 all-released (nav num sym fun)
+              (i o) del   15 all-released (nav num sym fun)
+              (a z) C-S-z 15 all-released (nav num sym fun)
+              (z x) C-z   15 all-released (nav num sym fun)
+              (x c) C-ins 15 all-released (nav num sym fun)
+              (c v) S-ins 15 all-released (nav num sym fun)
+              (x v) S-del 15 all-released (nav num sym fun)
+              (z v) C-a   15 all-released (nav num sym fun)
+              (n m) tab   15 all-released (nav num sym fun)
+              (m ,) C-pgup 15 all-released (nav num sym fun)
+              (, .) C-pgdn 15 all-released (nav num sym fun)
             )
           '';
         };

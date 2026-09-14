@@ -1,50 +1,64 @@
 add_newline = false
+palette = "noctalia"
 
-# Line 1: Left Ribbon -> Fill Space -> Right Status Pill ($cmd_duration)
-# Line 2: Clean input line ($character)
+# Line 1: [OS + Identity][Directory][Git][Time] -----------[fill]-----------> [Duration]
+# Line 2: Character Status Indicator
 format = """\
-[](fg:bright-white)$os[](fg:bright-white bg:white)$directory[](fg:white bg:bright-black)$git_branch$git_status[](fg:bright-black bg:black)$time[](fg:black)$fill$cmd_duration
+$os$username$hostname\
+$directory\
+$git_branch$git_status\
+$time\
+$fill\
+$cmd_duration
 $character"""
 
-# Empty right_format so Reedline leaves Line 2 completely blank
 right_format = ""
 
 [fill]
 symbol = " "
 
 # -----------------------------------------------------------------------------
-# Logo (bright-white)
+# 1. Identity Segment (OS Icon + pollux@castor) - Accent: Red | BG: pill_bg
 # -----------------------------------------------------------------------------
 [os]
 disabled = false
-style = "fg:black bg:bright-white bold"
-format = "[$symbol ]($style)"
+format = "[](fg:red)[$symbol ](fg:crust bg:red)"
 
 [os.symbols]
 NixOS = ""
 Linux = "󰌽"
-Debian = ""
+
+[username]
+show_always = true
+style_user = "fg:red bg:pill_bg bold"
+style_root = "fg:red bg:pill_bg bold"
+format = "[ $user]($style)"
+
+[hostname]
+ssh_only = false
+style = "fg:red bg:pill_bg bold"
+format = "[@$hostname ]($style)"
 
 # -----------------------------------------------------------------------------
-# Directory (white / beige)
+# 2. Directory Segment (Connected: transitions from pill_bg into green badge)
 # -----------------------------------------------------------------------------
 [directory]
-style = "fg:black bg:white bold"
-format = "[ $path ]($style)"
+style = "fg:green bg:pill_bg bold"
+format = "[](fg:green bg:pill_bg)[󰉋 ](fg:crust bg:green)[ $path ]($style)"
 truncation_length = 3
 truncation_symbol = "…/"
 home_symbol = "~"
 
 # -----------------------------------------------------------------------------
-# Git Branch & Status (bright-black tier)
+# 3. Git Segment (Connected: transitions from pill_bg into mauve badge)
 # -----------------------------------------------------------------------------
 [git_branch]
-symbol = " "
-style = "fg:white bg:bright-black bold"
-format = "[ $symbol$branch(:$remote_branch) ]($style)"
+symbol = ""
+style = "fg:mauve bg:pill_bg bold"
+format = "[](fg:mauve bg:pill_bg)[$symbol ](fg:crust bg:mauve)[ $branch ]($style)"
 
 [git_status]
-style = "fg:white bg:bright-black"
+style = "fg:mauve bg:pill_bg bold"
 format = "([$all_status$ahead_behind ]($style))"
 conflicted = "󰳤 "
 ahead = "⇡${count}"
@@ -58,26 +72,49 @@ renamed = "»${count}"
 deleted = "✘${count}"
 
 # -----------------------------------------------------------------------------
-# Time (black tier)
+# 4. Time Segment (End of connected ribbon: closes with  in pill_bg)
 # -----------------------------------------------------------------------------
 [time]
 disabled = false
-format = "[ $time ]($style)"
 time_format = "%R"
-style = "fg:white bg:black"
+style = "fg:blue bg:pill_bg bold"
+format = "[](fg:blue bg:pill_bg)[󰥔 ](fg:crust bg:blue)[ $time ]($style)[](fg:pill_bg)"
 
 # -----------------------------------------------------------------------------
-# Execution Duration (Far Right of Line 1)
+# 5. Right Side: Stopwatch / Duration Pill - Accent: Yellow
 # -----------------------------------------------------------------------------
 [cmd_duration]
 min_time = 2_000
 show_milliseconds = false
-format = '[](fg:bright-white)[ 󱎫 $duration ](fg:black bg:bright-white bold)[](fg:bright-white)'
+style = "fg:yellow bg:pill_bg bold"
+format = "[](fg:yellow)[󱎫 ](fg:crust bg:yellow)[ $duration ]($style)[](fg:pill_bg)"
 
 # -----------------------------------------------------------------------------
-# Line 2 Status Indicator
+# Line 2 Character Indicator (Tad less spacing: [  ] and [  ])
 # -----------------------------------------------------------------------------
 [character]
 disabled = false
-success_symbol = "[ ](bold green)"
-error_symbol = "[ ](bold red)"
+success_symbol = "[  ](bold green)"
+error_symbol = "[  ](bold red)"
+
+# -----------------------------------------------------------------------------
+# Noctalia Palette Fallback
+# -----------------------------------------------------------------------------
+[palettes.noctalia]
+pill_bg   = "#3a3f5a"
+blue      = "#89b4fa"
+red       = "#f38ba8"
+green     = "#a6e3a1"
+yellow    = "#f9e2af"
+cyan      = "#94e2d5"
+magenta   = "#f5c2e7"
+mauve     = "#f5c2e7"
+white     = "#a6adc8"
+black     = "#45475a"
+surface1  = "#45475a"
+surface0  = "#1e1e2e"
+base      = "#1e1e2e"
+mantle    = "#1e1e2e"
+crust     = "#11111b"
+text      = "#cdd6f4"
+overlay0  = "#585b70"

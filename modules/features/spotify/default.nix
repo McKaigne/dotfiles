@@ -63,11 +63,11 @@ in
         chmod u+w "$EXTENSIONS_DIR/adblock.js"
 
         if [ ! -f "$THEMES_DIR/marketplace/color.ini" ]; then
-          cp "${marketplaceColorIni}" "$THEMES_DIR/marketplace/color.ini"
-          chmod u+w "$THEMES_DIR/marketplace/color.ini"
+          cp "${marketplaceColorIni}" "$THEME_DIR/marketplace/color.ini"
+          chmod u+w "$THEME_DIR/marketplace/color.ini"
         fi
 
-        # 2. Bootstrap Marketplace app if missing
+        # 2. Bootstrap Marketplace custom app if missing
         if [ ! -f "$MARKETPLACE_DIR/manifest.json" ]; then
           echo "❄ [Spicetify] Installing Marketplace custom app..."
           mkdir -p "$MARKETPLACE_DIR"
@@ -88,11 +88,15 @@ in
           rm -rf "$TMP_ZIP" "$TMP_DIR"
         fi
 
-        # 3. Mirror Spotify binaries from Nix store if updated
+        # 3. Only mirror and patch if the store package updated or never initialized
         STORE_HASH=$(basename "$SPOTIFY_STORE")
-        NEED_REPATCH=0
-        if [ ! -d "$SPOTIFY_DIR" ] || [ ! -f "$SPOTIFY_DIR/.store-hash" ] || [ ! -f "$SPOTIFY_DIR/.spotify-wrapped" ] || [ "$(cat "$SPOTIFY_DIR/.store-hash" 2>/dev/null)" != "$STORE_HASH" ]; then
-          echo "❄ [Spicetify] Mirroring Spotify binaries..."
+        NEED_INITIALIZE=0
+        if [ ! -d "$SPOTIFY_DIR" ] || [ ! -f "$SPOTIFY_DIR/.store-hash" ] || [ ! -f "$SPOTIFY_DIR/.spotify-wrapped" ] || [ "$(< "$SPOTIFY_DIR/.store-hash")" != "$STORE_HASH" ]; then
+          NEED_INITIALIZE=1
+        fi
+
+        if [ "$NEED_INITIALIZE" -eq 1 ]; then
+          echo "❄ [Spicetify] Mirroring and patching Spotify binaries..."
           rm -rf "$SPOTIFY_DIR"
           mkdir -p "$SPOTIFY_DIR"
 
@@ -103,16 +107,7 @@ in
           if [ -f "$SPOTIFY_DIR/spotify" ]; then
             ${pkgs.gnused}/bin/sed -i "s|$SPOTIFY_STORE/share/spotify/|$SPOTIFY_DIR/|g" "$SPOTIFY_DIR/spotify"
           fi
-          NEED_REPATCH=1
-        fi
 
-        # 4. Enforce Marketplace theme engine and Adblockify extension
-        if [ ! -f "$HOME/.config/spicetify/config-xpui.ini" ] || [ "$("$SPICETIFY" config current_theme 2>/dev/null || true)" != "marketplace" ] || ! grep -q "adblock.js" "$HOME/.config/spicetify/config-xpui.ini" 2>/dev/null; then
-          NEED_REPATCH=1
-        fi
-
-        if [ "$NEED_REPATCH" -eq 1 ]; then
-          echo "❄ [Spicetify] Configuring Marketplace theme engine and Adblockify..."
           "$SPICETIFY" config \
             spotify_path "$SPOTIFY_DIR" \
             prefs_path "$HOME/.config/spotify/prefs" \
@@ -127,7 +122,7 @@ in
           "$SPICETIFY" backup apply -n >/dev/null 2>&1 || "$SPICETIFY" apply -n >/dev/null 2>&1 || true
         fi
 
-        # 5. Launch Spotify on Wayland
+        # 4. Launch immediately without re-applying (preserves Lucid and Marketplace storage!)
         exec "$SPOTIFY_DIR/spotify" \
           --enable-features=UseOzonePlatform \
           --ozone-platform=wayland \

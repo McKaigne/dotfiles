@@ -21,3 +21,12 @@ let current_paths = (
 )
 
 $env.PATH = ($system_bins | append $current_paths | flatten | uniq)
+
+# Dynamic Noctalia Starship Configuration Resolution
+let cache_dir = $"($active_home)/.cache/noctalia"
+let starship_cache = $"($cache_dir)/starship.toml"
+let palette_file = $"($cache_dir)/starship-palette.toml"
+
+if ($starship_cache | path exists) {
+  $env.STARSHIP_CONFIG = $starship_cache
+}

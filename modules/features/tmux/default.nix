@@ -79,6 +79,7 @@ in
         pkgs.python3
         pkgs.btop
         pkgs.wl-clipboard
+        pkgs.jq
         self'.packages.yazi
         self'.packages.helix
         self'.packages.nushell

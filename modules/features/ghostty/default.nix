@@ -48,32 +48,12 @@ in
         keybind = super+ctrl+shift+k=resize_split:up,10
         keybind = super+ctrl+shift+j=resize_split:down,10
 
-        # Resize splits (100 lines) (Arrows + HJKL)
-        keybind = super+ctrl+shift+alt+left=resize_split:left,100
-        keybind = super+ctrl+shift+alt+right=resize_split:right,100
-        keybind = super+ctrl+shift+alt+up=resize_split:up,100
-        keybind = super+ctrl+shift+alt+down=resize_split:down,100
-        keybind = super+ctrl+shift+alt+h=resize_split:left,100
-        keybind = super+ctrl+shift+alt+l=resize_split:right,100
-        keybind = super+ctrl+shift+alt+k=resize_split:up,100
-        keybind = super+ctrl+shift+alt+j=resize_split:down,100
-
         # Tabs (Arrows + HJKL)
         keybind = ctrl+shift+t=new_tab
         keybind = ctrl+shift+left=previous_tab
         keybind = ctrl+shift+right=next_tab
         keybind = ctrl+shift+h=previous_tab
         keybind = ctrl+shift+l=next_tab
-
-        keybind = alt+1=goto_tab:1
-        keybind = alt+2=goto_tab:2
-        keybind = alt+3=goto_tab:3
-        keybind = alt+4=goto_tab:4
-        keybind = alt+5=goto_tab:5
-        keybind = alt+6=goto_tab:6
-        keybind = alt+7=goto_tab:7
-        keybind = alt+8=goto_tab:8
-        keybind = alt+9=goto_tab:9
       '';
 
       wrappedGhostty = pkgs.symlinkJoin {
