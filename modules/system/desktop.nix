@@ -8,15 +8,26 @@ let
         "application/x-directory" = "thunar.desktop";
         "inode/mount-point" = "thunar.desktop";
         "x-scheme-handler/file" = "thunar.desktop";
-        "text/plain" = "emacsclient.desktop";
-        "text/x-c" = "emacsclient.desktop";
-        "text/x-c++src" = "emacsclient.desktop";
-        "text/x-c++hdr" = "emacsclient.desktop";
-        "text/x-csrc" = "emacsclient.desktop";
-        "text/x-chdr" = "emacsclient.desktop";
-        "text/x-rust" = "emacsclient.desktop";
-        "text/x-elixir" = "emacsclient.desktop";
-        "application/json" = "emacsclient.desktop";
+        "text/plain" = "dev.zed.Zed.desktop";
+        "text/x-c" = "dev.zed.Zed.desktop";
+        "text/x-c++src" = "dev.zed.Zed.desktop";
+        "text/x-c++hdr" = "dev.zed.Zed.desktop";
+        "text/x-csrc" = "dev.zed.Zed.desktop";
+        "text/x-chdr" = "dev.zed.Zed.desktop";
+        "text/x-rust" = "dev.zed.Zed.desktop";
+        "text/x-elixir" = "dev.zed.Zed.desktop";
+        "application/json" = "dev.zed.Zed.desktop";
+
+        # Archive manager associations
+        "application/zip" = "org.gnome.FileRoller.desktop";
+        "application/x-zip-compressed" = "org.gnome.FileRoller.desktop";
+        "application/x-tar" = "org.gnome.FileRoller.desktop";
+        "application/x-compressed-tar" = "org.gnome.FileRoller.desktop";
+        "application/x-gzip" = "org.gnome.FileRoller.desktop";
+        "application/x-bzip2" = "org.gnome.FileRoller.desktop";
+        "application/x-xz" = "org.gnome.FileRoller.desktop";
+        "application/x-7z-compressed" = "org.gnome.FileRoller.desktop";
+        "application/vnd.rar" = "org.gnome.FileRoller.desktop";
       };
     };
 

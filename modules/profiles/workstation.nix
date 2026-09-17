@@ -5,7 +5,6 @@
       self.nixosModules.theme
       self.nixosModules.desktop
 
-      self.nixosModules.emacs
       self.nixosModules.ghostty
       self.nixosModules.niri
       self.nixosModules.noctalia

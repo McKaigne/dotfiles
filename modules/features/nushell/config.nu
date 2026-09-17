@@ -52,16 +52,11 @@ $env.config.abbreviations = {
   gd: "git diff"
 
   # Editors
-  e: "emacsclient -c -a 'emacs'"
-  et: "emacsclient -t -a 'emacs'"
-  v: "emacsclient -c -a 'emacs'"
-  doom: "doom"
-  ds: "doom sync"
+  z: "zed"
+  zed: "zed"
   h: "hx"
   hx: "hx"
   "h.": "hx ."
-  z: "zed"
-  zed: "zed"
 
   # Terminal & Multiplexer
   t: "tmux"

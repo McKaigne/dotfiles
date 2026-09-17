@@ -26,7 +26,14 @@
         p7zip
       ];
 
-      iconDirs = "${catppuccinIcons}/share:${pkgs.adwaita-icon-theme}/share:${pkgs.hicolor-icon-theme}/share:/run/current-system/sw/share";
+      thunarDataDirs = [
+        "${catppuccinIcons}/share"
+        "${pkgs.adwaita-icon-theme}/share"
+        "${pkgs.hicolor-icon-theme}/share"
+        "${pkgs.file-roller}/share"
+        "${pkgs.thunar-archive-plugin}/share"
+        "/run/current-system/sw/share"
+      ];
 
       wrappedThunar = pkgs.symlinkJoin {
         name = "thunar";
@@ -35,7 +42,7 @@
         postBuild = ''
           wrapProgram $out/bin/thunar \
             --prefix PATH : ${lib.makeBinPath archiveTools} \
-            --prefix XDG_DATA_DIRS : "${iconDirs}"
+            --prefix XDG_DATA_DIRS : "${lib.concatStringsSep ":" thunarDataDirs}"
         '';
       };
     in
@@ -65,6 +72,7 @@
 
         services.dbus.packages = [
           self.packages.${pkgs.stdenv.hostPlatform.system}.thunar
+          pkgs.file-roller
         ];
 
         systemd.packages = [
@@ -74,6 +82,10 @@
         environment.systemPackages = [
           self.packages.${pkgs.stdenv.hostPlatform.system}.thunar
           catppuccinIcons
+          pkgs.file-roller
+          pkgs.unzip
+          pkgs.zip
+          pkgs.p7zip
         ];
 
         # Set Papirus-Dark (Catppuccin Mocha) in GTK3 settings

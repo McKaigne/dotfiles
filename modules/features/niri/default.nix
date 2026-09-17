@@ -25,7 +25,6 @@ in
         "@ghostty@"
         "@thunar@"
         "@helium@"
-        "@emacsclient@"
         "@zed@"
         "@grim@"
         "@slurp@"
@@ -42,6 +41,8 @@ in
         "@fuzzel@"
         "@spotify@"
         "@tmuxSessionizer@"
+        "@helixTmuxFocus@"
+        "@tmuxTermFocus@"
         "@lazygit@"
       ]
       [
@@ -52,7 +53,6 @@ in
         "${self'.packages.ghostty}/bin/ghostty"
         "${self'.packages.thunar}/bin/thunar"
         "${self'.packages.helium}/bin/helium"
-        "${self'.packages.emacs}/bin/emacsclient"
         "${self'.packages.zed}/bin/zed"
         "${pkgs.grim}/bin/grim"
         "${pkgs.slurp}/bin/slurp"
@@ -69,6 +69,8 @@ in
         "${self'.packages.fuzzel}/bin/fuzzel"
         "${self'.packages.spotify}/bin/spotify"
         "${self'.packages.tmux-sessionizer}/bin/tmux-sessionizer"
+        "${self'.packages.helix-tmux-focus}/bin/helix-tmux-focus"
+        "${self'.packages.tmux-term-focus}/bin/tmux-term-focus"
         "${pkgs.lazygit}/bin/lazygit"
       ]
       (builtins.readFile ./config.kdl)

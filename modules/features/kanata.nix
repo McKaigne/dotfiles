@@ -30,39 +30,44 @@ let
               lmet lalt       spc       ralt rctl
             )
 
-            ;; Hand letters only
+            ;; Full physical hand partitions for strict Chordal Hold (Opposite-Hand Rule)
             (defvar
-              left-letters (
-                q w e r t
-                a s d f g
-                z x c v b
+              left-hand-keys (
+                esc  1 2 3 4 5
+                tab  q w e r t
+                caps a s d f g
+                lsft z x c v b
+                lmet lalt
               )
-              right-letters (
-                y u i o p
-                h j k l ;
-                n m , . /
+              right-hand-keys (
+                6 7 8 9 0 - = bspc
+                y u i o p [ ] \
+                h j k l ; ' ret
+                n m , . / rsft
+                ralt rctl
               )
             )
 
             ;; Miryoku Layer Switch Aliases & Contralateral Home Row Mods
             (defalias
-              ;; Layer switches
-              ml_fun (tap-hold 200 200 lmet (layer-while-held fun))
-              ml_nav (tap-hold 200 200 lalt (layer-while-held nav))
-              mr_num (tap-hold 200 200 ralt (layer-while-held num))
-              mr_sym (tap-hold 200 200 rctl (layer-while-held sym))
+              ;; Layer switches (Permissive Hold: activates target layer on press + release of any layer key)
+              ml_fun (tap-hold-release 200 200 lmet (layer-while-held fun))
+              ml_nav (tap-hold-release 200 200 lalt (layer-while-held nav))
+              mr_num (tap-hold-release 200 200 ralt (layer-while-held num))
+              mr_sym (tap-hold-release 200 200 rctl (layer-while-held sym))
 
               ;; Home Row Mods (Alt - Ctrl - Mod - Shift)
+              ;; Combines Permissive Hold (-release) + Chordal Hold (-keys with same-hand exclusion)
               ;; Outer fingers: 180ms | Index fingers: 140ms
-              a      (tap-hold-release-keys 180 180 a lalt $left-letters)
-              s      (tap-hold-release-keys 180 180 s lctl $left-letters)
-              d      (tap-hold-release-keys 180 180 d lmet $left-letters)
-              f      (tap-hold-release-keys 140 140 f lsft $left-letters (require-prior-idle 0))
+              a      (tap-hold-release-keys 180 180 a lalt $left-hand-keys)
+              s      (tap-hold-release-keys 180 180 s lctl $left-hand-keys)
+              d      (tap-hold-release-keys 180 180 d lmet $left-hand-keys)
+              f      (tap-hold-release-keys 140 140 f lsft $left-hand-keys (require-prior-idle 0))
 
-              j      (tap-hold-release-keys 140 140 j rsft $right-letters (require-prior-idle 0))
-              k      (tap-hold-release-keys 180 180 k rmet $right-letters)
-              l      (tap-hold-release-keys 180 180 l rctl $right-letters)
-              scln   (tap-hold-release-keys 180 180 ; ralt $right-letters)
+              j      (tap-hold-release-keys 140 140 j rsft $right-hand-keys (require-prior-idle 0))
+              k      (tap-hold-release-keys 180 180 k rmet $right-hand-keys)
+              l      (tap-hold-release-keys 180 180 l rctl $right-hand-keys)
+              scln   (tap-hold-release-keys 180 180 ; ralt $right-hand-keys)
             )
 
             ;; =========================================================================

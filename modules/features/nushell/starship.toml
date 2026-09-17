@@ -18,7 +18,7 @@ right_format = ""
 symbol = " "
 
 # -----------------------------------------------------------------------------
-# 1. Identity Segment (OS Icon + pollux@castor) - Accent: Red | BG: pill_bg
+# 1. Identity Segment (OS Icon + pollux@castor) - Accent: Red | BG: #3a3f5a
 # -----------------------------------------------------------------------------
 [os]
 disabled = false
@@ -40,7 +40,7 @@ style = "fg:red bg:pill_bg bold"
 format = "[@$hostname ]($style)"
 
 # -----------------------------------------------------------------------------
-# 2. Directory Segment (Connected: transitions from pill_bg into green badge)
+# 2. Directory Segment (Connected: transitions from #3a3f5a into green badge)
 # -----------------------------------------------------------------------------
 [directory]
 style = "fg:green bg:pill_bg bold"
@@ -50,10 +50,10 @@ truncation_symbol = "…/"
 home_symbol = "~"
 
 # -----------------------------------------------------------------------------
-# 3. Git Segment (Connected: transitions from pill_bg into mauve badge)
+# 3. Git Segment (󰊢 Icon | Accent: Mauve)
 # -----------------------------------------------------------------------------
 [git_branch]
-symbol = ""
+symbol = "󰊢"
 style = "fg:mauve bg:pill_bg bold"
 format = "[](fg:mauve bg:pill_bg)[$symbol ](fg:crust bg:mauve)[ $branch ]($style)"
 
@@ -72,7 +72,7 @@ renamed = "»${count}"
 deleted = "✘${count}"
 
 # -----------------------------------------------------------------------------
-# 4. Time Segment (End of connected ribbon: closes with  in pill_bg)
+# 4. Time Segment (End of connected ribbon: closes with  in #3a3f5a)
 # -----------------------------------------------------------------------------
 [time]
 disabled = false
@@ -90,7 +90,7 @@ style = "fg:yellow bg:pill_bg bold"
 format = "[](fg:yellow)[󱎫 ](fg:crust bg:yellow)[ $duration ]($style)[](fg:pill_bg)"
 
 # -----------------------------------------------------------------------------
-# Line 2 Character Indicator (Tad less spacing: [  ] and [  ])
+# Line 2 Character Indicator
 # -----------------------------------------------------------------------------
 [character]
 disabled = false

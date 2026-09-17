@@ -42,7 +42,7 @@ window-rule {
   clip-to-geometry true
 }
 
-// Workspaces 0-9 (Scratchpad eliminated)
+// Workspaces 0-9
 workspace "w0"
 workspace "w1"
 workspace "w2"
@@ -60,32 +60,33 @@ spawn-at-startup "@systemctl@" "--user" "import-environment" "PATH" "XDG_DATA_DI
 
 binds {
   // =========================================================================
-  // 1. LEFT-HAND HOME ROW: DAILY DRIVERS (Bilateral: Right Mod [k])
+  // 1. LEFT-HAND HOME ROW: DAILY DRIVERS
   // =========================================================================
   Mod+A                  hotkey-overlay-title="Tmux Sessionizer"           { spawn "@ghostty@" "-e" "@tmuxSessionizer@"; }
-  Mod+S                  hotkey-overlay-title="Spotify (Spicetify Player)" { spawn "@spotify@"; }
-  Mod+D                  hotkey-overlay-title="Code Editor: Doom Emacs"    { spawn "@emacsclient@" "-c" "-a" "emacs"; }
+  Mod+S                  hotkey-overlay-title="Spotify Player"             { spawn "@spotify@"; }
+  Mod+D                  hotkey-overlay-title="Modal Editor: Helix (Tmux)" { spawn "@helixTmuxFocus@"; }
   Mod+F                  hotkey-overlay-title="Maximize Column (Fit Width)"{ maximize-column; }
   Mod+G                  hotkey-overlay-title="Git Client: Lazygit"        { spawn "@ghostty@" "-e" "@lazygit@"; }
 
   // =========================================================================
-  // 2. LEFT-HAND UPPER & BOTTOM ROWS: ESSENTIAL APPLICATIONS
+  // 2. ESSENTIAL APPLICATIONS
   // =========================================================================
   Mod+Q                  hotkey-overlay-title="Close Focused Window"       { close-window; }
   Mod+W                  hotkey-overlay-title="Browser: Helium"            { spawn "@helium@"; }
   Mod+E                  hotkey-overlay-title="File Manager: Thunar"       { spawn "@thunar@"; }
-  Mod+Z                  hotkey-overlay-title="GUI Editor: Zed"            { spawn "@zed@"; }
+  Mod+Z                  hotkey-overlay-title="Code Editor: Zed"           { spawn "@zed@"; }
   Mod+X                  hotkey-overlay-title="Power & Session Menu"       { spawn "@noctaliaShell@" "ipc" "call" "sessionMenu" "toggle"; }
   Mod+C                  hotkey-overlay-title="Center Column on Screen"    { center-column; }
   Mod+V                  hotkey-overlay-title="Clipboard History"          { spawn "@noctaliaShell@" "ipc" "call" "launcher" "clipboard"; }
 
   // =========================================================================
-  // 3. SYSTEM LAUNCHERS & NOCTALIA SHELL CONTROLS
+  // 3. TERMINALS & SYSTEM LAUNCHERS
   // =========================================================================
-  Mod+Return             hotkey-overlay-title="Terminal: Ghostty"          { spawn "@ghostty@"; }
-  Mod+Space              hotkey-overlay-title="Application Launcher"       { spawn "@noctaliaShell@" "ipc" "call" "launcher" "toggle"; }
-  Mod+Shift+Space        hotkey-overlay-title="Toggle Window Floating"     { toggle-window-floating; }
-  Mod+Shift+F            hotkey-overlay-title="Fullscreen Window"          { fullscreen-window; }
+  Mod+T                  hotkey-overlay-title="Terminal: Tmux (Focus/Spawn)" { spawn "@tmuxTermFocus@"; }
+  Mod+Return             hotkey-overlay-title="Terminal: Ghostty (Plain)"    { spawn "@ghostty@"; }
+  Mod+Space              hotkey-overlay-title="Application Launcher"         { spawn "@noctaliaShell@" "ipc" "call" "launcher" "toggle"; }
+  Mod+Shift+Space        hotkey-overlay-title="Toggle Window Floating"       { toggle-window-floating; }
+  Mod+Shift+F            hotkey-overlay-title="Fullscreen Window"            { fullscreen-window; }
 
   Mod+N                  hotkey-overlay-title="Control Center"             { spawn "@noctaliaShell@" "ipc" "call" "controlCenter" "toggle"; }
   Mod+Comma              hotkey-overlay-title="Noctalia Settings"          { spawn "@noctaliaShell@" "ipc" "call" "settings" "toggle"; }
@@ -100,7 +101,7 @@ binds {
   Mod+Slash              hotkey-overlay-title="Hotkey Cheat Sheet"         { show-hotkey-overlay; }
 
   // =========================================================================
-  // 4. RIGHT-HAND HOME ROW: DIRECTIONAL NAVIGATION (Bilateral: Left Mod [d])
+  // 4. DIRECTIONAL NAVIGATION
   // =========================================================================
   Mod+H                  hotkey-overlay-title="Focus Column Left"          { focus-column-left; }
   Mod+L                  hotkey-overlay-title="Focus Column Right"         { focus-column-right; }
@@ -147,7 +148,7 @@ binds {
   Mod+Shift+0            { move-column-to-workspace "w0"; }
 
   // =========================================================================
-  // 6. COLUMN SIZING & RESIZE CHORDS
+  // 6. COLUMN SIZING
   // =========================================================================
   Mod+Minus              hotkey-overlay-title="Column Width -5%"           { set-column-width "-5%"; }
   Mod+Equal              hotkey-overlay-title="Column Width +5%"           { set-column-width "+5%"; }
