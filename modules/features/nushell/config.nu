@@ -1,9 +1,9 @@
 $env.config.show_banner = false
 $env.config.edit_mode = 'vi'
 $env.config.cursor_shape = {
-  vi_insert: 'block'
+  vi_insert: 'line'
   vi_normal: 'block'
-  emacs: 'block'
+  emacs: 'line'
 }
 
 $env.config.hooks = ($env.config.hooks? | default {} | merge {

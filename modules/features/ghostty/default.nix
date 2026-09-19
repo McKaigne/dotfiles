@@ -20,6 +20,7 @@ in
         cursor-style-blink = false
         cursor-color = "#ffffff"
         cursor-text = "#000000"
+        adjust-cursor-thickness = 3
         custom-shader = "${./cursor_smear_fade.glsl}"
         confirm-close-surface = false
         mouse-hide-while-typing = true

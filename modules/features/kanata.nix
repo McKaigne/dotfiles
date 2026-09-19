@@ -30,7 +30,7 @@ let
               lmet lalt       spc       ralt rctl
             )
 
-            ;; Full physical hand partitions for strict Chordal Hold (Opposite-Hand Rule)
+            ;; Full hand partitions to ensure same-hand typing rolls NEVER latch modifiers
             (defvar
               left-hand-keys (
                 esc  1 2 3 4 5
@@ -50,24 +50,27 @@ let
 
             ;; Miryoku Layer Switch Aliases & Contralateral Home Row Mods
             (defalias
-              ;; Layer switches (Permissive Hold: activates target layer on press + release of any layer key)
+              ;; Layer switches (Permissive Hold enabled)
               ml_fun (tap-hold-release 200 200 lmet (layer-while-held fun))
               ml_nav (tap-hold-release 200 200 lalt (layer-while-held nav))
               mr_num (tap-hold-release 200 200 ralt (layer-while-held num))
               mr_sym (tap-hold-release 200 200 rctl (layer-while-held sym))
 
               ;; Home Row Mods (Alt - Ctrl - Mod - Shift)
-              ;; Combines Permissive Hold (-release) + Chordal Hold (-keys with same-hand exclusion)
-              ;; Outer fingers: 180ms | Index fingers: 140ms
-              a      (tap-hold-release-keys 180 180 a lalt $left-hand-keys)
-              s      (tap-hold-release-keys 180 180 s lctl $left-hand-keys)
-              d      (tap-hold-release-keys 180 180 d lmet $left-hand-keys)
-              f      (tap-hold-release-keys 140 140 f lsft $left-hand-keys (require-prior-idle 0))
+              a      (tap-hold-release-keys 200 200 a lalt $left-hand-keys)
+              s      (tap-hold-release-keys 200 200 s lctl $left-hand-keys)
+              d      (tap-hold-release-keys 200 200 d lmet $left-hand-keys)
+              f      (tap-hold-release-keys 180 180 f lsft $left-hand-keys)
 
-              j      (tap-hold-release-keys 140 140 j rsft $right-hand-keys (require-prior-idle 0))
-              k      (tap-hold-release-keys 180 180 k rmet $right-hand-keys)
-              l      (tap-hold-release-keys 180 180 l rctl $right-hand-keys)
-              scln   (tap-hold-release-keys 180 180 ; ralt $right-hand-keys)
+              j      (tap-hold-release-keys 180 180 j rsft $right-hand-keys)
+              k      (tap-hold-release-keys 200 200 k rmet $right-hand-keys)
+              l      (tap-hold-release-keys 200 200 l rctl $right-hand-keys)
+              scln   (tap-hold-release-keys 200 200 ; ralt $right-hand-keys)
+
+              ;; Text & Browser Action Macros
+              sel_line   (macro home S-end C-c)
+              sel_word   (macro C-left C-S-rght)
+              search_tab (macro C-c 50 C-t 100 C-v 50 ret)
             )
 
             ;; =========================================================================
@@ -125,53 +128,28 @@ let
               _      _                    _                 _      _
             )
 
-            ;; =========================================================================
-            ;; BILATERAL OVERRIDES: Enforces contralateral modifier usage
-            ;; =========================================================================
-            (defoverrides
-              (lsft a) (a)
-              (lsft s) (s)
-              (lsft d) (d)
-              (lsft f) (f)
-              (lsft g) (g)
-              (lsft q) (q)
-              (lsft w) (w)
-              (lsft e) (e)
-              (lsft r) (r)
-              (lsft t) (t)
-              (lsft z) (z)
-              (lsft x) (x)
-              (lsft c) (c)
-              (lsft v) (v)
-              (lsft b) (b)
-
-              (rsft y) (y)
-              (rsft u) (u)
-              (rsft i) (i)
-              (rsft o) (o)
-              (rsft p) (p)
-              (rsft h) (h)
-              (rsft j) (j)
-              (rsft k) (k)
-              (rsft l) (l)
-              (rsft ;) (;)
-              (rsft n) (n)
-              (rsft m) (m)
-            )
-
             ;; Universal Bigrams & Chords (15ms timer)
             (defchordsv2
-              (u i) bspc  15 all-released (nav num sym fun)
-              (i o) del   15 all-released (nav num sym fun)
-              (a z) C-S-z 15 all-released (nav num sym fun)
-              (z x) C-z   15 all-released (nav num sym fun)
-              (x c) C-ins 15 all-released (nav num sym fun)
-              (c v) S-ins 15 all-released (nav num sym fun)
-              (x v) S-del 15 all-released (nav num sym fun)
-              (z v) C-a   15 all-released (nav num sym fun)
-              (n m) tab   15 all-released (nav num sym fun)
-              (m ,) C-pgup 15 all-released (nav num sym fun)
-              (, .) C-pgdn 15 all-released (nav num sym fun)
+              ;; Tab Navigation (Top Row)
+              (w e) C-pgup      15 all-released (nav num sym fun)
+              (e r) C-pgdn      15 all-released (nav num sym fun)
+
+              ;; Editing Primitives (Right Hand Top Row)
+              (u i) bspc        15 all-released (nav num sym fun)
+              (i o) C-bspc      15 all-released (nav num sym fun)
+
+              ;; Clipboard & Undo (Left Hand Bottom Row)
+              (a z) C-S-z       15 all-released (nav num sym fun)
+              (z x) C-z         15 all-released (nav num sym fun)
+              (x c) C-ins       15 all-released (nav num sym fun)
+              (c v) S-ins       15 all-released (nav num sym fun)
+              (x v) S-del       15 all-released (nav num sym fun)
+              (z v) C-a         15 all-released (nav num sym fun)
+
+              ;; Text Selection & Web Search (Right Hand Bottom Row)
+              (n m) @sel_line   15 all-released (nav num sym fun)
+              (m ,) @sel_word   15 all-released (nav num sym fun)
+              (, .) @search_tab 15 all-released (nav num sym fun)
             )
           '';
         };

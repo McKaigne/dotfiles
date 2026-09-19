@@ -9,14 +9,18 @@ auto-pairs = true
 auto-format = true
 
 [editor.cursor-shape]
-insert = "block"
 normal = "block"
+insert = "bar"
 select = "block"
 
 [editor.indent-guides]
 render = true
 character = "│"
 skip-levels = 1
+
+[editor.soft-wrap]
+enable = true
+wrap-at-text-width = true
 
 [editor.lsp]
 display-inlay-hints = true
@@ -29,3 +33,25 @@ right = ["file-type", "file-encoding", "position", "position-percentage"]
 mode.normal = "NORMAL"
 mode.insert = "INSERT"
 mode.select = "SELECT"
+
+# ==============================================================================
+# Keybindings (Optimized for Note-Taking & Prose)
+# ==============================================================================
+[keys.normal]
+# Fast buffer/note navigation (Like Vim/Doom bufferline)
+"H" = ":buffer-previous"
+"L" = ":buffer-next"
+"A-h" = ":buffer-previous"
+"A-l" = ":buffer-next"
+"A-w" = ":buffer-close"
+
+# Quick Save
+"C-s" = ":write"
+
+[keys.normal.space]
+# Org-mode Checkbox Toggle (Cycle: [ ] <-> [x] <-> plain bullet)
+t = [
+  "extend_to_line_start", "extend_to_line_end",
+  ":pipe sed -E 's/^- \\[ \\]/- [x]/;t;s/^- \\[x\\]/- [ ]/;t;s/^- /- [ ] /'",
+  "collapse_selection"
+]
