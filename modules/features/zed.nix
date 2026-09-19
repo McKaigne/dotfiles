@@ -20,7 +20,7 @@ in
       fixedCursor = self'.packages.bibata-cursors-fixed;
       iconPath = "${fixedCursor}/share/icons:/run/current-system/sw/share/icons";
 
-      # Core editor utilities; language toolchains are provided per-project via devenv
+      # Core editor utilities; heavy compilers live per-project in devenv
       zedRuntimeDeps = with pkgs; [
         direnv
         git
@@ -34,22 +34,37 @@ in
       ];
 
       zedSettings = pkgs.writeText "settings.json" (builtins.toJSON {
-        helix_mode = true;
-        theme = "Noctalia Dark";
-        load_direnv = "shell_hook";
-        buffer_font_family = "Maple Mono NF";
-        buffer_font_size = 14;
-        ui_font_family = "Maple Mono NF";
-        ui_font_size = 14;
-        cursor_shape = "bar";
-        relative_line_numbers = true;
-        auto_update = false;
+        # --- Window Decorations (Server-side eliminates CSD buttons on Niri) ---
+        window_decorations = "server";
 
-        telemetry = {
-          diagnostics = false;
-          metrics = false;
+        # --- Theme & Visual Philosophy (Noctalia Minimalist) ---
+        theme = "Noctalia Dark";
+        theme_overrides = {
+          "Noctalia Dark" = {
+            "border.variant" = "#00000000";
+            "border" = "#00000000";
+            "toolbar.background" = "#00000000";
+            "panel.background" = "#00000000";
+            "syntax" = {
+              "comment" = { "font_style" = "italic"; };
+              "comment.doc" = { "font_style" = "italic"; };
+            };
+          };
         };
 
+        # --- Typography (Maple Mono NF) ---
+        ui_font_family = "Maple Mono NF";
+        ui_font_size = 14;
+        buffer_font_family = "Maple Mono NF";
+        buffer_font_size = 14;
+        buffer_line_height = { "custom" = 1.6; };
+        agent_ui_font_size = 14;
+        agent_buffer_font_size = 14;
+
+        # --- Modal Engine & Cursors ---
+        helix_mode = true;
+        cursor_shape = "bar";
+        cursor_blink = false;
         vim = {
           use_system_clipboard = "always";
           cursor_shape = {
@@ -60,6 +75,124 @@ in
           };
         };
 
+        # --- Title Bar & UI Chrome ---
+        title_bar = {
+          button_layout = ":";
+          show_onboarding_banner = false;
+          show_project_items = false;
+          show_branch_name = false;
+          show_user_menu = false;
+        };
+
+        # --- Clean Bufferline-Style Tabs ---
+        tab_bar = {
+          show = true;
+          show_nav_history_buttons = false;
+          show_tab_bar_buttons = false;
+        };
+        tabs = {
+          show_close_button = "hidden";
+          file_icons = true;
+          git_status = true;
+        };
+
+        # --- Ribbons & Clutter Stripped ---
+        toolbar = {
+          breadcrumbs = false;
+          quick_actions = false;
+        };
+        status_bar = {
+          "experimental.show" = false;
+        };
+        terminal = {
+          toolbar = {
+            breadcrumbs = false;
+          };
+          button = false;
+        };
+
+        scrollbar = {
+          show = "never";
+        };
+        gutter = {
+          min_line_number_digits = 3;
+          folds = false;
+          runnables = false;
+        };
+        indent_guides = {
+          enabled = false;
+        };
+        git = {
+          git_gutter = "tracked_files";
+          inline_blame = { enabled = false; };
+        };
+
+        # --- Project File Tree (Docked Left) ---
+        project_panel = {
+          dock = "left";
+          default_width = 300;
+          hide_root = true;
+          auto_fold_dirs = false;
+          starts_open = false;
+          git_status = true;
+          sticky_scroll = false;
+          scrollbar = { show = "never"; };
+          indent_guides = { show = "never"; };
+        };
+
+        outline_panel = {
+          default_width = 300;
+          indent_guides = { show = "never"; };
+        };
+        file_finder = {
+          modal_max_width = "large";
+        };
+
+        # --- Intelligent Editing Flow ---
+        show_completions_on_input = true;
+        show_completion_documentation = true;
+        hover_popover_enabled = true;
+        selection_highlight = true;
+        seed_search_query_from_cursor = "always";
+
+        # --- In-Editor Details ---
+        current_line_highlight = "none";
+        show_whitespaces = "none";
+        drag_and_drop_selection = { enabled = false; };
+        inline_code_actions = false;
+        lsp_document_colors = "none";
+        extend_comment_on_newline = true;
+        horizontal_scroll_margin = 4;
+        vertical_scroll_margin = 4;
+
+        # --- Formatting & Persistence ---
+        tab_size = 2;
+        auto_indent = true;
+        auto_indent_on_paste = true;
+        format_on_save = "off";
+        autosave = "on_focus_change";
+        auto_update = false;
+        when_closing_with_no_tabs = "keep_window_open";
+        close_on_file_delete = true;
+        restore_on_file_reopen = true;
+        restore_on_startup = "empty_tab";
+        session = {
+          restore_unsaved_buffers = true;
+        };
+
+        # --- Centered Layout ---
+        centered_layout = {
+          right_padding = 0.15;
+          left_padding = 0.15;
+        };
+
+        # --- Environment & Tooling ---
+        load_direnv = "shell_hook";
+        telemetry = {
+          diagnostics = false;
+          metrics = false;
+        };
+
         language_servers = [
           "!package-version-server"
           "..."
@@ -67,16 +200,14 @@ in
 
         languages = {
           "Nix" = {
-            format_on_save = "on";
+            format_on_save = "off";
             formatter = {
-              external = {
-                command = "nixfmt";
-              };
+              external = { command = "nixfmt"; };
             };
             language_servers = [ "nixd" "..." ];
           };
           "Lua" = {
-            format_on_save = "on";
+            format_on_save = "off";
             formatter = {
               external = {
                 command = "stylua";
@@ -86,11 +217,11 @@ in
             language_servers = [ "lua-language-server" "..." ];
           };
           "TOML" = {
-            format_on_save = "on";
+            format_on_save = "off";
             language_servers = [ "taplo" "..." ];
           };
           "Markdown" = {
-            format_on_save = "on";
+            format_on_save = "off";
             language_servers = [ "marksman" "..." ];
           };
           "JSON" = {
@@ -102,18 +233,10 @@ in
         };
 
         lsp = {
-          nixd = {
-            binary = { path_lookup = true; };
-          };
-          lua-language-server = {
-            binary = { path_lookup = true; };
-          };
-          taplo = {
-            binary = { path_lookup = true; };
-          };
-          marksman = {
-            binary = { path_lookup = true; };
-          };
+          nixd = { binary = { path_lookup = true; }; };
+          lua-language-server = { binary = { path_lookup = true; }; };
+          taplo = { binary = { path_lookup = true; }; };
+          marksman = { binary = { path_lookup = true; }; };
         };
       });
 
@@ -126,7 +249,7 @@ in
         }
         {
           label = "Quickrun: Current File";
-          command = "if [ \"$ZED_FILE_EXTENSION\" = \"py\" ]; then python3 -u \"$ZED_FILE\"; elif [ \"$ZED_FILE_EXTENSION\" = \"sh\" ]; then bash \"$ZED_FILE\"; fi";
+          command = "case \"$ZED_FILE\" in *.py) python3 -u \"$ZED_FILE\" ;; *.sh) bash \"$ZED_FILE\" ;; esac";
           use_new_terminal = false;
           allow_concurrent_runs = false;
         }
@@ -139,8 +262,12 @@ in
 
       zedKeymap = pkgs.writeText "keymap.json" (builtins.toJSON [
         {
-          context = "Editor && (vim_mode == normal || vim_mode == visual) && !VimWaiting && !menu";
+          # Primary Code Editor Modal Keymap
+          context = "Editor && (vim_mode == normal || vim_mode == helix_normal || vim_mode == visual || vim_mode == helix_select) && !VimWaiting && !menu";
           bindings = {
+            # Unbind bare space to allow modal chords
+            "space" = null;
+
             # --- Root Doom Leaders ---
             "space space" = "file_finder::Toggle";
             "space ." = "file_finder::Toggle";
@@ -149,7 +276,7 @@ in
             "space :" = "command_palette::Toggle";
             "space ;" = "buffer_search::Deploy";
             "space '" = [ "pane::DeploySearch" { "replace_enabled" = true; } ];
-            "space `" = "terminal_panel::ToggleFocus";
+            "space `" = "workspace::ToggleBottomDock";
             "space /" = "workspace::NewSearch";
             "space *" = "editor::SelectAllMatches";
             "space x" = "pane::CloseActiveItem";
@@ -214,14 +341,14 @@ in
             "space g b" = "editor::ToggleGitBlame";
             "space g ]" = "editor::GoToHunk";
             "space g [" = "editor::GoToPreviousHunk";
-            "space g r" = "editor::RevertHunk";
-            "space g d" = "editor::ToggleDiff";
+            "space g r" = "git::Restore";
+            "space g d" = "editor::ToggleSelectedDiffHunks";
             "space g f" = "file_finder::Toggle";
 
             # --- Open & Docks Menu (SPC o) ---
-            "space o t" = "terminal_panel::ToggleFocus";
+            "space o p" = "workspace::ToggleLeftDock";
+            "space o t" = "workspace::ToggleBottomDock";
             "space o shift-t" = "workspace::NewTerminal";
-            "space o p" = "project_panel::ToggleFocus";
             "space o g" = "git_panel::ToggleFocus";
             "space o o" = "outline_panel::ToggleFocus";
             "space o a" = "agent::ToggleFocus";
@@ -242,7 +369,7 @@ in
             "space p shift-c" = "task::Rerun";
             "space p k" = "pane::CloseOtherItems";
             "space p d" = "pane::RevealInProjectPanel";
-            "space p t" = "terminal_panel::ToggleFocus";
+            "space p t" = "workspace::ToggleBottomDock";
 
             # --- Search (SPC s) ---
             "space s p" = "workspace::NewSearch";
@@ -253,16 +380,17 @@ in
             "space s r" = [ "pane::DeploySearch" { "replace_enabled" = true; } ];
 
             # --- Toggles (SPC t) ---
-            "space t z" = "pane::ToggleZoom";
+            "space t z" = "workspace::ToggleZoom";
             "space t w" = "editor::ToggleSoftWrap";
             "space t i" = "editor::ToggleInlayHints";
             "space t b" = "editor::ToggleGitBlame";
-            "space t t" = "terminal_panel::ToggleFocus";
-            "space t p" = "project_panel::ToggleFocus";
+            "space t t" = "workspace::ToggleBottomDock";
+            "space t p" = "workspace::ToggleLeftDock";
             "space t g" = "git_panel::ToggleFocus";
             "space t o" = "outline_panel::ToggleFocus";
             "space t a" = "agent::ToggleFocus";
             "space t d" = "diagnostics::Deploy";
+            "space t c" = "workspace::ToggleCenteredLayout";
 
             # --- Window Splits & Controls (SPC w) ---
             "space w v" = "pane::SplitRight";
@@ -278,12 +406,11 @@ in
             "space w c" = "pane::CloseActiveItem";
             "space w d" = "pane::CloseActiveItem";
             "space w o" = "pane::CloseOtherItems";
-            "space w m" = "pane::ToggleZoom";
-            "space w =" = "pane::Rebalance";
-            "space w shift-left"  = [ "pane::MoveItemToDirection" "Left" ];
-            "space w shift-right" = [ "pane::MoveItemToDirection" "Right" ];
-            "space w shift-up"    = [ "pane::MoveItemToDirection" "Up" ];
-            "space w shift-down"  = [ "pane::MoveItemToDirection" "Down" ];
+            "space w m" = "workspace::ToggleZoom";
+            "space w shift-left"  = [ "workspace::MoveItemToPaneInDirection" { direction = "left"; } ];
+            "space w shift-right" = [ "workspace::MoveItemToPaneInDirection" { direction = "right"; } ];
+            "space w shift-up"    = [ "workspace::MoveItemToPaneInDirection" { direction = "up"; } ];
+            "space w shift-down"  = [ "workspace::MoveItemToPaneInDirection" { direction = "down"; } ];
 
             # --- Help & Documentation (SPC h) ---
             "space h t" = "theme_selector::Toggle";
@@ -307,32 +434,36 @@ in
           };
         }
         {
-          # Universal Tab Navigation inside the Terminal Panel
+          # Clean Terminal Context: Only tab cycling and instant dock hide
           context = "Terminal";
           bindings = {
             "ctrl-pageup" = "pane::ActivatePreviousItem";
             "ctrl-pagedown" = "pane::ActivateNextItem";
+            "alt-t" = "workspace::ToggleBottomDock";
           };
         }
         {
-          # Fallback when no buffer is open
+          # Empty pane fallbacks
           context = "EmptyPane || SharedScreen";
           bindings = {
+            "space" = null;
             "space space" = "file_finder::Toggle";
             "space ." = "file_finder::Toggle";
             "space f" = "file_finder::Toggle";
             "space p p" = "projects::OpenRecent";
             "space p n" = [ "task::Spawn" { "task_name" = "Project: New C++ (From Template)"; } ];
-            "space o t" = "terminal_panel::ToggleFocus";
-            "space o p" = "project_panel::ToggleFocus";
+            "space o t" = "workspace::ToggleBottomDock";
+            "space o p" = "workspace::ToggleLeftDock";
             "space o s" = "zed::OpenSettings";
             "space c c" = "task::Spawn";
             "space d d" = "debugger::Start";
           };
         }
         {
+          # Project Tree Drawer Context
           context = "ProjectPanel && not_editing";
           bindings = {
+            "space" = null;
             "h" = "project_panel::CollapseSelectedEntry";
             "j" = "menu::SelectNext";
             "k" = "menu::SelectPrev";
@@ -346,9 +477,9 @@ in
             "x" = "project_panel::Cut";
             "y" = "project_panel::Copy";
             "p" = "project_panel::Paste";
-            "q" = "project_panel::ToggleFocus";
-            "escape" = "project_panel::ToggleFocus";
-            "space o p" = "project_panel::ToggleFocus";
+            "q" = "workspace::ToggleLeftDock";
+            "escape" = "workspace::ToggleLeftDock";
+            "space o p" = "workspace::ToggleLeftDock";
             "space space" = "file_finder::Toggle";
             "space p p" = "projects::OpenRecent";
           };
@@ -388,12 +519,12 @@ in
       apps.zed-editor = {
         type = "app";
         program = "${wrappedZed}/bin/zed";
-        meta.description = "Hermetically wrapped Zed editor with Helix mode and Doom Emacs keymaps";
+        meta.description = "Hermetically wrapped Zed editor with Helix mode and non-colliding Doom Emacs keymaps";
       };
       apps.zed = {
         type = "app";
         program = "${wrappedZed}/bin/zed";
-        meta.description = "Hermetically wrapped Zed editor with Helix mode and Doom Emacs keymaps";
+        meta.description = "Hermetically wrapped Zed editor with Helix mode and non-colliding Doom Emacs keymaps";
       };
     };
 }
