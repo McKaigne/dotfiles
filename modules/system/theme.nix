@@ -24,7 +24,11 @@ let
       };
 
       config = {
-        environment.systemPackages = [ cfg.package pkgs.adw-gtk3 ];
+        environment.systemPackages = [
+          cfg.package
+          pkgs.adw-gtk3
+          pkgs.glib
+        ];
 
         environment.sessionVariables = {
           XCURSOR_THEME    = cfg.theme;
@@ -33,6 +37,7 @@ let
           HYPRCURSOR_SIZE  = toString cfg.size;
           XCURSOR_PATH     = lib.mkForce "${cfg.package}/share/icons:/run/current-system/sw/share/icons";
           NIXOS_OZONE_WL   = "1";
+          GTK_THEME        = "adw-gtk3-dark";
         };
 
         environment.etc."xdg/icons/default/index.theme".text = ''
@@ -42,13 +47,41 @@ let
           Inherits=${cfg.theme}
         '';
 
-        # Live Noctalia CSS Bridge for GTK 3 & 4
+        # System-Wide GTK 3 & 4 Settings (Guarantees Dark Mode Base for Helium & GTK3)
+        environment.etc."xdg/gtk-3.0/settings.ini".text = ''
+          [Settings]
+          gtk-theme-name=adw-gtk3-dark
+          gtk-icon-theme-name=Papirus-Dark
+          gtk-cursor-theme-name=${cfg.theme}
+          gtk-cursor-theme-size=${toString cfg.size}
+          gtk-font-name=Maple Mono NF 11
+          gtk-application-prefer-dark-theme=1
+        '';
+
+        environment.etc."xdg/gtk-4.0/settings.ini".text = ''
+          [Settings]
+          gtk-theme-name=adw-gtk3-dark
+          gtk-icon-theme-name=Papirus-Dark
+          gtk-cursor-theme-name=${cfg.theme}
+          gtk-cursor-theme-size=${toString cfg.size}
+          gtk-font-name=Maple Mono NF 11
+          gtk-application-prefer-dark-theme=1
+        '';
+
+        # Live Noctalia CSS Bridge for GTK 3 & GTK 4
         environment.etc."xdg/gtk-3.0/gtk.css".text = ''
           @import url("file:///home/${config.mainUser}/.config/gtk-3.0/noctalia.css");
         '';
         environment.etc."xdg/gtk-4.0/gtk.css".text = ''
           @import url("file:///home/${config.mainUser}/.config/gtk-4.0/noctalia.css");
         '';
+
+        systemd.tmpfiles.rules = [
+          "d /home/${config.mainUser}/.config/gtk-3.0 0755 ${config.mainUser} users -"
+          "d /home/${config.mainUser}/.config/gtk-4.0 0755 ${config.mainUser} users -"
+          "f /home/${config.mainUser}/.config/gtk-3.0/noctalia.css 0644 ${config.mainUser} users -"
+          "f /home/${config.mainUser}/.config/gtk-4.0/noctalia.css 0644 ${config.mainUser} users -"
+        ];
 
         programs.dconf = {
           enable = true;

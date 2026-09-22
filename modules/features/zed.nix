@@ -131,7 +131,7 @@ in
         project_panel = {
           dock = "left";
           default_width = 300;
-          hide_root = true;
+          hide_root = false;
           auto_fold_dirs = false;
           starts_open = false;
           git_status = true;
@@ -281,6 +281,7 @@ in
             "space *" = "editor::SelectAllMatches";
             "space x" = "pane::CloseActiveItem";
             "space X" = "pane::CloseOtherItems";
+            "space e" = "project_panel::ToggleFocus";
             "] b" = "pane::ActivateNextItem";
             "[ b" = "pane::ActivatePreviousItem";
 
@@ -346,7 +347,7 @@ in
             "space g f" = "file_finder::Toggle";
 
             # --- Open & Docks Menu (SPC o) ---
-            "space o p" = "workspace::ToggleLeftDock";
+            "space o p" = "project_panel::ToggleFocus";
             "space o t" = "workspace::ToggleBottomDock";
             "space o shift-t" = "workspace::NewTerminal";
             "space o g" = "git_panel::ToggleFocus";
@@ -369,7 +370,7 @@ in
             "space p shift-c" = "task::Rerun";
             "space p k" = "pane::CloseOtherItems";
             "space p d" = "pane::RevealInProjectPanel";
-            "space p t" = "workspace::ToggleBottomDock";
+            "space p t" = "project_panel::ToggleFocus";
 
             # --- Search (SPC s) ---
             "space s p" = "workspace::NewSearch";
@@ -385,7 +386,7 @@ in
             "space t i" = "editor::ToggleInlayHints";
             "space t b" = "editor::ToggleGitBlame";
             "space t t" = "workspace::ToggleBottomDock";
-            "space t p" = "workspace::ToggleLeftDock";
+            "space t p" = "project_panel::ToggleFocus";
             "space t g" = "git_panel::ToggleFocus";
             "space t o" = "outline_panel::ToggleFocus";
             "space t a" = "agent::ToggleFocus";
@@ -434,7 +435,7 @@ in
           };
         }
         {
-          # Clean Terminal Context: Only tab cycling and instant dock hide
+          # Clean Terminal Context
           context = "Terminal";
           bindings = {
             "ctrl-pageup" = "pane::ActivatePreviousItem";
@@ -453,7 +454,8 @@ in
             "space p p" = "projects::OpenRecent";
             "space p n" = [ "task::Spawn" { "task_name" = "Project: New C++ (From Template)"; } ];
             "space o t" = "workspace::ToggleBottomDock";
-            "space o p" = "workspace::ToggleLeftDock";
+            "space o p" = "project_panel::ToggleFocus";
+            "space t p" = "project_panel::ToggleFocus";
             "space o s" = "zed::OpenSettings";
             "space c c" = "task::Spawn";
             "space d d" = "debugger::Start";
@@ -477,9 +479,9 @@ in
             "x" = "project_panel::Cut";
             "y" = "project_panel::Copy";
             "p" = "project_panel::Paste";
-            "q" = "workspace::ToggleLeftDock";
-            "escape" = "workspace::ToggleLeftDock";
-            "space o p" = "workspace::ToggleLeftDock";
+            "q" = "project_panel::ToggleFocus";
+            "escape" = "project_panel::ToggleFocus";
+            "space o p" = "project_panel::ToggleFocus";
             "space space" = "file_finder::Toggle";
             "space p p" = "projects::OpenRecent";
           };

@@ -7,7 +7,18 @@ $env.config.cursor_shape = {
 }
 
 $env.config.hooks = ($env.config.hooks? | default {} | merge {
-  pre_prompt: [ { print "" } ]
+  pre_prompt: [
+    { print "" }
+    {
+      if (which direnv | is-empty) { return }
+      let direnv_out = (direnv export json | from json | default {})
+      if ($direnv_out | is-empty) { return }
+      if ($direnv_out.PATH? != null) {
+        $env.PATH = ($direnv_out.PATH | split row (char esep))
+      }
+      load-env ($direnv_out | reject -o PATH)
+    }
+  ]
 })
 
 $env.config.keybindings = (
@@ -94,6 +105,7 @@ def cx [dir: path] {
 
 source @starshipInit@
 source @zoxideInit@
+source @carapaceInit@
 
 # Modal & Multiline indicators:
 $env.PROMPT_INDICATOR = $"(ansi cyan_bold)> (ansi reset)"

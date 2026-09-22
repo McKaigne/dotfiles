@@ -1,13 +1,13 @@
-{ ... }:
+{ inputs, ... }:
 let
   desktopModule = { pkgs, ... }: {
     xdg.mime = {
       enable = true;
       defaultApplications = {
-        "inode/directory" = "thunar.desktop";
-        "application/x-directory" = "thunar.desktop";
-        "inode/mount-point" = "thunar.desktop";
-        "x-scheme-handler/file" = "thunar.desktop";
+        "inode/directory" = "superfile.desktop";
+        "application/x-directory" = "superfile.desktop";
+        "inode/mount-point" = "superfile.desktop";
+        "x-scheme-handler/file" = "superfile.desktop";
         "text/plain" = "dev.zed.Zed.desktop";
         "text/x-c" = "dev.zed.Zed.desktop";
         "text/x-c++src" = "dev.zed.Zed.desktop";
@@ -31,7 +31,6 @@ let
       };
     };
 
-    # Baseline workstation infrastructure & core utilities
     environment.systemPackages = with pkgs; [
       git
       curl
@@ -48,7 +47,34 @@ let
       pavucontrol
       alsa-utils
       libnotify
+
+      # Development Tooling & Highlighting
+      nnn
+      direnv
+      pkgs.devenv
+      delta
+
+      # Downloaders & Extractors
+      yt-dlp
+      aria2
+      p7zip
+      unrar
     ];
+
+    environment.etc."gitconfig".text = ''
+      [core]
+        pager = delta
+
+      [interactive]
+        diffFilter = delta --color-only
+
+      [delta]
+        navigate = true
+        light = false
+        line-numbers = true
+        side-by-side = false
+        syntax-theme = "base16"
+    '';
 
     fonts.packages = with pkgs; [
       maple-mono.NF-unhinted

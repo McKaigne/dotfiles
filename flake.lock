@@ -1,5 +1,25 @@
 {
   "nodes": {
+    "cliamp": {
+      "inputs": {
+        "nixpkgs": [
+          "nixpkgs"
+        ]
+      },
+      "locked": {
+        "lastModified": 1789928374,
+        "narHash": "sha256-LnRdWERki6eSy42DRVIRt9amPfGtuyshDyI3TIS4+OI=",
+        "owner": "bjarneo",
+        "repo": "cliamp",
+        "rev": "57ae3badf75f1f370178df34c6382c069e6564aa",
+        "type": "github"
+      },
+      "original": {
+        "owner": "bjarneo",
+        "repo": "cliamp",
+        "type": "github"
+      }
+    },
     "flake-parts": {
       "inputs": {
         "nixpkgs-lib": "nixpkgs-lib"
@@ -86,6 +106,7 @@
     },
     "root": {
       "inputs": {
+        "cliamp": "cliamp",
         "flake-parts": "flake-parts",
         "helium": "helium",
         "import-tree": "import-tree",

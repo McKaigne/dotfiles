@@ -2,10 +2,15 @@
 let
   kanataModule = { config, ... }: {
     options.hardware.kanata = {
-      keyboardDevice = lib.mkOption {
+      internalKeyboard = lib.mkOption {
         type = lib.types.str;
         default = "/dev/input/by-path/platform-i8042-serio-0-event-kbd";
-        description = "Input event device path for Kanata keyboard interception (laptop internal keyboard only)";
+        description = "Input event device path for internal laptop keyboard";
+      };
+      bluetoothKeyboard = lib.mkOption {
+        type = lib.types.str;
+        default = "/dev/input/by-id/lofree-flow84";
+        description = "Input event device path for Bluetooth keyboard";
       };
     };
 
@@ -13,12 +18,15 @@ let
       services.kanata = {
         enable = true;
         keyboards.default = {
-          devices = [ config.hardware.kanata.keyboardDevice ];
+          devices = [
+            config.hardware.kanata.internalKeyboard
+            config.hardware.kanata.bluetoothKeyboard
+          ];
           extraDefCfg = ''
             process-unmapped-keys yes
             concurrent-tap-hold yes
             tap-hold-require-prior-idle 150
-            chords-v2-min-idle 100
+            chords-v2-min-idle 140
           '';
           config = ''
             ;; Complete 58-key physical keyboard matrix
@@ -30,126 +38,97 @@ let
               lmet lalt       spc       ralt rctl
             )
 
-            ;; Full hand partitions to ensure same-hand typing rolls NEVER latch modifiers
+            ;; Non-modifier typing keys: Excludes HRM keys so modifiers can stack!
             (defvar
-              left-hand-keys (
+              left-typing-keys (
                 esc  1 2 3 4 5
                 tab  q w e r t
-                caps a s d f g
+                     g
                 lsft z x c v b
-                lmet lalt
+                lmet lalt spc
               )
-              right-hand-keys (
+              right-typing-keys (
                 6 7 8 9 0 - = bspc
                 y u i o p [ ] \
-                h j k l ; ' ret
+                h             ' ret
                 n m , . / rsft
-                ralt rctl
+                ralt rctl spc
               )
             )
 
-            ;; Miryoku Layer Switch Aliases & Contralateral Home Row Mods
+            ;; Aliases: Home Row Mods, Space-Held Navigation Layer, and Raw Gaming Toggle
             (defalias
-              ;; Layer switches (Permissive Hold enabled)
-              ml_fun (tap-hold-release 200 200 lmet (layer-while-held fun))
-              ml_nav (tap-hold-release 200 200 lalt (layer-while-held nav))
-              mr_num (tap-hold-release 200 200 ralt (layer-while-held num))
-              mr_sym (tap-hold-release 200 200 rctl (layer-while-held sym))
+              ;; Space-Held Nav Layer: Tap for Space, Hold for Navigation & Editing
+              spc_nav (tap-hold-release 200 200 spc (layer-while-held nav))
 
-              ;; Home Row Mods (Alt - Ctrl - Mod - Shift)
-              a      (tap-hold-release-keys 200 200 a lalt $left-hand-keys)
-              s      (tap-hold-release-keys 200 200 s lctl $left-hand-keys)
-              d      (tap-hold-release-keys 200 200 d lmet $left-hand-keys)
-              f      (tap-hold-release-keys 180 180 f lsft $left-hand-keys)
+              ;; Urob's Timeless Home Row Mods
+              a      (tap-hold-except-keys 250 250 a lalt $left-typing-keys)
+              s      (tap-hold-except-keys 250 250 s lctl $left-typing-keys)
+              d      (tap-hold-except-keys 250 250 d lmet $left-typing-keys)
+              f      (tap-hold-except-keys 220 220 f lsft $left-typing-keys)
 
-              j      (tap-hold-release-keys 180 180 j rsft $right-hand-keys)
-              k      (tap-hold-release-keys 200 200 k rmet $right-hand-keys)
-              l      (tap-hold-release-keys 200 200 l rctl $right-hand-keys)
-              scln   (tap-hold-release-keys 200 200 ; ralt $right-hand-keys)
+              j      (tap-hold-except-keys 220 220 j rsft $right-typing-keys)
+              k      (tap-hold-except-keys 250 250 k rmet $right-typing-keys)
+              l      (tap-hold-except-keys 250 250 l rctl $right-typing-keys)
+              scln   (tap-hold-except-keys 250 250 ; ralt $right-typing-keys)
 
-              ;; Text & Browser Action Macros
-              sel_line   (macro home S-end C-c)
-              sel_word   (macro C-left C-S-rght)
-              search_tab (macro C-c 50 C-t 100 C-v 50 ret)
+              ;; Gaming / Raw Bypass Toggle
+              tog_raw (switch
+                ((base-layer raw)) (layer-switch base) break
+                () (layer-switch raw) break
+              )
             )
 
             ;; =========================================================================
-            ;; LAYER 1: BASE
+            ;; LAYER 1: BASE (Space-Held Navigation Active via @spc_nav)
             ;; =========================================================================
             (deflayer base
               esc    1      2      3      4      5 6 7      8      9      0      -      =    bspc
               tab    q      w      e      r      t y u      i      o      p      [      ]    \
               esc    @a     @s     @d     @f     g h @j     @k     @l     @scln  '      ret
               lsft   z      x      c      v      b n m      ,      .      /      rsft
-              @ml_fun @ml_nav             spc               @mr_num @mr_sym
+              lmet   lalt                 @spc_nav          ralt   rctl
             )
 
             ;; =========================================================================
-            ;; LAYER 2: NAV (Hold Left Alt)
+            ;; LAYER 2: NAV (Activated while holding Spacebar)
             ;; =========================================================================
             (deflayer nav
-              _      _      _      _      _      _ _ _      _      _      _      _      _    _
-              _      _      _      _      _      _ _ home   pgdn   pgup   end    _      _    _
-              _      C-a    _      _      _      _ left down up    rght   _      _      ret
-              _      C-z    C-x    C-c    C-v    _ bspc del  C-bspc C-del  _      _
-              _      _                    _                 _      _
+              _      _      _      _      _      _ _      _    _    _    _      _      _    _
+              _      _      _      _      _      _ C-S-z  C-v  C-c  C-x  C-z    _      _    _
+              _      _      _      _      _      _ left   down up   rght _      _      _
+              _      _      _      _      _      _ home   pgdn pgup end  _      _
+              _      _                    _                    _    _
             )
 
             ;; =========================================================================
-            ;; LAYER 3: NUM (Hold Right AltGr)
+            ;; LAYER 3: RAW (Gaming / Typing Test Bypass: Pure Keys / Zero Tap-Holds)
             ;; =========================================================================
-            (deflayer num
-              _      _      _      _      _      _ _ _      _      _      _      _      _    _
-              _      [      7      8      9      ] _ S-=    -      S-8    /      S-6    _    _
-              _      ;      4      5      6      = _ 0      .      ,      ret    _      _
-              _      grv    1      2      3      \ _ _      _      _      _      _
-              _      _                    0                 _      _
+            (deflayer raw
+              esc    1      2      3      4      5 6 7      8      9      0      -      =    bspc
+              tab    q      w      e      r      t y u      i      o      p      [      ]    \
+              caps   a      s      d      f      g h j      k      l      ;      '      ret
+              lsft   z      x      c      v      b n m      ,      .      /      rsft
+              lmet   lalt                 spc               ralt   rctl
             )
 
-            ;; =========================================================================
-            ;; LAYER 4: SYM (Hold Right Ctrl)
-            ;; =========================================================================
-            (deflayer sym
-              _      _      _      _      _      _ _ _      _      _      _      _      _    _
-              _      S-[    S-7    S-8    S-9    S-] _ S--  -      S-8    /      S-6    _    _
-              _      S-;    S-4    S-5    S-6    S-= _ S-'  '      S-,    S-.    S-/    _
-              _      S-grv  S-1    S-2    S-3    S-\ _ [    ]      S-[    S-]    _
-              _      _                    _                 _      _
-            )
-
-            ;; =========================================================================
-            ;; LAYER 5: FUN / MEDIA (Hold Left Win)
-            ;; =========================================================================
-            (deflayer fun
-              _      f1     f2     f3     f4     f5 f6 f7     f8     f9     f10    f11    f12  _
-              _      _      _      _      _      _  _  _      _      _      _      _      _    _
-              _      _      _      _      _      _  prev voldwn volu   next   _      _    _
-              _      _      _      _      _      _  mute pp     _      _      _      _
-              _      _                    _                 _      _
-            )
-
-            ;; Universal Bigrams & Chords (15ms timer)
+            ;; Universal Bigrams & Chords
             (defchordsv2
-              ;; Tab Navigation (Top Row)
-              (w e) C-pgup      15 all-released (nav num sym fun)
-              (e r) C-pgdn      15 all-released (nav num sym fun)
-
-              ;; Editing Primitives (Right Hand Top Row)
-              (u i) bspc        15 all-released (nav num sym fun)
-              (i o) C-bspc      15 all-released (nav num sym fun)
+              ;; Gaming / Raw Bypass Toggle (Press both Shift keys simultaneously)
+              (lsft rsft) @tog_raw  50 all-released ()
 
               ;; Clipboard & Undo (Left Hand Bottom Row)
-              (a z) C-S-z       15 all-released (nav num sym fun)
-              (z x) C-z         15 all-released (nav num sym fun)
-              (x c) C-ins       15 all-released (nav num sym fun)
-              (c v) S-ins       15 all-released (nav num sym fun)
-              (x v) S-del       15 all-released (nav num sym fun)
-              (z v) C-a         15 all-released (nav num sym fun)
+              (a z) C-S-z           15 all-released ()
+              (z x) C-z             15 all-released ()
+              (x c) C-ins           15 all-released ()
+              (c v) S-ins           15 all-released ()
+              (x v) S-del           15 all-released ()
+              (z v) C-a             15 all-released ()
 
-              ;; Text Selection & Web Search (Right Hand Bottom Row)
-              (n m) @sel_line   15 all-released (nav num sym fun)
-              (m ,) @sel_word   15 all-released (nav num sym fun)
-              (, .) @search_tab 15 all-released (nav num sym fun)
+              ;; Word Editing & Tmux (Right Hand Bottom Row)
+              (n m) C-b             15 all-released ()
+              (m ,) C-bspc          15 all-released ()
+              (, .) C-del           15 all-released ()
             )
           '';
         };

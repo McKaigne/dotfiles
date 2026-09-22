@@ -5,6 +5,7 @@ let
       self.packages.${pkgs.stdenv.hostPlatform.system}.tmux
       self.packages.${pkgs.stdenv.hostPlatform.system}.tmux-sessionizer
       self.packages.${pkgs.stdenv.hostPlatform.system}.tmux-window-picker
+      self.packages.${pkgs.stdenv.hostPlatform.system}.tmux-helix-picker
       self.packages.${pkgs.stdenv.hostPlatform.system}.helix-tmux
       self.packages.${pkgs.stdenv.hostPlatform.system}.helix-tmux-focus
       self.packages.${pkgs.stdenv.hostPlatform.system}.tmux-term-focus
@@ -16,17 +17,12 @@ in
 
   perSystem = { self', pkgs, lib, ... }:
     let
-      tmuxConf = ./tmux.conf;
-
-      # Sessionizer wrapped to ALWAYS invoke tmux with the hermetic config
       tmuxSessionizer = pkgs.writeShellScriptBin "tmux-sessionizer" ''
         set -euo pipefail
-        PATH="${lib.makeBinPath [ pkgs.fzf pkgs.findutils pkgs.procps pkgs.coreutils pkgs.gnugrep ]}:$PATH"
-        TMUX_CONF="${tmuxConf}"
-        export TMUX_CONF
+        PATH="${lib.makeBinPath [ pkgs.fzf pkgs.findutils pkgs.procps pkgs.coreutils pkgs.gnugrep pkgs.tmux ]}:$PATH"
 
         tmux() {
-          command "${pkgs.tmux}/bin/tmux" -f "$TMUX_CONF" "$@"
+          command "${pkgs.tmux}/bin/tmux" ''${TMUX_CONF:+-f "$TMUX_CONF"} "$@"
         }
 
         if [ $# -eq 1 ]; then
@@ -34,7 +30,7 @@ in
         else
           existing_sessions=$(tmux list-sessions -F "#{session_name}" 2>/dev/null || true)
 
-          search_roots=("$HOME/projects" "$HOME/work" "$HOME/personal" "$HOME/dotfiles" "/etc/nixos" "$HOME")
+          search_roots=("$HOME/Projects" "$HOME/projects" "$HOME/work" "$HOME/personal" "$HOME/dotfiles" "/etc/nixos" "$HOME")
           existing_roots=()
           for r in "''${search_roots[@]}"; do
             [ -d "$r" ] && existing_roots+=("$r")
@@ -42,7 +38,7 @@ in
 
           dirs=$(find "''${existing_roots[@]}" -mindepth 1 -maxdepth 1 -type d 2>/dev/null || true)
 
-          selected=$( (echo "$existing_sessions"; echo "$dirs") | grep -v '^$' | fzf --reverse --prompt="󰒉 Sessionizer > " --height=100% )
+          selected=$( (echo "$existing_sessions"; echo "$dirs") | grep -v '^$' | fzf --reverse --prompt="󰒉 Sessions & Projects > " )
         fi
 
         if [ -z "$selected" ]; then
@@ -72,23 +68,59 @@ in
 
       tmuxWindowPicker = pkgs.writeShellScriptBin "tmux-window-picker" ''
         set -euo pipefail
-        PATH="${lib.makeBinPath [ pkgs.fzf pkgs.coreutils ]}:$PATH"
-        TMUX_CONF="${tmuxConf}"
+        PATH="${lib.makeBinPath [ pkgs.fzf pkgs.tmux pkgs.coreutils ]}:$PATH"
 
-        tmux() {
-          command "${pkgs.tmux}/bin/tmux" -f "$TMUX_CONF" "$@"
-        }
-
-        target=$(tmux list-windows -F "#{window_index}: #{window_name} #{?window_active,(active),}" 2>/dev/null | \
-          fzf --reverse --prompt="󰖯 window > " --height=100% | \
-          cut -d: -f1)
+        target=$(tmux list-windows -a -F "#{session_name}:#{window_index} - #{window_name} #{?window_active,(active),}" 2>/dev/null | \
+          fzf --reverse --prompt="󰖯 All Windows > " | cut -d' ' -f1)
 
         if [ -n "$target" ]; then
-          exec tmux select-window -t "$target"
+          tmux select-window -t "$target"
+          tmux switch-client -t "$target"
         fi
       '';
 
-      # Raw Helix launcher attached to a persistent 'main' session
+      tmuxHelixPicker = pkgs.writeShellScriptBin "tmux-helix-picker" ''
+        set -euo pipefail
+        PATH="${lib.makeBinPath [ pkgs.fzf pkgs.tmux pkgs.gnugrep pkgs.coreutils ]}:$PATH"
+
+        target=$(tmux list-panes -a -F '#{session_name}:#{window_index}.#{pane_index} │ #{pane_current_command} │ #{window_name} │ #{pane_current_path}' 2>/dev/null | \
+          grep -Ei '(hx|helix)' | \
+          fzf --reverse --prompt="󰅩 Helix Panes > " --header="Select active Helix session" | \
+          cut -d'│' -f1 | tr -d ' ')
+
+        if [ -n "$target" ]; then
+          tmux select-pane -t "$target"
+          tmux select-window -t "$target"
+          tmux switch-client -t "$target"
+        fi
+      '';
+
+      tmuxConf = pkgs.writeText "tmux.conf" (builtins.replaceStrings
+        [
+          "@nnn@"
+          "@tmuxSessionizer@"
+          "@tmuxWindowPicker@"
+          "@tmuxHelixPicker@"
+          "@lazygit@"
+          "@superfile@"
+          "@btop@"
+          "@nu@"
+          "@wlCopy@"
+        ]
+        [
+          "${pkgs.nnn}/bin/nnn"
+          "${tmuxSessionizer}/bin/tmux-sessionizer"
+          "${tmuxWindowPicker}/bin/tmux-window-picker"
+          "${tmuxHelixPicker}/bin/tmux-helix-picker"
+          "${pkgs.lazygit}/bin/lazygit"
+          "${self'.packages.superfile}/bin/superfile"
+          "${self'.packages.btop}/bin/btop"
+          "${self'.packages.nushell}/bin/nu"
+          "${pkgs.wl-clipboard}/bin/wl-copy"
+        ]
+        (builtins.readFile ./tmux.conf)
+      );
+
       helixTmux = pkgs.writeShellScriptBin "helix-tmux" ''
         set -euo pipefail
         TMUX_CONF="${tmuxConf}"
@@ -96,14 +128,12 @@ in
         exec "${pkgs.tmux}/bin/tmux" -f "$TMUX_CONF" new-session -A -s main "${self'.packages.helix}/bin/hx" "$@"
       '';
 
-      # Focus-or-Spawn for Tmux terminal (Mod + T)
       tmuxTermFocus = pkgs.writeShellScriptBin "tmux-term-focus" ''
         set -euo pipefail
         PATH="${lib.makeBinPath [ pkgs.jq pkgs.niri self'.packages.ghostty pkgs.coreutils ]}:$PATH"
         TMUX_CONF="${tmuxConf}"
         export TMUX_CONF
 
-        # Check if an existing tmux-terminal window is open in Niri
         WINDOW_ID=$(niri msg -j windows 2>/dev/null | jq -r '.[] | select((.app_id == "ghostty.tmux") or (.title | test("^tmux-terminal"; "i"))) | .id' | head -n1 || true)
 
         if [ -n "$WINDOW_ID" ] && [ "$WINDOW_ID" != "null" ]; then
@@ -113,12 +143,10 @@ in
         fi
       '';
 
-      # Focus-or-Spawn for Helix in Tmux (Mod + D)
       helixTmuxFocus = pkgs.writeShellScriptBin "helix-tmux-focus" ''
         set -euo pipefail
         PATH="${lib.makeBinPath [ pkgs.jq pkgs.niri self'.packages.ghostty pkgs.coreutils ]}:$PATH"
 
-        # Check if an existing helix-tmux window is open in Niri
         WINDOW_ID=$(niri msg -j windows 2>/dev/null | jq -r '.[] | select((.app_id == "ghostty.helix") or (.title | test("^helix-tmux"; "i"))) | .id' | head -n1 || true)
 
         if [ -n "$WINDOW_ID" ] && [ "$WINDOW_ID" != "null" ]; then
@@ -137,11 +165,13 @@ in
         pkgs.btop
         pkgs.wl-clipboard
         pkgs.jq
-        self'.packages.yazi
+        pkgs.nnn
+        self'.packages.superfile
         self'.packages.helix
         self'.packages.nushell
         tmuxSessionizer
         tmuxWindowPicker
+        tmuxHelixPicker
         helixTmux
         helixTmuxFocus
         tmuxTermFocus
@@ -149,7 +179,15 @@ in
 
       wrappedTmux = pkgs.symlinkJoin {
         name = "tmux";
-        paths = [ pkgs.tmux tmuxSessionizer tmuxWindowPicker helixTmux helixTmuxFocus tmuxTermFocus ];
+        paths = [
+          pkgs.tmux
+          tmuxSessionizer
+          tmuxWindowPicker
+          tmuxHelixPicker
+          helixTmux
+          helixTmuxFocus
+          tmuxTermFocus
+        ];
         nativeBuildInputs = [ pkgs.makeWrapper ];
         postBuild = ''
           wrapProgram $out/bin/tmux \
@@ -163,6 +201,7 @@ in
       packages.tmux = wrappedTmux;
       packages.tmux-sessionizer = tmuxSessionizer;
       packages.tmux-window-picker = tmuxWindowPicker;
+      packages.tmux-helix-picker = tmuxHelixPicker;
       packages.helix-tmux = helixTmux;
       packages.helix-tmux-focus = helixTmuxFocus;
       packages.tmux-term-focus = tmuxTermFocus;
@@ -176,26 +215,6 @@ in
         type = "app";
         program = "${tmuxSessionizer}/bin/tmux-sessionizer";
         meta.description = "ThePrimeagen's tmux-sessionizer project manager";
-      };
-      apps.tmux-window-picker = {
-        type = "app";
-        program = "${tmuxWindowPicker}/bin/tmux-window-picker";
-        meta.description = "Interactive fzf window switcher for tmux";
-      };
-      apps.helix-tmux = {
-        type = "app";
-        program = "${helixTmux}/bin/helix-tmux";
-        meta.description = "Launch persistent Helix modal editor inside Tmux";
-      };
-      apps.helix-tmux-focus = {
-        type = "app";
-        program = "${helixTmuxFocus}/bin/helix-tmux-focus";
-        meta.description = "Focus or spawn persistent Helix modal editor inside Tmux";
-      };
-      apps.tmux-term-focus = {
-        type = "app";
-        program = "${tmuxTermFocus}/bin/tmux-term-focus";
-        meta.description = "Focus or spawn persistent Tmux terminal session";
       };
     };
 }

@@ -1,24 +1,19 @@
 add_newline = false
 palette = "noctalia"
 
-# Line 1: [OS + Identity][Directory][Git][Time] -----------[fill]-----------> [Duration]
-# Line 2: Character Status Indicator
+# Line 1: [OS + User][Directory (Repo-Truncated)][Git][Time]
+# Right Prompt: [Dev Env][Duration] (Auto-collapses in narrow panes!)
 format = """\
 $os$username$hostname\
 $directory\
 $git_branch$git_status\
 $time\
-$fill\
-$cmd_duration
 $character"""
 
-right_format = ""
-
-[fill]
-symbol = " "
+right_format = "$nix_shell$cmd_duration"
 
 # -----------------------------------------------------------------------------
-# 1. Identity Segment (OS Icon + pollux@castor) - Accent: Red | BG: #3a3f5a
+# 1. Identity Segment (OS Icon + User) - Accent: Red | BG: #3a3f5a
 # -----------------------------------------------------------------------------
 [os]
 disabled = false
@@ -34,18 +29,20 @@ style_user = "fg:red bg:pill_bg bold"
 style_root = "fg:red bg:pill_bg bold"
 format = "[ $user]($style)"
 
+# Only show @hostname over SSH to save 9 columns on local workstation
 [hostname]
-ssh_only = false
+ssh_only = true
 style = "fg:red bg:pill_bg bold"
-format = "[@$hostname ]($style)"
+format = "[@$hostname]($style)"
 
 # -----------------------------------------------------------------------------
-# 2. Directory Segment (Connected: transitions from #3a3f5a into green badge)
+# 2. Directory Segment (Repo-Truncated to prevent overflow in split panes)
 # -----------------------------------------------------------------------------
 [directory]
 style = "fg:green bg:pill_bg bold"
 format = "[](fg:green bg:pill_bg)[󰉋 ](fg:crust bg:green)[ $path ]($style)"
-truncation_length = 3
+truncation_length = 2
+truncate_to_repo = true
 truncation_symbol = "…/"
 home_symbol = "~"
 
@@ -72,7 +69,7 @@ renamed = "»${count}"
 deleted = "✘${count}"
 
 # -----------------------------------------------------------------------------
-# 4. Time Segment (End of connected ribbon: closes with  in #3a3f5a)
+# 4. Time Segment (End of left ribbon: closes with  in #3a3f5a)
 # -----------------------------------------------------------------------------
 [time]
 disabled = false
@@ -81,7 +78,20 @@ style = "fg:blue bg:pill_bg bold"
 format = "[](fg:blue bg:pill_bg)[󰥔 ](fg:crust bg:blue)[ $time ]($style)[](fg:pill_bg)"
 
 # -----------------------------------------------------------------------------
-# 5. Right Side: Stopwatch / Duration Pill - Accent: Yellow
+# 5. Dev Environment Segment (Cyan Sandbox Cube in Right Prompt)
+# -----------------------------------------------------------------------------
+[nix_shell]
+disabled = false
+symbol = "󰆍"
+style = "fg:cyan bg:pill_bg bold"
+format = "[](fg:cyan)[$symbol ](fg:crust bg:cyan)[ $name ]($style)[](fg:pill_bg) "
+impure_msg = ""
+pure_msg = ""
+unknown_msg = "devenv"
+heuristic = true
+
+# -----------------------------------------------------------------------------
+# 6. Stopwatch / Duration Pill (Yellow Pill in Right Prompt)
 # -----------------------------------------------------------------------------
 [cmd_duration]
 min_time = 2_000

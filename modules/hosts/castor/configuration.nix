@@ -5,6 +5,7 @@
     nix.settings = {
       experimental-features = [ "nix-command" "flakes" ];
       warn-dirty = false;
+      auto-optimise-store = true;
     };
 
     networking.hostName = "castor";
@@ -13,8 +14,16 @@
     boot.loader.systemd-boot.enable = true;
     boot.loader.efi.canTouchEfiVariables = true;
 
-    # Enable nix-ld so precompiled CLI binaries run seamlessly
     programs.nix-ld.enable = true;
+
+    # Compressed in-RAM swap to guarantee OOM immunity during heavy compilation
+    zramSwap = {
+      enable = true;
+      memoryPercent = 50;
+    };
+
+    # Intel Tiger Lake thermal governor
+    services.thermald.enable = true;
 
     hardware.enableRedistributableFirmware = true;
     hardware.firmware = with pkgs; [
@@ -30,8 +39,19 @@
     hardware.bluetooth = {
       enable = true;
       powerOnBoot = true;
+      settings = {
+        General = {
+          FastConnectable = true;
+          Experimental = true;
+        };
+      };
     };
     services.blueman.enable = true;
+
+    # Universal udev rule: Matches Lofree Flow84 whether Wired (USB) or Bluetooth!
+    services.udev.extraRules = ''
+      KERNEL=="event*", SUBSYSTEM=="input", ATTRS{name}=="*Flow84*|*Lofree*", SYMLINK+="input/by-id/lofree-flow84", TAG+="uaccess"
+    '';
 
     services.greetd = {
       enable = true;

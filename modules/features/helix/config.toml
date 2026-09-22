@@ -2,56 +2,69 @@ theme = "noctalia"
 
 [editor]
 line-number = "relative"
+mouse = false
 cursorline = true
 color-modes = true
-bufferline = "multiple"
-auto-pairs = true
-auto-format = true
+true-color = true
+bufferline = "always"
+auto-save = true
+idle-timeout = 50
+completion-trigger-len = 1
+scrolloff = 5
 
+# Use underline/bar so Helix yields to the native terminal cursor
 [editor.cursor-shape]
-normal = "block"
+normal = "underline"
 insert = "bar"
-select = "block"
+select = "underline"
+
+[editor.soft-wrap]
+enable = true
+max-wrap = 0
+max-indent-retain = 30
+wrap-indicator = "↪ "
+wrap-at-text-width = false
+
+[editor.file-picker]
+hidden = false
+
+[editor.statusline]
+left = ["mode", "spinner", "file-name", "file-modification-indicator"]
+center = []
+right = ["diagnostics", "selections", "position", "file-encoding", "file-type"]
+separator = "│"
+mode.normal = "NORMAL"
+mode.insert = "INSERT"
+mode.select = "SELECT"
+
+[editor.lsp]
+display-messages = true
+display-inlay-hints = false
 
 [editor.indent-guides]
 render = true
 character = "│"
 skip-levels = 1
 
-[editor.soft-wrap]
-enable = true
-wrap-at-text-width = true
-
-[editor.lsp]
-display-inlay-hints = true
-display-messages = true
-
-[editor.statusline]
-left = ["mode", "spinner", "file-name", "read-only-indicator", "file-modification-indicator"]
-center = ["diagnostics"]
-right = ["file-type", "file-encoding", "position", "position-percentage"]
-mode.normal = "NORMAL"
-mode.insert = "INSERT"
-mode.select = "SELECT"
-
-# ==============================================================================
-# Keybindings (Optimized for Note-Taking & Prose)
-# ==============================================================================
 [keys.normal]
-# Fast buffer/note navigation (Like Vim/Doom bufferline)
-"H" = ":buffer-previous"
-"L" = ":buffer-next"
-"A-h" = ":buffer-previous"
-"A-l" = ":buffer-next"
-"A-w" = ":buffer-close"
+esc = ["collapse_selection", "keep_primary_selection"]
+"C-s" = ":w"
+"C-q" = ":q"
+space.f = "file_picker"
+space.b = "buffer_picker"
+space.w = "save_selection"
+space.q = ":q"
 
-# Quick Save
-"C-s" = ":write"
+# Strip Helix internal window/pane movement
+"C-w" = "no_op"
+"C-h" = "no_op"
+"C-j" = "no_op"
+"C-k" = "no_op"
+"C-l" = "no_op"
 
-[keys.normal.space]
-# Org-mode Checkbox Toggle (Cycle: [ ] <-> [x] <-> plain bullet)
-t = [
-  "extend_to_line_start", "extend_to_line_end",
-  ":pipe sed -E 's/^- \\[ \\]/- [x]/;t;s/^- \\[x\\]/- [ ]/;t;s/^- /- [ ] /'",
-  "collapse_selection"
-]
+[keys.insert]
+"C-s" = ":w"
+"C-c" = "normal_mode"
+
+[keys.select]
+esc = ["collapse_selection", "keep_primary_selection"]

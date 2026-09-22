@@ -1,4 +1,4 @@
-{ self, ... }:
+{ self, inputs, ... }:
 
 let
   nixosModule = { config, pkgs, ... }: {
@@ -8,6 +8,9 @@ let
       self.packages.${pkgs.stdenv.hostPlatform.system}.nushell
       pkgs.zoxide
       pkgs.fzf
+      pkgs.direnv
+      pkgs.devenv
+      pkgs.carapace
     ];
   };
 in
@@ -25,6 +28,10 @@ in
       ${pkgs.zoxide}/bin/zoxide init nushell > $out
     '';
 
+    carapaceInit = pkgs.runCommand "carapace-init.nu" {} ''
+      ${pkgs.carapace}/bin/carapace _carapace nushell > $out
+    '';
+
     noctaliaStarshipSync = pkgs.writeShellScriptBin "noctalia-starship-sync" ''
       set -euo pipefail
       CACHE_DIR="$HOME/.cache/noctalia"
@@ -40,8 +47,8 @@ in
 
     configNu = pkgs.writeText "config.nu" (
       builtins.replaceStrings
-        [ "@starshipInit@" "@zoxideInit@" ]
-        [ "${starshipInit}" "${zoxideInit}" ]
+        [ "@starshipInit@" "@zoxideInit@" "@carapaceInit@" ]
+        [ "${starshipInit}" "${zoxideInit}" "${carapaceInit}" ]
         (builtins.readFile ./config.nu)
     );
 
@@ -49,7 +56,16 @@ in
   in {
     packages.nushell = pkgs.symlinkJoin {
       name = "nushell-wrapped";
-      paths = [ pkgs.nushell pkgs.starship pkgs.zoxide pkgs.fzf noctaliaStarshipSync ];
+      paths = [
+        pkgs.nushell
+        pkgs.starship
+        pkgs.zoxide
+        pkgs.fzf
+        pkgs.direnv
+        pkgs.devenv
+        pkgs.carapace
+        noctaliaStarshipSync
+      ];
       nativeBuildInputs = [ pkgs.makeWrapper ];
       passthru = {
         shellPath = "/bin/nu";
@@ -57,7 +73,7 @@ in
       postBuild = ''
         wrapProgram $out/bin/nu \
           --set STARSHIP_CONFIG "${starshipConfig}" \
-          --prefix PATH : "${lib.makeBinPath [ pkgs.starship pkgs.wl-clipboard pkgs.zoxide pkgs.fzf noctaliaStarshipSync ]}" \
+          --prefix PATH : "${lib.makeBinPath [ pkgs.starship pkgs.wl-clipboard pkgs.zoxide pkgs.fzf pkgs.direnv pkgs.devenv pkgs.carapace noctaliaStarshipSync ]}" \
           --add-flags "--config ${configNu} --env-config ${envNu}"
       '';
     };
@@ -67,7 +83,7 @@ in
     apps.nushell = {
       type = "app";
       program = "${self'.packages.nushell}/bin/nu";
-      meta.description = "Hermetically wrapped Nushell with Starship and in-store Zoxide";
+      meta.description = "Hermetically wrapped Nushell with Starship, Zoxide, and Carapace";
     };
   };
 }

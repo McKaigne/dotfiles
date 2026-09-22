@@ -4,6 +4,14 @@ let
     environment.systemPackages = [
       self.packages.${pkgs.stdenv.hostPlatform.system}.helium
     ];
+
+    # Declarative managed policy: Always restore last session on startup / reboot
+    environment.etc."chromium/policies/managed/helium-restore.json".text = builtins.toJSON {
+      RestoreOnStartup = 1;
+    };
+    environment.etc."helium/policies/managed/helium-restore.json".text = builtins.toJSON {
+      RestoreOnStartup = 1;
+    };
   };
 in
 {
@@ -27,7 +35,8 @@ in
             --prefix XDG_DATA_DIRS : "${pkgs.gsettings-desktop-schemas}/share:${pkgs.gtk3}/share:${pkgs.adwaita-icon-theme}/share:${fixedCursor}/share:/run/current-system/sw/share" \
             --set-default XDG_CURRENT_DESKTOP "GNOME" \
             --add-flags "--ozone-platform=wayland" \
-            --add-flags "--gtk-version=3"
+            --add-flags "--gtk-version=3" \
+            --add-flags "--restore-last-session"
         '';
       };
     in
@@ -37,7 +46,7 @@ in
       apps.helium = {
         type = "app";
         program = "${wrappedHelium}/bin/helium";
-        meta.description = "Hermetically wrapped Helium Wayland browser";
+        meta.description = "Hermetically wrapped Helium Wayland browser with persistent tabs";
       };
     };
 }

@@ -22,6 +22,7 @@ in
         cursor-text = "#000000"
         adjust-cursor-thickness = 3
         custom-shader = "${./cursor_smear_fade.glsl}"
+        custom-shader-animation = true
         confirm-close-surface = false
         mouse-hide-while-typing = true
 
