@@ -16,13 +16,11 @@
 
     programs.nix-ld.enable = true;
 
-    # Compressed in-RAM swap to guarantee OOM immunity during heavy compilation
     zramSwap = {
       enable = true;
       memoryPercent = 50;
     };
 
-    # Intel Tiger Lake thermal governor
     services.thermald.enable = true;
 
     hardware.enableRedistributableFirmware = true;
@@ -41,23 +39,26 @@
       powerOnBoot = true;
       settings = {
         General = {
-          FastConnectable = true;
           Experimental = true;
+          JustWorksRepairing = "always";
+        };
+        Input = {
+          ClassicBondedOnly = false;
         };
       };
     };
     services.blueman.enable = true;
 
-    # Universal udev rule: Matches Lofree Flow84 whether Wired (USB) or Bluetooth!
     services.udev.extraRules = ''
-      KERNEL=="event*", SUBSYSTEM=="input", ATTRS{name}=="*Flow84*|*Lofree*", SYMLINK+="input/by-id/lofree-flow84", TAG+="uaccess"
+      KERNEL=="event*", SUBSYSTEM=="input", ATTRS{name}=="*[Ff]low84*", SYMLINK+="input/by-id/lofree-flow84", TAG+="uaccess"
+      KERNEL=="event*", SUBSYSTEM=="input", ATTRS{name}=="*[Ll]ofree*", SYMLINK+="input/by-id/lofree-flow84", TAG+="uaccess"
     '';
 
     services.greetd = {
       enable = true;
       settings = {
         default_session = {
-          command = "${config.programs.niri.package}/bin/niri";
+          command = "${config.programs.niri.package}/bin/niri --session";
           user = config.mainUser;
         };
       };

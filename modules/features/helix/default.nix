@@ -11,10 +11,15 @@ in
 
   perSystem = { pkgs, lib, ... }:
     let
+      noctaliaHelixTheme = pkgs.writeText "noctalia.toml" ''
+        inherits = "catppuccin_mocha"
+      '';
+
       helixConfigDir = pkgs.runCommand "helix-config-dir" {} ''
-        mkdir -p $out/helix
+        mkdir -p $out/helix/themes
         cp ${./config.toml} $out/helix/config.toml
         cp ${./languages.toml} $out/helix/languages.toml
+        cp ${noctaliaHelixTheme} $out/helix/themes/noctalia.toml
       '';
 
       wrappedHelix = pkgs.symlinkJoin {

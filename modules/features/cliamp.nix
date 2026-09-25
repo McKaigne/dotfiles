@@ -8,35 +8,32 @@ let
 in
 {
   flake.nixosModules.cliamp = nixosModule;
+  flake.nixosModules.castorConfiguration = nixosModule;
 
   perSystem = { self', pkgs, lib, system, ... }:
     let
       rawCliamp = inputs.cliamp.packages.${system}.default;
 
+      # Noctalia Dark Palette (Catppuccin Mocha) matching Niri, Zed, and Ghostty
       noctaliaTheme = pkgs.writeText "noctalia.toml" ''
-        bg = "#1e2326"
-        accent = "#7fbbb3"
-        bright_fg = "#d3c6aa"
-        fg = "#7a8478"
-        green = "#a7c080"
-        yellow = "#dbbc7f"
-        red = "#e67e80"
+        # Omit bg to seamlessly inherit Ghostty's terminal background
+        # bg = "#1e1e2e"
+        accent = "#cba6f7"
+        bright_fg = "#cdd6f4"
+        fg = "#a6adc8"
+        green = "#a6e3a1"
+        yellow = "#f9e2af"
+        red = "#f38ba8"
       '';
 
-      # Exact cookie target for Helium browser
-      cliampConfig = pkgs.writeText "config.toml" ''
+      cliampConfigTemplate = pkgs.writeText "config.toml.template" ''
         theme = "noctalia"
         start-theme = "noctalia"
         auto-play = false
 
         [ytmusic]
-        cookies_from = "chromium:~/.config/net.imput.helium"
-      '';
-
-      cliampConfigDir = pkgs.runCommand "cliamp-config-dir" {} ''
-        mkdir -p $out/cliamp/themes
-        cp ${cliampConfig} $out/cliamp/config.toml
-        cp ${noctaliaTheme} $out/cliamp/themes/noctalia.toml
+        enabled = true
+        cookies_from = "chromium+basictext:@USER_HOME@/.config/net.imput.helium"
       '';
 
       wrappedCliamp = pkgs.symlinkJoin {
@@ -45,8 +42,14 @@ in
         nativeBuildInputs = [ pkgs.makeWrapper ];
         postBuild = ''
           wrapProgram $out/bin/cliamp \
-            --prefix PATH : "${lib.makeBinPath [ pkgs.ffmpeg pkgs.yt-dlp ]}" \
-            --prefix XDG_CONFIG_DIRS : "${cliampConfigDir}" \
+            --prefix PATH : "${lib.makeBinPath [ pkgs.ffmpeg pkgs.yt-dlp pkgs.gnused ]}" \
+            --run '
+              CLIAMP_RUNTIME="''${XDG_RUNTIME_DIR:-/tmp}/cliamp-config-''${USER}"
+              mkdir -p "$CLIAMP_RUNTIME/cliamp/themes"
+              ${pkgs.gnused}/bin/sed "s|@USER_HOME@|$HOME|g" "${cliampConfigTemplate}" > "$CLIAMP_RUNTIME/cliamp/config.toml"
+              cp -f "${noctaliaTheme}" "$CLIAMP_RUNTIME/cliamp/themes/noctalia.toml"
+              export XDG_CONFIG_HOME="$CLIAMP_RUNTIME"
+            ' \
             --add-flags "--start-theme noctalia"
         '';
       };
@@ -57,7 +60,7 @@ in
       apps.cliamp = {
         type = "app";
         program = "${wrappedCliamp}/bin/cliamp";
-        meta.description = "Terminal music player inspired by Winamp with Noctalia theme and YouTube Music sync";
+        meta.description = "Terminal music player with authentic Noctalia theme and YouTube Music sync";
       };
     };
 }

@@ -14,16 +14,14 @@ let
 in
 {
   flake.nixosModules.tmux = nixosModule;
+  flake.nixosModules.castorConfiguration = nixosModule;
 
   perSystem = { self', pkgs, lib, ... }:
     let
+      # 1. Independent Helper Scripts (Zero recursion: do NOT reference tmuxConf)
       tmuxSessionizer = pkgs.writeShellScriptBin "tmux-sessionizer" ''
         set -euo pipefail
         PATH="${lib.makeBinPath [ pkgs.fzf pkgs.findutils pkgs.procps pkgs.coreutils pkgs.gnugrep pkgs.tmux ]}:$PATH"
-
-        tmux() {
-          command "${pkgs.tmux}/bin/tmux" ''${TMUX_CONF:+-f "$TMUX_CONF"} "$@"
-        }
 
         if [ $# -eq 1 ]; then
           selected="$1"
@@ -37,7 +35,6 @@ in
           done
 
           dirs=$(find "''${existing_roots[@]}" -mindepth 1 -maxdepth 1 -type d 2>/dev/null || true)
-
           selected=$( (echo "$existing_sessions"; echo "$dirs") | grep -v '^$' | fzf --reverse --prompt="󰒉 Sessions & Projects > " )
         fi
 
@@ -83,7 +80,7 @@ in
         set -euo pipefail
         PATH="${lib.makeBinPath [ pkgs.fzf pkgs.tmux pkgs.gnugrep pkgs.coreutils ]}:$PATH"
 
-        target=$(tmux list-panes -a -F '#{session_name}:#{window_index}.#{pane_index} │ #{pane_current_command} │ #{window_name} │ #{pane_current_path}' 2>/dev/null | \
+        target=$(tmux list-panes -a -F "#{session_name}:#{window_index}.#{pane_index} │ #{pane_current_command} │ #{window_name} │ #{pane_current_path}" 2>/dev/null | \
           grep -Ei '(hx|helix)' | \
           fzf --reverse --prompt="󰅩 Helix Panes > " --header="Select active Helix session" | \
           cut -d'│' -f1 | tr -d ' ')
@@ -95,6 +92,7 @@ in
         fi
       '';
 
+      # 2. Tmux Configuration Derivation (Directly interpolates local scripts)
       tmuxConf = pkgs.writeText "tmux.conf" (builtins.replaceStrings
         [
           "@nnn@"
@@ -121,18 +119,17 @@ in
         (builtins.readFile ./tmux.conf)
       );
 
+      # 3. Outer Launchers
       helixTmux = pkgs.writeShellScriptBin "helix-tmux" ''
         set -euo pipefail
-        TMUX_CONF="${tmuxConf}"
-        export TMUX_CONF
+        export TMUX_CONF="${tmuxConf}"
         exec "${pkgs.tmux}/bin/tmux" -f "$TMUX_CONF" new-session -A -s main "${self'.packages.helix}/bin/hx" "$@"
       '';
 
       tmuxTermFocus = pkgs.writeShellScriptBin "tmux-term-focus" ''
         set -euo pipefail
         PATH="${lib.makeBinPath [ pkgs.jq pkgs.niri self'.packages.ghostty pkgs.coreutils ]}:$PATH"
-        TMUX_CONF="${tmuxConf}"
-        export TMUX_CONF
+        export TMUX_CONF="${tmuxConf}"
 
         WINDOW_ID=$(niri msg -j windows 2>/dev/null | jq -r '.[] | select((.app_id == "ghostty.tmux") or (.title | test("^tmux-terminal"; "i"))) | .id' | head -n1 || true)
 
@@ -166,6 +163,8 @@ in
         pkgs.wl-clipboard
         pkgs.jq
         pkgs.nnn
+        pkgs.coreutils
+        pkgs.util-linux
         self'.packages.superfile
         self'.packages.helix
         self'.packages.nushell
@@ -177,6 +176,7 @@ in
         tmuxTermFocus
       ];
 
+      # 4. Final Wrapped Tmux
       wrappedTmux = pkgs.symlinkJoin {
         name = "tmux";
         paths = [

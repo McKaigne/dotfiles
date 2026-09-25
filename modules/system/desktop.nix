@@ -8,15 +8,15 @@ let
         "application/x-directory" = "superfile.desktop";
         "inode/mount-point" = "superfile.desktop";
         "x-scheme-handler/file" = "superfile.desktop";
-        "text/plain" = "dev.zed.Zed.desktop";
-        "text/x-c" = "dev.zed.Zed.desktop";
-        "text/x-c++src" = "dev.zed.Zed.desktop";
-        "text/x-c++hdr" = "dev.zed.Zed.desktop";
-        "text/x-csrc" = "dev.zed.Zed.desktop";
-        "text/x-chdr" = "dev.zed.Zed.desktop";
-        "text/x-rust" = "dev.zed.Zed.desktop";
-        "text/x-elixir" = "dev.zed.Zed.desktop";
-        "application/json" = "dev.zed.Zed.desktop";
+        "text/plain" = "emacsclient.desktop";
+        "text/x-c" = "emacsclient.desktop";
+        "text/x-c++src" = "emacsclient.desktop";
+        "text/x-c++hdr" = "emacsclient.desktop";
+        "text/x-csrc" = "emacsclient.desktop";
+        "text/x-chdr" = "emacsclient.desktop";
+        "text/x-rust" = "emacsclient.desktop";
+        "text/x-elixir" = "emacsclient.desktop";
+        "application/json" = "emacsclient.desktop";
 
         # Archive manager associations
         "application/zip" = "org.gnome.FileRoller.desktop";
@@ -86,4 +86,5 @@ let
 in
 {
   flake.nixosModules.desktop = desktopModule;
+  flake.nixosModules.castorConfiguration = desktopModule;
 }

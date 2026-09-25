@@ -28,6 +28,7 @@ let
           cfg.package
           pkgs.adw-gtk3
           pkgs.glib
+          pkgs.papirus-icon-theme
         ];
 
         environment.sessionVariables = {
@@ -47,7 +48,6 @@ let
           Inherits=${cfg.theme}
         '';
 
-        # System-Wide GTK 3 & 4 Settings (Guarantees Dark Mode Base for Helium & GTK3)
         environment.etc."xdg/gtk-3.0/settings.ini".text = ''
           [Settings]
           gtk-theme-name=adw-gtk3-dark
@@ -68,7 +68,6 @@ let
           gtk-application-prefer-dark-theme=1
         '';
 
-        # Live Noctalia CSS Bridge for GTK 3 & GTK 4
         environment.etc."xdg/gtk-3.0/gtk.css".text = ''
           @import url("file:///home/${config.mainUser}/.config/gtk-3.0/noctalia.css");
         '';
@@ -102,7 +101,6 @@ let
 in
 {
   flake.nixosModules.theme = themeModule;
-  flake.nixosModules.cursor = themeModule;
 
   perSystem = { pkgs, ... }:
     let

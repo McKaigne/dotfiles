@@ -72,7 +72,7 @@ in
       };
       postBuild = ''
         wrapProgram $out/bin/nu \
-          --set STARSHIP_CONFIG "${starshipConfig}" \
+          --set-default STARSHIP_CONFIG "${starshipConfig}" \
           --prefix PATH : "${lib.makeBinPath [ pkgs.starship pkgs.wl-clipboard pkgs.zoxide pkgs.fzf pkgs.direnv pkgs.devenv pkgs.carapace noctaliaStarshipSync ]}" \
           --add-flags "--config ${configNu} --env-config ${envNu}"
       '';

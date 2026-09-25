@@ -5,17 +5,28 @@ let
       self.packages.${pkgs.stdenv.hostPlatform.system}.helium
     ];
 
-    # Declarative managed policy: Always restore last session on startup / reboot
-    environment.etc."chromium/policies/managed/helium-restore.json".text = builtins.toJSON {
+    # Declarative managed policies: Restore session + auto-install uBlock Origin and Vimium C
+    environment.etc."chromium/policies/managed/helium-policies.json".text = builtins.toJSON {
       RestoreOnStartup = 1;
+      ExtensionManifestV2Availability = 2;
+      ExtensionInstallForcelist = [
+        "hfjbmagddngcpeloejdejnfgbamkjaeg;https://clients2.google.com/service/update2/crx"
+        "cjpalhdlnbpafiamejdnhcphjbkeiagm;https://clients2.google.com/service/update2/crx"
+      ];
     };
-    environment.etc."helium/policies/managed/helium-restore.json".text = builtins.toJSON {
+    environment.etc."helium/policies/managed/helium-policies.json".text = builtins.toJSON {
       RestoreOnStartup = 1;
+      ExtensionManifestV2Availability = 2;
+      ExtensionInstallForcelist = [
+        "hfjbmagddngcpeloejdejnfgbamkjaeg;https://clients2.google.com/service/update2/crx"
+        "cjpalhdlnbpafiamejdnhcphjbkeiagm;https://clients2.google.com/service/update2/crx"
+      ];
     };
   };
 in
 {
   flake.nixosModules.helium = nixosModule;
+  flake.nixosModules.castorConfiguration = nixosModule;
 
   perSystem = { self', pkgs, ... }:
     let
@@ -36,7 +47,9 @@ in
             --set-default XDG_CURRENT_DESKTOP "GNOME" \
             --add-flags "--ozone-platform=wayland" \
             --add-flags "--gtk-version=3" \
-            --add-flags "--restore-last-session"
+            --add-flags "--restore-last-session" \
+            --add-flags "--password-store=basic" \
+            --add-flags "--disable-features=LockProfileCookieDatabase"
         '';
       };
     in
@@ -46,7 +59,7 @@ in
       apps.helium = {
         type = "app";
         program = "${wrappedHelium}/bin/helium";
-        meta.description = "Hermetically wrapped Helium Wayland browser with persistent tabs";
+        meta.description = "Hermetically wrapped Helium Wayland browser with unlocked cookies, uBlock Origin, and Vimium C";
       };
     };
 }

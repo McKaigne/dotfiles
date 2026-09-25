@@ -5,7 +5,6 @@ let
       self.packages.${pkgs.stdenv.hostPlatform.system}.superfile
     ];
 
-    # Pre-seed dotfile visibility (visible by default) and silence the first-use tutorial
     systemd.tmpfiles.rules = [
       "d /home/${config.mainUser}/.local/share/superfile 0755 ${config.mainUser} users -"
       "f+ /home/${config.mainUser}/.local/share/superfile/toggleDotFile 0644 ${config.mainUser} users - true"
@@ -18,18 +17,15 @@ in
 
   perSystem = { self', pkgs, lib, ... }:
     let
-      # 1. Noctalia Full-Spectrum Theme (Double-quoted TOML strings)
       noctaliaTheme = pkgs.writeText "noctalia.toml" ''
         code_syntax_highlight = "catppuccin-mocha"
 
-        # Base Canvas
         full_screen_fg = "#d3c6aa"
         full_screen_bg = "#1e2326"
 
         gradient_color = ["#7fbbb3", "#a7c080"]
         directory_icon_color = "#7fbbb3"
 
-        # File Panel
         file_panel_fg = "#d3c6aa"
         file_panel_bg = "#1e2326"
         file_panel_border = "#3a3f5a"
@@ -39,7 +35,6 @@ in
         file_panel_item_selected_fg = "#1e2326"
         file_panel_item_selected_bg = "#7fbbb3"
 
-        # Sidebar
         sidebar_fg = "#d3c6aa"
         sidebar_bg = "#1e2326"
         sidebar_title = "#7fbbb3"
@@ -49,13 +44,11 @@ in
         sidebar_item_selected_bg = "#a7c080"
         sidebar_divider = "#3a3f5a"
 
-        # Footer (Processes & Clipboard)
         footer_fg = "#d3c6aa"
         footer_bg = "#1e2326"
         footer_border = "#3a3f5a"
         footer_border_active = "#7fbbb3"
 
-        # Modals & Dialogs
         modal_fg = "#d3c6aa"
         modal_bg = "#2d353b"
         modal_border = "#7fbbb3"
@@ -65,7 +58,6 @@ in
         modal_confirm_fg = "#1e2326"
         modal_confirm_bg = "#a7c080"
 
-        # Accents
         cursor = "#7fbbb3"
         correct = "#a7c080"
         error = "#e67e80"
@@ -73,12 +65,9 @@ in
         cancel = "#e67e80"
       '';
 
-      # 2. Full Native Layout with Helix Defaults (Double-quoted TOML strings)
       spfConfig = pkgs.writeText "config.toml" ''
         theme = "noctalia"
         style = "noctalia"
-
-        # Use Helix as default editor for files and directories
         editor = "${self'.packages.helix}/bin/hx"
         dir_editor = "${self'.packages.helix}/bin/hx"
 
@@ -92,14 +81,12 @@ in
         sort_order_reversed = false
         case_sensitive_sort = false
 
-        # Full Native Dashboard Styling
         nerdfont = true
         transparent_background = false
         file_preview_width = 0
         sidebar_width = 20
         show_panel_footer_info = true
 
-        # Borders
         border_top = "─"
         border_bottom = "─"
         border_left = "│"
@@ -111,27 +98,22 @@ in
         border_middle_left = "├"
         border_middle_right = "┤"
 
-        # Full Plugin Ecosystem
         metadata = true
         enable_md5_checksum = false
         zoxide_support = true
       '';
 
-      # 3. Vim Navigation with Safe Double-Quoted Strings
       spfHotkeys = pkgs.writeText "hotkeys.toml" ''
-        # Global Navigation
         confirm = ["enter", "l"]
         parent_directory = ["h", "backspace"]
         quit = ["q", "esc"]
         cd_quit = ["Q", ""]
 
-        # Movement
         list_up = ["k", "up"]
         list_down = ["j", "down"]
         page_up = ["ctrl+u", "pgup"]
         page_down = ["ctrl+d", "pgdown"]
 
-        # Panel Controls
         create_new_file_panel = ["n", ""]
         close_file_panel = ["w", ""]
         next_file_panel = ["tab", "L"]
@@ -140,12 +122,10 @@ in
         open_sort_options_menu = ["o", ""]
         toggle_reverse_sort = ["R", ""]
 
-        # Focus Switching
         focus_on_sidebar = ["s", ""]
         focus_on_process_bar = ["p", ""]
         focus_on_metadata = ["m", ""]
 
-        # File Operations
         copy_items = ["y", "ctrl+c"]
         cut_items = ["x", "ctrl+x"]
         paste_items = ["p", "ctrl+v"]
@@ -153,18 +133,18 @@ in
         file_panel_item_rename = ["r", "ctrl+r"]
         file_panel_item_create = ["a", "ctrl+n"]
 
-        # Editor Hooks (e = Edit File in Helix, E = Open Directory in Helix)
+        compress_file = ["C", "ctrl+a"]
+        extract_file = ["X", "ctrl+e"]
+
         open_file_with_editor = ["e", ""]
         open_current_directory_with_editor = ["E", ""]
 
-        # Toggles & Selection
         toggle_dot_file = [".", "ctrl+h"]
         toggle_footer = ["F", ""]
         file_panel_select_mode_items_select_down = ["shift+down", "J"]
         file_panel_select_mode_items_select_up = ["shift+up", "K"]
         file_panel_select_all_items = ["A", ""]
 
-        # Utilities
         open_zoxide = ["z", ""]
         search_bar = ["/", ""]
         command_prompt = [":", ""]
@@ -177,13 +157,24 @@ in
         cp ${noctaliaTheme} $out/superfile/theme/noctalia.toml
       '';
 
+      superfileDesktop = pkgs.makeDesktopItem {
+        name = "superfile";
+        desktopName = "Superfile";
+        comment = "Terminal File Manager with Noctalia Theme";
+        icon = "system-file-manager";
+        exec = "${self'.packages.ghostty}/bin/ghostty --class=ghostty.superfile --title=Superfile -e superfile %u";
+        terminal = false;
+        categories = [ "System" "FileManager" ];
+        mimeTypes = [ "inode/directory" "application/x-directory" ];
+      };
+
       wrappedSuperfile = pkgs.symlinkJoin {
         name = "superfile";
-        paths = [ pkgs.superfile ];
+        paths = [ pkgs.superfile superfileDesktop ];
         nativeBuildInputs = [ pkgs.makeWrapper ];
         postBuild = ''
           wrapProgram $out/bin/superfile \
-            --prefix PATH : "${lib.makeBinPath [ self'.packages.helix pkgs.zoxide pkgs.bat ]}" \
+            --prefix PATH : "${lib.makeBinPath [ self'.packages.helix pkgs.zoxide pkgs.bat pkgs.p7zip pkgs.unrar ]}" \
             --prefix XDG_CONFIG_DIRS : "${superfileConfigDir}" \
             --set SUPERFILE_CONFIG_DIR "${superfileConfigDir}/superfile" \
             --set EDITOR "${self'.packages.helix}/bin/hx"
@@ -197,7 +188,7 @@ in
       apps.superfile = {
         type = "app";
         program = "${wrappedSuperfile}/bin/superfile";
-        meta.description = "Hermetically wrapped Superfile terminal file manager with Vim keybindings and Noctalia theme";
+        meta.description = "Hermetically wrapped Superfile terminal file manager with Noctalia theme";
       };
     };
 }

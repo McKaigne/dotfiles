@@ -8,7 +8,6 @@ let
 in
 {
   flake.nixosModules.mpv = nixosModule;
-  flake.nixosModules.media = nixosModule;
 
   perSystem = { pkgs, ... }: {
     packages.mpv = pkgs.mpv;

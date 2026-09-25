@@ -60,7 +60,11 @@ in
         postBuild = ''
           wrapProgram $out/bin/endcord \
             --prefix PATH : "${lib.makeBinPath [ pkgs.wl-clipboard pkgs.xclip ]}" \
-            --prefix XDG_CONFIG_DIRS : "${endcordConfigDir}"
+            --run '
+              mkdir -p "$HOME/.config/endcord/themes"
+              ln -sf "${noctaliaTheme}" "$HOME/.config/endcord/themes/noctalia.ini"
+            ' \
+            --add-flags "-c ${endcordConfigDir}/endcord/config.ini"
         '';
       };
     in

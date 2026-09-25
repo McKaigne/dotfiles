@@ -50,7 +50,6 @@ in
         theme[download_mid]="#83c092"
         theme[download_end]="#a7c080"
         theme[upload_start]="#d699b6"
-        theme[upload_mid]="#e67e80"
         theme[upload_end]="#dbbc7f"
         theme[process_start]="#83c092"
         theme[process_mid]="#a7c080"
@@ -75,7 +74,7 @@ in
         nativeBuildInputs = [ pkgs.makeWrapper ];
         postBuild = ''
           wrapProgram $out/bin/btop \
-            --prefix XDG_CONFIG_DIRS : "${btopConfigDir}"
+            --add-flags "--config ${btopConfigDir}/btop/btop.conf --themes-dir ${btopConfigDir}/btop/themes"
         '';
       };
     in
