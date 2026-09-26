@@ -12,7 +12,7 @@ in
 
   perSystem = { pkgs, ... }:
     let
-      noctaliaBtopTheme = pkgs.writeText "noctalia.theme" ''
+      fallbackTheme = pkgs.writeText "noctalia.theme" ''
         theme[main_bg]="#1e2326"
         theme[main_fg]="#d3c6aa"
         theme[title]="#d3c6aa"
@@ -56,19 +56,20 @@ in
         theme[process_end]="#e67e80"
       '';
 
-      btopConfigDir = pkgs.runCommand "btop-config-dir" {} ''
-        mkdir -p $out/btop/themes
-        cp ${./btop.conf} $out/btop/btop.conf
-        cp ${noctaliaBtopTheme} $out/btop/themes/noctalia.theme
-      '';
-
       wrappedBtop = pkgs.symlinkJoin {
         name = "btop";
         paths = [ pkgs.btop ];
         nativeBuildInputs = [ pkgs.makeWrapper ];
         postBuild = ''
           wrapProgram $out/bin/btop \
-            --add-flags "--config ${btopConfigDir}/btop/btop.conf --themes-dir ${btopConfigDir}/btop/themes"
+            --run '
+              # Seed fallback theme if Noctalia has not run its btop template yet
+              mkdir -p "$HOME/.config/btop/themes"
+              if [ ! -f "$HOME/.config/btop/themes/noctalia.theme" ]; then
+                cp "${fallbackTheme}" "$HOME/.config/btop/themes/noctalia.theme" 2>/dev/null || true
+              fi
+            ' \
+            --add-flags "--config ${./btop.conf} --themes-dir $HOME/.config/btop/themes"
         '';
       };
     in
@@ -78,7 +79,7 @@ in
       apps.btop = {
         type = "app";
         program = "${wrappedBtop}/bin/btop";
-        meta.description = "Hermetically wrapped btop monitor with Noctalia theme";
+        meta.description = "Hermetically wrapped btop connected to Noctalia dynamic themes";
       };
     };
 }

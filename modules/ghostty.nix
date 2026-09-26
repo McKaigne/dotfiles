@@ -12,7 +12,8 @@ in
 
   perSystem = { pkgs, ... }:
     let
-      noctaliaTheme = pkgs.runCommand "ghostty-noctalia-theme" {} ''
+      # Fallback theme if ~/.config/ghostty/themes/noctalia is not yet seeded
+      fallbackTheme = pkgs.runCommand "ghostty-fallback-theme" {} ''
         mkdir -p $out/share/ghostty/themes
         cat << 'EOF' > $out/share/ghostty/themes/noctalia
 background = 1e1e2e
@@ -40,6 +41,8 @@ palette = 15=#cdd6f4
 EOF
       '';
 
+      # Notice: NO cursor-color override here!
+      # The cursor color is controlled by the active Noctalia theme file.
       ghosttyConfig = pkgs.writeText "ghostty-config" ''
 font-family = "Maple Mono NF"
 font-size = 14
@@ -49,8 +52,6 @@ background-opacity = 0.88
 
 cursor-style = block
 cursor-style-blink = false
-cursor-color = "#cba6f7"
-cursor-text = "#11111b"
 adjust-cursor-thickness = 2
 
 confirm-close-surface = false
@@ -80,11 +81,18 @@ keybind = ctrl+shift+l=next_tab
 
       wrappedGhostty = pkgs.symlinkJoin {
         name = "ghostty";
-        paths = [ pkgs.ghostty noctaliaTheme ];
+        paths = [ pkgs.ghostty fallbackTheme ];
         nativeBuildInputs = [ pkgs.makeWrapper ];
         postBuild = ''
           wrapProgram $out/bin/ghostty \
-            --prefix XDG_DATA_DIRS : "${noctaliaTheme}/share" \
+            --run '
+              # Seed user theme directory with fallback if missing
+              if [ ! -f "$HOME/.config/ghostty/themes/noctalia" ]; then
+                mkdir -p "$HOME/.config/ghostty/themes"
+                cp "${fallbackTheme}/share/ghostty/themes/noctalia" "$HOME/.config/ghostty/themes/noctalia" 2>/dev/null || true
+              fi
+            ' \
+            --prefix XDG_DATA_DIRS : "${fallbackTheme}/share" \
             --add-flags "--config-file=${ghosttyConfig}"
         '';
       };
@@ -95,7 +103,7 @@ keybind = ctrl+shift+l=next_tab
       apps.ghostty = {
         type = "app";
         program = "${wrappedGhostty}/bin/ghostty";
-        meta.description = "Hermetically wrapped Ghostty with frosted glass translucency and Noctalia theme";
+        meta.description = "Hermetically wrapped Ghostty connected to Noctalia dynamic theme";
       };
     };
 }

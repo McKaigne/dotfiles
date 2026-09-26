@@ -1,41 +1,41 @@
 
-# ==============================================================================
-# Nushell User Configuration
-# ==============================================================================
-
 $env.config = {
   show_banner: false
-  edit_mode: 'vi'
+  edit_mode: emacs
   cursor_shape: {
-    vi_insert: 'line'
-    vi_normal: 'block'
+    emacs: block
+    vi_insert: bar
+    vi_normal: block
+  }
+  completions: {
+    case_sensitive: false
+    quick: true
+    partial: true
+    algorithm: "prefix"
   }
 }
 
-# --- Core Aliases (Fast & Reliable) ---
-alias f = fetch             # aerofyl's animated 3D fetch
-alias ff = fetch
-alias g = git
-alias ga = git add
-alias gc = git commit
-alias gp = git push
-alias gl = git pull
-alias gst = git status
-alias gd = git diff
-alias h = hx
-alias v = hx
-alias l = ls -l
-alias la = ls -a
-alias ll = ls -la
-alias c = clear
-
-# --- NixOS Quick Directory Navigation (ncd) ---
-def --env ncd [dir?: path] {
-  let target = ($dir | default "/etc/nixos")
-  cd $target
+# --- Expandable Command Abbreviations (Expand on Space or Enter) ---
+$env.config.abbreviations = {
+  g: "git"
+  ga: "git add"
+  gc: "git commit -m"
+  gca: "git commit --amend"
+  gco: "git checkout"
+  gd: "git diff"
+  gl: "git pull"
+  gp: "git push"
+  gst: "git status"
+  ll: "ls -l"
+  la: "ls -a"
+  lla: "ls -la"
+  hx: "helix"
+  v: "helix"
+  spf: "superfile"
+  nr: "sudo nixos-rebuild switch --flake /etc/nixos#castor"
 }
 
-# --- Shell Integrations ---
+# Initialize dynamic integrations
 source @starshipInit@
 source @zoxideInit@
 source @carapaceInit@
