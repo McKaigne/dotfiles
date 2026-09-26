@@ -29,16 +29,27 @@ let
           pkgs.adw-gtk3
           pkgs.glib
           pkgs.papirus-icon-theme
+          pkgs.kdePackages.breeze
         ];
 
+        # ---------------------------------------------------------------------
+        # Qt & KDE Dolphin Theming (Reads Noctalia's ~/.config/kdeglobals)
+        # ---------------------------------------------------------------------
+        qt = {
+          enable = true;
+          platformTheme = "kde";
+          style = "breeze";
+        };
+
         environment.sessionVariables = {
-          XCURSOR_THEME    = cfg.theme;
-          XCURSOR_SIZE     = toString cfg.size;
-          HYPRCURSOR_THEME = cfg.theme;
-          HYPRCURSOR_SIZE  = toString cfg.size;
-          XCURSOR_PATH     = lib.mkForce "${cfg.package}/share/icons:/run/current-system/sw/share/icons";
-          NIXOS_OZONE_WL   = "1";
-          GTK_THEME        = "adw-gtk3-dark";
+          XCURSOR_THEME        = cfg.theme;
+          XCURSOR_SIZE         = toString cfg.size;
+          HYPRCURSOR_THEME     = cfg.theme;
+          HYPRCURSOR_SIZE      = toString cfg.size;
+          XCURSOR_PATH         = lib.mkForce "${cfg.package}/share/icons:/run/current-system/sw/share/icons";
+          NIXOS_OZONE_WL       = "1";
+          GTK_THEME            = "adw-gtk3-dark";
+          QT_QPA_PLATFORMTHEME = "kde";
         };
 
         environment.etc."xdg/icons/default/index.theme".text = ''
@@ -80,6 +91,7 @@ let
           "d /home/${config.mainUser}/.config/gtk-4.0 0755 ${config.mainUser} users -"
           "f /home/${config.mainUser}/.config/gtk-3.0/noctalia.css 0644 ${config.mainUser} users -"
           "f /home/${config.mainUser}/.config/gtk-4.0/noctalia.css 0644 ${config.mainUser} users -"
+          "f /home/${config.mainUser}/.config/kdeglobals 0644 ${config.mainUser} users -"
         ];
 
         programs.dconf = {

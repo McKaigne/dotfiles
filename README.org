@@ -1,339 +1,263 @@
-#+title: Castor — NixOS Workstation
-#+author: pollux
+#+title: Modular Flake-Parts Workstation Architecture
+#+author: Pollux
 #+startup: overview
-#+options: toc:2 num:nil
+#+options: toc:3 num:nil html-postamble:nil
 
-* 1. Dendritic & Hermetic Architecture
-This workstation implements the *Pure Dendritic Flake-Parts Pattern* coupled with the *Hermetic Wrapping Doctrine*:
+* Architectural Foundation & Philosophy
 
-- *flake-parts + import-tree*: Every module inside =modules/= is discovered automatically via =inputs.import-tree=. There are zero centralized import lists in =flake.nix= or =configuration.nix=. Every feature module under =modules/features/<name>.nix= directly exports its NixOS module via option merging.
-- *Zero Home Manager & Zero Dotfiles*: Home Manager is eliminated. No symlinks are made into =~/.config/=. Every tool is an immutable Nix derivation wrapped build-time with its configuration in the Nix store (=pkgs.writeText=, =pkgs.makeWrapper=).
-- *Hermetic Store Interpolation*: Keybindings, launchers, and IPC targets reference exact =/nix/store= derivation paths, eliminating ambient =$PATH= breakage.
-- *Ephemeral Project Isolation*: Heavy compilers and toolchains (C++, CMake, LLVM/GCC) are decoupled from global derivations and supplied ephemerally per-project via =devenv= and =direnv=.
-- *Portability*: Primary CLI and GUI packages can be run directly on any Linux distribution:
-  #+begin_src nu
-  nix run github:McKaigne/dotfiles#helix
-  nix run github:McKaigne/dotfiles#zed
-  nix run github:McKaigne/dotfiles#ghostty
-  nix run github:McKaigne/dotfiles#tmux
-  #+end_src
+This repository defines an immutable, hermetically wrapped, keyboard-driven Linux workstation architecture running on *NixOS (unstable)*.
 
-* 2. Software & Packaging Matrix
-| Role | Program | Implementation |
-|------+---------+----------------|
-| *OS* | NixOS (unstable) | Dendritic system, profile, and hardware modules |
-| *Compositor* | Niri | Wrapped with in-store =config.kdl=, =prefer-no-csd=, and dynamic Noctalia palette |
-| *Desktop Shell* | Noctalia Shell | Wrapped via =wrapper-modules= with live theme palette generator |
-| *Keyboard Daemon* | Kanata | =services.kanata= with strict "No-Gaps" HRM, permissive hold, and chords |
-| *Primary Code Editor* | Zed (=zed=) | Wrapped with Helix mode, Doom Emacs keymaps, distraction-free bufferline, and Noctalia styling |
-| *Terminal/Notes Editor*| Helix (=hx=) | Wrapped with in-store =config.toml=, =languages.toml=, and Marksman LSP |
-| *Shell* | Nushell (=nu=) | Wrapped with in-store =config.nu=, =env.nu=, Starship, and Vi mode |
-| *Terminal Emulator* | Ghostty | Wrapped with in-store config, 3px cursor beam, and GLSL smear shader |
-| *Multiplexer* | Tmux | Wrapped with in-store =tmux.conf= and Noctalia status bar |
-| *Browser* | Helium | Wrapped with Ozone Wayland flags and GSettings schema paths |
-| *File Managers* | Thunar, Yazi | Thunar with in-store =uca.xml=, Yazi with wrapped Helix opener |
-| *Audio Server* | PipeWire | PipeWire + WirePlumber + Intel SOF DSP Firmware |
-| *Launcher* | Fuzzel | Wrapped with in-store INI & Noctalia live palette hook |
-| *Cursor Theme* | Bibata Modern Classic | Wrapped with pointer fallback fixes & system dconf schemas |
-| *Font* | Maple Mono NF | System-wide via =fonts.packages= |
-
-* 3. Key Conventions & Philosophy
-1. *Ergonomics First, Mnemonics Second*: Two-key chords on resting fingers and sequential modal taps (=Space= \to =key=) supersede simultaneous multi-finger claw chords.
-2. *The "No-Gaps" Modifier Rule*: Modifiers on the home row are physically adjacent:
-   $$\text{Pinky (Alt)} \longleftrightarrow \text{Ring (Ctrl)} \longleftrightarrow \text{Middle (Gui)} \longleftrightarrow \text{Index (Shift)}$$
-   - *Forbidden Combinations*: Any chord spanning non-adjacent fingers is banned:
-     #+begin_quote
-     =Alt + Shift=, =Ctrl + Shift=, =Gui + Alt=, =Alt + Ctrl + Shift=, and =Alt + Gui + Shift= are never used.
-     #+end_quote
-   - *Valid Combinations*: Single modifiers or physically adjacent pairs (=Gui + Shift=, =Gui + Ctrl=, =Ctrl + Alt=).
-3. *The Gui Partition*: =Gui= (=Mod= / Super) is *strictly reserved for system utilities* (Niri compositor and Noctalia shell). No code editor or terminal may bind =Gui=.
-4. *User Parameterization*: Always reference =config.mainUser= (declared in =modules/system/user.nix=). Never hardcode usernames.
-5. *Nushell Exclusivity*: The login shell is Nushell. Documentation and scripts must use Nushell syntax (=save --force=, =;= chaining, =$env.VAR=).
-6. *Setuid Precedence*: In =env.nu=, =/run/wrappers/bin= is strictly ahead of =/run/current-system/sw/bin= to preserve =sudo=.
-
-* 4. Noctalia Theming Exception
-The only mutable files permitted in =~/.config/= are live theme palettes generated dynamically by the Noctalia shell when switching wallpapers:
-- =~/.config/niri/noctalia.kdl= \to Dynamic Niri focus ring palette
-- =~/.config/fuzzel/themes/noctalia= \to Dynamic Fuzzel launcher palette
-- =~/.config/gtk-3.0/noctalia.css= & =4.0= \to Imported system-wide via =/etc/xdg/gtk-*/gtk.css=
-- =~/.config/zed/themes/noctalia.json= \to Evaluated dynamically by Zed
-
-* 5. Master Keybinding Architecture
-
-** 5.1 Kanata Hardware Layer (Zero-Reach Physical Chords)
-*** Universal Tabs & Buffers
-| Chord | Emitted Action | Target Behavior |
-|-------+----------------+-----------------|
-| *w + e* | =Ctrl + PageUp= | Previous Tab / Buffer (Zed, Ghostty, Helium) |
-| *e + r* | =Ctrl + PageDown= | Next Tab / Buffer (Zed, Ghostty, Helium) |
-
-*** Text Selection & Web Search
-| Chord | Action | Underlying Macro |
-|-------+--------+------------------|
-| *u + i* | Backspace | Single-character delete left |
-| *i + o* | Delete Word Left | =Ctrl + Backspace= |
-| *n + m* | Select Line & Copy | =Home= \to =Shift + End= \to =Ctrl + C= |
-| *m + ,* | Select Word | =Ctrl + Left= \to =Ctrl + Shift + Right= |
-| *, + .* | Search in New Tab | =Ctrl + C= \to =Ctrl + T= \to =Ctrl + V= \to =Enter= |
-
-*** CUA Clipboard & Undo Chords
-| Chord | Action | Emitted Standard |
-|-------+--------+------------------|
-| *x + c* | Universal Copy | =Ctrl + Insert= |
-| *c + v* | Universal Paste | =Shift + Insert= |
-| *x + v* | Universal Cut | =Shift + Delete= |
-| *z + v* | Select All | =Ctrl + A= |
-| *z + x* | Undo | =Ctrl + Z= |
-| *a + z* | Redo | =Ctrl + Shift + Z= |
-
-*** Contralateral Home-Row Modifiers
-| Hand | Key | Tap | Hold (Multi-modifier enabled) |
-|------+-----+-----+-------------------------------|
-| *Left* | *A* | =a= | *Left Alt* (Pinky) |
-| *Left* | *S* | =s= | *Left Ctrl* (Ring) |
-| *Left* | *D* | =d= | *Left Gui / Super* (Middle) |
-| *Left* | *F* | =f= | *Left Shift* (Index) |
-| *Right* | *J* | =j= | *Right Shift* (Index) |
-| *Right* | *K* | =k= | *Right Gui / Super* (Middle) |
-| *Right* | *L* | =l= | *Right Ctrl* (Ring) |
-| *Right* | *;* | =;= | *Right Alt* (Pinky) |
-
-*** Thumb Layers
-| Key | Tap | Hold Layer |
-|-----+-----+------------|
-| *Left Inner (=ml_fun=)* | =Win= | *Fun Layer*: F1–F12, Media controls |
-| *Left Outer (=ml_nav=)* | =Alt= | *Nav Layer*: HJKL arrows, Home, End, PgUp, PgDn |
-| *Right Inner (=mr_num=)* | =AltGr= | *Num Layer*: Full numpad cluster on left hand |
-| *Right Outer (=mr_sym=)* | =Ctrl= | *Sym Layer*: Full symbol cluster on left hand |
-
-** 5.2 Niri Compositor & Noctalia Shell (=Mod = Left Gui / 'd'=)
-*** Window & Workspace Management
-| Shortcut | Action |
-|----------+--------|
-| *Mod + Q* | Close focused window |
-| *Mod + F* | Maximize column width |
-| *Mod + Shift + F* | Toggle window floating (=Mod + Shift= adjacent) |
-| *Mod + C* | Center column on screen |
-| *Mod + H / L* | Focus column Left / Right |
-| *Mod + J / K* | Focus workspace Down / Up |
-| *Mod + Shift + H / L* | Move column Left / Right |
-| *Mod + Shift + J / K* | Move column to workspace Down / Up |
-| *Mod + 1–0* | Focus workspace =w0=–=w9= |
-| *Mod + Shift + 1–0* | Move column to workspace =w0=–=w9= |
-| *Mod + - / =* | Expand/Shrink column width \pm5% |
-| *Mod + Shift + - / =* | Expand/Shrink window height \pm5% |
-
-*** Desktop Shell & Launchers
-| Shortcut | Action |
-|----------+--------|
-| *Mod + Space* | Noctalia Application Launcher |
-| *Mod + X* | Power & Session Menu |
-| *Mod + V* | Clipboard History |
-| *Mod + N* | Noctalia Control Center |
-| *Mod + Comma* | Noctalia Settings |
-| *Mod + Period* | Emoji Picker |
-| *Mod + B* | Toggle Desktop Top Bar |
-| *Mod + Escape* | Lock Screen |
-| *Mod + Backspace* | Dismiss Desktop Notification |
-| *Mod + Shift + N* | Notification History Drawer |
-| *Mod + Ctrl + N* | Toggle Do-Not-Disturb (=Mod + Ctrl= adjacent) |
-| *Mod + Shift + S* | Interactive Area Screenshot (grim + slurp) |
-| *Print* | Fullscreen Screenshot |
-| *Mod + Ctrl + Escape* | Power Off Displays (DPMS) |
-
-*** Direct Application Launchers
-| Shortcut | Application |
-|----------+-------------|
-| *Mod + Return* | Ghostty Terminal |
-| *Mod + Z* | Zed Code Editor |
-| *Mod + W* | Helium Web Browser |
-| *Mod + E* | Thunar File Manager |
-| *Mod + S* | Spotify Player |
-| *Mod + G* | Lazygit (Ghostty) |
-| *Mod + A* | Tmux Sessionizer (Ghostty) |
-| *Mod + T* | Persistent Tmux Terminal |
-| *Mod + D* | Persistent Helix in Tmux |
-
-** 5.3 Zed GUI Editor (Doom Emacs Leader + Helix Modal)
-*** Root Leaders & Buffers
-| Keybind | Action | Description |
-|---------+--------+-------------|
-| *Space Space* / *Space .* | Find File | Project-wide fuzzy file finder |
-| *Space ,* / *Space <* | Switch Buffer | Interactive buffer / tab switcher |
-| *] b* / *e + r* | Next Buffer | Cycle forward through open tabs |
-| *[ b* / *w + e* | Prev Buffer | Cycle backward through open tabs |
-| *Space x* | Close Buffer | Close active file tab |
-| *Space X* | Close Others | Close all other file tabs |
-| *Space :* | Command Palette | M-x action search |
-| *Space /* | Grep Project | Global text search (ripgrep) |
-| *Space ;* | Search Buffer | Find text in current buffer |
-| *Space '* | Search & Replace | Find and replace drawer |
-| *Space ** | Select Matches | Select all occurrences of word |
-
-*** Docks & Panels (True Toggles)
-| Keybind | Action | Description |
-|---------+--------+-------------|
-| *Space o p* | Toggle File Tree | Opens/Collapses Project Tree on *Left dock* |
-| *Space o t* / *Space `*| Toggle Terminal | Opens/Collapses Terminal on *Bottom dock* |
-| *Space o T* | New Terminal | Spawns fresh terminal tab |
-| *Space o g* | Git Status | Magit-style Git status panel |
-| *Space o o* | Outline Panel | Document symbols / structure |
-| *Space o a* | AI Assistant | Chat / Agent panel |
-| *Space o d* | Diagnostics | Project error/warning drawer |
-| *Space o r* | REPL | Open interactive language REPL |
-| *Space o P* | Reveal in Tree | Highlight active file in Left dock |
-
-*** Projects (=Space p ...=)
-| Keybind | Action | Description |
-|---------+--------+-------------|
-| *Space p n* | Project New | *Scaffold new C++ project from template inside Zed* |
-| *Space p p* | Project Switch | Switch between recent projects |
-| *Space p f* | Project Files | Fuzzy file finder |
-| *Space p c* | Compile | Open CMake / Task build selector |
-| *Space p C* | Recompile | Rerun last CMake build task |
-
-*** Windows & Splits (=Space w ...=)
-| Keybind | Action | Description |
-|---------+--------+-------------|
-| *Space w v* | Vertical Split | Split editor window right |
-| *Space w s* | Horizontal Split | Split editor window down |
-| *Space w h / j / k / l*| Focus Split | Move focus Left / Down / Up / Right |
-| *Space w H / J / K / L*| Swap Split | Swap window positions Left / Down / Up / Right |
-| *Space w Shift-Left/Right*| Move Tab H | Move active file tab into adjacent split |
-| *Space w Shift-Up/Down* | Move Tab V | Move active file tab into top/bottom split |
-| *Space w c* / *w d* | Close Split | Close active split window |
-| *Space w o* | Close Others | Close all splits except active |
-| *Space w m* / *Space t z* | Toggle Zoom | Maximize split (Zen mode) |
-
-*** Code, Tasks & REPL (=Space c ...=)
-| Keybind | Action | Description |
-|---------+--------+-------------|
-| *Space c r* / *Space m r*| Quickrun | Evaluate selected lines or buffer in REPL |
-| *Space c c* | Compile | Open CMake / Task build selector |
-| *Space c C* | Recompile | Rerun previous build task |
-| *Space c k* | Kill Process | Terminate running task / shutdown REPL |
-| *Space c f* | Format | Format buffer |
-| *Space c r* | Rename | Rename symbol under cursor |
-| *Space c a* | Code Actions | Quick fixes and refactors |
-| *Space c l* | Comment | Toggle line comment |
-| *Space c d* / *c D* | Definition | Jump to definition (standard / in split) |
-
-*** DAP Debugger (=Space d ...=)
-| Keybind | Action | Description |
-|---------+--------+-------------|
-| *Space d d* | Start Debugger | Launch DAP session |
-| *Space d b* | Breakpoint | Toggle breakpoint on line |
-| *Space d c* | Continue | Continue execution |
-| *Space d s* / *d i* | Step Into | Step into function call |
-| *Space d n* / *d o* | Step Over | Step over line |
-| *Space d O* | Step Out | Step out of current frame |
-| *Space d p* | Pause | Pause running execution |
-| *Space d r* | Restart | Restart debug session |
-| *Space d q* | Stop | Terminate debugger |
-| *Space d e* | Evaluate | Evaluate selected expression |
-
-*** Left File Tree Drawer Controls
-| Key | Action |
-|-----+--------|
-| *j / k* | Move selection down / up |
-| *h / l* | Collapse / expand directory |
-| *Enter / o* | Open selected file |
-| *a / Shift + A* | Create new file / new folder |
-| *r / d* | Rename / Delete |
-| *x / y / p* | Cut / Copy / Paste |
-| *q / Escape / Space o p*| *Exit and close drawer* |
-
-*** Terminal Dock Controls (Inside Terminal)
-| Keybind | Action |
-|---------+--------|
-| *Alt + T* | *Toggle / Close Terminal Dock* |
-| *w + e* / *Ctrl + PageUp* | Previous terminal tab |
-| *e + r* / *Ctrl + PageDown*| Next terminal tab |
-| *Ctrl + Space* | Nushell autocomplete menu |
-| *Ctrl + D* / =exit= | Close active terminal tab |
-
-** 5.4 Helix Editor (Notes & Terminal Editing with Marksman)
-| Keybind | Action | Description |
-|---------+--------+-------------|
-| *Space e* | File Explorer | Interactive directory tree browser with preview panel |
-| *Space E* | Buffer Explorer | Open File Explorer starting at current file's folder |
-| *Space f* | File Picker | Fuzzy file finder across notes/repo |
-| *Space s* | Table of Contents | Fuzzy search =# Headings= in active note (=org-goto=) |
-| *[[* /(insert)/ | Wikilink Completion | Autocomplete any note title in your folder |
-| *gd* /(on link)/ | Follow Link | Jump into linked =[[note]]= (=Ctrl + O= to jump back) |
-| *gr* /(on link)/ | Backlinks | Find all notes referencing this section |
-| *Space t* | Task Toggle | Org task cycle: =- = \to =- [ ] = \to =- [x] = |
-| *H / L* | Cycle Notes | Previous / Next open note buffer |
-| *Alt + W* | Close Note | Close active buffer |
-| *Ctrl + S* | Quick Save | Write note to disk |
-
-** 5.5 Nushell Interactive Shell (Evil Mode)
-- *Insert Mode (=>= in Cyan)*: Type commands normally. Tap =Escape= for Normal Mode.
-  - =Ctrl + Space=: Fuzzy autocompletion popup
-  - =Ctrl + W= (or =i + o=): Delete word backward
-  - =Shift + Enter= / =Alt + Enter=: Multiline newline
-- *Normal Mode (=:= in Magenta)*: Vi command line manipulation:
-  - =h / l=: Move character left / right
-  - =j / k=: History down / up
-  - =w / b / e=: Word forward / backward / end
-  - =0 / $=: Start / end of line
-  - =dw / cw / ciw=: Delete / change word
-  - =u / Ctrl + R=: Undo / Redo edits
-  - =/=: Search command history backward
-  - *=v=*: *Open command line in Helix (=hx=) to edit as a script!*
-
-* 6. C++ Project Scaffolding & Devenv
-
-** 6.1 Project Templates
-A reproducible template lives in =~/Projects/templates/cpp=:
 #+begin_example
-~/Projects/templates/cpp/
-├── .envrc                     # use devenv
-├── devenv.nix                 # Isolated cmake, ninja, clang-tools, gdb
-├── devenv.yaml                # Devenv metadata
-├── CMakeLists.txt             # Modern C++20 with compile_commands export
-├── src/
-│   └── main.cpp               # Hello world entry point
-└── .zed/
-    ├── settings.json          # Points clangd to build/
-    └── tasks.json             # Pre-configured CMake tasks
+┌────────────────────────────────────────────────────────────────────────┐
+│                        ARCHITECTURAL PILLARS                           │
+├───────────────────────────────────┬────────────────────────────────────┤
+│ Pure Dendritic Flake-Parts        │ Hermetic Wrapping Doctrine         │
+├───────────────────────────────────┼────────────────────────────────────┤
+│ • Zero centralized import lists   │ • Zero Home Manager                │
+│ • import-tree auto-discovery      │ • Zero out-of-store dotfiles       │
+│ • Domain-driven folder layout     │ • In-store derivations only        │
+│ • Multi-device portable modules   │ • Noctalia live-palette hooks      │
+└───────────────────────────────────┴────────────────────────────────────┘
 #+end_example
 
-** 6.2 Zero-LSP-Error Guarantee
-On entering any project directory, =devenv.nix= automatically configures CMake and symlinks =build/compile_commands.json= to the project root. Standard library headers (=<iostream>=, =<vector>=) resolve instantly with zero red squigglies.
+** 1. Pure Dendritic Flake-Parts
+- *Zero Glue in =flake.nix=*: =flake.nix= only declares inputs and calls:
+  #+begin_src nix
+  inputs.flake-parts.lib.mkFlake { inherit inputs; } (inputs.import-tree ./modules);
+  #+end_src
+  No files, configurations, or package sets may be manually imported into =flake.nix=.
+- *Automatic Discovery*: Files under =modules/= are automatically discovered via =import-tree=.
+- *Option Merging*: Every feature module directly exports its configuration, allowing =flake-parts= to automatically merge all definitions across the system.
 
-** 6.3 Instant Project Creation
-1. Inside Zed, press *Space p n*.
-2. Enter the new project name in the bottom drawer (e.g. =my-app=).
-3. The project is created, =direnv= is auto-trusted via =/etc/xdg/direnv/direnv.toml=, and Zed launches the new workspace ready to build (*Space c c*).
+** 2. The Hermetic Wrapping Doctrine
+- *Home Manager is Eliminated*: No =home-manager=, no =mkOutOfStoreSymlink=, and zero dotfiles symlinked to =~/.config/=.
+- *Derivations as Configuration*: Every tool is compiled at build time into an immutable Nix derivation using =pkgs.symlinkJoin= and =pkgs.makeWrapper=.
+- *In-Store Flag Injection*: Configuration files are generated in the Nix store via =pkgs.writeText= and injected via flags:
+  - *Helix*: =--config ${helixConfig}=
+  - *Tmux*: =-f ${tmuxConf}=
+  - *Foot*: =--config=${footConfig}=
+  - *Nushell*: =--config ${configNu} --env-config ${envNu}=
+  - *Niri*: =NIRI_CONFIG="${niriConfig}"=
+  - *Fuzzel*: =--config=${fuzzelConfig}=
+- *The Noctalia Theming Exception*: The *only* mutable files permitted in =~/.config/= are live theme palettes dynamically generated by the Noctalia shell when switching wallpapers:
+  - =~/.config/niri/noctalia.kdl=
+  - =~/.config/foot/themes/noctalia=
+  - =~/.config/fuzzel/themes/noctalia=
+  - =~/.config/kdeglobals= (for Qt6 / Dolphin auto-theming)
+  - =~/.config/gtk-3.0/noctalia.css= & =gtk-4.0/noctalia.css=
 
-* 7. Daily Tasks & Maintenance
+* Repository Layout
+
+The configuration is organized into functional domains:
+
+#+begin_example
+/etc/nixos/
+├── flake.nix                  # Minimal entrypoint (flake-parts + import-tree)
+├── flake.lock                 # Pinned dependencies
+├── README.org                 # System documentation
+└── modules/
+    ├── core/                  # Universal OS baseline (portable to any host)
+    │   ├── system.nix         # Networking, bootloader, pipewire, sudo, bluetooth
+    │   ├── user.nix           # mainUser option declaration ("pollux")
+    │   ├── desktop.nix        # MIME associations, fonts, system CLI tools
+    │   └── theme.nix          # Bibata cursor, GTK & Qt/KDE Dolphin theming
+    │
+    ├── desktop/               # Graphical Wayland environment
+    │   ├── niri/              # Compositor (default.nix + config.kdl)
+    │   ├── foot/              # Terminal emulator (default.nix + foot.ini)
+    │   ├── noctalia/          # Desktop shell (default.nix)
+    │   ├── fuzzel.nix         # Application launcher
+    │   └── viewers.nix        # Zathura (docs) & imv (images)
+    │
+    ├── terminal/              # Keyboard, CLI shell & TUI utilities
+    │   ├── nushell/           # Shell (default.nix, config.nu, env.nu, starship.toml)
+    │   ├── tmux/              # Multiplexer (default.nix, tmux.conf)
+    │   ├── superfile/         # TUI file manager (default.nix)
+    │   ├── kanata.nix         # Keyboard daemon (HRM)
+    │   └── btop.nix           # System resource monitor
+    │
+    ├── editor/                # Primary development environment
+    │   └── helix/             # Modal editor (default.nix, config.toml, languages.toml)
+    │
+    ├── apps/                  # User applications & media
+    │   ├── dolphin.nix        # KDE Dolphin (GUI file manager, auto-themed by Noctalia)
+    │   ├── browser/           # Helium browser wrapper (default.nix)
+    │   ├── audio/             # Media players (cava, mpv, easyeffects, cliamp)
+    │   └── social/            # Endcord Discord TUI (default.nix)
+    │
+    └── hosts/                 # Host-specific profiles
+        └── castor/            # Reference Intel Tiger Lake laptop profile
+            ├── default.nix    # Assembles nixosConfigurations.castor
+            └── hardware.nix   # Disk UUIDs, CPU microcode, Lofree Flow84 udev
+#+end_example
+
+* Deploying on a New Device (Multi-Device Guide)
+
+All modules under =core/=, =desktop/=, =terminal/=, =editor/=, and =apps/= are *100% host-agnostic*. 
+
+To deploy this configuration on a second machine (e.g., =rigel= or =desktop=):
+
+1. *Generate Hardware Config on Target Machine*:
+   #+begin_src sh
+   nixos-generate-config --show-hardware-config > hardware.nix
+   #+end_src
+
+2. *Create a New Host Profile*:
+   Create a new directory at =modules/hosts/<hostname>/=:
+   - Copy the generated =hardware.nix= into =modules/hosts/<hostname>/hardware.nix=.
+   - Create =modules/hosts/<hostname>/default.nix=:
+     #+begin_src nix
+     { self, inputs, ... }: {
+       flake.nixosConfigurations.<hostname> = inputs.nixpkgs.lib.nixosSystem {
+         specialArgs = { inherit inputs; };
+         modules = [
+           self.nixosModules.castorConfiguration # Universal system baseline
+           ./hardware.nix                        # Host-specific disk & CPU drivers
+         ] ++ (builtins.attrValues (builtins.removeAttrs self.nixosModules [
+           "castorConfiguration"
+           "castorHardware"
+           "niri"
+           "helium"
+           "cliamp"
+           "tmux"
+           "kanata"
+           "desktop"
+           "dolphin"
+           "foot"
+         ]));
+       };
+     }
+     #+end_src
+
+3. *Build and Activate*:
+   #+begin_src sh
+   sudo nixos-rebuild switch --flake .#<hostname>
+   #+end_src
+
+* Primary Software Matrix
+
+| Domain | Tool | Architectural Implementation |
+| :--- | :--- | :--- |
+| *OS* | NixOS (unstable) | Pure dendritic flake-parts on Intel Tiger Lake |
+| *Compositor* | Niri | Scrollable-tiling Wayland compositor, no CSD, in-store KDL |
+| *Desktop Shell* | Noctalia Shell | Controls dynamic color generation across the entire system |
+| *Terminal* | Foot | Wayland-native C terminal, SIMD rendering, Maple Mono NF |
+| *Primary Editor* | Helix (=hx=) | Selection-first modal editor inside Tmux with native LSP/DAP |
+| *Multiplexer* | Tmux | Dotbar statusline, all-Alt popups, Emacs-style copy mode |
+| *GUI File Manager*| Dolphin | Auto-themed by Noctalia via =kdeglobals= & =qt.platformTheme="kde"= |
+| *TUI File Manager*| Superfile & =nnn= | Superfile (=Mod+Shift+E=) and =nnn= popup (=Alt+e= in Tmux) |
+| *Browser* | Helium | Chromium fork, unlocked cookies, Vimium C + uBlock Origin |
+| *Keyboard Daemon*| Kanata | Timeless HRM, 150ms prior-idle, 50ms unified chords |
+| *Audio* | PipeWire | PipeWire + WirePlumber + Intel SOF DSP + EasyEffects |
+
+* Primary Keybindings Reference
+
+** 1. System Compositor (Niri — Super / Mod Layer)
+
+`Mod` (Gui / Super) is *strictly reserved for system utilities and window management*.
+
+| Keybinding | Scope | Description |
+| :--- | :--- | :--- |
+| *`Mod + D`* | Primary Dev | *Focus / Spawn Helix in Tmux* |
+| *`Mod + A`* | Projects | Open Tmux Sessionizer in Foot |
+| *`Mod + T`* | Terminal | Focus / Spawn persistent Tmux workspace |
+| *`Mod + Return`* | Terminal | Spawn standalone Foot terminal |
+| *`Mod + E`* | GUI Files | Launch Dolphin (auto-themed by Noctalia) |
+| *`Mod + Shift + E`*| TUI Files | Launch Superfile in Foot |
+| *`Mod + W`* | Browser | Launch Helium Browser |
+| *`Mod + S`* | Music | Launch Cliamp (YouTube Music) |
+| *`Mod + G`* | Git | Launch Lazygit in Foot |
+| *`Mod + Q`* | Window | Close focused window |
+| *`Mod + F`* | Window | Maximize column (fit width) |
+| *`Mod + Space`* | Launcher | Noctalia application launcher |
+| *`Mod + V`* | Clipboard | Noctalia clipboard history |
+| *`Mod + P`* | Power | Noctalia power and session menu |
+| *`Mod + h/j/k/l`* | Navigation | Focus Column Left / Down / Up / Right |
+| *`Mod + Shift + h/j/k/l`*| Navigation | Move Column Left / Down / Up / Right |
+| *`Mod + 1..0`* | Workspaces | Focus Workspace 1–10 |
+
+** 2. Terminal Multiplexer (Tmux — Alt & Alt+Ctrl Layer)
+
+Zero-prefix =Alt= handles instant navigation and popups. =Alt + Ctrl= handles tab management without finger-gapping.
+
+| Keybinding | Type | Action |
+| :--- | :--- | :--- |
+| *`Alt + h / j / k / l`* | Navigation | Focus pane Left / Down / Up / Right |
+| *`Alt + v`* | Splits | Split pane vertically (right) |
+| *`Alt + z`* | Panes | Toggle zoom active pane (fullscreen) |
+| *`Alt + q`* | Panes | Close active pane (split) |
+| *`Alt + t`* | Tabs | New tab (window) in current directory |
+| *`Alt + Ctrl + j`* | Tabs | *Next Tab (Window)* |
+| *`Alt + Ctrl + k`* | Tabs | *Previous Tab (Window)* |
+| *`Alt + Ctrl + q`* | Tabs | Close active Tab (Window) |
+| *`Alt + 1..0`* | Tabs | Jump directly to Tab 1–10 |
+| *`Alt + e`* | Popups | Launch =nnn= file manager in pane directory |
+| *`Alt + b`* | Popups | Fuzzy Tab / Window picker (=tmuxWindowPicker=) |
+| *`Alt + a`* | Popups | Project switcher (=tmuxSessionizer=) |
+| *`Alt + g`* | Popups | Lazygit popup |
+| *`Alt + m`* | Popups | Btop resource monitor popup |
+| *`Alt + Enter`* | Popups | Floating Nushell scratchpad |
+| *`Alt + /`* | Cheatsheet | Open interactive Tmux cheatsheet |
+| *`Prefix + s`* | Prefix | Split horizontally (*Shields Helix `Alt-s`!*) |
+| *`Prefix + c`* | Prefix | Enter Emacs-style copy mode |
+| *`Prefix + h`* | Prefix | Active Helix panes picker |
+
+** 3. Emacs-Style Copy Mode in Tmux
+
+Entered via *`Prefix + c`* (or *`Alt + PageUp`*):
+
+- *`Space`* or *`v`*: Begin selection.
+- *`M-w`* or *`y`* or *`Enter`*: Copy selection directly to Wayland clipboard (=wl-copy=) and exit.
+- *`C-g`* or *`Escape`* or *`q`*: Cancel / exit copy mode.
+- *`M-v`* / *`C-v`*: Page Up / Page Down.
+- *`C-s`* / *`/`*: Search backward / forward in scrollback history.
+
+* The Keyboard Engine (Kanata on Lofree Flow84)
+
+The physical keyboard engine enforces the *No-Gaps Modifier Rule*:
+$$\text{Pinky (Alt)} \longleftrightarrow \text{Ring (Ctrl)} \longleftrightarrow \text{Middle (Gui)} \longleftrightarrow \text{Index (Shift)}$$
+
+Non-adjacent modifier combinations (=Alt+Shift=, =Ctrl+Shift=) are strictly avoided.
+
+** Home-Row Timings & Bilateral Hold
+- *Index (`f` / `j` — Shift)*: =140ms= hold timeout. Zero prior-idle lockout. Instant mid-sentence capitalization.
+- *Middle (`d` / `k` — Gui)*: =170ms= hold timeout.
+- *Ring (`s` / `l` — Ctrl)*: =195ms= hold timeout.
+- *Pinky (`a` / `;` — Alt)*: =220ms= hold timeout.
+- *Bilateral Separation*: Left-hand modifiers only trigger holds on opposite-hand keys. Rolls across the same hand automatically tap as normal characters.
+
+** Hardware Chords (`defchordsv2`)
+- *`Left Shift + Right Shift`*: Toggle *Raw Layer* (disables all tap-holds for safe password entry).
+- *`z + x`*: Undo (=C-z=).
+- *`x + c`*: Copy (=C-ins=).
+- *`c + v`*: Paste (=S-ins=).
+- *`n + m`*: Tmux Prefix (=C-b=).
+- *`m + ,`*: Delete word backward (=C-bspc=).
+
+* Shell & Development Workflow
+
+** 1. Fullstack Development via Devenv
+Compilers (=gcc=, =clang=, =rustc=, =elixir=) and language servers are *never installed globally*. 
+- In any repository, run =devenv init= and declare tools in =devenv.nix=.
+- =envrc= (=direnv=) loads the environment buffer-locally.
+- **Helix** detects language servers on =PATH= automatically.
+
+** 2. Nushell & Starship
+The interactive login shell is *Nushell*.
+- *File Writing Protocol*: Always write files using raw multiline string literals in quad backticks with non-conflicting delimiters.
+- *Starship Prompt*: Two-line prompt with line 1 containing Git additions (=▴=), deletions (=▿=), and line 2 dedicated to command execution. Pulls colors dynamically from Noctalia's =~/.cache/noctalia/starship-palette.toml=.
+
+* Maintenance & Inspection Protocol
+
+To extract all configuration files to the clipboard without binary caches or temporary databases:
+
 #+begin_src nu
-# 1. Edit NixOS configuration
-hx /etc/nixos/modules/features/zed.nix
+let config_files = (
+    fd . /etc/nixos ~/.config -t f -H -e nix -e kdl -e toml -e conf -e ini -e json -E .git -E flake.lock -E 'net.imput.helium' -E 'google-chrome' -E 'chromium' -E dconf -E cache -E '*.log'
+    | lines
+)
 
-# 2. Stage changes (Flakes strictly ignore untracked files)
-ga
+$config_files | each { |f| bat --style=header,grid --paging=never $f } | str join "\n" | wl-copy
 
-# 3. Check flake evaluation
-nix flake check --no-build
-
-# 4. Rebuild and switch system
-nr
-
-# 5. Commit and push
-gc "feat(zed): update keybindings"
-gp
+print $"Successfully copied ($config_files | length) core configuration files to clipboard!"
 #+end_src
-
-* 8. Install on New Machine
-1. Boot live NixOS installer USB and mount target filesystems to =/mnt=.
-2. Clone repository:
-   #+begin_src nu
-   git clone https://github.com/McKaigne/dotfiles.git /mnt/etc/nixos
-   #+end_src
-3. Update filesystem UUIDs in =modules/hosts/castor/hardware.nix=.
-4. Install system:
-   #+begin_src nu
-   nixos-install --flake /mnt/etc/nixos#castor
-   #+end_src

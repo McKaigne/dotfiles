@@ -34,6 +34,12 @@
     services.upower.enable = true;
     services.openssh.enable = true;
 
+    # Sudo Configuration: Infinite prompt wait + 30m cache + completely silent input
+    security.sudo.extraConfig = ''
+      Defaults passwd_timeout=0
+      Defaults timestamp_timeout=30
+    '';
+
     hardware.bluetooth = {
       enable = true;
       powerOnBoot = true;

@@ -11,10 +11,11 @@
       "niri"
       "helium"
       "cliamp"
-      "emacs"
       "tmux"
       "kanata"
       "desktop"
+      "dolphin"
+      "foot"
     ]));
   };
 }

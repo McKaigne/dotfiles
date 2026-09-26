@@ -68,8 +68,8 @@ in
       spfConfig = pkgs.writeText "config.toml" ''
         theme = "noctalia"
         style = "noctalia"
-        editor = "${self'.packages.helix}/bin/hx"
-        dir_editor = "${self'.packages.helix}/bin/hx"
+        editor = "hx"
+        dir_editor = "hx"
 
         auto_check_update = false
         cd_on_quit = true
@@ -162,7 +162,7 @@ in
         desktopName = "Superfile";
         comment = "Terminal File Manager with Noctalia Theme";
         icon = "system-file-manager";
-        exec = "${self'.packages.ghostty}/bin/ghostty --class=ghostty.superfile --title=Superfile -e superfile %u";
+        exec = "${self'.packages.foot}/bin/foot --app-id=foot.superfile --title=Superfile -e superfile %u";
         terminal = false;
         categories = [ "System" "FileManager" ];
         mimeTypes = [ "inode/directory" "application/x-directory" ];
@@ -177,7 +177,8 @@ in
             --prefix PATH : "${lib.makeBinPath [ self'.packages.helix pkgs.zoxide pkgs.bat pkgs.p7zip pkgs.unrar ]}" \
             --prefix XDG_CONFIG_DIRS : "${superfileConfigDir}" \
             --set SUPERFILE_CONFIG_DIR "${superfileConfigDir}/superfile" \
-            --set EDITOR "${self'.packages.helix}/bin/hx"
+            --set EDITOR "hx" \
+            --set VISUAL "hx"
           [ -e $out/bin/spf ] || ln -sf $out/bin/superfile $out/bin/spf
         '';
       };
