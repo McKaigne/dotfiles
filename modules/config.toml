@@ -1,0 +1,53 @@
+
+theme = "noctalia"
+
+[editor]
+line-number = "relative"
+mouse = false
+cursorline = true
+color-modes = true
+bufferline = "always"
+auto-save = true
+idle-timeout = 50
+completion-trigger-len = 1
+
+[editor.cursor-shape]
+normal = "block"
+insert = "bar"
+select = "block"
+
+[editor.soft-wrap]
+enable = true
+max-wrap = 0
+max-indent-retain = 30
+
+[editor.file-picker]
+hidden = false
+
+[editor.statusline]
+left = ["mode", "spinner", "file-name", "file-modification-indicator"]
+center = []
+right = ["diagnostics", "selections", "position", "file-encoding", "file-type"]
+
+[editor.lsp]
+display-messages = true
+
+[editor.indent-guides]
+render = true
+skip-levels = 1
+
+[keys.normal]
+"C-s" = ":w"
+"C-q" = ":q"
+space.w = "save_selection"
+space.q = ":q"
+
+"C-w" = "no_op"
+"C-h" = "no_op"
+"C-j" = "no_op"
+"C-k" = "no_op"
+"C-l" = "no_op"
+
+[keys.insert]
+"C-s" = ":w"
+"C-c" = "normal_mode"

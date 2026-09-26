@@ -1,0 +1,64 @@
+
+"$schema" = 'https://starship.rs/config-schema.json'
+
+add_newline = false
+continuation_prompt = "[▸▹ ](dimmed white)"
+
+format = """($nix_shell$container$fill$git_metrics\n)$cmd_duration\
+$hostname\
+$localip\
+$shlvl\
+$jobs\
+$sudo\
+$username\
+$character"""
+
+right_format = """\
+$directory\
+$git_branch\
+$git_status\
+$package\
+$c\
+$rust\
+$golang\
+$nodejs\
+$python\
+$time"""
+
+[fill]
+symbol = ' '
+
+[character]
+format = "$symbol "
+success_symbol = "[◎](bold italic bright-yellow)"
+error_symbol = "[○](italic purple)"
+
+[directory]
+home_symbol = "⌂"
+truncation_length = 2
+truncation_symbol = "□ "
+read_only = " ◈"
+style = "italic blue"
+
+[nix_shell]
+style = 'bold italic dimmed blue'
+symbol = '✶'
+format = '[$symbol nix⎪$state⎪]($style) '
+
+[time]
+disabled = false
+format = "[ $time]($style)"
+time_format = "%R"
+style = "italic dimmed white"
+
+[palettes.noctalia]
+blue      = "#89b4fa"
+red       = "#f38ba8"
+green     = "#a6e3a1"
+yellow    = "#f9e2af"
+cyan      = "#94e2d5"
+magenta   = "#f5c2e7"
+white     = "#a6adc8"
+black     = "#45475a"
+text      = "#cdd6f4"
+base      = "#1e1e2e"

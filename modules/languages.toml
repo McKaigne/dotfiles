@@ -1,0 +1,9 @@
+
+[[language]]
+name = "markdown"
+scope = "source.md"
+injection-regex = "md|markdown"
+file-types = ["md", "markdown", "txt"]
+language-servers = [ "marksman" ]
+text-width = 80
+soft-wrap = { enable = true, wrap-at-text-width = true }

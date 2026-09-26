@@ -1,3 +1,4 @@
+
 { ... }: {
   perSystem = { self', pkgs, ... }: {
     devShells.default = pkgs.mkShell {
@@ -9,7 +10,7 @@
       ];
 
       shellHook = ''
-        echo "❄ Castor Workstation Flake Environment Active"
+        echo "Castor Workstation Flake Environment Active"
       '';
     };
 

@@ -1,0 +1,60 @@
+
+# Noctalia v5 Configuration
+# Native C++ / Wayland Desktop Shell
+
+[general]
+scale_ratio = 1.0
+border_radius = 12
+enable_shadows = true
+avatar = "/home/pollux/.face"
+language = "en"
+
+[theme]
+mode = "dark"
+palette = "catppuccin-mocha"
+
+[wallpaper]
+enabled = true
+directory = "/home/pollux/Pictures/Wallpapers"
+change_mode = "random"
+interval_sec = 300
+transition = "honeycomb"
+
+[nightlight]
+enabled = true
+day_temp = 6500
+night_temp = 4000
+auto_schedule = true
+
+[bar.default]
+position = "bottom"
+floating = true
+margin_ends = 6
+margin_edge = 6
+frame_radius = 12
+opacity = 0.93
+
+widgets_left = [ "launcher", "clock", "system-monitor", "media-mini" ]
+widgets_center = [ "workspace" ]
+widgets_right = [ "tray", "notifications", "network", "battery", "control-center" ]
+
+[launcher]
+position = "center"
+view_mode = "list"
+sort_by_used = true
+terminal_command = "ghostty -e"
+enable_clipboard = true
+enable_session_search = true
+
+[control_center]
+position = "close_to_button"
+
+[notifications]
+location = "top_right"
+normal_timeout = 8
+critical_timeout = 15
+enable_markdown = true
+
+[lockscreen]
+countdown_sec = 10
+allow_hibernate = false
