@@ -4,7 +4,7 @@ $env.config = {
   edit_mode: emacs
   cursor_shape: {
     emacs: block
-    vi_insert: bar
+    vi_insert: line
     vi_normal: block
   }
   completions: {
