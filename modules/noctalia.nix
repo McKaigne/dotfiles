@@ -1,16 +1,23 @@
 
 { self, inputs, ... }:
 let
-  nixosModule = { config, pkgs, ... }: {
-    environment.systemPackages = [
-      self.packages.${pkgs.stdenv.hostPlatform.system}.noctalia
-    ];
+  nixosModule = { config, pkgs, ... }:
+    let
+      noctaliaConfig = pkgs.writeText "noctalia.toml" (
+        builtins.replaceStrings [ "@user@" ] [ config.mainUser ] (builtins.readFile ./noctalia.toml)
+      );
+    in
+    {
+      environment.systemPackages = [
+        self.packages.${pkgs.stdenv.hostPlatform.system}.noctalia
+      ];
 
-    systemd.tmpfiles.rules = [
-      "d /home/${config.mainUser}/.config/noctalia 0755 ${config.mainUser} users -"
-      "C+ /home/${config.mainUser}/.config/noctalia/config.toml 0644 ${config.mainUser} users - ${./noctalia.toml}"
-    ];
-  };
+      systemd.tmpfiles.rules = [
+        "d /home/${config.mainUser}/.config/noctalia 0755 ${config.mainUser} users -"
+        "d /home/${config.mainUser}/.config/niri 0755 ${config.mainUser} users -"
+        "C+ /home/${config.mainUser}/.config/noctalia/config.toml 0644 ${config.mainUser} users - ${noctaliaConfig}"
+      ];
+    };
 in
 {
   flake.nixosModules.noctalia = nixosModule;

@@ -47,6 +47,7 @@ let
       wl-clipboard
       eza
       bat
+      fetch              # aerofyl's animated 3D fetch
       file-roller
       adwaita-icon-theme
       hicolor-icon-theme

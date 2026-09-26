@@ -25,10 +25,27 @@ environment {
   XCURSOR_SIZE "16"
 }
 
+# --- Frosted Glass Compositor Blur ---
+blur {
+  passes 3
+  offset 3.0
+  noise 0.02
+  saturation 1.2
+}
+
 layout {
   gaps 8
   focus-ring {
     width 2
+    active-color "#cba6f7"
+    inactive-color "#1e1e2e"
+    urgent-color "#f38ba8"
+  }
+  border {
+    width 1
+    active-color "#cba6f7"
+    inactive-color "#1e1e2e"
+    urgent-color "#f38ba8"
   }
   preset-column-widths {
     proportion 0.33333
@@ -38,9 +55,38 @@ layout {
   }
 }
 
+# Dynamic Noctalia Theme: inotify-monitored override for real-time border updates
+include optional=true "@userHome@/.config/niri/noctalia.kdl"
+
+# --- Window Rules for Frosted Glass Windows ---
 window-rule {
   geometry-corner-radius 12
   clip-to-geometry true
+  background-effect {
+    blur true
+    xray false
+  }
+}
+
+# --- Layer Rules for Noctalia Desktop Shell Surfaces ---
+layer-rule {
+  match namespace="^noctalia-(bar|panel|launcher|control-center|dock|overview|session).*$"
+  background-effect {
+    blur true
+    xray false
+  }
+}
+
+layer-rule {
+  match namespace="^noctalia-wallpaper.*$"
+  place-within-backdrop true
+}
+
+layer-rule {
+  match namespace="^noctalia-(toast|osd|notification).*$"
+  background-effect {
+    blur false
+  }
 }
 
 workspace "w0"
@@ -60,14 +106,12 @@ spawn-at-startup "@systemctl@" "--user" "import-environment" "PATH" "XDG_DATA_DI
 spawn-at-startup "@systemctl@" "--user" "start" "graphical-session.target"
 
 binds {
-  // 1. PRIMARY DEVELOPMENT SUITE
   Mod+A                  hotkey-overlay-title="Tmux Sessionizer"                  { spawn "@ghostty@" "-e" "@tmuxSessionizer@"; }
   Mod+S                  hotkey-overlay-title="Music: YouTube Music (Cliamp)"     { spawn "@ghostty@" "--class=ghostty.cliamp" "--title=YouTube Music" "-e" "@cliamp@" "--provider" "ytmusic"; }
   Mod+D                  hotkey-overlay-title="Primary Editor: Helix (Tmux)"      { spawn "@helixTmuxFocus@"; }
   Mod+F                  hotkey-overlay-title="Maximize Column"                   { maximize-column; }
   Mod+G                  hotkey-overlay-title="Git Client: Lazygit"               { spawn "@ghostty@" "-e" "@lazygit@"; }
 
-  // 2. ESSENTIAL APPLICATIONS
   Mod+Q                  hotkey-overlay-title="Close Focused Window"              { close-window; }
   Mod+W                  hotkey-overlay-title="Browser: Helium"                   { spawn "@helium@"; }
   Mod+E                  hotkey-overlay-title="File Manager: Superfile (TUI)"     { spawn "@ghostty@" "--class=ghostty.superfile" "--title=Superfile" "-e" "@superfile@"; }
@@ -76,11 +120,9 @@ binds {
   Mod+V                  hotkey-overlay-title="Clipboard History"                 { spawn "@noctalia@" "msg" "panel-toggle" "clipboard"; }
   Mod+P                  hotkey-overlay-title="Power & Session Menu"              { spawn "@noctalia@" "msg" "panel-toggle" "session"; }
 
-  // Audio Mixers & Equalizers
   Mod+M                  hotkey-overlay-title="Audio Effects: EasyEffects"        { spawn "@easyeffects@"; }
   Mod+Shift+M            hotkey-overlay-title="Volume Mixer: Pavucontrol"         { spawn "@pavucontrol@"; }
 
-  // 3. TERMINALS & SYSTEM LAUNCHERS
   Mod+T                  hotkey-overlay-title="Terminal: Tmux (Focus/Spawn)"      { spawn "@tmuxTermFocus@"; }
   Mod+Return             hotkey-overlay-title="Terminal: Ghostty (Plain)"         { spawn "@ghostty@"; }
   Mod+Space              hotkey-overlay-title="Application Launcher"              { spawn "@noctalia@" "msg" "panel-toggle" "launcher"; }
@@ -94,7 +136,6 @@ binds {
   Mod+Backspace          hotkey-overlay-title="Dismiss Notification"              { spawn "@noctalia@" "msg" "notification-dismiss"; }
   Mod+Slash              hotkey-overlay-title="Hotkey Cheat Sheet"                { show-hotkey-overlay; }
 
-  // 4. DIRECTIONAL NAVIGATION
   Mod+H                  hotkey-overlay-title="Focus Column Left"                 { focus-column-left; }
   Mod+L                  hotkey-overlay-title="Focus Column Right"                { focus-column-right; }
   Mod+J                  hotkey-overlay-title="Focus Workspace Down"              { focus-workspace-down; }
@@ -114,7 +155,6 @@ binds {
   Mod+Shift+Down         { move-column-to-workspace-down; }
   Mod+Shift+Up           { move-column-to-workspace-up; }
 
-  // 5. WORKSPACES (0–9)
   Mod+1                  { focus-workspace "w1"; }
   Mod+2                  { focus-workspace "w2"; }
   Mod+3                  { focus-workspace "w3"; }
@@ -137,13 +177,11 @@ binds {
   Mod+Shift+9            { move-column-to-workspace "w9"; }
   Mod+Shift+0            { move-column-to-workspace "w0"; }
 
-  // 6. COLUMN SIZING
   Mod+Minus              hotkey-overlay-title="Column Width -5%"                  { set-column-width "-5%"; }
   Mod+Equal              hotkey-overlay-title="Column Width +5%"                  { set-column-width "+5%"; }
   Mod+Shift+Minus        hotkey-overlay-title="Window Height -5%"                 { set-window-height "-5%"; }
   Mod+Shift+Equal        hotkey-overlay-title="Window Height +5%"                 { set-window-height "+5%"; }
 
-  // 7. HARDWARE, MEDIA & SCREENSHOTS
   Mod+Shift+S            hotkey-overlay-title="Area Screenshot"                   { spawn "@screenshotArea@"; }
   Print                  hotkey-overlay-title="Fullscreen Screenshot"             { spawn "@screenshotFull@"; }
 

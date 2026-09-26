@@ -46,6 +46,7 @@ in
 
       niriConfig = pkgs.writeText "config.kdl" (builtins.replaceStrings
         [
+          "@userHome@"
           "@noctalia@"
           "@xwaylandSatellite@"
           "@systemctl@"
@@ -68,6 +69,7 @@ in
           "@brightnessDown@"
         ]
         [
+          "/home/pollux"
           "${self'.packages.noctalia}/bin/noctalia"
           "${pkgs.xwayland-satellite}/bin/xwayland-satellite"
           "${pkgs.systemd}/bin/systemctl"
@@ -111,7 +113,7 @@ in
       apps.niri = {
         type = "app";
         program = "${self'.packages.niri}/bin/niri";
-        meta.description = "Scrollable-tiling Wayland compositor wrapped with hermetic config";
+        meta.description = "Scrollable-tiling Wayland compositor wrapped with hermetic config and dynamic Noctalia theming";
       };
     };
 }

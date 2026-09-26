@@ -6,16 +6,28 @@
 scale_ratio = 1.0
 border_radius = 12
 enable_shadows = true
-avatar = "/home/pollux/.face"
+avatar = "/home/@user@/.face"
 language = "en"
 
 [theme]
 mode = "dark"
-palette = "catppuccin-mocha"
+
+[theme.templates]
+enable_builtin_templates = true
+builtin_ids = [
+  "btop",
+  "cava",
+  "ghostty",
+  "gtk3",
+  "gtk4",
+  "helix",
+  "niri",
+  "starship"
+]
 
 [wallpaper]
 enabled = true
-directory = "/home/pollux/Pictures/Wallpapers"
+directory = "/home/@user@/Pictures/Wallpapers"
 change_mode = "random"
 interval_sec = 300
 transition = "honeycomb"
@@ -32,7 +44,7 @@ floating = true
 margin_ends = 6
 margin_edge = 6
 frame_radius = 12
-opacity = 0.93
+opacity = 0.88
 
 widgets_left = [ "launcher", "clock", "system-monitor", "media-mini" ]
 widgets_center = [ "workspace" ]

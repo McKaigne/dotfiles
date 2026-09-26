@@ -58,14 +58,8 @@ in
       };
       postBuild = ''
         wrapProgram $out/bin/nu \
+          --set STARSHIP_CONFIG "${starshipConfig}" \
           --prefix PATH : "${lib.makeBinPath [ pkgs.starship pkgs.wl-clipboard pkgs.zoxide pkgs.fzf pkgs.direnv pkgs.devenv pkgs.carapace ]}" \
-          --run '
-            if [ -f "$HOME/.cache/noctalia/starship.toml" ]; then
-              export STARSHIP_CONFIG="$HOME/.cache/noctalia/starship.toml"
-            else
-              export STARSHIP_CONFIG="${starshipConfig}"
-            fi
-          ' \
           --add-flags "--config ${configNu} --env-config ${envNu}"
       '';
     };

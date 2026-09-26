@@ -5,12 +5,6 @@ let
     environment.systemPackages = [
       self.packages.${pkgs.stdenv.hostPlatform.system}.superfile
     ];
-
-    systemd.tmpfiles.rules = [
-      "d /home/${config.mainUser}/.local/share/superfile 0755 ${config.mainUser} users -"
-      "f+ /home/${config.mainUser}/.local/share/superfile/toggleDotFile 0644 ${config.mainUser} users - true"
-      "f+ /home/${config.mainUser}/.local/share/superfile/firstUseCheck 0644 ${config.mainUser} users - true"
-    ];
   };
 in
 {
@@ -20,25 +14,48 @@ in
     let
       noctaliaTheme = pkgs.writeText "noctalia.toml" ''
         code_syntax_highlight = "catppuccin-mocha"
-        full_screen_fg = "#cdd6f4"
-        full_screen_bg = "#1e1e2e"
-        file_panel_fg = "#cdd6f4"
-        file_panel_bg = "#1e1e2e"
-        file_panel_border = "#313244"
-        file_panel_border_active = "#cba6f7"
-        sidebar_fg = "#cdd6f4"
-        sidebar_bg = "#1e1e2e"
-        sidebar_title = "#cba6f7"
-        sidebar_border = "#313244"
-        sidebar_border_active = "#cba6f7"
-        cursor = "#cba6f7"
-        correct = "#a6e3a1"
-        error = "#f38ba8"
-        hint = "#f9e2af"
+        full_screen_fg = "#d3c6aa"
+        full_screen_bg = "#1e2326"
+        gradient_color = ["#7fbbb3", "#a7c080"]
+        directory_icon_color = "#7fbbb3"
+        file_panel_fg = "#d3c6aa"
+        file_panel_bg = "#1e2326"
+        file_panel_border = "#3a3f5a"
+        file_panel_border_active = "#7fbbb3"
+        file_panel_top_directory_icon = "#7fbbb3"
+        file_panel_top_path = "#83c092"
+        file_panel_item_selected_fg = "#1e2326"
+        file_panel_item_selected_bg = "#7fbbb3"
+        sidebar_fg = "#d3c6aa"
+        sidebar_bg = "#1e2326"
+        sidebar_title = "#7fbbb3"
+        sidebar_border = "#3a3f5a"
+        sidebar_border_active = "#7fbbb3"
+        sidebar_item_selected_fg = "#1e2326"
+        sidebar_item_selected_bg = "#a7c080"
+        sidebar_divider = "#3a3f5a"
+        footer_fg = "#d3c6aa"
+        footer_bg = "#1e2326"
+        footer_border = "#3a3f5a"
+        footer_border_active = "#7fbbb3"
+        modal_fg = "#d3c6aa"
+        modal_bg = "#2d353b"
+        modal_border = "#7fbbb3"
+        modal_border_active = "#a7c080"
+        modal_cancel_fg = "#1e2326"
+        modal_cancel_bg = "#e67e80"
+        modal_confirm_fg = "#1e2326"
+        modal_confirm_bg = "#a7c080"
+        cursor = "#7fbbb3"
+        correct = "#a7c080"
+        error = "#e67e80"
+        hint = "#dbbc7f"
+        cancel = "#e67e80"
       '';
 
       spfConfig = pkgs.writeText "config.toml" ''
         theme = "noctalia"
+        style = "noctalia"
         editor = "hx"
         dir_editor = "hx"
         auto_check_update = false
@@ -46,7 +63,7 @@ in
         default_open_file_preview = true
         default_directory = "."
         nerdfont = true
-        transparent_background = false
+        transparent_background = true
         file_preview_width = 0
         sidebar_width = 20
         zoxide_support = true
@@ -105,7 +122,7 @@ in
       apps.superfile = {
         type = "app";
         program = "${wrappedSuperfile}/bin/superfile";
-        meta.description = "Hermetically wrapped Superfile terminal file manager";
+        meta.description = "Hermetically wrapped Superfile with frosted translucency and Noctalia theme";
       };
     };
 }
