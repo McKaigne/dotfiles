@@ -25,7 +25,7 @@ environment {
   XCURSOR_SIZE "16"
 }
 
-# --- Frosted Glass Compositor Blur ---
+// --- Frosted Glass Compositor Blur ---
 blur {
   passes 3
   offset 3.0
@@ -55,10 +55,10 @@ layout {
   }
 }
 
-# Dynamic Noctalia Theme: inotify-monitored override for real-time border updates
+// Dynamic Noctalia Theme: inotify-monitored override for real-time border updates
 include optional=true "@userHome@/.config/niri/noctalia.kdl"
 
-# --- Window Rules for Frosted Glass Windows ---
+// --- Window Rules for Frosted Glass Windows ---
 window-rule {
   geometry-corner-radius 12
   clip-to-geometry true
@@ -68,7 +68,7 @@ window-rule {
   }
 }
 
-# --- Layer Rules for Noctalia Desktop Shell Surfaces ---
+// --- Layer Rules for Noctalia Desktop Shell Surfaces ---
 layer-rule {
   match namespace="^noctalia-(bar|panel|launcher|control-center|dock|overview|session).*$"
   background-effect {
