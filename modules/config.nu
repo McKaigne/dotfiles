@@ -18,7 +18,7 @@ $env.config = {
 # --- Expandable Command Abbreviations (Modular & Composable) ---
 $env.config.abbreviations = {
   # =========================================================================
-  # 1. Modular Pipe Suffixes & Structured Data (Stringable at end of command)
+  # 1. Modular Pipe Suffixes & Structured Data (Composable at end of pipe)
   # =========================================================================
   tojson: "| to json -i 2"
   fromjson: "| from json"
@@ -50,7 +50,7 @@ $env.config.abbreviations = {
   nenv: "$env | transpose key value | sort-by key"
 
   # =========================================================================
-  # 3. NixOS & Flake Maintenance (castor-specific & generic)
+  # 3. NixOS & Flake Maintenance
   # =========================================================================
   ncd: "cd /etc/nixos"
   nr: "sudo nixos-rebuild switch --flake /etc/nixos#castor"
@@ -65,17 +65,10 @@ $env.config.abbreviations = {
   nopt: "nix store optimise"
 
   # =========================================================================
-  # 4. Git Workflows
+  # 4. Git Core Navigation & Staging
   # =========================================================================
   gaa: "git add -A"
   gap: "git add -p"
-  gcm: "git commit -m"
-  gca: "git commit --amend"
-  gcan: "git commit --amend --no-edit"
-  gco: "git checkout"
-  gcb: "git checkout -b"
-  gsw: "git switch"
-  gswc: "git switch -c"
   gst: "git status -sb"
   gdiff: "git diff"
   gds: "git diff --staged"
@@ -83,16 +76,55 @@ $env.config.abbreviations = {
   gpf: "git push --force-with-lease"
   gpull: "git pull --rebase"
   glog: "git log --oneline --graph --decorate"
-  grbi: "git rebase -i"
-  grbc: "git rebase --continue"
-  grba: "git rebase --abort"
+  gco: "git checkout"
+  gcb: "git checkout -b"
+  gsw: "git switch"
+  gswc: "git switch -c"
   gsta: "git stash push -m"
   gstp: "git stash pop"
   gstd: "git stash drop"
-  greset: "git reset --hard"
 
   # =========================================================================
-  # 5. GitHub CLI (gh)
+  # 5. Modular Conventional Commit Starters (Direct commit with semantic tag)
+  # =========================================================================
+  gcm: "git commit -m"
+  gca: "git commit --amend"
+  gcan: "git commit --amend --no-edit"
+  gcfeat: "git commit -m \"feat: "
+  gcfix: "git commit -m \"fix: "
+  gcdocs: "git commit -m \"docs: "
+  gcref: "git commit -m \"refactor: "
+  gcperf: "git commit -m \"perf: "
+  gctest: "git commit -m \"test: "
+  gcchore: "git commit -m \"chore: "
+  gcstyle: "git commit -m \"style: "
+  gcci: "git commit -m \"ci: "
+  gcbuild: "git commit -m \"build: "
+  gcwip: "git commit -m \"wip: "
+  gcbreak: "git commit -m \"feat!: "
+
+  # =========================================================================
+  # 6. Stage-All + Conventional Commit (Atomic Pipelines)
+  # =========================================================================
+  gacfeat: "git add -A; git commit -m \"feat: "
+  gacfix: "git add -A; git commit -m \"fix: "
+  gacdocs: "git add -A; git commit -m \"docs: "
+  gacref: "git add -A; git commit -m \"refactor: "
+  gacchore: "git add -A; git commit -m \"chore: "
+  gacwip: "git add -A; git commit -m \"wip: "
+
+  # =========================================================================
+  # 7. Commit Lifecycle, Rebase & Undo
+  # =========================================================================
+  gundo: "git reset --soft HEAD~1"
+  gdrop: "git reset --hard HEAD~1"
+  gcap: "git commit --amend --no-edit; git push --force-with-lease"
+  grbi: "git rebase -i"
+  grbc: "git rebase --continue"
+  grba: "git rebase --abort"
+
+  # =========================================================================
+  # 8. GitHub CLI (gh)
   # =========================================================================
   ghpr: "gh pr list"
   ghprc: "gh pr create"
@@ -102,7 +134,7 @@ $env.config.abbreviations = {
   ghis: "gh issue list"
 
   # =========================================================================
-  # 6. Compositor & Shell (Niri & Noctalia IPC)
+  # 9. Compositor & Shell (Niri & Noctalia IPC)
   # =========================================================================
   nmsg: "niri msg"
   nwin: "niri msg windows"
@@ -119,7 +151,7 @@ $env.config.abbreviations = {
   nocbar: "noctalia msg bar-toggle"
 
   # =========================================================================
-  # 7. Terminal Multiplexer & Modal Editor (Tmux & Helix)
+  # 10. Multiplexer & Editor (Tmux & Helix)
   # =========================================================================
   tma: "tmux attach -t"
   tml: "tmux list-sessions"
@@ -130,7 +162,7 @@ $env.config.abbreviations = {
   hxrel: "pkill -USR1 hx"
 
   # =========================================================================
-  # 8. Modern CLI Tools & New Diagnostics (btm, dust, procs, tealdeer, etc.)
+  # 11. Modern CLI Tools & Diagnostics
   # =========================================================================
   bt: "btm"
   lg: "lazygit"
