@@ -132,6 +132,7 @@ $env.config.abbreviations = {
   # =========================================================================
   # 8. Modern CLI Tools & New Diagnostics (btm, dust, procs, tealdeer, etc.)
   # =========================================================================
+  bt: "btm"
   lg: "lazygit"
   tlup: "tldr --update"
   ll: "eza -l --icons --git"

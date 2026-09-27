@@ -25,7 +25,7 @@ in
           "@tmuxWindowPicker@"
           "@lazygit@"
           "@nnn@"
-          "@btop@"
+          "@btm@"
           "@nu@"
           "@wlCopy@"
         ]
@@ -34,7 +34,7 @@ in
           "tmux-window-picker"
           "${pkgs.lazygit}/bin/lazygit"
           "${pkgs.nnn}/bin/nnn"
-          "${pkgs.btop}/bin/btop"
+          "${pkgs.bottom}/bin/btm"
           "${self'.packages.nushell}/bin/nu"
           "${pkgs.wl-clipboard}/bin/wl-copy"
         ]
@@ -142,7 +142,7 @@ in
         nativeBuildInputs = [ pkgs.makeWrapper ];
         postBuild = ''
           wrapProgram $out/bin/tmux \
-            --prefix PATH : "${lib.makeBinPath [ pkgs.fzf pkgs.findutils pkgs.procps pkgs.lazygit pkgs.bat pkgs.wl-clipboard pkgs.jq pkgs.coreutils pkgs.nnn self'.packages.helix self'.packages.nushell ]}:$out/bin" \
+            --prefix PATH : "${lib.makeBinPath [ pkgs.fzf pkgs.findutils pkgs.procps pkgs.lazygit pkgs.bat pkgs.wl-clipboard pkgs.jq pkgs.coreutils pkgs.nnn pkgs.bottom self'.packages.helix self'.packages.nushell ]}:$out/bin" \
             --set TMUX_CONF "${tmuxConf}" \
             --add-flags "-f ${tmuxConf}"
         '';

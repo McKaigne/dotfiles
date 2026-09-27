@@ -15,7 +15,6 @@ mode = "dark"
 [theme.templates]
 enable_builtin_templates = true
 builtin_ids = [
-  "btop",
   "cava",
   "ghostty",
   "gtk3",

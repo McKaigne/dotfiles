@@ -76,12 +76,12 @@ let
         unrar
         jq
 
-        # Requested Utilities
+        # Diagnostics & Modern CLI Tools
         delta
         lazygit
         gh
         bottom
-        du-dust
+        dust
         procs
         tealdeer
         nnn
@@ -102,15 +102,15 @@ let
           pager = delta
           editor = hx
 
-        [interactive]
-          diffFilter = delta --color-only
+      [interactive]
+        diffFilter = delta --color-only
 
-        [delta]
-          navigate = true
-          light = false
-          line-numbers = true
-          side-by-side = false
-          syntax-theme = "base16"
+      [delta]
+        navigate = true
+        light = false
+        line-numbers = true
+        side-by-side = false
+        syntax-theme = "base16"
       '';
 
       fonts.packages = with pkgs; [
