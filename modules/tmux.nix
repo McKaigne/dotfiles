@@ -19,14 +19,12 @@ in
     let
       tmuxBin = "${pkgs.tmux}/bin/tmux";
 
-      # Break mutual recursion: tmuxConf references sessionizer/picker by command name,
-      # which are provided hermetically in wrappedTmux's PATH via $out/bin.
       tmuxConf = pkgs.writeText "tmux.conf" (builtins.replaceStrings
         [
           "@tmuxSessionizer@"
           "@tmuxWindowPicker@"
           "@lazygit@"
-          "@superfile@"
+          "@nnn@"
           "@btop@"
           "@nu@"
           "@wlCopy@"
@@ -35,8 +33,8 @@ in
           "tmux-sessionizer"
           "tmux-window-picker"
           "${pkgs.lazygit}/bin/lazygit"
-          "${self'.packages.superfile}/bin/superfile"
-          "${self'.packages.btop}/bin/btop"
+          "${pkgs.nnn}/bin/nnn"
+          "${pkgs.btop}/bin/btop"
           "${self'.packages.nushell}/bin/nu"
           "${pkgs.wl-clipboard}/bin/wl-copy"
         ]
@@ -144,7 +142,7 @@ in
         nativeBuildInputs = [ pkgs.makeWrapper ];
         postBuild = ''
           wrapProgram $out/bin/tmux \
-            --prefix PATH : "${lib.makeBinPath [ pkgs.fzf pkgs.findutils pkgs.procps pkgs.lazygit pkgs.bat pkgs.wl-clipboard pkgs.jq pkgs.coreutils self'.packages.superfile self'.packages.helix self'.packages.nushell ]}:$out/bin" \
+            --prefix PATH : "${lib.makeBinPath [ pkgs.fzf pkgs.findutils pkgs.procps pkgs.lazygit pkgs.bat pkgs.wl-clipboard pkgs.jq pkgs.coreutils pkgs.nnn self'.packages.helix self'.packages.nushell ]}:$out/bin" \
             --set TMUX_CONF "${tmuxConf}" \
             --add-flags "-f ${tmuxConf}"
         '';

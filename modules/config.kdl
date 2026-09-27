@@ -25,14 +25,6 @@ environment {
   XCURSOR_SIZE "16"
 }
 
-// --- Frosted Glass Compositor Blur ---
-blur {
-  passes 3
-  offset 3.0
-  noise 0.02
-  saturation 1.2
-}
-
 layout {
   gaps 8
   focus-ring {
@@ -55,38 +47,14 @@ layout {
   }
 }
 
-// Dynamic Noctalia Theme: inotify-monitored override for real-time border updates
+// Live Noctalia border and focus-ring theme overrides
 include optional=true "@userHome@/.config/niri/noctalia.kdl"
 
-// --- Window Rules for Frosted Glass Windows ---
+// Window Rules: draw-border-with-background false stops borders from drawing filled rectangles behind windows
 window-rule {
   geometry-corner-radius 12
   clip-to-geometry true
-  background-effect {
-    blur true
-    xray false
-  }
-}
-
-// --- Layer Rules for Noctalia Desktop Shell Surfaces ---
-layer-rule {
-  match namespace="^noctalia-(bar|panel|launcher|control-center|dock|overview|session).*$"
-  background-effect {
-    blur true
-    xray false
-  }
-}
-
-layer-rule {
-  match namespace="^noctalia-wallpaper.*$"
-  place-within-backdrop true
-}
-
-layer-rule {
-  match namespace="^noctalia-(toast|osd|notification).*$"
-  background-effect {
-    blur false
-  }
+  draw-border-with-background false
 }
 
 workspace "w0"
@@ -114,7 +82,7 @@ binds {
 
   Mod+Q                  hotkey-overlay-title="Close Focused Window"              { close-window; }
   Mod+W                  hotkey-overlay-title="Browser: Helium"                   { spawn "@helium@"; }
-  Mod+E                  hotkey-overlay-title="File Manager: Superfile (TUI)"     { spawn "@ghostty@" "--class=ghostty.superfile" "--title=Superfile" "-e" "@superfile@"; }
+  Mod+E                  hotkey-overlay-title="File Manager: nnn (TUI)"           { spawn "@ghostty@" "--class=ghostty.nnn" "--title=nnn" "-e" "@nnn@"; }
   Mod+X                  hotkey-overlay-title="Fuzzel Fast Launcher"              { spawn "@fuzzel@"; }
   Mod+C                  hotkey-overlay-title="Center Column on Screen"           { center-column; }
   Mod+V                  hotkey-overlay-title="Clipboard History"                 { spawn "@noctalia@" "msg" "panel-toggle" "clipboard"; }

@@ -25,6 +25,10 @@ builtin_ids = [
   "starship"
 ]
 
+[theme.templates.user.cliamp]
+input_path = "~/.config/noctalia/templates/cliamp.toml"
+output_path = "~/.config/cliamp/themes/noctalia.toml"
+
 [wallpaper]
 enabled = true
 directory = "/home/@user@/Pictures/Wallpapers"
@@ -44,7 +48,7 @@ floating = true
 margin_ends = 6
 margin_edge = 6
 frame_radius = 12
-opacity = 0.88
+opacity = 0.95
 
 widgets_left = [ "launcher", "clock", "system-monitor", "media-mini" ]
 widgets_center = [ "workspace" ]
