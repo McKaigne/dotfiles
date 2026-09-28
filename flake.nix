@@ -1,4 +1,3 @@
-
 {
   description = "Castor Workstation Flake - Niri + Noctalia v5 + Helix + Tmux";
 
