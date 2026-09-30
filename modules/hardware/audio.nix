@@ -1,16 +1,21 @@
-{ ... }: {
-  flake.nixosModules.audio = { pkgs, ... }: {
-    security.rtkit.enable = true;
-    services.pipewire = {
-      enable = true;
-      alsa.enable = true;
-      alsa.support32Bit = true;
-      pulse.enable = true;
-      wireplumber.enable = true;
-    };
-    hardware.firmware = with pkgs; [
-      sof-firmware
-      alsa-firmware
-    ];
+{ pkgs, ... }: {
+  security.rtkit.enable = true;
+  services.pipewire = {
+    enable = true;
+    alsa.enable = true;
+    alsa.support32Bit = true;
+    pulse.enable = true;
+    wireplumber.enable = true;
   };
+
+  hardware.firmware = with pkgs; [
+    sof-firmware
+    alsa-firmware
+  ];
+
+  environment.systemPackages = with pkgs; [
+    easyeffects
+    pavucontrol
+    cava
+  ];
 }

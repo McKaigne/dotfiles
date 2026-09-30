@@ -1,4 +1,3 @@
-# Nushell Configuration - Castor Workstation Final Specification
 $env.config = {
   show_banner: false
   edit_mode: 'vi'
@@ -19,7 +18,6 @@ $env.config = {
   }
 
   abbreviations: {
-    # --- PIPES, SINKS & REDIRECTIONS ---
     toclip:   "| wl-copy"
     fromclip: "wl-paste"
     silent:   "o+e> /dev/null"
@@ -27,7 +25,6 @@ $env.config = {
     savef:    "| save --force "
     savea:    "| save --force --append "
 
-    # --- FORMAT CONVERTERS (Nushell-Native) ---
     tojson:   "| to json -i 2"
     fromjson: "| from json"
     toyaml:   "| to yaml"
@@ -35,17 +32,15 @@ $env.config = {
     tokdl:    "| to kdl"
     fromkdl:  "| from kdl"
 
-    # --- NOCTALIA DESKTOP INTENTS ---
     nlaunch:   "noctalia msg panel-toggle launcher"
     ncontrol:  "noctalia msg panel-toggle control-center"
     nsession:  "noctalia msg panel-toggle session"
     nclip:     "noctalia msg panel-toggle clipboard"
     nsettings: "noctalia msg settings-toggle"
     nbar:      "noctalia msg bar-toggle"
-    nlock:     "noctalia msg lock"
-    nclosemsg: "noctalia msg notification-dismiss"
+    nlock:     "noctalia msg session lock"
+    nclosemsg: "noctalia msg notification-clear-active"
 
-    # --- NIRI WINDOW MANAGER INTENTS ---
     nreload: "niri msg action load-config-file"
     nclose:  "niri msg action close-window"
     nquit:   "niri msg action quit"
@@ -54,7 +49,6 @@ $env.config = {
     nwork:   "niri msg -j workspaces | from json"
     nmon:    "niri msg -j outputs | from json"
 
-    # --- NIXOS SYSTEM INTENTS ---
     rebuild: "sudo nixos-rebuild switch --flake /etc/nixos#castor"
     nr:      "sudo nixos-rebuild switch --flake /etc/nixos#castor"
     nboot:   "sudo nixos-rebuild boot --flake /etc/nixos#castor"
@@ -66,7 +60,6 @@ $env.config = {
     nshell:  "nix shell nixpkgs#"
     ntrace:  "--show-trace"
 
-    # --- GIT ACTION INTENTS ---
     ga:       "git add -A"
     gstage:   "git add -A"
     gpatch:   "git add -p"
@@ -85,43 +78,30 @@ $env.config = {
     gbranch:  "git switch "
     gnew:     "git switch -c "
 
-    # --- TMUX INTENTS ---
-    tsess: "tmux list-sessions"
-    tlw:   "tmux list-windows"
-    tjoin: "tmux attach-session -t "
-    tnew:  "tmux new-session -s "
-    tkill: "tmux kill-session -t "
-    twipe: "tmux kill-server"
-
-    # --- ZELLIJ WORKSPACE INTENTS ---
     zj:    "zellij"
     zja:   "zellij attach "
     zjl:   "zellij list-sessions"
     zjk:   "zellij kill-session "
     zjka:  "zellij kill-all-sessions"
 
-    # --- ZOXIDE INTENTS ---
     zq:    "zoxide query "
     zql:   "zoxide query -l"
     za:    "zoxide add "
     zr:    "zoxide remove "
 
-    # --- DIRECT HELIX CONFIG JUMPS ---
     hxf: "hx /etc/nixos/flake.nix"
-    hxc: "hx /etc/nixos/modules/apps/helix/default.nix"
-    hxn: "hx /etc/nixos/modules/terminal/nushell/config.nu"
-    hxi: "hx /etc/nixos/modules/desktop/niri/config.kdl"
-    hxt: "hx /etc/nixos/modules/terminal/tmux/tmux.conf"
+    hxh: "hx /etc/nixos/hosts/castor/default.nix"
+    hxc: "hx /etc/nixos/features/core/default.nix"
+    hxn: "hx /etc/nixos/features/shell/config.nu"
+    hxi: "hx /etc/nixos/features/niri/config.kdl"
+    hxz: "hx /etc/nixos/features/zellij/default.nix"
   }
 }
 
-# --- TOKEN-OPTIMIZED CONFIG INSPECTION ENGINE ---
-
-# Helper: Collects configuration files using clean Nu array spreading (no multiline parse bugs)
 def get-config-files [path: string] {
   let target = ($path | path expand)
   let extensions = [
-    "-e" "nix" "-e" "kdl" "-e" "toml" "-e" "conf" "-e" "ini" "-e" "el" "-e" "json" "-e" "nu" "-e" "py"
+    "-e" "nix" "-e" "kdl" "-e" "toml" "-e" "conf" "-e" "ini" "-e" "el" "-e" "json" "-e" "nu" "-e" "py" "-e" "css"
   ]
   let excludes = [
     "-E" ".git"
@@ -147,10 +127,9 @@ def get-config-files [path: string] {
     "-E" "session-store*"
   ]
 
-  ^fd . $target -t f -H -S -50k ...$extensions ...$excludes | lines
+  ^fd . $target -t f -L -H -S -50k ...$extensions ...$excludes | lines
 }
 
-# cft: Generates an AI-token-safe tree of only configuration files (default: current directory)
 def cft [path: string = "."] {
   let files = (get-config-files $path)
   if ($files | is-empty) {
@@ -164,7 +143,6 @@ def cft [path: string = "."] {
   print $"\n[Copied tree of ($files | length) core config files to clipboard]"
 }
 
-# cfb: Formats and dumps contents of only configuration files to clipboard (default: current directory)
 def cfb [path: string = "."] {
   let files = (get-config-files $path)
   if ($files | is-empty) {
@@ -181,7 +159,6 @@ def cfb [path: string = "."] {
   print $"[Copied full content of ($files | length) config files to clipboard]"
 }
 
-# --- BASE ALIASES ---
 alias l = ls
 alias ll = ls -l
 alias la = ls -a
@@ -193,7 +170,6 @@ alias fetch = ^fetch
 alias g = git
 alias lg = lazygit
 
-# --- COMPILED NIX STORE INTEGRATIONS ---
 source "@starshipInit@"
 source "@zoxideInit@"
 source "@carapaceInit@"

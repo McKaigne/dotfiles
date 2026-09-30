@@ -1,0 +1,217 @@
+# ── Nix ──────────────────────────────────────────────────────────────────────
+[[language]]
+name = "nix"
+scope = "source.nix"
+injection-regex = "nix"
+file-types = ["nix"]
+language-servers = ["nixd"]
+auto-format = true
+formatter = { command = "nixfmt" }
+
+[language-server.nixd]
+command = "nixd"
+
+# ── Shell / Bash ──────────────────────────────────────────────────────────────
+[[language]]
+name = "bash"
+scope = "source.bash"
+injection-regex = "bash|sh|zsh"
+file-types = ["sh", "bash", "zsh", ".bashrc", ".bash_profile", ".profile", ".zshrc"]
+language-servers = ["bash-language-server"]
+auto-format = true
+formatter = { command = "shfmt", args = ["-"] }
+
+[language-server.bash-language-server]
+command = "bash-language-server"
+args = ["start"]
+
+# ── TOML ──────────────────────────────────────────────────────────────────────
+[[language]]
+name = "toml"
+scope = "source.toml"
+injection-regex = "toml"
+file-types = ["toml"]
+language-servers = ["taplo"]
+auto-format = true
+
+[language-server.taplo]
+command = "taplo"
+args = ["lsp", "stdio"]
+
+# ── YAML ──────────────────────────────────────────────────────────────────────
+[[language]]
+name = "yaml"
+scope = "source.yaml"
+injection-regex = "yaml|yml"
+file-types = ["yaml", "yml"]
+language-servers = ["yaml-language-server"]
+auto-format = false
+
+[language-server.yaml-language-server]
+command = "yaml-language-server"
+args = ["--stdio"]
+
+# ── Markdown ──────────────────────────────────────────────────────────────────
+[[language]]
+name = "markdown"
+scope = "source.md"
+injection-regex = "md|markdown"
+file-types = ["md", "markdown", "txt"]
+language-servers = ["marksman"]
+text-width = 80
+soft-wrap = { enable = true, wrap-at-text-width = true }
+
+[language-server.marksman]
+command = "marksman"
+args = ["server"]
+
+# ── HTML & HTMX ───────────────────────────────────────────────────────────────
+[[language]]
+name = "html"
+scope = "text.html.basic"
+injection-regex = "html"
+file-types = ["html", "htm"]
+language-servers = ["vscode-html-language-server", "htmx-lsp"]
+auto-format = true
+
+[language-server.htmx-lsp]
+command = "htmx-lsp"
+
+# ── Django / Jinja Templates ─────────────────────────────────────────────────
+[[language]]
+name = "django-html"
+scope = "text.html.django"
+injection-regex = "django|jinja"
+file-types = ["djhtml", "jinja", "jinja2", "j2"]
+language-servers = ["vscode-html-language-server", "htmx-lsp"]
+formatter = { command = "djlint", args = ["-", "--reformat"] }
+auto-format = true
+
+# ── KDL ──────────────────────────────────────────────────────────────────────
+[[language]]
+name = "kdl"
+scope = "source.kdl"
+injection-regex = "kdl"
+file-types = ["kdl"]
+
+# ── C / C++ ──────────────────────────────────────────────────────────────────
+[[language]]
+name = "c"
+scope = "source.c"
+injection-regex = "c"
+file-types = ["c", "h"]
+language-servers = ["clangd"]
+auto-format = true
+
+[[language]]
+name = "cpp"
+scope = "source.cpp"
+injection-regex = "cpp|c\\+\\+"
+file-types = ["cc", "cpp", "cxx", "hh", "hpp"]
+language-servers = ["clangd"]
+auto-format = true
+
+[language-server.clangd]
+command = "clangd"
+
+# ── Python ────────────────────────────────────────────────────────────────────
+[[language]]
+name = "python"
+scope = "source.python"
+injection-regex = "python"
+file-types = ["py"]
+language-servers = ["pyright"]
+auto-format = false
+
+[language-server.pyright]
+command = "pyright-langserver"
+args = ["--stdio"]
+
+# ── Rust ──────────────────────────────────────────────────────────────────────
+[[language]]
+name = "rust"
+scope = "source.rust"
+injection-regex = "rust|rs"
+file-types = ["rs"]
+language-servers = ["rust-analyzer"]
+auto-format = true
+
+[language-server.rust-analyzer]
+command = "rust-analyzer"
+
+# ── Go ────────────────────────────────────────────────────────────────────────
+[[language]]
+name = "go"
+scope = "source.go"
+injection-regex = "go"
+file-types = ["go"]
+language-servers = ["gopls"]
+auto-format = true
+
+[language-server.gopls]
+command = "gopls"
+
+# ── Lua ──────────────────────────────────────────────────────────────────────
+[[language]]
+name = "lua"
+scope = "source.lua"
+injection-regex = "lua"
+file-types = ["lua"]
+language-servers = ["lua-language-server"]
+auto-format = true
+
+[language-server.lua-language-server]
+command = "lua-language-server"
+
+# ── JavaScript / TypeScript ────────────────────────────────────────────────────
+[[language]]
+name = "javascript"
+scope = "source.js"
+injection-regex = "javascript|js"
+file-types = ["js", "mjs", "cjs"]
+language-servers = ["typescript-language-server"]
+auto-format = true
+
+[[language]]
+name = "typescript"
+scope = "source.ts"
+injection-regex = "typescript|ts"
+file-types = ["ts", "mts"]
+language-servers = ["typescript-language-server"]
+auto-format = true
+
+[language-server.typescript-language-server]
+command = "typescript-language-server"
+args = ["--stdio"]
+
+# ── Clojure / Lisp ───────────────────────────────────────────────────────────
+[[language]]
+name = "clojure"
+scope = "source.clojure"
+injection-regex = "clojure|clj|cljs|cljc|edn"
+file-types = ["clj", "cljs", "cljc", "edn", "bb"]
+language-servers = ["clojure-lsp"]
+auto-format = true
+
+[language-server.clojure-lsp]
+command = "clojure-lsp"
+
+# ── Common Lisp ──────────────────────────────────────────────────────────────
+[[language]]
+name = "common-lisp"
+scope = "source.lisp"
+injection-regex = "lisp|cl"
+file-types = ["lisp", "cl", "asd", "lsp"]
+language-servers = ["cl-lsp"]
+auto-format = false
+
+[language-server.cl-lsp]
+command = "cl-lsp"
+
+# ── JSON ──────────────────────────────────────────────────────────────────────
+[[language]]
+name = "json"
+scope = "source.json"
+injection-regex = "json"
+file-types = ["json"]
+auto-format = true

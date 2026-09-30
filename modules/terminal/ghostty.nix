@@ -1,65 +1,48 @@
-{ self, ... }:
+{ config, pkgs, ... }:
 let
-  nixosModule = { pkgs, ... }: {
-    environment.systemPackages = [
-      self.packages.${pkgs.stdenv.hostPlatform.system}.ghostty
-    ];
-  };
+  user = config.mainUser;
 in
 {
-  flake.nixosModules.ghostty = nixosModule;
+  environment.systemPackages = [ pkgs.ghostty ];
 
-  perSystem = { pkgs, ... }:
-    let
-      ghosttyConfig = pkgs.writeText "ghostty-config" ''
-        font-family = "Maple Mono NF"
-        font-size = 14
-        window-decoration = false
-        theme = noctalia
+  home-manager.users.${user} = {
+    xdg.configFile."ghostty/config".text = ''
+      font-family = "Lilex Nerd Font"
+      font-size = 14
+      font-feature = calt
+      font-feature = ss01
+      font-feature = cv01
+      font-feature = cv02
+      font-feature = cv09
+      font-feature = cv11
+      font-feature = cv13
+      font-feature = cv15
+      font-feature = locl
+      window-decoration = false
+      theme = noctalia
 
-        cursor-style = block
-        cursor-style-blink = false
-        adjust-cursor-thickness = 2
-        confirm-close-surface = false
-        mouse-hide-while-typing = true
+      cursor-style = block
+      cursor-style-blink = false
+      adjust-cursor-thickness = 2
+      confirm-close-surface = false
+      mouse-hide-while-typing = true
 
-        # Splits
-        keybind = ctrl+shift+e=new_split:down
-        keybind = ctrl+shift+o=new_split:right
-        keybind = ctrl+alt+left=goto_split:left
-        keybind = ctrl+alt+right=goto_split:right
-        keybind = ctrl+alt+up=goto_split:top
-        keybind = ctrl+alt+down=goto_split:bottom
-        keybind = ctrl+alt+h=goto_split:left
-        keybind = ctrl+alt+l=goto_split:right
-        keybind = ctrl+alt+k=goto_split:top
-        keybind = ctrl+alt+j=goto_split:bottom
+      keybind = ctrl+shift+e=new_split:down
+      keybind = ctrl+shift+o=new_split:right
+      keybind = ctrl+alt+left=goto_split:left
+      keybind = ctrl+alt+right=goto_split:right
+      keybind = ctrl+alt+up=goto_split:top
+      keybind = ctrl+alt+down=goto_split:bottom
+      keybind = ctrl+alt+h=goto_split:left
+      keybind = ctrl+alt+l=goto_split:right
+      keybind = ctrl+alt+k=goto_split:top
+      keybind = ctrl+alt+j=goto_split:bottom
 
-        # Tabs
-        keybind = ctrl+shift+t=new_tab
-        keybind = ctrl+shift+left=previous_tab
-        keybind = ctrl+shift+right=next_tab
-        keybind = ctrl+shift+h=previous_tab
-        keybind = ctrl+shift+l=next_tab
-      '';
-
-      wrappedGhostty = pkgs.symlinkJoin {
-        name = "ghostty";
-        paths = [ pkgs.ghostty ];
-        nativeBuildInputs = [ pkgs.makeWrapper ];
-        postBuild = ''
-          wrapProgram $out/bin/ghostty \
-            --add-flags "--config-file=${ghosttyConfig}"
-        '';
-      };
-    in
-    {
-      packages.ghostty = wrappedGhostty;
-
-      apps.ghostty = {
-        type = "app";
-        program = "${wrappedGhostty}/bin/ghostty";
-        meta.description = "Ghostty terminal linked to Noctalia live theme";
-      };
-    };
+      keybind = ctrl+shift+t=new_tab
+      keybind = ctrl+shift+left=previous_tab
+      keybind = ctrl+shift+right=next_tab
+      keybind = ctrl+shift+h=previous_tab
+      keybind = ctrl+shift+l=next_tab
+    '';
+  };
 }

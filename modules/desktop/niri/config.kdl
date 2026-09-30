@@ -38,15 +38,15 @@ layout {
   gaps 8
   focus-ring {
     width 2
-    active-color "#cba6f7"
-    inactive-color "#1e1e2e"
-    urgent-color "#f38ba8"
+    active-color   "#6c7086"
+    inactive-color "#313244"
+    urgent-color   "#f38ba8"
   }
   border {
     width 1
-    active-color "#cba6f7"
-    inactive-color "#1e1e2e"
-    urgent-color "#f38ba8"
+    active-color   "#6c7086"
+    inactive-color "#313244"
+    urgent-color   "#f38ba8"
   }
   preset-column-widths {
     proportion 0.33333
@@ -91,46 +91,46 @@ spawn-at-startup "@systemctl@" "--user" "import-environment" "PATH" "XDG_DATA_DI
 spawn-at-startup "@systemctl@" "--user" "start" "graphical-session.target"
 
 binds {
-  Mod+A                  hotkey-overlay-title="Tmux Sessionizer"                  { spawn "@ghostty@" "-e" "@tmuxSessionizer@"; }
-  Mod+S                  hotkey-overlay-title="Music: Pear Desktop"               { spawn "@pearDesktop@"; }
-  Mod+D                  hotkey-overlay-title="Primary Editor: Helix (Tmux)"      { spawn "@helixTmuxFocus@"; }
-  Mod+F                  hotkey-overlay-title="Maximize Column"                   { maximize-column; }
-  Mod+G                  hotkey-overlay-title="Git Client: Lazygit"               { spawn "@ghostty@" "-e" "@lazygit@"; }
+  Mod+A                  hotkey-overlay-title="Zellij Session Picker"               { spawn "@zellijAttach@"; }
+  Mod+S                  hotkey-overlay-title="Music: Pear Desktop"                 { spawn "@pearDesktop@"; }
+  Mod+D                  hotkey-overlay-title="Primary Editor: Helix"               { spawn "@helixFocus@"; }
+  Mod+F                  hotkey-overlay-title="Maximize Column"                     { maximize-column; }
+  Mod+G                  hotkey-overlay-title="Git Client: Lazygit"                 { spawn "@ghostty@" "-e" "@lazygit@"; }
 
-  Mod+Q                  hotkey-overlay-title="Close Focused Window"              { close-window; }
-  Mod+W                  hotkey-overlay-title="Browser: Qutebrowser (Vim)"        { spawn "@qutebrowser@"; }
-  Mod+Shift+W            hotkey-overlay-title="Browser: Helium (Fallback/DRM)"    { spawn "@helium@"; }
-  Mod+E                  hotkey-overlay-title="File Manager: Nautilus"            { spawn "@nautilus@"; }
-  Mod+X                  hotkey-overlay-title="Fuzzel Fast Launcher"              { spawn "@fuzzel@"; }
-  Mod+C                  hotkey-overlay-title="Center Column on Screen"           { center-column; }
-  Mod+V                  hotkey-overlay-title="Clipboard History"                 { spawn "@noctalia@" "msg" "panel-toggle" "clipboard"; }
-  Mod+P                  hotkey-overlay-title="Power & Session Menu"              { spawn "@noctalia@" "msg" "panel-toggle" "session"; }
+  Mod+Q                  hotkey-overlay-title="Close Focused Window"                { close-window; }
+  Mod+W                  hotkey-overlay-title="Browser: Qutebrowser (Vim)"          { spawn "@qutebrowser@"; }
+  Mod+Shift+W            hotkey-overlay-title="Browser: Helium (Fallback/DRM)"      { spawn "@helium@"; }
+  Mod+E                  hotkey-overlay-title="File Manager: Nautilus"              { spawn "@nautilus@"; }
+  Mod+X                  hotkey-overlay-title="Fuzzel Fast Launcher"                { spawn "@fuzzel@"; }
+  Mod+C                  hotkey-overlay-title="Center Column on Screen"             { center-column; }
+  Mod+V                  hotkey-overlay-title="Clipboard History"                   { spawn "@noctalia@" "msg" "panel-toggle" "clipboard"; }
+  Mod+P                  hotkey-overlay-title="Power & Session Menu"                { spawn "@noctalia@" "msg" "panel-toggle" "session"; }
 
-  Mod+M                  hotkey-overlay-title="Audio Effects: EasyEffects"        { spawn "@easyeffects@"; }
-  Mod+Shift+M            hotkey-overlay-title="Volume Mixer: Pavucontrol"         { spawn "@pavucontrol@"; }
+  Mod+M                  hotkey-overlay-title="Audio Effects: EasyEffects"          { spawn "@easyeffects@"; }
+  Mod+Shift+M            hotkey-overlay-title="Volume Mixer: Pavucontrol"           { spawn "@pavucontrol@"; }
 
-  Mod+T                  hotkey-overlay-title="Terminal: Tmux (Focus/Spawn)"      { spawn "@tmuxTermFocus@"; }
-  Mod+Return             hotkey-overlay-title="Terminal: Ghostty (Plain)"         { spawn "@ghostty@"; }
-  Mod+Space              hotkey-overlay-title="Application Launcher"              { spawn "@noctalia@" "msg" "panel-toggle" "launcher"; }
-  Mod+Shift+Space        hotkey-overlay-title="Toggle Window Floating"            { toggle-window-floating; }
-  Mod+Shift+F            hotkey-overlay-title="Fullscreen Window"                 { fullscreen-window; }
+  Mod+T                  hotkey-overlay-title="Terminal: Zellij (Focus/Spawn)"      { spawn "@zellijFocus@"; }
+  Mod+Return             hotkey-overlay-title="Terminal: Ghostty (Plain)"           { spawn "@ghostty@"; }
+  Mod+Space              hotkey-overlay-title="Application Launcher"                { spawn "@noctalia@" "msg" "panel-toggle" "launcher"; }
+  Mod+Shift+Space        hotkey-overlay-title="Toggle Window Floating"              { toggle-window-floating; }
+  Mod+Shift+F            hotkey-overlay-title="Fullscreen Window"                   { fullscreen-window; }
 
-  Mod+N                  hotkey-overlay-title="Control Center"                    { spawn "@noctalia@" "msg" "panel-toggle" "control-center"; }
-  Mod+Comma              hotkey-overlay-title="Noctalia Settings"                 { spawn "@noctalia@" "msg" "settings-toggle"; }
-  Mod+Escape             hotkey-overlay-title="Lock Screen"                       { spawn "@noctalia@" "msg" "lock"; }
-  Mod+B                  hotkey-overlay-title="Toggle Bar"                        { spawn "@noctalia@" "msg" "bar-toggle"; }
-  Mod+Backspace          hotkey-overlay-title="Dismiss Notification"              { spawn "@noctalia@" "msg" "notification-dismiss"; }
-  Mod+Slash              hotkey-overlay-title="Hotkey Cheat Sheet"                { show-hotkey-overlay; }
+  Mod+N                  hotkey-overlay-title="Control Center"                      { spawn "@noctalia@" "msg" "panel-toggle" "control-center"; }
+  Mod+Comma              hotkey-overlay-title="Noctalia Settings"                   { spawn "@noctalia@" "msg" "settings-toggle"; }
+  Mod+Escape             hotkey-overlay-title="Lock Screen"                         { spawn "@noctalia@" "msg" "session" "lock"; }
+  Mod+B                  hotkey-overlay-title="Toggle Bar"                          { spawn "@noctalia@" "msg" "bar-toggle"; }
+  Mod+Backspace          hotkey-overlay-title="Dismiss Notification"                { spawn "@noctalia@" "msg" "notification-clear-active"; }
+  Mod+Slash              hotkey-overlay-title="Hotkey Cheat Sheet"                  { show-hotkey-overlay; }
 
-  Mod+H                  hotkey-overlay-title="Focus Column Left"                 { focus-column-left; }
-  Mod+L                  hotkey-overlay-title="Focus Column Right"                { focus-column-right; }
-  Mod+J                  hotkey-overlay-title="Focus Workspace Down"              { focus-workspace-down; }
-  Mod+K                  hotkey-overlay-title="Focus Workspace Up"                { focus-workspace-up; }
+  Mod+H                  hotkey-overlay-title="Focus Column Left"                   { focus-column-left; }
+  Mod+L                  hotkey-overlay-title="Focus Column Right"                  { focus-column-right; }
+  Mod+J                  hotkey-overlay-title="Focus Workspace Down"                { focus-workspace-down; }
+  Mod+K                  hotkey-overlay-title="Focus Workspace Up"                  { focus-workspace-up; }
 
-  Mod+Shift+H            hotkey-overlay-title="Move Column Left"                  { move-column-left; }
-  Mod+Shift+L            hotkey-overlay-title="Move Column Right"                 { move-column-right; }
-  Mod+Shift+J            hotkey-overlay-title="Move Column to WS Down"            { move-column-to-workspace-down; }
-  Mod+Shift+K            hotkey-overlay-title="Move Column to WS Up"              { move-column-to-workspace-up; }
+  Mod+Shift+H            hotkey-overlay-title="Move Column Left"                    { move-column-left; }
+  Mod+Shift+L            hotkey-overlay-title="Move Column Right"                   { move-column-right; }
+  Mod+Shift+J            hotkey-overlay-title="Move Column to WS Down"              { move-column-to-workspace-down; }
+  Mod+Shift+K            hotkey-overlay-title="Move Column to WS Up"                { move-column-to-workspace-up; }
 
   Mod+Left               { focus-column-left; }
   Mod+Right              { focus-column-right; }
@@ -163,13 +163,13 @@ binds {
   Mod+Shift+9            { move-column-to-workspace "w9"; }
   Mod+Shift+0            { move-column-to-workspace "w0"; }
 
-  Mod+Minus              hotkey-overlay-title="Column Width -5%"                  { set-column-width "-5%"; }
-  Mod+Equal              hotkey-overlay-title="Column Width +5%"                  { set-column-width "+5%"; }
-  Mod+Shift+Minus        hotkey-overlay-title="Window Height -5%"                 { set-window-height "-5%"; }
-  Mod+Shift+Equal        hotkey-overlay-title="Window Height +5%"                 { set-window-height "+5%"; }
+  Mod+Minus              hotkey-overlay-title="Column Width -5%"                    { set-column-width "-5%"; }
+  Mod+Equal              hotkey-overlay-title="Column Width +5%"                    { set-column-width "+5%"; }
+  Mod+Shift+Minus        hotkey-overlay-title="Window Height -5%"                   { set-window-height "-5%"; }
+  Mod+Shift+Equal        hotkey-overlay-title="Window Height +5%"                   { set-window-height "+5%"; }
 
-  Mod+Shift+S            hotkey-overlay-title="Area Screenshot"                   { spawn "@screenshotArea@"; }
-  Print                  hotkey-overlay-title="Fullscreen Screenshot"             { spawn "@screenshotFull@"; }
+  Mod+Shift+S            hotkey-overlay-title="Area Screenshot"                     { spawn "@screenshotArea@"; }
+  Print                  hotkey-overlay-title="Fullscreen Screenshot"               { spawn "@screenshotFull@"; }
 
   XF86MonBrightnessUp    { spawn "@brightnessUp@"; }
   XF86MonBrightnessDown  { spawn "@brightnessDown@"; }
@@ -181,5 +181,5 @@ binds {
   XF86AudioNext          { spawn "@playerctl@" "next"; }
   XF86AudioPrev          { spawn "@playerctl@" "previous"; }
 
-  Mod+Ctrl+Escape        hotkey-overlay-title="Turn Off Monitors"                 { power-off-monitors; }
+  Mod+Ctrl+Escape        hotkey-overlay-title="Turn Off Monitors"                   { power-off-monitors; }
 }

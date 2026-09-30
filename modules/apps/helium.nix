@@ -1,58 +1,39 @@
-{ self, inputs, ... }:
+{ config, pkgs, inputs, ... }:
 let
-  nixosModule = { pkgs, ... }: {
-    environment.systemPackages = [
-      self.packages.${pkgs.stdenv.hostPlatform.system}.helium
-    ];
-
-    environment.etc."chromium/policies/managed/helium-policies.json".text = builtins.toJSON {
-      RestoreOnStartup = 1;
-      ExtensionManifestV2Availability = 2;
-      ExtensionInstallForcelist = [
-        "hfjbmagddngcpeloejdejnfgbamkjaeg;https://clients2.google.com/service/update2/crx"
-        "cjpalhdlnbpafiamejdnhcphjbkeiagm;https://clients2.google.com/service/update2/crx"
-      ];
-    };
+  system = pkgs.stdenv.hostPlatform.system;
+  rawHelium = inputs.helium.packages.${system}.default;
+  schemaDir = "${pkgs.gsettings-desktop-schemas}/share/gsettings-schemas/${pkgs.gsettings-desktop-schemas.name}/glib-2.0/schemas:${pkgs.gtk3}/share/gsettings-schemas/${pkgs.gtk3.name}/glib-2.0/schemas";
+  wrappedHelium = pkgs.symlinkJoin {
+    name = "helium";
+    paths = [ rawHelium ];
+    nativeBuildInputs = [ pkgs.makeWrapper ];
+    postBuild = ''
+      wrapProgram $out/bin/helium \
+        --set XCURSOR_THEME "Bibata-Modern-Classic" \
+        --set XCURSOR_SIZE "16" \
+        --prefix GSETTINGS_SCHEMA_DIR : "${schemaDir}" \
+        --prefix XDG_DATA_DIRS : "${pkgs.gsettings-desktop-schemas}/share:${pkgs.gtk3}/share:${pkgs.adwaita-icon-theme}/share:/run/current-system/sw/share" \
+        --set-default XDG_CURRENT_DESKTOP "GNOME" \
+        --add-flags "--ozone-platform=wayland" \
+        --add-flags "--enable-features=VaapiVideoDecodeLinuxGL,VaapiVideoEncoder,CanvasOopRasterization" \
+        --add-flags "--enable-gpu-rasterization" \
+        --add-flags "--enable-zero-copy" \
+        --add-flags "--gtk-version=3" \
+        --add-flags "--restore-last-session" \
+        --add-flags "--password-store=basic" \
+        --add-flags "--disable-features=LockProfileCookieDatabase"
+    '';
   };
 in
 {
-  flake.nixosModules.helium = nixosModule;
+  environment.systemPackages = [ wrappedHelium ];
 
-  perSystem = { self', pkgs, ... }:
-    let
-      rawHelium = inputs.helium.packages.${pkgs.stdenv.hostPlatform.system}.default;
-      schemaDir = "${pkgs.gsettings-desktop-schemas}/share/gsettings-schemas/${pkgs.gsettings-desktop-schemas.name}/glib-2.0/schemas:${pkgs.gtk3}/share/gsettings-schemas/${pkgs.gtk3.name}/glib-2.0/schemas";
-      fixedCursor = self'.packages.bibata-cursors-fixed;
-      wrappedHelium = pkgs.symlinkJoin {
-        name = "helium";
-        paths = [ rawHelium ];
-        nativeBuildInputs = [ pkgs.makeWrapper ];
-        postBuild = ''
-          wrapProgram $out/bin/helium \
-            --set XCURSOR_THEME "Bibata-Modern-Classic" \
-            --set XCURSOR_SIZE "16" \
-            --prefix XCURSOR_PATH : "${fixedCursor}/share/icons:/run/current-system/sw/share/icons" \
-            --prefix GSETTINGS_SCHEMA_DIR : "${schemaDir}" \
-            --prefix XDG_DATA_DIRS : "${pkgs.gsettings-desktop-schemas}/share:${pkgs.gtk3}/share:${pkgs.adwaita-icon-theme}/share:${fixedCursor}/share:/run/current-system/sw/share" \
-            --set-default XDG_CURRENT_DESKTOP "GNOME" \
-            --add-flags "--ozone-platform=wayland" \
-            --add-flags "--enable-features=VaapiVideoDecodeLinuxGL,VaapiVideoEncoder,CanvasOopRasterization" \
-            --add-flags "--enable-gpu-rasterization" \
-            --add-flags "--enable-zero-copy" \
-            --add-flags "--gtk-version=3" \
-            --add-flags "--restore-last-session" \
-            --add-flags "--password-store=basic" \
-            --add-flags "--disable-features=LockProfileCookieDatabase"
-        '';
-      };
-    in
-    {
-      packages.helium = wrappedHelium;
-
-      apps.helium = {
-        type = "app";
-        program = "${wrappedHelium}/bin/helium";
-        meta.description = "Helium Wayland browser with VAAPI and Iris Xe GPU acceleration";
-      };
-    };
+  environment.etc."chromium/policies/managed/helium-policies.json".text = builtins.toJSON {
+    RestoreOnStartup = 1;
+    ExtensionManifestV2Availability = 2;
+    ExtensionInstallForcelist = [
+      "hfjbmagddngcpeloejdejnfgbamkjaeg;https://clients2.google.com/service/update2/crx"
+      "cjpalhdlnbpafiamejdnhcphjbkeiagm;https://clients2.google.com/service/update2/crx"
+    ];
+  };
 }

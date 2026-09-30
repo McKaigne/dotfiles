@@ -1,0 +1,47 @@
+theme = "noctalia-clean"
+
+[editor]
+line-number = "relative"
+mouse = false
+cursorline = true
+color-modes = true
+bufferline = "always"
+auto-save = true
+idle-timeout = 50
+completion-trigger-len = 1
+gutters = ["diff", "diagnostics", "line-numbers", "spacer"]
+
+[editor.cursor-shape]
+normal = "block"
+insert = "bar"
+select = "block"
+
+[editor.indent-guides]
+render = true
+character = "│"
+skip-levels = 0
+
+[editor.soft-wrap]
+enable = true
+wrap-indicator = "↳ "
+
+[editor.lsp]
+display-inlay-hints = true
+display-messages = true
+
+[editor.whitespace.render]
+tab = "all"
+
+[editor.whitespace.characters]
+tab = "→"
+
+[editor.statusline]
+separator = "│"
+left = ["mode", "spinner", "file-name", "file-modification-indicator"]
+right = ["diagnostics", "selections", "position", "file-encoding", "file-type"]
+
+[keys.normal]
+"C-s" = ":w"
+"C-q" = ":q"
+space.w = ":w"
+space.q = ":q"
