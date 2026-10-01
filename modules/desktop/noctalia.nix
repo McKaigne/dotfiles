@@ -9,6 +9,7 @@ let
     fi
     pkill -USR2 cava 2>/dev/null || true
     pkill -HUP -x qutebrowser 2>/dev/null || true
+    pkill -USR1 -x ytm 2>/dev/null || true
   '';
 in
 {
@@ -113,12 +114,49 @@ in
       force = true;
     };
 
+    xdg.configFile."noctalia/templates/ytm-player.toml" = {
+      text = ''
+        [theme]
+        primary = "{{ colors.primary.default.hex }}"
+        secondary = "{{ colors.secondary.default.hex }}"
+        accent = "{{ colors.primary.default.hex }}"
+        background = "{{ colors.surface.default.hex }}"
+        surface = "{{ colors.surface_container.default.hex }}"
+        panel = "{{ colors.surface_container_high.default.hex }}"
+        error = "{{ colors.error.default.hex }}"
+        success = "{{ colors.tertiary.default.hex }}"
+        warning = "{{ colors.secondary.default.hex }}"
+        text = "{{ colors.on_surface.default.hex }}"
+        text_muted = "{{ colors.on_surface_variant.default.hex }}"
+        border = "{{ colors.outline.default.hex }}"
+      '';
+      force = true;
+    };
+
     home.activation.seedNoctalia = lib.hm.dag.entryAfter ["writeBoundary"] ''
-      mkdir -p $HOME/.config/helix/themes $HOME/.config/ghostty/themes $HOME/.config/niri $HOME/.config/fuzzel/themes $HOME/.config/gtk-3.0 $HOME/.config/gtk-4.0 $HOME/.config/noctalia/hooks $HOME/.config/zellij/themes $HOME/Pictures/Wallpapers
+      mkdir -p $HOME/.config/helix/themes $HOME/.config/ghostty/themes $HOME/.config/niri $HOME/.config/fuzzel/themes $HOME/.config/gtk-3.0 $HOME/.config/gtk-4.0 $HOME/.config/noctalia/hooks $HOME/.config/zellij/themes $HOME/.config/ytm-player $HOME/Pictures/Wallpapers
       ln -sf ${noctaliaThemeSync}/bin/noctalia-theme-sync $HOME/.config/noctalia/hooks/theme-sync.sh
 
       # Guard against cached templates calling raw 'qutebrowser :config-source'
       find $HOME/.local/share/noctalia $HOME/.cache/noctalia $HOME/.config/noctalia -type f -name "apply.sh" -exec sed -i 's/qutebrowser :config-source/pkill -HUP -x qutebrowser 2>\/dev\/null || true/g' {} + 2>/dev/null || true
+
+      if [ ! -f $HOME/.config/ytm-player/theme.toml ]; then
+        cat << 'EOF' > $HOME/.config/ytm-player/theme.toml
+[theme]
+primary = "#b58900"
+secondary = "#d33682"
+accent = "#b58900"
+background = "#002b36"
+surface = "#06313c"
+panel = "#08404f"
+error = "#dc322f"
+success = "#cb4b16"
+warning = "#d33682"
+text = "#839496"
+text_muted = "#657b83"
+border = "#31788d"
+EOF
+      fi
 
       if [ ! -f $HOME/.config/niri/noctalia.kdl ]; then
         cat << 'EOF' > $HOME/.config/niri/noctalia.kdl

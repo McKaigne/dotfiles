@@ -16,6 +16,7 @@
     ../../modules/apps/fuzzel
     ../../modules/apps/helium.nix
     ../../modules/apps/viewers.nix
+    ../../modules/apps/ytm-player.nix
   ];
 
   networking.hostName = "castor";

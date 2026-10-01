@@ -64,6 +64,22 @@ let
     fi
   '';
 
+  ytmFocus = pkgs.writeShellScriptBin "ytm-focus" ''
+    set -euo pipefail
+    if [ ! -f "$HOME/.config/ytm-player/auth.json" ] && command -v ytm &>/dev/null; then
+      ytm setup --browser helium 2>/dev/null || true
+    fi
+    WINDOW_ID=$(${pkgs.niri}/bin/niri msg -j windows 2>/dev/null | \
+      ${pkgs.jq}/bin/jq -r '.[] | select((.app_id == "ghostty.ytm") or (.title | test("ytm-music"; "i"))) | .id' | head -n1 || true)
+    if [ -n "$WINDOW_ID" ] && [ "$WINDOW_ID" != "null" ]; then
+      ${pkgs.niri}/bin/niri msg action focus-window --id "$WINDOW_ID"
+    else
+      exec ${pkgs.ghostty}/bin/ghostty \
+        --class="ghostty.ytm" --title="ytm-music" \
+        -e ytm
+    fi
+  '';
+
   noctaliaPkg = inputs.noctalia.packages.${system}.default;
   heliumPkg = inputs.helium.packages.${system}.default;
 
@@ -77,7 +93,7 @@ let
       "@qutebrowser@"
       "@helium@"
       "@nautilus@"
-      "@pearDesktop@"
+      "@ytmFocus@"
       "@fuzzel@"
       "@wpctl@"
       "@playerctl@"
@@ -101,7 +117,7 @@ let
       "${pkgs.qutebrowser}/bin/qutebrowser"
       "${heliumPkg}/bin/helium"
       "${pkgs.nautilus}/bin/nautilus"
-      "${pkgs.pear-desktop}/bin/pear-desktop"
+      "${ytmFocus}/bin/ytm-focus"
       "${pkgs.fuzzel}/bin/fuzzel"
       "${pkgs.wireplumber}/bin/wpctl"
       "${pkgs.playerctl}/bin/playerctl"

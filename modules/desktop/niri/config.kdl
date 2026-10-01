@@ -92,7 +92,7 @@ spawn-at-startup "@systemctl@" "--user" "start" "graphical-session.target"
 
 binds {
   Mod+A                  hotkey-overlay-title="Zellij Session Picker"               { spawn "@zellijAttach@"; }
-  Mod+S                  hotkey-overlay-title="Music: Pear Desktop"                 { spawn "@pearDesktop@"; }
+  Mod+S                  hotkey-overlay-title="Music: ytm-player (TUI)"            { spawn "@ytmFocus@"; }
   Mod+D                  hotkey-overlay-title="Primary Editor: Helix"               { spawn "@helixFocus@"; }
   Mod+F                  hotkey-overlay-title="Maximize Column"                     { maximize-column; }
   Mod+G                  hotkey-overlay-title="Git Client: Lazygit"                 { spawn "@ghostty@" "-e" "@lazygit@"; }
