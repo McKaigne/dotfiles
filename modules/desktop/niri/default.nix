@@ -66,9 +66,6 @@ let
 
   ytmFocus = pkgs.writeShellScriptBin "ytm-focus" ''
     set -euo pipefail
-    if [ ! -f "$HOME/.config/ytm-player/auth.json" ] && command -v ytm &>/dev/null; then
-      ytm setup --browser helium 2>/dev/null || true
-    fi
     WINDOW_ID=$(${pkgs.niri}/bin/niri msg -j windows 2>/dev/null | \
       ${pkgs.jq}/bin/jq -r '.[] | select((.app_id == "ghostty.ytm") or (.title | test("ytm-music"; "i"))) | .id' | head -n1 || true)
     if [ -n "$WINDOW_ID" ] && [ "$WINDOW_ID" != "null" ]; then
