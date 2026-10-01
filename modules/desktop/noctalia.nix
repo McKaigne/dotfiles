@@ -8,6 +8,7 @@ let
       niri msg action load-config-file 2>/dev/null || true
     fi
     pkill -USR2 cava 2>/dev/null || true
+    pkill -HUP -x qutebrowser 2>/dev/null || true
   '';
 in
 {
@@ -115,6 +116,9 @@ in
     home.activation.seedNoctalia = lib.hm.dag.entryAfter ["writeBoundary"] ''
       mkdir -p $HOME/.config/helix/themes $HOME/.config/ghostty/themes $HOME/.config/niri $HOME/.config/fuzzel/themes $HOME/.config/gtk-3.0 $HOME/.config/gtk-4.0 $HOME/.config/noctalia/hooks $HOME/.config/zellij/themes $HOME/Pictures/Wallpapers
       ln -sf ${noctaliaThemeSync}/bin/noctalia-theme-sync $HOME/.config/noctalia/hooks/theme-sync.sh
+
+      # Guard against cached templates calling raw 'qutebrowser :config-source'
+      find $HOME/.local/share/noctalia $HOME/.cache/noctalia $HOME/.config/noctalia -type f -name "apply.sh" -exec sed -i 's/qutebrowser :config-source/pkill -HUP -x qutebrowser 2>\/dev\/null || true/g' {} + 2>/dev/null || true
 
       if [ ! -f $HOME/.config/niri/noctalia.kdl ]; then
         cat << 'EOF' > $HOME/.config/niri/noctalia.kdl
