@@ -1,20 +1,22 @@
 {
   "nodes": {
-    "flake-utils": {
+    "cliamp": {
       "inputs": {
-        "systems": "systems"
+        "nixpkgs": [
+          "nixpkgs"
+        ]
       },
       "locked": {
-        "lastModified": 1731533236,
-        "narHash": "sha256-l0KFg5HjrsfsO/JpG+r7fRrqm12kzFHyUHqHCVpMMbI=",
-        "owner": "numtide",
-        "repo": "flake-utils",
-        "rev": "11707dc2f618dd54ca8739b309ec4fc024de578b",
+        "lastModified": 1790963891,
+        "narHash": "sha256-Sf9QIPNgpHnNSKNC2MeJmaPrztp3s653UGQyZmvz3Zc=",
+        "owner": "bjarneo",
+        "repo": "cliamp",
+        "rev": "9d9e55abd5ba87e1c8de4f9bd3ecc911d0f35b16",
         "type": "github"
       },
       "original": {
-        "owner": "numtide",
-        "repo": "flake-utils",
+        "owner": "bjarneo",
+        "repo": "cliamp",
         "type": "github"
       }
     },
@@ -96,47 +98,11 @@
     },
     "root": {
       "inputs": {
+        "cliamp": "cliamp",
         "helium": "helium",
         "home-manager": "home-manager",
         "nixpkgs": "nixpkgs",
-        "noctalia": "noctalia",
-        "ytm-player": "ytm-player"
-      }
-    },
-    "systems": {
-      "locked": {
-        "lastModified": 1681028828,
-        "narHash": "sha256-Vy1rq5AaRuLzOxct8nz4T6wlgyUR7zLU309k9mBC768=",
-        "owner": "nix-systems",
-        "repo": "default",
-        "rev": "da67096a3b9bf56a91d16901293e51ba5b49a27e",
-        "type": "github"
-      },
-      "original": {
-        "owner": "nix-systems",
-        "repo": "default",
-        "type": "github"
-      }
-    },
-    "ytm-player": {
-      "inputs": {
-        "flake-utils": "flake-utils",
-        "nixpkgs": [
-          "nixpkgs"
-        ]
-      },
-      "locked": {
-        "lastModified": 1788849233,
-        "narHash": "sha256-/oP9JFQkbDtRJ+1GIoYQgcrMO07wokBOYaf9HKqVs5c=",
-        "owner": "peternaame-boop",
-        "repo": "ytm-player",
-        "rev": "45af0220d4b1d2752568f2636191320cd9ea1ed7",
-        "type": "github"
-      },
-      "original": {
-        "owner": "peternaame-boop",
-        "repo": "ytm-player",
-        "type": "github"
+        "noctalia": "noctalia"
       }
     }
   },

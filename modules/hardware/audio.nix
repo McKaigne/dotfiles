@@ -1,4 +1,8 @@
-{ pkgs, ... }: {
+{ config, pkgs, ... }:
+let
+  user = config.mainUser;
+in
+{
   security.rtkit.enable = true;
   services.pipewire = {
     enable = true;
@@ -12,6 +16,12 @@
     sof-firmware
     alsa-firmware
   ];
+
+  home-manager.users.${user} = {
+    services.easyeffects = {
+      enable = true;
+    };
+  };
 
   environment.systemPackages = with pkgs; [
     easyeffects

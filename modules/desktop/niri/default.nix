@@ -1,4 +1,4 @@
-{ config, pkgs, inputs, ... }:
+{ config, pkgs, lib, inputs, ... }:
 let
   system = pkgs.stdenv.hostPlatform.system;
   user = config.mainUser;
@@ -44,39 +44,6 @@ let
     fi
   '';
 
-  zellijAttach = pkgs.writeShellScriptBin "zellij-attach" ''
-    set -euo pipefail
-    exec ${pkgs.ghostty}/bin/ghostty \
-      --class="ghostty.zellij-picker" --title="zellij-session-picker" \
-      -e ${pkgs.zellij}/bin/zellij attach --create
-  '';
-
-  helixFocus = pkgs.writeShellScriptBin "helix-focus" ''
-    set -euo pipefail
-    WINDOW_ID=$(${pkgs.niri}/bin/niri msg -j windows 2>/dev/null | \
-      ${pkgs.jq}/bin/jq -r '.[] | select((.app_id == "ghostty.helix") or (.title | test("helix-editor"; "i"))) | .id' | head -n1 || true)
-    if [ -n "$WINDOW_ID" ] && [ "$WINDOW_ID" != "null" ]; then
-      ${pkgs.niri}/bin/niri msg action focus-window --id "$WINDOW_ID"
-    else
-      exec ${pkgs.ghostty}/bin/ghostty \
-        --class="ghostty.helix" --title="helix-editor" \
-        -e ${pkgs.helix}/bin/hx
-    fi
-  '';
-
-  ytmFocus = pkgs.writeShellScriptBin "ytm-focus" ''
-    set -euo pipefail
-    WINDOW_ID=$(${pkgs.niri}/bin/niri msg -j windows 2>/dev/null | \
-      ${pkgs.jq}/bin/jq -r '.[] | select((.app_id == "ghostty.ytm") or (.title | test("ytm-music"; "i"))) | .id' | head -n1 || true)
-    if [ -n "$WINDOW_ID" ] && [ "$WINDOW_ID" != "null" ]; then
-      ${pkgs.niri}/bin/niri msg action focus-window --id "$WINDOW_ID"
-    else
-      exec ${pkgs.ghostty}/bin/ghostty \
-        --class="ghostty.ytm" --title="ytm-music" \
-        -e ytm
-    fi
-  '';
-
   noctaliaPkg = inputs.noctalia.packages.${system}.default;
   heliumPkg = inputs.helium.packages.${system}.default;
 
@@ -90,14 +57,9 @@ let
       "@qutebrowser@"
       "@helium@"
       "@nautilus@"
-      "@ytmFocus@"
-      "@fuzzel@"
       "@wpctl@"
       "@playerctl@"
       "@zellijFocus@"
-      "@zellijAttach@"
-      "@helixFocus@"
-      "@lazygit@"
       "@easyeffects@"
       "@pavucontrol@"
       "@screenshotArea@"
@@ -114,14 +76,9 @@ let
       "${pkgs.qutebrowser}/bin/qutebrowser"
       "${heliumPkg}/bin/helium"
       "${pkgs.nautilus}/bin/nautilus"
-      "${ytmFocus}/bin/ytm-focus"
-      "${pkgs.fuzzel}/bin/fuzzel"
       "${pkgs.wireplumber}/bin/wpctl"
       "${pkgs.playerctl}/bin/playerctl"
       "${zellijFocus}/bin/zellij-focus"
-      "${zellijAttach}/bin/zellij-attach"
-      "${helixFocus}/bin/helix-focus"
-      "${pkgs.lazygit}/bin/lazygit"
       "${pkgs.easyeffects}/bin/easyeffects"
       "${pkgs.pavucontrol}/bin/pavucontrol"
       "${screenshotArea}/bin/screenshot-area"
@@ -135,7 +92,10 @@ in
   programs.niri.enable = true;
 
   home-manager.users.${user} = {
-    xdg.configFile."niri/config.kdl".text = niriConfigRaw;
+    xdg.configFile."niri/config.kdl" = {
+      text = niriConfigRaw;
+      force = true;
+    };
   };
 
   environment.systemPackages = [
@@ -145,11 +105,11 @@ in
   xdg.portal = {
     enable = true;
     extraPortals = [
-      pkgs.xdg-desktop-portal-gnome
       pkgs.xdg-desktop-portal-gtk
+      pkgs.xdg-desktop-portal-gnome
     ];
     config.niri = {
-      default = [ "gnome" "gtk" ];
+      default = lib.mkForce [ "gtk" ];
     };
   };
 }

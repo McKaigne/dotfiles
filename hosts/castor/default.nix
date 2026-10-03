@@ -1,22 +1,26 @@
 { config, pkgs, lib, inputs, ... }: {
   imports = [
     ./hardware.nix
-    ../../modules/core.nix
+    ../../modules/core
     ../../modules/hardware/audio.nix
     ../../modules/hardware/bluetooth.nix
     ../../modules/hardware/graphics.nix
     ../../modules/hardware/kanata.nix
     ../../modules/desktop/niri
     ../../modules/desktop/noctalia.nix
+    ../../modules/desktop/fuzzel
+    ../../modules/desktop/theme.nix
+    ../../modules/desktop/fonts.nix
+    ../../modules/desktop/xdg.nix
+    ../../modules/dev
     ../../modules/terminal/ghostty.nix
     ../../modules/terminal/zellij.nix
     ../../modules/terminal/shell
     ../../modules/editor/helix
-    ../../modules/apps/qutebrowser
-    ../../modules/apps/fuzzel
-    ../../modules/apps/helium.nix
-    ../../modules/apps/viewers.nix
-    ../../modules/apps/ytm-player.nix
+    ../../modules/browser/helium.nix
+    ../../modules/browser/qutebrowser
+    ../../modules/media/cliamp.nix
+    ../../modules/media/viewers.nix
   ];
 
   networking.hostName = "castor";
@@ -70,7 +74,7 @@
     enable = true;
     settings = {
       default_session = {
-        command = "${pkgs.niri}/bin/niri --session";
+        command = "${pkgs.niri}/bin/niri-session";
         user = config.mainUser;
       };
     };

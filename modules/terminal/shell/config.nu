@@ -169,8 +169,8 @@ alias f = ^fetch
 alias fetch = ^fetch
 alias g = git
 alias lg = lazygit
-alias music = ytm
-alias ytm = ytm
+alias music = cliamp
+alias amp = cliamp
 
 source "@starshipInit@"
 source "@zoxideInit@"

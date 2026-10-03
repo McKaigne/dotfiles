@@ -15,8 +15,8 @@
       url = "github:oxcl/nix-flake-helium-browser";
       inputs.nixpkgs.follows = "nixpkgs";
     };
-    ytm-player = {
-      url = "github:peternaame-boop/ytm-player";
+    cliamp = {
+      url = "github:bjarneo/cliamp";
       inputs.nixpkgs.follows = "nixpkgs";
     };
   };

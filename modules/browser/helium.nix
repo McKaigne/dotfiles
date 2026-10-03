@@ -20,7 +20,6 @@ let
         --add-flags "--enable-zero-copy" \
         --add-flags "--gtk-version=3" \
         --add-flags "--restore-last-session" \
-        --add-flags "--password-store=basic" \
         --add-flags "--disable-features=LockProfileCookieDatabase"
     '';
   };
