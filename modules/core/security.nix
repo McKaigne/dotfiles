@@ -6,7 +6,7 @@
   systemd.user.services.polkit-gnome-authentication-agent-1 = {
     description = "polkit-gnome-authentication-agent-1";
     wantedBy = [ "graphical-session.target" ];
-    wants = [ "graphical-session.target" ];
+    partOf = [ "graphical-session.target" ];
     after = [ "graphical-session.target" ];
     serviceConfig = {
       Type = "simple";
@@ -21,9 +21,6 @@
     polkit_gnome
     gnome-keyring
     libsecret
-    (pkgs.secretspec or (pkgs.writeShellScriptBin "secretspec" ''
-      exec nix run "github:cachix/secretspec" -- "$@"
-    ''))
     sops
     age
     ssh-to-age

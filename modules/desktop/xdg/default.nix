@@ -14,13 +14,20 @@ in
     ]
   '';
 
-  xdg.mime = {
-    enable = true;
-    defaultApplications = {
-      "inode/directory" = "org.gnome.Nautilus.desktop";
-      "application/x-directory" = "org.gnome.Nautilus.desktop";
-      "inode/mount-point" = "org.gnome.Nautilus.desktop";
-      "x-scheme-handler/file" = "org.gnome.Nautilus.desktop";
+  home-manager.users.${user} = {
+    xdg.mimeApps = {
+      enable = true;
+      defaultApplications = {
+        "inode/directory" = "org.gnome.Nautilus.desktop";
+        "application/x-directory" = "org.gnome.Nautilus.desktop";
+        "inode/mount-point" = "org.gnome.Nautilus.desktop";
+        "x-scheme-handler/file" = "org.gnome.Nautilus.desktop";
+        "text/html" = "brave-browser.desktop";
+        "x-scheme-handler/http" = "brave-browser.desktop";
+        "x-scheme-handler/https" = "brave-browser.desktop";
+        "x-scheme-handler/about" = "brave-browser.desktop";
+        "x-scheme-handler/unknown" = "brave-browser.desktop";
+      };
     };
   };
 

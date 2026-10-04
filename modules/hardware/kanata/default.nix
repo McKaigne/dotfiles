@@ -109,23 +109,26 @@ in
 
   services.kanata = {
     enable = true;
-    keyboards.internal = {
-      devices = [ "/dev/input/by-path/platform-i8042-serio-0-event-kbd" ];
-      extraDefCfg = extraDef;
-      config = kanataConfig;
-    };
-    keyboards.bluetooth = {
-      devices = [ "/dev/input/by-id/lofree-flow84" ];
-      extraDefCfg = extraDef;
-      config = kanataConfig;
-    };
-    keyboards.alice = {
-      devices = [
-        "/dev/input/by-id/weikav-record-alice"
-        "/dev/input/by-id/usb-ITON_Spring_DEMO-event-kbd"
-      ];
-      extraDefCfg = extraDef;
-      config = kanataConfig;
+    keyboards = {
+      bluetooth = {
+        devices = [ "/dev/input/by-id/lofree-flow84" ];
+        extraDefCfg = extraDef;
+        config = kanataConfig;
+      };
+      alice = {
+        devices = [
+          "/dev/input/by-id/weikav-record-alice"
+          "/dev/input/by-id/usb-ITON_Spring_DEMO-event-kbd"
+        ];
+        extraDefCfg = extraDef;
+        config = kanataConfig;
+      };
+    } // lib.optionalAttrs (config.networking.hostName == "castor") {
+      internal = {
+        devices = [ "/dev/input/by-path/platform-i8042-serio-0-event-kbd" ];
+        extraDefCfg = extraDef;
+        config = kanataConfig;
+      };
     };
   };
 

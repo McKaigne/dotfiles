@@ -7,8 +7,6 @@
     auto-optimise-store = true;
     max-jobs = "auto";
     cores = 0;
-    keep-outputs = true;
-    keep-derivations = true;
     substituters = [
       "https://cache.nixos.org"
       "https://devenv.cachix.org"

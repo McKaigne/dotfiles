@@ -7,11 +7,11 @@ in
 
   # Declarative enterprise policies for Brave Origin
   environment.etc."brave/policies/managed/brave-policies.json".text = builtins.toJSON {
-    RestoreOnStartup = 1; # Continue where you left off
+    RestoreOnStartup = 1;
     BraveRewardsDisabled = true;
     BraveWalletDisabled = true;
     BraveVPNDisabled = true;
-    BraveAIChatEnabled = false; # Disable Leo AI
+    BraveAIChatEnabled = false;
     BraveNewsDisabled = true;
     BraveTalkDisabled = true;
     BraveP3AEnabled = false;
@@ -19,7 +19,7 @@ in
     BraveWebDiscoveryEnabled = false;
     TorDisabled = true;
     SyncDisabled = true;
-    PasswordManagerEnabled = false; # Rely on Bitwarden
+    PasswordManagerEnabled = false;
     MetricsReportingEnabled = false;
     DnsOverHttpsMode = "secure";
     DnsOverHttpsTemplates = "https://dns.quad9.net/dns-query";
@@ -50,18 +50,6 @@ in
     config.environment.etc."brave/policies/managed/brave-policies.json".source;
 
   home-manager.users.${user} = { lib, ... }: {
-    # Primary default browser associations
-    xdg.mimeApps = {
-      enable = true;
-      defaultApplications = {
-        "text/html" = "brave-browser.desktop";
-        "x-scheme-handler/http" = "brave-browser.desktop";
-        "x-scheme-handler/https" = "brave-browser.desktop";
-        "x-scheme-handler/about" = "brave-browser.desktop";
-        "x-scheme-handler/unknown" = "brave-browser.desktop";
-      };
-    };
-
     # Seed Vimium C keymappings (J/K tab cycle, d close tab)
     xdg.configFile."vimium-c/vimium_c.json".text = builtins.toJSON {
       keyMappings = [

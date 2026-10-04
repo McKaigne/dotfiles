@@ -293,8 +293,7 @@ in
                $HOME/.config/cliamp/themes \
                $HOME/.config/qt5ct/colors \
                $HOME/.config/qt6ct/colors \
-               $HOME/.local/share/color-schemes \
-               /etc/nixos/wallpapers
+               $HOME/.local/share/color-schemes
 
       if [ -f $HOME/.config/noctalia/settings.json ]; then
         sed -i 's/"enableUserTheming": false/"enableUserTheming": true/g' $HOME/.config/noctalia/settings.json || true

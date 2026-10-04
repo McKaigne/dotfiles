@@ -221,11 +221,8 @@ binds {
   Mod+Shift+Equal        { set-window-height "+5%"; }
   Mod+Backspace          { spawn "@noctalia@" "msg" "notification-clear-active"; }
 
-  // Screenshots
-  Mod+Shift+S            hotkey-overlay-title="Area Screenshot"                     { spawn "@screenshotArea@"; }
-  Print                  hotkey-overlay-title="Fullscreen Screenshot"               { spawn "@screenshotFull@"; }
-
   // Hardware Media Keys
+  Print                  hotkey-overlay-title="Fullscreen Screenshot"               { spawn "@screenshotFull@"; }
   XF86MonBrightnessUp    { spawn "@brightnessUp@"; }
   XF86MonBrightnessDown  { spawn "@brightnessDown@"; }
   XF86AudioRaiseVolume   { spawn "@wpctl@" "set-volume" "-l" "1.4" "@DEFAULT_AUDIO_SINK@" "5%+"; }
