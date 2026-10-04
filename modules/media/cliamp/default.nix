@@ -21,25 +21,25 @@ in
 
   home-manager.users.${user} = { lib, ... }: {
     home.activation.setupCliampConfig = lib.hm.dag.entryAfter ["writeBoundary"] ''
-      mkdir -p $HOME/.config/cliamp
+      mkdir -p $HOME/.config/cliamp/themes
       rm -f $HOME/.config/cliamp/config.toml
       cat <<'EOF' > $HOME/.config/cliamp/config.toml
 theme = "noctalia"
-visualizer = "Terrain"
+visualizer = "Retro"
 provider = "ytmusic"
 eq_preset = "Flat"
 eq = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
 volume = 80
+expanded = true
 hide_help_bar = true
 hide_settings_pane = true
 vis_volume_linked = false
-compact = false
 
 [ytmusic]
 enabled = true
 cookies_from = "chromium+gnomekeyring:/home/${user}/.config/net.imput.helium"
 EOF
-      chmod 600 $HOME/.config/cliamp/config.toml
+      chmod 644 $HOME/.config/cliamp/config.toml
     '';
   };
 }

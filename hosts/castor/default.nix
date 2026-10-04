@@ -1,26 +1,54 @@
 { config, pkgs, lib, inputs, ... }: {
   imports = [
+    # Hardware & Baseline
     ./hardware.nix
     ../../modules/core
-    ../../modules/hardware/audio.nix
-    ../../modules/hardware/bluetooth.nix
-    ../../modules/hardware/graphics.nix
-    ../../modules/hardware/kanata.nix
+    ../../modules/hardware/audio
+    ../../modules/hardware/bluetooth
+    ../../modules/hardware/graphics
+    ../../modules/hardware/kanata
+
+    # Desktop Shell & Compositor
     ../../modules/desktop/niri
-    ../../modules/desktop/noctalia.nix
+    ../../modules/desktop/noctalia
     ../../modules/desktop/fuzzel
-    ../../modules/desktop/theme.nix
-    ../../modules/desktop/fonts.nix
-    ../../modules/desktop/xdg.nix
-    ../../modules/dev
-    ../../modules/terminal/ghostty.nix
-    ../../modules/terminal/zellij.nix
+    ../../modules/desktop/theme
+    ../../modules/desktop/fonts
+    ../../modules/desktop/xdg
+
+    # Terminal & Editor
+    ../../modules/terminal/ghostty
+    ../../modules/terminal/zellij
     ../../modules/terminal/shell
     ../../modules/editor/helix
-    ../../modules/browser/helium.nix
+
+    # Web Browsing
+    ../../modules/browser/helium
     ../../modules/browser/qutebrowser
-    ../../modules/media/cliamp.nix
-    ../../modules/media/viewers.nix
+
+    # Media Suite
+    ../../modules/media/cliamp
+    ../../modules/media/parabolic
+    ../../modules/media/mpv
+    ../../modules/media/imv
+
+    # Document Suite
+    ../../modules/documents/zathura
+    ../../modules/documents/libreoffice
+
+    # Creative Production Suite
+    ../../modules/creative/blender
+    ../../modules/creative/kdenlive
+    ../../modules/creative/krita
+    ../../modules/creative/obs
+
+    # Development & Engines
+    ../../modules/dev/toolchain
+    ../../modules/dev/godot
+
+    # Network & Security
+    ../../modules/network/localsend
+    ../../modules/security/bitwarden
   ];
 
   networking.hostName = "castor";

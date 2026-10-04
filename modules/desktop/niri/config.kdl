@@ -56,6 +56,13 @@ layout {
   }
 }
 
+blur {
+  passes 3
+  offset 3.0
+  noise 0.02
+  saturation 1.2
+}
+
 include optional=true "@userHome@/.config/niri/noctalia.kdl"
 include optional=true "@userHome@/.config/niri/custom.kdl"
 
@@ -65,9 +72,49 @@ window-rule {
   draw-border-with-background false
 }
 
+window-rule {
+  match app-id="^com.mitchellh.ghostty$"
+  background-effect {
+    blur true
+    xray false
+  }
+}
+
+window-rule {
+  match app-id="^ghostty$"
+  background-effect {
+    blur true
+    xray false
+  }
+}
+
+window-rule {
+  match app-id=r#"^dev\.noctalia\.Noctalia.*$"#
+  open-floating true
+  background-effect {
+    blur true
+    xray false
+  }
+}
+
 layer-rule {
   match namespace="^wallpaper$"
   place-within-backdrop true
+}
+
+layer-rule {
+  match namespace="^noctalia-(bar-[^\"]+|notification|dock|panel|attached-panel|osd)$"
+  background-effect {
+    xray false
+  }
+}
+
+layer-rule {
+  match namespace="^launcher$"
+  background-effect {
+    blur true
+    xray false
+  }
 }
 
 debug {
@@ -92,7 +139,7 @@ spawn-at-startup "@systemctl@" "--user" "start" "graphical-session.target"
 
 binds {
   // =========================================================================
-  // Primary Applications (Curated for Hotkey Overlay)
+  // Primary Applications
   // =========================================================================
   Mod+Return             hotkey-overlay-title="Terminal: Ghostty"                   { spawn "@ghostty@"; }
   Mod+A                  hotkey-overlay-title="Workspace Sessionizer: Zellij"       { spawn "@zellijFocus@"; }
@@ -130,7 +177,7 @@ binds {
   Mod+Shift+M            hotkey-overlay-title="Volume Mixer: Pavucontrol"           { spawn "@pavucontrol@"; }
 
   // =========================================================================
-  // Navigation & Workspaces (Suppressed from overlay to prevent vertical overflow)
+  // Navigation & Workspaces
   // =========================================================================
   Mod+H                  { focus-column-left; }
   Mod+L                  { focus-column-right; }

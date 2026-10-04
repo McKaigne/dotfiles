@@ -26,6 +26,7 @@ in
           palette = "catppuccin-mocha";
           templates = {
             enable_builtin_templates = true;
+            enable_user_templates = true;
             builtin_ids = [
               "btop"
               "cava"
@@ -37,6 +38,7 @@ in
               "niri"
               "qt"
               "starship"
+              "zathura"
             ];
             user = {
               cliamp = {
@@ -116,12 +118,11 @@ in
 
     xdg.configFile."noctalia/templates/cliamp.toml" = {
       text = ''
-        bg = "none"
         accent = "{{ colors.primary.default.hex }}"
-        bright_fg = "{{ colors.primary.default.hex }}"
-        fg = "{{ colors.secondary.default.hex }}"
-        green = "{{ colors.secondary.default.hex }}"
-        yellow = "{{ colors.primary.default.hex }}"
+        bright_fg = "{{ colors.on_surface.default.hex }}"
+        fg = "{{ colors.on_surface_variant.default.hex }}"
+        green = "{{ colors.primary.default.hex }}"
+        yellow = "{{ colors.secondary.default.hex }}"
         red = "{{ colors.tertiary.default.hex }}"
       '';
       force = true;
@@ -315,6 +316,10 @@ in
                $HOME/.config/qt6ct/colors \
                $HOME/.local/share/color-schemes \
                $HOME/Pictures/Wallpapers
+
+      if [ -f $HOME/.config/noctalia/settings.json ]; then
+        sed -i 's/"enableUserTheming": false/"enableUserTheming": true/g' $HOME/.config/noctalia/settings.json || true
+      fi
 
       ln -sf ${noctaliaThemeSync}/bin/noctalia-theme-sync $HOME/.config/noctalia/hooks/theme-sync.sh
     '';
