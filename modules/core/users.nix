@@ -12,7 +12,7 @@ in
   config = {
     users.users.${user} = {
       isNormalUser = true;
-      extraGroups = [ "wheel" "networkmanager" "video" "audio" "input" "uinput" ];
+      extraGroups = [ "wheel" "networkmanager" "video" "audio" "input" "uinput" "render" ];
     };
 
     home-manager = {

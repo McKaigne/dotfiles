@@ -1,19 +1,58 @@
 { config, pkgs, inputs, lib, ... }:
 let
+  system = pkgs.stdenv.hostPlatform.system;
   user = config.mainUser;
+  noctaliaPkg = inputs.noctalia.packages.${system}.default;
 
   noctaliaThemeSync = pkgs.writeShellScriptBin "noctalia-theme-sync" ''
     set -euo pipefail
+
+    MODE="prefer-dark"
+    GTK_THEME="adw-gtk3-dark"
+
+    SETTINGS="$HOME/.config/noctalia/settings.json"
+    if [ -f "$SETTINGS" ]; then
+      IS_DARK=$(${pkgs.jq}/bin/jq -r 'if .darkMode != null then .darkMode elif .theme.mode != null then (.theme.mode == "dark") else true end' "$SETTINGS" 2>/dev/null || echo "true")
+      if [ "$IS_DARK" = "false" ]; then
+        MODE="prefer-light"
+        GTK_THEME="adw-gtk3"
+      fi
+    fi
+
+    # Ensure GLib finds schemas for org.gnome.desktop.interface
+    export XDG_DATA_DIRS="${pkgs.gsettings-desktop-schemas}/share/gsettings-schemas/${pkgs.gsettings-desktop-schemas.name}''${XDG_DATA_DIRS:+:$XDG_DATA_DIRS}"
+
+    # Broadcast to GSettings and dconf so xdg-desktop-portal updates Chromium, Brave, and GTK apps live
+    ${pkgs.glib}/bin/gsettings set org.gnome.desktop.interface color-scheme "$MODE" 2>/dev/null || true
+    ${pkgs.glib}/bin/gsettings set org.gnome.desktop.interface gtk-theme "$GTK_THEME" 2>/dev/null || true
+    ${pkgs.dconf}/bin/dconf write /org/gnome/desktop/interface/color-scheme "'$MODE'" 2>/dev/null || true
+    ${pkgs.dconf}/bin/dconf write /org/gnome/desktop/interface/gtk-theme "'$GTK_THEME'" 2>/dev/null || true
+
+    # Synchronize Brave Origin Preferences live if the file exists
+    PREF_FILE="$HOME/.config/BraveSoftware/Brave-Origin/Default/Preferences"
+    if [ -f "$PREF_FILE" ]; then
+      ${pkgs.jq}/bin/jq '
+        .extensions = (.extensions // {}) |
+        .extensions.theme = (.extensions.theme // {}) |
+        .extensions.theme.use_system = true |
+        .extensions.theme.system_theme = 1
+      ' "$PREF_FILE" > "$PREF_FILE.tmp" && mv "$PREF_FILE.tmp" "$PREF_FILE" 2>/dev/null || true
+    fi
+
     if command -v niri &>/dev/null && [ -n "''${WAYLAND_DISPLAY:-}" ]; then
       niri msg action load-config-file 2>/dev/null || true
     fi
     pkill -USR2 cava 2>/dev/null || true
-    pkill -HUP -x qutebrowser 2>/dev/null || true
     systemctl --user restart easyeffects 2>/dev/null || true
   '';
 in
 {
-  environment.systemPackages = [ noctaliaThemeSync ];
+  environment.systemPackages = [
+    noctaliaThemeSync
+    pkgs.glib
+    pkgs.dconf
+    pkgs.gsettings-desktop-schemas
+  ];
 
   home-manager.users.${user} = { lib, ... }: {
     imports = [ inputs.noctalia.homeModules.default ];
@@ -49,11 +88,6 @@ in
                 input_path = "/home/${user}/.config/noctalia/templates/zellij.kdl";
                 output_path = "/home/${user}/.config/zellij/themes/noctalia.kdl";
               };
-              qutebrowser = {
-                input_path = "/home/${user}/.config/noctalia/templates/qutebrowser-colors.py";
-                output_path = "/home/${user}/.config/qutebrowser/noctalia/colors.py";
-                post_hook = "pkill -HUP -x qutebrowser 2>/dev/null || true";
-              };
               kde = {
                 input_path = "/home/${user}/.config/noctalia/templates/kde-noctalia.colors";
                 output_path = "/home/${user}/.local/share/color-schemes/noctalia.colors";
@@ -65,10 +99,11 @@ in
           enabled = true;
           colorGeneration = "${noctaliaThemeSync}/bin/noctalia-theme-sync";
           startup = "${noctaliaThemeSync}/bin/noctalia-theme-sync";
+          darkModeChange = "${noctaliaThemeSync}/bin/noctalia-theme-sync";
         };
         wallpaper = {
           enabled = true;
-          directory = "/home/${user}/Pictures/Wallpapers";
+          directory = "/etc/nixos/wallpapers";
           change_mode = "random";
           interval_sec = 300;
           transition = "honeycomb";
@@ -145,61 +180,6 @@ in
             orange "{{ colors.primary_container.default.hex }}"
           }
         }
-      '';
-      force = true;
-    };
-
-    xdg.configFile."noctalia/templates/qutebrowser-colors.py" = {
-      text = ''
-        # Noctalia qutebrowser theme - Material Design 3 Colors
-        # Auto-generated from Noctalia Template Engine
-
-        surface = "{{ colors.surface.default.hex }}"
-        surface_dim = "{{ colors.surface_container_lowest.default.hex }}"
-        surface_bright = "{{ colors.surface_container_highest.default.hex }}"
-        surface_container = "{{ colors.surface_container.default.hex }}"
-        surface_container_low = "{{ colors.surface_container_low.default.hex }}"
-        surface_container_lowest = "{{ colors.surface_container_lowest.default.hex }}"
-        surface_container_high = "{{ colors.surface_container_high.default.hex }}"
-        surface_container_highest = "{{ colors.surface_container_highest.default.hex }}"
-        surface_variant = "{{ colors.surface_variant.default.hex }}"
-
-        on_surface = "{{ colors.on_surface.default.hex }}"
-        on_surface_variant = "{{ colors.on_surface_variant.default.hex }}"
-
-        primary = "{{ colors.primary.default.hex }}"
-        on_primary = "{{ colors.on_primary.default.hex }}"
-        primary_container = "{{ colors.primary_container.default.hex }}"
-        on_primary_container = "{{ colors.on_primary_container.default.hex }}"
-
-        secondary = "{{ colors.secondary.default.hex }}"
-        on_secondary = "{{ colors.on_secondary.default.hex }}"
-        secondary_container = "{{ colors.secondary_container.default.hex }}"
-        on_secondary_container = "{{ colors.on_secondary_container.default.hex }}"
-
-        tertiary = "{{ colors.tertiary.default.hex }}"
-        on_tertiary = "{{ colors.on_tertiary.default.hex }}"
-        tertiary_container = "{{ colors.tertiary_container.default.hex }}"
-        on_tertiary_container = "{{ colors.on_tertiary_container.default.hex }}"
-
-        error = "{{ colors.error.default.hex }}"
-        on_error = "{{ colors.on_error.default.hex }}"
-        error_container = "{{ colors.error_container.default.hex }}"
-        on_error_container = "{{ colors.on_error_container.default.hex }}"
-
-        outline = "{{ colors.outline.default.hex }}"
-        outline_variant = "{{ colors.outline_variant.default.hex }}"
-
-        inverse_surface = "{{ colors.on_surface.default.hex }}"
-        inverse_on_surface = "{{ colors.surface.default.hex }}"
-        inverse_primary = "{{ colors.primary.default.hex }}"
-
-        def hex_to_rgba(hex_color, alpha):
-            hex_color = hex_color.lstrip('#')
-            r = int(hex_color[0:2], 16)
-            g = int(hex_color[2:4], 16)
-            b = int(hex_color[4:6], 16)
-            return 'rgba({}, {}, {}, {})'.format(r, g, b, alpha)
       '';
       force = true;
     };
@@ -311,11 +291,10 @@ in
                $HOME/.config/noctalia/hooks \
                $HOME/.config/zellij/themes \
                $HOME/.config/cliamp/themes \
-               $HOME/.config/qutebrowser/noctalia \
                $HOME/.config/qt5ct/colors \
                $HOME/.config/qt6ct/colors \
                $HOME/.local/share/color-schemes \
-               $HOME/Pictures/Wallpapers
+               /etc/nixos/wallpapers
 
       if [ -f $HOME/.config/noctalia/settings.json ]; then
         sed -i 's/"enableUserTheming": false/"enableUserTheming": true/g' $HOME/.config/noctalia/settings.json || true

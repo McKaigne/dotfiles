@@ -45,7 +45,6 @@ let
   '';
 
   noctaliaPkg = inputs.noctalia.packages.${system}.default;
-  heliumPkg = inputs.helium.packages.${system}.default;
 
   niriConfigRaw = builtins.replaceStrings
     [
@@ -54,8 +53,7 @@ let
       "@xwaylandSatellite@"
       "@systemctl@"
       "@ghostty@"
-      "@qutebrowser@"
-      "@helium@"
+      "@brave@"
       "@nautilus@"
       "@wpctl@"
       "@playerctl@"
@@ -73,8 +71,7 @@ let
       "${pkgs.xwayland-satellite}/bin/xwayland-satellite"
       "${pkgs.systemd}/bin/systemctl"
       "${pkgs.ghostty}/bin/ghostty"
-      "${pkgs.qutebrowser}/bin/qutebrowser"
-      "${heliumPkg}/bin/helium"
+      "${lib.getExe pkgs.brave-origin}"
       "${pkgs.nautilus}/bin/nautilus"
       "${pkgs.wireplumber}/bin/wpctl"
       "${pkgs.playerctl}/bin/playerctl"
@@ -91,6 +88,16 @@ in
 {
   programs.niri.enable = true;
 
+  services.greetd = {
+    enable = true;
+    settings = {
+      default_session = {
+        command = "${pkgs.niri}/bin/niri-session";
+        user = config.mainUser;
+      };
+    };
+  };
+
   home-manager.users.${user} = {
     xdg.configFile."niri/config.kdl" = {
       text = niriConfigRaw;
@@ -101,15 +108,4 @@ in
   environment.systemPackages = [
     pkgs.xwayland-satellite
   ];
-
-  xdg.portal = {
-    enable = true;
-    extraPortals = [
-      pkgs.xdg-desktop-portal-gtk
-      pkgs.xdg-desktop-portal-gnome
-    ];
-    config.niri = {
-      default = lib.mkForce [ "gtk" ];
-    };
-  };
 }

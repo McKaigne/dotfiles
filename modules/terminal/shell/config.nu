@@ -49,10 +49,11 @@ $env.config = {
     nwork:   "niri msg -j workspaces | from json"
     nmon:    "niri msg -j outputs | from json"
 
-    rebuild: "sudo nixos-rebuild switch --flake /etc/nixos#castor"
-    nr:      "sudo nixos-rebuild switch --flake /etc/nixos#castor"
-    nboot:   "sudo nixos-rebuild boot --flake /etc/nixos#castor"
-    ntest:   "sudo nixos-rebuild test --flake /etc/nixos#castor"
+    # Host-agnostic declarative rebuilds (automatically evaluates current machine hostname)
+    rebuild: "sudo nixos-rebuild switch --flake /etc/nixos"
+    nr:      "sudo nixos-rebuild switch --flake /etc/nixos"
+    nboot:   "sudo nixos-rebuild boot --flake /etc/nixos"
+    ntest:   "sudo nixos-rebuild test --flake /etc/nixos"
     ncd:     "cd /etc/nixos"
     nupdate: "nix flake update --flake /etc/nixos"
     nclean:  "nix-collect-garbage -d"
@@ -91,10 +92,10 @@ $env.config = {
 
     hxf: "hx /etc/nixos/flake.nix"
     hxh: "hx /etc/nixos/hosts/castor/default.nix"
-    hxc: "hx /etc/nixos/features/core/default.nix"
-    hxn: "hx /etc/nixos/features/shell/config.nu"
-    hxi: "hx /etc/nixos/features/niri/config.kdl"
-    hxz: "hx /etc/nixos/features/zellij/default.nix"
+    hxc: "hx /etc/nixos/modules/core/default.nix"
+    hxn: "hx /etc/nixos/modules/terminal/shell/config.nu"
+    hxi: "hx /etc/nixos/modules/desktop/niri/config.kdl"
+    hxz: "hx /etc/nixos/modules/terminal/zellij/config.kdl"
   }
 }
 

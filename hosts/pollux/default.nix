@@ -5,8 +5,8 @@
     ../../modules/core
     ../../modules/hardware/audio
     ../../modules/hardware/bluetooth
-    ../../modules/hardware/graphics/intel  # Intel Iris Xe
-    ../../modules/hardware/kanata
+    ../../modules/hardware/graphics/amd  # AMD RDNA 3 + HIP compute
+    ../../modules/hardware/kanata        # Runs Weikav Alice and Flow84
 
     # Desktop Shell & Compositor
     ../../modules/desktop/niri
@@ -50,24 +50,14 @@
     ../../modules/security/bitwarden
   ];
 
-  networking.hostName = "castor";
-  mainUser = "pollux";
+  networking.hostName = "pollux";
+  mainUser = "castor";
 
   time.timeZone = "Asia/Manila";
 
   boot.loader.systemd-boot.enable = true;
   boot.loader.efi.canTouchEfiVariables = true;
-
   programs.nix-ld.enable = true;
-
-  boot.kernelParams = [
-    "i915.enable_fbc=1"
-    "nowatchdog"
-  ];
-
-  boot.extraModprobeConfig = ''
-    options snd_hda_intel power_save=1 power_save_controller=Y
-  '';
 
   boot.tmp.useTmpfs = true;
   boot.tmp.tmpfsSize = "50%";
@@ -79,22 +69,10 @@
   };
 
   boot.kernel.sysctl = {
-    "vm.swappiness" = 180;
-    "vm.watermark_boost_factor" = 0;
-    "vm.watermark_scale_factor" = 125;
-    "vm.page-cluster" = 0;
-    "vm.dirty_writeback_centisecs" = 6000;
-    "vm.dirty_expire_centisecs" = 6000;
-    "vm.dirty_ratio" = 20;
-    "vm.dirty_background_ratio" = 5;
+    "vm.swappiness" = 10;
   };
 
   networking.networkmanager.enable = true;
-  networking.networkmanager.wifi.powersave = true;
-
-  services.thermald.enable = true;
-  services.power-profiles-daemon.enable = true;
-  services.upower.enable = true;
   services.openssh.enable = true;
 
   security.sudo.extraConfig = ''

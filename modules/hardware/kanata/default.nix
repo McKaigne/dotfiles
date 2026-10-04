@@ -102,6 +102,11 @@ in
 {
   hardware.uinput.enable = true;
 
+  services.udev.extraRules = ''
+    KERNEL=="event*", SUBSYSTEM=="input", ATTRS{name}=="*Spring*", SYMLINK+="input/by-id/weikav-record-alice", TAG+="uaccess", TAG+="systemd", ENV{SYSTEMD_ALIAS}="/dev/input/by-id/weikav-record-alice"
+    KERNEL=="event*", SUBSYSTEM=="input", ATTRS{id/vendor}=="369b", ATTRS{id/product}=="0051", SYMLINK+="input/by-id/weikav-record-alice", TAG+="uaccess", TAG+="systemd", ENV{SYSTEMD_ALIAS}="/dev/input/by-id/weikav-record-alice"
+  '';
+
   services.kanata = {
     enable = true;
     keyboards.internal = {
@@ -114,6 +119,14 @@ in
       extraDefCfg = extraDef;
       config = kanataConfig;
     };
+    keyboards.alice = {
+      devices = [
+        "/dev/input/by-id/weikav-record-alice"
+        "/dev/input/by-id/usb-ITON_Spring_DEMO-event-kbd"
+      ];
+      extraDefCfg = extraDef;
+      config = kanataConfig;
+    };
   };
 
   systemd.services.kanata-bluetooth = {
@@ -123,6 +136,13 @@ in
     };
     serviceConfig = {
       Restart = lib.mkForce "on-failure";
+      RestartSec = "2s";
+    };
+  };
+
+  systemd.services.kanata-alice = {
+    serviceConfig = {
+      Restart = "always";
       RestartSec = "2s";
     };
   };

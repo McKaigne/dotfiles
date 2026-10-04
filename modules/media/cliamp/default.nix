@@ -37,7 +37,7 @@ vis_volume_linked = false
 
 [ytmusic]
 enabled = true
-cookies_from = "chromium+gnomekeyring:/home/${user}/.config/net.imput.helium"
+cookies_from = "brave+gnomekeyring:/home/${user}/.config/BraveSoftware/Brave-Origin"
 EOF
       chmod 644 $HOME/.config/cliamp/config.toml
     '';

@@ -1,9 +1,3 @@
-prefer-no-csd
-
-hotkey-overlay {
-  skip-at-startup
-}
-
 input {
   focus-follows-mouse max-scroll-amount="0%"
 
@@ -143,8 +137,8 @@ binds {
   // =========================================================================
   Mod+Return             hotkey-overlay-title="Terminal: Ghostty"                   { spawn "@ghostty@"; }
   Mod+A                  hotkey-overlay-title="Workspace Sessionizer: Zellij"       { spawn "@zellijFocus@"; }
-  Mod+S                  hotkey-overlay-title="Vim Browser / Search: Qutebrowser"   { spawn "@qutebrowser@"; }
-  Mod+W                  hotkey-overlay-title="Primary Browser: Helium"             { spawn "@helium@"; }
+  Mod+W                  hotkey-overlay-title="Web Browser: Brave Origin"           { spawn "@brave@"; }
+  Mod+S                  hotkey-overlay-title="Area Screenshot (Drag)"              { spawn "@screenshotArea@"; }
   Mod+E                  hotkey-overlay-title="File Manager: Nautilus"              { spawn "@nautilus@"; }
   Mod+D                  hotkey-overlay-title="Application Launcher"                { spawn "@noctalia@" "msg" "panel-toggle" "launcher"; }
 
