@@ -20,7 +20,7 @@
     ../../modules/terminal/ghostty
     ../../modules/terminal/zellij
     ../../modules/terminal/shell
-    ../../modules/editor/helix
+    ../../modules/editor/neovim
 
     # Web Browser
     ../../modules/browser/brave
@@ -33,7 +33,8 @@
 
     # Document Suite
     ../../modules/documents/zathura
-    ../../modules/documents/libreoffice
+    ../../modules/documents/onlyoffice
+    ../../modules/documents/obsidian
 
     # Creative Production Suite
     ../../modules/creative/blender

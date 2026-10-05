@@ -1,4 +1,4 @@
-{ pkgs, ... }: {
+{ pkgs, lib, ... }: {
   security.polkit.enable = true;
   services.gnome.gnome-keyring.enable = true;
   security.pam.services.greetd.enableGnomeKeyring = true;
@@ -24,5 +24,5 @@
     sops
     age
     ssh-to-age
-  ];
+  ] ++ lib.optional (pkgs ? secretspec) pkgs.secretspec;
 }

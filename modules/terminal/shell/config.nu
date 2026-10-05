@@ -49,7 +49,6 @@ $env.config = {
     nwork:   "niri msg -j workspaces | from json"
     nmon:    "niri msg -j outputs | from json"
 
-    # Host-agnostic declarative rebuilds (automatically evaluates current machine hostname)
     rebuild: "sudo nixos-rebuild switch --flake /etc/nixos"
     nr:      "sudo nixos-rebuild switch --flake /etc/nixos"
     nboot:   "sudo nixos-rebuild boot --flake /etc/nixos"
@@ -90,19 +89,19 @@ $env.config = {
     za:    "zoxide add "
     zr:    "zoxide remove "
 
-    hxf: "hx /etc/nixos/flake.nix"
-    hxh: "hx /etc/nixos/hosts/castor/default.nix"
-    hxc: "hx /etc/nixos/modules/core/default.nix"
-    hxn: "hx /etc/nixos/modules/terminal/shell/config.nu"
-    hxi: "hx /etc/nixos/modules/desktop/niri/config.kdl"
-    hxz: "hx /etc/nixos/modules/terminal/zellij/config.kdl"
+    hxf: "nvim /etc/nixos/flake.nix"
+    hxh: "nvim /etc/nixos/hosts/castor/default.nix"
+    hxc: "nvim /etc/nixos/modules/core/default.nix"
+    hxn: "nvim /etc/nixos/modules/terminal/shell/config.nu"
+    hxi: "nvim /etc/nixos/modules/desktop/niri/config.kdl"
+    hxz: "nvim /etc/nixos/modules/terminal/zellij/config.kdl"
   }
 }
 
 def get-config-files [path: string] {
   let target = ($path | path expand)
   let extensions = [
-    "-e" "nix" "-e" "kdl" "-e" "toml" "-e" "conf" "-e" "ini" "-e" "el" "-e" "json" "-e" "nu" "-e" "py" "-e" "css"
+    "-e" "nix" "-e" "kdl" "-e" "toml" "-e" "conf" "-e" "ini" "-e" "el" "-e" "json" "-e" "nu" "-e" "py" "-e" "css" "-e" "lua"
   ]
   let excludes = [
     "-E" ".git"
@@ -163,6 +162,9 @@ def cfb [path: string = "."] {
 alias l = ls
 alias ll = ls -l
 alias la = ls -a
+alias v = nvim
+alias vi = nvim
+alias vim = nvim
 alias hx = helix
 alias bottom = btm
 alias y = yazi

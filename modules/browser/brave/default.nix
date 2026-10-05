@@ -24,21 +24,19 @@ in
     DnsOverHttpsMode = "secure";
     DnsOverHttpsTemplates = "https://dns.quad9.net/dns-query";
 
-    # Maintain Manifest V2 compatibility for uBlock Origin
-    ExtensionManifestV2Availability = 2;
-
-    # Allow local Noctalia theme extension
     ExtensionInstallAllowlist = [ "*" ];
 
     ExtensionInstallForcelist = [
-      # Vimium C
-      "gphhapmejobijbbhgpjhcjognlahblep;https://clients2.google.com/service/update2/crx"
+      # Vimium C (Qutebrowser / Vim Modal Navigation)
+      "hfjbmagddngcpeloejdejnfgbamkjaeg;https://clients2.google.com/service/update2/crx"
+      # FastStream Video Player
+      "kkeakohpadmbldjaiggikmnldlfkdfog;https://clients2.google.com/service/update2/crx"
+      # SocialFocus
+      "abocjojdmemdpiffeadpdnicnlhcndcg;https://clients2.google.com/service/update2/crx"
       # Bitwarden
       "nngceckbapebfimnlniiiahkandclblb;https://clients2.google.com/service/update2/crx"
       # SponsorBlock
       "mnjggcdmjocbbbhaepdhchncahnbgone;https://clients2.google.com/service/update2/crx"
-      # uBlock Origin (MV2)
-      "cjpalhdlnbpafiamejdnhcphjbkeiagm;https://clients2.google.com/service/update2/crx"
     ];
   };
 
@@ -50,31 +48,6 @@ in
     config.environment.etc."brave/policies/managed/brave-policies.json".source;
 
   home-manager.users.${user} = { lib, ... }: {
-    # Seed Vimium C keymappings (J/K tab cycle, d close tab)
-    xdg.configFile."vimium-c/vimium_c.json".text = builtins.toJSON {
-      keyMappings = [
-        "map J previousTab"
-        "map K nextTab"
-        "map d removeTab"
-      ];
-    };
-
-    # Force Chromium Wayland + GTK integration flags
-    xdg.configFile."brave-flags.conf".text = ''
-      --ozone-platform-hint=auto
-      --gtk-version=4
-    '';
-
-    xdg.configFile."brave-origin-flags.conf".text = ''
-      --ozone-platform-hint=auto
-      --gtk-version=4
-    '';
-
-    xdg.configFile."chromium-flags.conf".text = ''
-      --ozone-platform-hint=auto
-      --gtk-version=4
-    '';
-
     # Configure Brave Origin Preferences: Disable vertical tabs, enforce GTK system theme
     home.activation.setupBravePrefs = lib.hm.dag.entryAfter ["writeBoundary"] ''
       PREF_DIR="$HOME/.config/BraveSoftware/Brave-Origin/Default"

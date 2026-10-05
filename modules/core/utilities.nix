@@ -1,7 +1,7 @@
-{ pkgs, ... }: {
+{ pkgs, lib, ... }: {
   environment.sessionVariables = {
-    EDITOR = "hx";
-    VISUAL = "hx";
+    EDITOR = "nvim";
+    VISUAL = "nvim";
     NNN_OPTS = "aep";
   };
 
@@ -34,14 +34,5 @@
     aria2
     p7zip
     unrar
-
-    # Custom Script Wrappers
-    (pkgs.antigravity-cli or (pkgs.writeShellScriptBin "agy" ''
-      if command -v antigravity-cli &>/dev/null; then
-        exec antigravity-cli "$@"
-      else
-        exec nix run "github:antigravity-cli/antigravity" -- "$@"
-      fi
-    ''))
-  ];
+  ] ++ lib.optional (pkgs ? antigravity-cli) pkgs.antigravity-cli;
 }

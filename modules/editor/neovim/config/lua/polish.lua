@@ -1,0 +1,2 @@
+-- Custom post-initialization overrides
+-- This runs after all plugins and configuration are loaded.
