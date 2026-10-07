@@ -8,7 +8,7 @@
   environment.systemPackages = with pkgs; [
     # Terminal Navigation & Process Monitoring
     tree
-    bottom
+    btop
     fetch
     bat
     eza
@@ -28,11 +28,14 @@
     xh
     curl
 
-    # Applications & Archive Tools
+    # Transfer, Sync & Archive Tools
     yazi
     nnn
     aria2
     p7zip
     unrar
-  ] ++ lib.optional (pkgs ? antigravity-cli) pkgs.antigravity-cli;
+    rsync
+  ] ++ lib.optional (pkgs ? ghgrab) pkgs.ghgrab
+    ++ lib.optional (pkgs ? lazyrsync) pkgs.lazyrsync
+    ++ lib.optional (pkgs ? antigravity-cli) pkgs.antigravity-cli;
 }

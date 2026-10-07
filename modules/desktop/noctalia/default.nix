@@ -151,6 +151,17 @@ in
       };
     };
 
+    # Declarative Btop configuration: Upstream default layout + Noctalia theme
+    xdg.configFile."btop/btop.conf" = {
+      text = ''
+        color_theme = "noctalia"
+        theme_background = False
+        truecolor = True
+        rounded_corners = True
+      '';
+      force = true;
+    };
+
     xdg.configFile."noctalia/templates/cliamp.toml" = {
       text = ''
         accent = "{{ colors.primary.default.hex }}"
@@ -291,6 +302,7 @@ in
                $HOME/.config/noctalia/hooks \
                $HOME/.config/zellij/themes \
                $HOME/.config/cliamp/themes \
+               $HOME/.config/btop/themes \
                $HOME/.config/qt5ct/colors \
                $HOME/.config/qt6ct/colors \
                $HOME/.local/share/color-schemes

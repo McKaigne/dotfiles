@@ -40,7 +40,7 @@ let
     };
     postBuild = ''
       wrapProgram $out/bin/nu \
-        --prefix PATH : "/run/wrappers/bin:/run/current-system/sw/bin:${lib.makeBinPath [ pkgs.starship pkgs.wl-clipboard pkgs.zoxide pkgs.fzf pkgs.direnv pkgs.devenv pkgs.carapace pkgs.nnn pkgs.bottom pkgs.fetch pkgs.yazi ]}" \
+        --prefix PATH : "/run/wrappers/bin:/run/current-system/sw/bin:${lib.makeBinPath [ pkgs.starship pkgs.wl-clipboard pkgs.zoxide pkgs.fzf pkgs.direnv pkgs.devenv pkgs.carapace pkgs.nnn pkgs.btop pkgs.fetch pkgs.yazi ]}" \
         --set STARSHIP_CONFIG "/etc/starship.toml" \
         --add-flags "--config ${configNu} --env-config ${envNu}"
     '';

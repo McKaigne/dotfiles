@@ -8,27 +8,27 @@ let
 
   zellijLayout = ''
     layout {
-      pane
       pane size=1 borderless=true {
         plugin location="file:${zjstatusWasm}" {
-          format_left   " {mode} #[fg=$fg,bold]□ {session}#[fg=$black]    {tabs}"
+          format_left   " #[fg=$yellow,bold]● {session} #[fg=$black]•{tabs}"
           format_center ""
-          format_right  ""
-          format_space  ""
+          format_right  "{mode} "
+          format_space  "#[bg=NONE]"
 
-          tab_normal   "#[fg=$black] {index} {name} #[fg=$black]·"
-          tab_active   "#[fg=$fg,bold]▶ {index} {name} #[fg=$black]·"
-          tab_sync     "#[fg=$yellow] "
+          tab_normal   " #[fg=$white]○ {index} {name} #[fg=$black]•"
+          tab_active   " #[fg=$fg,bold]● {index} {name} #[fg=$black]•"
+          tab_sync     " #[fg=$yellow,bold]󰓩 "
 
-          mode_locked  "#[fg=$black,bold]⬡ LOCKED"
-          mode_normal  "#[fg=$magenta,bold]⬢ NORMAL"
-          mode_pane    "#[fg=$cyan,bold]⬟ PANE"
-          mode_tab     "#[fg=$yellow,bold]■ TAB"
-          mode_resize  "#[fg=$blue,bold]▲ RESIZE"
-          mode_scroll  "#[fg=$green,bold]● SCROLL"
-          mode_session "#[fg=$orange,bold]◆ SESSION"
+          mode_locked  "#[fg=$black]LCK"
+          mode_normal  "#[fg=$magenta,bold]NOR #[fg=$white][p]ane [t]ab [r]esize [s]croll [q]uit"
+          mode_pane    "#[fg=$cyan,bold]PAN #[fg=$white][h/j/k/l]move [r]ight [d]own [x]close [f]ull"
+          mode_tab     "#[fg=$yellow,bold]TAB #[fg=$white][h/l]prev/next [n]ew [x]close [1-9]goto"
+          mode_scroll  "#[fg=$green,bold]SCR #[fg=$white][j/k]down/up [d/u]page [s]earch"
+          mode_resize  "#[fg=$blue,bold]RES #[fg=$white][h/j/k/l]resize [+/-]grow/shrink"
+          mode_session "#[fg=$orange,bold]SES #[fg=$white][d]etach [w]orkspace"
         }
       }
+      pane
     }
   '';
 in

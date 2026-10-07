@@ -53,7 +53,6 @@
 
   networking.hostName = "castor";
   mainUser = "pollux";
-  hardware.kanata.enableInternalKeyboard = true;
 
   time.timeZone = "Asia/Manila";
 

@@ -98,6 +98,15 @@ $env.config = {
   }
 }
 
+def fkill [] {
+  let selected = (ps | select pid name cpu mem | to text | lines | skip 1 | ^fzf --header="Select process to kill (ESC to cancel)")
+  if ($selected | is-not-empty) {
+    let pid = ($selected | split row " " | where { |x| $x != "" } | get 0 | into int)
+    kill -9 $pid
+    print $"Killed process ($pid)"
+  }
+}
+
 def get-config-files [path: string] {
   let target = ($path | path expand)
   let extensions = [
@@ -166,7 +175,8 @@ alias v = nvim
 alias vi = nvim
 alias vim = nvim
 alias hx = helix
-alias bottom = btm
+alias bottom = btop
+alias btm = btop
 alias y = yazi
 alias f = ^fetch
 alias fetch = ^fetch

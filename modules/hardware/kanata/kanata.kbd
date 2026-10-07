@@ -1,0 +1,113 @@
+(defcfg
+  process-unmapped-keys yes
+  concurrent-tap-hold yes
+  override-release-on-activation yes
+  linux-continue-if-no-devs-found yes
+  linux-dev-names-exclude (
+    "Corne"
+  )
+)
+
+(defsrc
+  esc  1    2    3    4    5    6    7    8    9    0    -    =    bspc
+  tab  q    w    e    r    t    y    u    i    o    p    [    ]    \
+  caps a    s    d    f    g    h    j    k    l    scln '    ret
+  lsft z    x    c    v    b    n    m    ,    .    /    rsft
+  lmet lalt           spc                 ralt rctl
+)
+
+(defoverrides
+  ;; Number Row: Shifted state inverts symbols back into clean digits
+  (lsft 1) (1)
+  (rsft 1) (1)
+  (lsft 2) (2)
+  (rsft 2) (2)
+  (lsft 3) (3)
+  (rsft 3) (3)
+  (lsft 4) (4)
+  (rsft 4) (4)
+  (lsft 5) (5)
+  (rsft 5) (5)
+  (lsft 6) (6)
+  (rsft 6) (6)
+  (lsft 7) (7)
+  (rsft 7) (7)
+  (lsft 8) (8)
+  (rsft 8) (8)
+  (lsft 9) (9)
+  (rsft 9) (9)
+  (lsft 0) (0)
+  (rsft 0) (0)
+  (lsft -) (lsft 5)
+  (rsft -) (rsft 5)
+  (lsft =) (lsft 4)
+  (rsft =) (rsft 4)
+  (lsft ]) (lsft 6)
+  (rsft ]) (rsft 6)
+)
+
+(defalias
+  ;; Dual Tap/Hold Layer Shifters (Tap = One-Shot Layer, Hold = Momentary Layer)
+  nav_tap  (one-shot 2000 (layer-while-held nav))
+  nav_hold (layer-while-held nav)
+  lalt_nav (tap-hold-press 200 200 @nav_tap @nav_hold)
+
+  num_tap  (one-shot 2000 (layer-while-held num))
+  num_hold (layer-while-held num)
+  ralt_num (tap-hold-press 200 200 @num_tap @num_hold)
+
+  ;; Callum One-Shot Modifiers on nav layer (ACGS: Arms modifier & returns to base)
+  os_alt (multi (one-shot 2000 lalt) (layer-switch base))
+  os_ctl (multi (one-shot 2000 lctl) (layer-switch base))
+  os_met (multi (one-shot 2000 lmet) (layer-switch base))
+  os_sft (multi (one-shot 2000 lsft) (layer-switch base))
+
+  ;; Callum One-Shot Modifiers on num layer (ACGS: Arms modifier & returns to base)
+  os_rsft (multi (one-shot 2000 lsft) (layer-switch base))
+  os_rmet (multi (one-shot 2000 lmet) (layer-switch base))
+  os_rctl (multi (one-shot 2000 lctl) (layer-switch base))
+  os_ralt (multi (one-shot 2000 lalt) (layer-switch base))
+
+  ;; Number Layer Keypad + Shifted Function Keys (F1-F12)
+  n_pls (fork S-= f11 (lsft rsft))
+  n_min (fork - f12 (lsft rsft))
+  n_ast S-8
+  n_sls /
+  n_dot .
+  n_eql =
+
+  n9 (fork 9 f9 (lsft rsft))
+  n8 (fork 8 f8 (lsft rsft))
+  n7 (fork 7 f7 (lsft rsft))
+  n6 (fork 6 f6 (lsft rsft))
+  n5 (fork 5 f5 (lsft rsft))
+  n4 (fork 4 f4 (lsft rsft))
+  n3 (fork 3 f3 (lsft rsft))
+  n2 (fork 2 f2 (lsft rsft))
+  n1 (fork 1 f1 (lsft rsft))
+  n0 (fork 0 f10 (lsft rsft))
+)
+
+(deflayer base
+  grv     S-=   [     S-[   S-9   S-7   =     S-0   S-]   ]     S-8   S-1   S-3   bspc
+  tab     q     w     e     r     t     y     u     i     o     p     -     S-2   \
+  esc     a     s     d     f     g     h     j     k     l     scln  '     ret
+  lsft    z     x     c     v     b     n     m     ,     .     /     rsft
+  lmet    @lalt_nav         spc                 @ralt_num rctl
+)
+
+(deflayer nav
+  _       _     _     _     _     _     _     _     _     _     _     _     _     _
+  _       _     _     _     _     _     C-S-z S-ins C-ins S-del C-z   _     _     _
+  _       @os_alt @os_ctl @os_met @os_sft _ left down up  rght  pgdn  pgup  _
+  _       C-p   C-t   C-s   C-r   C-o   bspc  del   home  end   ret   _
+  _       _                 spc                 del   _
+)
+
+(deflayer num
+  _       _     _     _     _     _     _     _     _     _     _     _     _     _
+  _       @n_pls @n9  @n8   @n7   @n_min _    _     _     _     _     _     _     _
+  _       @n_ast @n3  @n2   @n1   @n_sls _    @os_rsft @os_rmet @os_rctl @os_ralt _ _
+  _       @n_dot @n6  @n5   @n4   @n_eql M-x  C-x   C-c   C-h   C-u   _
+  _       .                 @n0                 _     _
+)
