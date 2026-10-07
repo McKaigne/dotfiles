@@ -60,6 +60,15 @@
   boot.loader.efi.canTouchEfiVariables = true;
   programs.nix-ld.enable = true;
 
+  # Fallback to synchronous scripted stage 1 initrd to eliminate systemd device timeouts
+  boot.initrd.systemd.enable = false;
+
+  # Hardware fix for Kingston NV2 on AMD platforms (disable broken APST & PCIe ASPM)
+  boot.kernelParams = [
+    "nvme_core.default_ps_max_latency_us=0"
+    "pcie_aspm=off"
+  ];
+
   boot.tmp.useTmpfs = true;
   boot.tmp.tmpfsSize = "50%";
 
