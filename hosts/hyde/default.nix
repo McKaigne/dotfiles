@@ -60,16 +60,13 @@
   boot.loader.efi.canTouchEfiVariables = true;
   programs.nix-ld.enable = true;
 
-  # Include all default storage and PCIe bus drivers in early initrd (matching the Live USB)
   boot.initrd.includeDefaultModules = true;
 
-  # Drop into an interactive root shell instead of panicking if a mount error occurs
-  boot.shell_on_fail = true;
-
-  # Hardware fix for Kingston NV2 on AMD platforms (disable broken APST & PCIe ASPM)
+  # Hardware fix for Kingston NV2 on AMD platforms (disable broken APST & PCIe ASPM) + shell on fail
   boot.kernelParams = [
     "nvme_core.default_ps_max_latency_us=0"
     "pcie_aspm=off"
+    "boot.shell_on_fail"
   ];
 
   boot.tmp.useTmpfs = true;
