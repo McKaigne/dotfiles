@@ -9,51 +9,6 @@ let
       lmet lalt           spc                 ralt rctl
     )
 
-    (defoverrides
-      ;; Unshifted number row outputs Programmer Symbols
-      (1) (lsft =)
-      (2) ([)
-      (3) (lsft [)
-      (4) (lsft 9)
-      (5) (lsft 7)
-      (6) (=)
-      (7) (lsft 0)
-      (8) (lsft ])
-      (9) (])
-      (0) (lsft 8)
-      (-) (lsft 1)
-      (=) (lsft 3)
-      (]) (lsft 2)
-
-      ;; Shifted number row inverts back to clean Digits and Symbols
-      (lsft 1) (1)
-      (rsft 1) (1)
-      (lsft 2) (2)
-      (rsft 2) (2)
-      (lsft 3) (3)
-      (rsft 3) (3)
-      (lsft 4) (4)
-      (rsft 4) (4)
-      (lsft 5) (5)
-      (rsft 5) (5)
-      (lsft 6) (6)
-      (rsft 6) (6)
-      (lsft 7) (7)
-      (rsft 7) (7)
-      (lsft 8) (8)
-      (rsft 8) (8)
-      (lsft 9) (9)
-      (rsft 9) (9)
-      (lsft 0) (0)
-      (rsft 0) (0)
-      (lsft -) (lsft 5)
-      (rsft -) (lsft 5)
-      (lsft =) (lsft 4)
-      (rsft =) (lsft 4)
-      (lsft ]) (lsft 6)
-      (rsft ]) (lsft 6)
-    )
-
     ;; ------------------------------------------------------------------------
     ;; Base Layer Chords: df -> tab, jk -> C-bspc
     ;; ------------------------------------------------------------------------
@@ -71,13 +26,13 @@ let
     ;; Nav Layer Left-Hand Chords (a, s, d, f)
     ;; ------------------------------------------------------------------------
     (defchords nav-chords 50
-      ;; Singles: Dispatched via dedicated dual-action aliases
+      ;; Singles
       (a) @os_alt
       (s) @os_ctl
       (d) @os_met
       (f) @os_sft
 
-      ;; Doubles: Zero-hold composite OSMs returning cleanly to base
+      ;; Doubles
       (d f) (multi (layer-switch base) (release-layer nav) (one-shot 2000 M-lsft))
       (s d) (multi (layer-switch base) (release-layer nav) (one-shot 2000 C-lmet))
       (s f) (multi (layer-switch base) (release-layer nav) (one-shot 2000 C-lsft))
@@ -99,13 +54,13 @@ let
     ;; Num Layer Right-Hand Chords (j, k, l, scln)
     ;; ------------------------------------------------------------------------
     (defchords num-chords 50
-      ;; Singles: Dispatched via dedicated dual-action aliases
+      ;; Singles
       (j)    @os_r_sft
       (k)    @os_r_met
       (l)    @os_r_ctl
       (scln) @os_r_alt
 
-      ;; Doubles: Zero-hold composite OSMs returning cleanly to base
+      ;; Doubles
       (j k)    (multi (layer-switch base) (release-layer num) (one-shot 2000 M-lsft))
       (k l)    (multi (layer-switch base) (release-layer num) (one-shot 2000 C-lmet))
       (j l)    (multi (layer-switch base) (release-layer num) (one-shot 2000 C-lsft))
@@ -134,6 +89,20 @@ let
       b_j (chord base-chords j)
       b_k (chord base-chords k)
 
+      ;; Base Layer Programmer Symbol Row: Unshifted = Symbol, Shifted = Digit
+      p_1   (fork S-= 1 (lsft rsft))
+      p_2   (fork [ 2 (lsft rsft))
+      p_3   (fork S-[ 3 (lsft rsft))
+      p_4   (fork S-9 4 (lsft rsft))
+      p_5   (fork S-7 5 (lsft rsft))
+      p_6   (fork = 6 (lsft rsft))
+      p_7   (fork S-0 7 (lsft rsft))
+      p_8   (fork S-] 8 (lsft rsft))
+      p_9   (fork ] 9 (lsft rsft))
+      p_0   (fork S-8 0 (lsft rsft))
+      p_min (fork S-1 S-5 (lsft rsft))
+      p_eql (fork S-3 S-4 (lsft rsft))
+
       ;; Nav Layer Left-Hand OSM Chord Aliases
       n_a (chord nav-chords a)
       n_s (chord nav-chords s)
@@ -141,12 +110,10 @@ let
       n_f (chord nav-chords f)
 
       ;; Nav Dual-Action Modifiers: Tap = OSM to base; Hold = native mod staying on nav
-      os_alt (tap-hold-press 200 200 (multi (layer-switch base) (release-layer nav) (one-shot 2000 lalt)) lalt)
-      os_ctl (tap-hold-press 200 200 (multi (layer-switch base) (release-layer nav) (one-shot 2000 lctl)) lctl)
-      os_met (tap-hold-press 200 200 (multi (layer-switch base) (release-layer nav) (one-shot 2000 lmet)) lmet)
-      os_sft (tap-hold-press 200 200 (multi (layer-switch base) (release-layer nav) (one-shot 2000 lsft)) lsft)
-
-      ;; Dedicated Nav Composite Modifiers
+      os_alt   (tap-hold-press 200 200 (multi (layer-switch base) (release-layer nav) (one-shot 2000 lalt)) lalt)
+      os_ctl   (tap-hold-press 200 200 (multi (layer-switch base) (release-layer nav) (one-shot 2000 lctl)) lctl)
+      os_met   (tap-hold-press 200 200 (multi (layer-switch base) (release-layer nav) (one-shot 2000 lmet)) lmet)
+      os_sft   (tap-hold-press 200 200 (multi (layer-switch base) (release-layer nav) (one-shot 2000 lsft)) lsft)
       os_meh   (tap-hold-press 200 200 (multi (layer-switch base) (release-layer nav) (one-shot 2000 C-A-lsft)) C-A-lsft)
       os_cs    (tap-hold-press 200 200 (multi (layer-switch base) (release-layer nav) (one-shot 2000 C-lsft)) C-lsft)
       os_ms    (tap-hold-press 200 200 (multi (layer-switch base) (release-layer nav) (one-shot 2000 M-lsft)) M-lsft)
@@ -167,32 +134,31 @@ let
       os_r_alt (tap-hold-press 200 200 (multi (layer-switch base) (release-layer num) (one-shot 2000 lalt)) lalt)
       os_r_meh (tap-hold-press 200 200 (multi (layer-switch base) (release-layer num) (one-shot 2000 C-A-lsft)) C-A-lsft)
 
-      ;; Number Layer Keypad + Shifted Function Keys (F1-F12)
+      ;; Number Layer: Unshifted = Raw Digits; Shifted = F-Keys (F1-F12)
+      n1    (fork 1 f1 (lsft rsft))
+      n2    (fork 2 f2 (lsft rsft))
+      n3    (fork 3 f3 (lsft rsft))
+      n4    (fork 4 f4 (lsft rsft))
+      n5    (fork 5 f5 (lsft rsft))
+      n6    (fork 6 f6 (lsft rsft))
+      n7    (fork 7 f7 (lsft rsft))
+      n8    (fork 8 f8 (lsft rsft))
+      n9    (fork 9 f9 (lsft rsft))
+      n0    (fork 0 f10 (lsft rsft))
       n_pls (fork S-= f11 (lsft rsft))
       n_min (fork - f12 (lsft rsft))
       n_ast S-8
       n_sls /
       n_dot .
       n_eql =
-
-      n9 (fork 9 f9 (lsft rsft))
-      n8 (fork 8 f8 (lsft rsft))
-      n7 (fork 7 f7 (lsft rsft))
-      n6 (fork 6 f6 (lsft rsft))
-      n5 (fork 5 f5 (lsft rsft))
-      n4 (fork 4 f4 (lsft rsft))
-      n3 (fork 3 f3 (lsft rsft))
-      n2 (fork 2 f2 (lsft rsft))
-      n1 (fork 1 f1 (lsft rsft))
-      n0 (fork 0 f10 (lsft rsft))
     )
 
     (deflayer base
-      esc  1    2    3     4     5  6  7     8     9  0    -    =    bspc
-      tab  q    w    e     r     t  y  u     i     o  p    [    ]    \
-      esc  a    s    @b_d  @b_f  g  h  @b_j  @b_k  l  scln '    ret
-      lsft z    x    c     v     b  n  m     ,     .  /    rsft
-      lmet @osl_nav        spc                 @osl_num  rctl
+      esc  @p_1 @p_2 @p_3  @p_4  @p_5 @p_6 @p_7  @p_8  @p_9 @p_0  @p_min @p_eql bspc
+      tab  q    w    e     r     t    y    u     i     o    p     [      ]      \
+      esc  a    s    @b_d  @b_f  g    h    @b_j  @b_k  l    scln  '      ret
+      lsft z    x    c     v     b    n    m     ,     .    /     rsft
+      lmet @osl_nav        spc                   @osl_num  rctl
     )
 
     (deflayer nav
@@ -204,11 +170,11 @@ let
     )
 
     (deflayer num
-      _    _      _   _    _     _        _        _      _     _     _       _ _ _
-      _    @n_pls @n9 @n8  @n7   @n_min   @n_sls   _      _     _     _       _ _ _
+      _    _      _   _    _     _        _         _     _     _     _       _ _ _
+      _    @n_pls @n9 @n8  @n7   @n_min   @n_sls    _     _     _     _       _ _ _
       _    @n_ast @n3 @n2  @n1   @n_eql   @os_r_meh @m_j  @m_k  @m_l  @m_scln _ _
-      _    @n_dot @n6 @n5  @n4   @n_sls   M-x      C-x    C-c   C-h   C-u     _
-      _    .               @n0                     _      _
+      _    @n_dot @n6 @n5  @n4   @n_sls   M-x       C-x   C-c   C-h   C-u     _
+      _    .               @n0                      _     _
     )
   '';
 in

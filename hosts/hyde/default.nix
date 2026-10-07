@@ -51,8 +51,8 @@
     ../../modules/security/bitwarden
   ];
 
-  networking.hostName = "pollux";
-  mainUser = "castor";
+  networking.hostName = "hyde";
+  mainUser = "jekyll";
 
   time.timeZone = "Asia/Manila";
 

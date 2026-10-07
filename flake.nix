@@ -1,5 +1,5 @@
 {
-  description = "Castor & Pollux Workstations - Dendritic Architecture";
+  description = "Castor & Hyde Workstations - Dendritic Architecture";
 
   inputs = {
     nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
@@ -36,13 +36,13 @@
           ];
         };
 
-        # Desktop PC (AMD Ryzen 5800X + RX 7600 XT, castor user)
-        pollux = nixpkgs.lib.nixosSystem {
+        # Desktop PC (AMD Ryzen 5800X + RX 7600 XT, jekyll user)
+        hyde = nixpkgs.lib.nixosSystem {
           system = "x86_64-linux";
           specialArgs = { inherit inputs self; };
           modules = [
             home-manager.nixosModules.home-manager
-            ./hosts/pollux
+            ./hosts/hyde
           ];
         };
       };
