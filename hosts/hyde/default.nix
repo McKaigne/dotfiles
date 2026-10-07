@@ -60,13 +60,14 @@
   boot.loader.efi.canTouchEfiVariables = true;
   programs.nix-ld.enable = true;
 
-  boot.initrd.includeDefaultModules = true;
+  # Official NixOS option to bundle all storage and bus drivers into initrd (matching Live USB)
+  hardware.enableAllHardware = true;
 
-  # Hardware fix for Kingston NV2 on AMD platforms (disable broken APST & PCIe ASPM) + shell on fail
+  # Kingston NV2 APST fix + disable premature device timeout in initrd
   boot.kernelParams = [
     "nvme_core.default_ps_max_latency_us=0"
     "pcie_aspm=off"
-    "boot.shell_on_fail"
+    "systemd.default_device_timeout_sec=infinity"
   ];
 
   boot.tmp.useTmpfs = true;
