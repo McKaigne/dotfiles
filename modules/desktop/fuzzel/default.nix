@@ -1,14 +1,16 @@
-{ config, pkgs, ... }:
+{ pkgs, ... }:
 let
-  user = config.mainUser;
+  fuzzelConfig = pkgs.writeText "fuzzel.ini" (builtins.readFile ./fuzzel.ini);
+  wrappedFuzzel = pkgs.symlinkJoin {
+    name = "fuzzel";
+    paths = [ pkgs.fuzzel ];
+    nativeBuildInputs = [ pkgs.makeWrapper ];
+    postBuild = ''
+      wrapProgram $out/bin/fuzzel \
+        --add-flags "--config ${fuzzelConfig}"
+    '';
+  };
 in
 {
-  environment.systemPackages = [ pkgs.fuzzel ];
-
-  home-manager.users.${user} = {
-    xdg.configFile."fuzzel/fuzzel.ini" = {
-      source = ./fuzzel.ini;
-      force = true;
-    };
-  };
+  environment.systemPackages = [ wrappedFuzzel ];
 }
