@@ -33,7 +33,8 @@ environment {
 }
 
 layout {
-  gaps 8
+  gaps 10
+  center-focused-column "on-overflow"
   default-column-width { proportion 0.5; }
 
   focus-ring {
@@ -56,6 +57,29 @@ layout {
   }
 }
 
+animations {
+  workspace-switch {
+    spring damping-ratio=0.85 stiffness=1000 epsilon=0.0001
+  }
+  horizontal-view-movement {
+    spring damping-ratio=0.85 stiffness=1000 epsilon=0.0001
+  }
+  window-open {
+    duration-ms 200
+    curve "ease-out-cubic"
+  }
+  window-close {
+    duration-ms 150
+    curve "ease-out-cubic"
+  }
+  window-movement {
+    spring damping-ratio=0.85 stiffness=1000 epsilon=0.0001
+  }
+  window-resize {
+    spring damping-ratio=0.85 stiffness=1000 epsilon=0.0001
+  }
+}
+
 blur {
   passes 3
   offset 3.0
@@ -66,13 +90,16 @@ blur {
 include optional=true "~/.config/niri/noctalia.kdl"
 include optional=true "~/.config/niri/custom.kdl"
 
+// Base window geometry
 window-rule {
   geometry-corner-radius 12
   clip-to-geometry true
   draw-border-with-background false
 }
 
+// Terminal & editor blur
 window-rule {
+  match app-id="^ghostty$"
   match app-id="^com.mitchellh.ghostty$"
   background-effect {
     blur true
@@ -80,14 +107,7 @@ window-rule {
   }
 }
 
-window-rule {
-  match app-id="^ghostty$"
-  background-effect {
-    blur true
-    xray false
-  }
-}
-
+// Noctalia popups & settings
 window-rule {
   match app-id=r#"^dev\.noctalia\.Noctalia.*$"#
   open-floating true
@@ -97,6 +117,24 @@ window-rule {
   }
 }
 
+// Dialogs, pickers, and portals (Ly-sec ruleset)
+window-rule {
+  match app-id=r#"^org\.freedesktop\.impl\.portal\.desktop.*$"#
+  match app-id=r#"^xdg-desktop-portal.*$"#
+  match app-id="^pavucontrol$"
+  match app-id="^com.saivert.pwvucontrol$"
+  match app-id="^easyeffects$"
+  match app-id="^com.gabm.satty$"
+  match app-id="^org.gnome.FileRoller$"
+  match app-id="^blueman-manager$"
+  match title=r#"^Picture-in-Picture$"#
+  match title=r#"^Open File.*$"#
+  match title=r#"^Save File.*$"#
+  match title=r#"^Save As.*$"#
+  open-floating true
+}
+
+// Compositor layers
 layer-rule {
   match namespace="^wallpaper$"
   place-within-backdrop true
@@ -139,6 +177,7 @@ spawn-at-startup "@systemctl@" "--user" "import-environment" "PATH" "XDG_DATA_DI
 spawn-at-startup "@systemctl@" "--user" "start" "graphical-session.target"
 
 binds {
+  // Primary Applications
   Mod+Return             hotkey-overlay-title="Terminal: Ghostty"                   { spawn "@ghostty@"; }
   Mod+A                  hotkey-overlay-title="Workspace Sessionizer: Zellij"       { spawn "@zellijFocus@"; }
   Mod+W                  hotkey-overlay-title="Web Browser: Brave Origin"           { spawn "@brave@"; }
@@ -147,6 +186,7 @@ binds {
   Mod+E                  hotkey-overlay-title="File Manager: Nautilus"              { spawn "@nautilus@"; }
   Mod+D                  hotkey-overlay-title="Application Launcher"                { spawn "@noctalia@" "msg" "panel-toggle" "launcher"; }
 
+  // Noctalia Panels
   Mod+V                  hotkey-overlay-title="Clipboard History"                   { spawn "@noctalia@" "msg" "panel-toggle" "clipboard"; }
   Mod+N                  hotkey-overlay-title="Notification Center"                 { spawn "@noctalia@" "msg" "panel-toggle" "notifications"; }
   Mod+C                  hotkey-overlay-title="Control Center"                      { spawn "@noctalia@" "msg" "panel-toggle" "control-center"; }
@@ -159,15 +199,19 @@ binds {
   Mod+Escape             hotkey-overlay-title="Lock Screen"                         { spawn "@noctalia@" "msg" "session" "lock"; }
   Mod+Slash              hotkey-overlay-title="Hotkey Cheat Sheet"                  { show-hotkey-overlay; }
 
+  // Window Layout & Cycling
   Mod+Q                  hotkey-overlay-title="Close Focused Window"                { close-window; }
   Mod+F                  hotkey-overlay-title="Maximize Column"                     { maximize-column; }
   Mod+Shift+F            hotkey-overlay-title="Fullscreen Window"                   { fullscreen-window; }
   Mod+Shift+Space        hotkey-overlay-title="Toggle Window Floating"              { toggle-window-floating; }
+  Mod+R                  hotkey-overlay-title="Cycle Column Width Presets"          { switch-preset-column-width; }
   Mod+Shift+C            hotkey-overlay-title="Center Column on Screen"             { center-column; }
 
+  // Audio Utilities
   Mod+M                  hotkey-overlay-title="Audio Effects: EasyEffects"          { spawn "@easyeffects@"; }
   Mod+Shift+M            hotkey-overlay-title="Volume Mixer: Pavucontrol"           { spawn "@pavucontrol@"; }
 
+  // Navigation (Vim + Arrows)
   Mod+H                  { focus-column-left; }
   Mod+L                  { focus-column-right; }
   Mod+J                  { focus-workspace-down; }
@@ -187,6 +231,11 @@ binds {
   Mod+Shift+Down         { move-column-to-workspace-down; }
   Mod+Shift+Up           { move-column-to-workspace-up; }
 
+  // Mouse Wheel Navigation
+  Mod+WheelScrollDown    cooldown-ms=150 { focus-column-right; }
+  Mod+WheelScrollUp      cooldown-ms=150 { focus-column-left; }
+
+  // Workspaces
   Mod+1                  { focus-workspace "w1"; }
   Mod+2                  { focus-workspace "w2"; }
   Mod+3                  { focus-workspace "w3"; }
@@ -209,12 +258,14 @@ binds {
   Mod+Shift+9            { move-column-to-workspace "w9"; }
   Mod+Shift+0            { move-column-to-workspace "w0"; }
 
+  // Width adjustments
   Mod+Minus              { set-column-width "-5%"; }
   Mod+Equal              { set-column-width "+5%"; }
   Mod+Shift+Minus        { set-window-height "-5%"; }
   Mod+Shift+Equal        { set-window-height "+5%"; }
   Mod+Backspace          { spawn "@noctalia@" "msg" "notification-clear-active"; }
 
+  // Hardware Keys
   Print                  hotkey-overlay-title="Fullscreen Screenshot"               { spawn "@screenshotFull@"; }
   XF86MonBrightnessUp    { spawn "@brightnessUp@"; }
   XF86MonBrightnessDown  { spawn "@brightnessDown@"; }
