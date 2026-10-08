@@ -1,0 +1,6 @@
+# Noctalia v5 Runtime State Overrides
+[bar.default]
+position = "bottom"
+start = ["launcher", "clock", "sysmon", "media"]
+center = ["workspaces"]
+end = ["tray", "notifications", "network", "battery", "control-center"]

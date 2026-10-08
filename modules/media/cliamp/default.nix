@@ -22,13 +22,8 @@ in
   home-manager.users.${user} = { lib, ... }: {
     home.activation.setupCliampConfig = lib.hm.dag.entryAfter ["writeBoundary"] ''
       mkdir -p $HOME/.config/cliamp/themes
-      mkdir -p $HOME/.config/BraveSoftware
-
-      # Declaratively bridge Brave Origin to standard Chromium discovery path
-      ln -sfn $HOME/.config/BraveSoftware/Brave-Origin $HOME/.config/BraveSoftware/Brave-Browser
-
-      rm -f $HOME/.config/cliamp/config.toml
-      cat <<'EOF' > $HOME/.config/cliamp/config.toml
+      if [ ! -f $HOME/.config/cliamp/config.toml ]; then
+        cat <<'EOF' > $HOME/.config/cliamp/config.toml
 theme = "noctalia"
 visualizer = "Retro"
 provider = "ytmusic"
@@ -44,7 +39,8 @@ vis_volume_linked = false
 enabled = true
 cookies_from = "brave+gnomekeyring"
 EOF
-      chmod 644 $HOME/.config/cliamp/config.toml
+        chmod 644 $HOME/.config/cliamp/config.toml
+      fi
     '';
   };
 }

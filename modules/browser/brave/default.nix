@@ -27,7 +27,7 @@ in
     ExtensionInstallAllowlist = [ "*" ];
 
     ExtensionInstallForcelist = [
-      # Vimium C (Qutebrowser / Vim Modal Navigation)
+      # Vimium C
       "hfjbmagddngcpeloejdejnfgbamkjaeg;https://clients2.google.com/service/update2/crx"
       # FastStream Video Player
       "kkeakohpadmbldjaiggikmnldlfkdfog;https://clients2.google.com/service/update2/crx"
@@ -48,6 +48,12 @@ in
     config.environment.etc."brave/policies/managed/brave-policies.json".source;
 
   home-manager.users.${user} = { lib, ... }: {
+    # Establish standard Chromium discovery bridge for yt-dlp / ytmusicapi
+    home.activation.setupBraveSymlinks = lib.hm.dag.entryAfter ["writeBoundary"] ''
+      mkdir -p "$HOME/.config/BraveSoftware"
+      ln -sfn "$HOME/.config/BraveSoftware/Brave-Origin" "$HOME/.config/BraveSoftware/Brave-Browser"
+    '';
+
     # Configure Brave Origin Preferences: Disable vertical tabs, enforce GTK system theme
     home.activation.setupBravePrefs = lib.hm.dag.entryAfter ["writeBoundary"] ''
       PREF_DIR="$HOME/.config/BraveSoftware/Brave-Origin/Default"

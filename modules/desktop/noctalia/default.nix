@@ -118,9 +118,9 @@ in
             margin_edge = 6;
             frame_radius = 12;
             opacity = 0.85;
-            widgets_left = [ "launcher" "clock" "system-monitor" "media-mini" ];
-            widgets_center = [ "workspace" ];
-            widgets_right = [ "tray" "notifications" "network" "battery" "control-center" ];
+            start = [ "launcher" "clock" "sysmon" "media" ];
+            center = [ "workspaces" ];
+            end = [ "tray" "notifications" "network" "battery" "control-center" ];
           };
         };
         launcher = {
@@ -150,6 +150,9 @@ in
     # Bi-directional out-of-store symlinks to /etc/nixos
     xdg.configFile."noctalia/settings.json".source =
       config.lib.file.mkOutOfStoreSymlink "/etc/nixos/modules/desktop/noctalia/settings.json";
+
+    xdg.stateFile."noctalia/settings.toml".source =
+      config.lib.file.mkOutOfStoreSymlink "/etc/nixos/modules/desktop/noctalia/settings.toml";
 
     xdg.configFile."noctalia/plugins.json".source =
       config.lib.file.mkOutOfStoreSymlink "/etc/nixos/modules/desktop/noctalia/plugins.json";

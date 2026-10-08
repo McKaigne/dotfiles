@@ -7,6 +7,10 @@
     ];
   };
 
+  boot.kernelParams = [
+    "i915.enable_fbc=1"
+  ];
+
   environment.sessionVariables = {
     LIBVA_DRIVER_NAME = "iHD";
   };
