@@ -7,6 +7,9 @@
       url = "github:nix-community/home-manager";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    flake-parts.url = "github:hercules-ci/flake-parts";
+    import-tree.url = "github:vic/import-tree";
+    wrapper-modules.url = "github:BirdeeHub/nix-wrapper-modules";
     noctalia = {
       url = "github:noctalia-dev/noctalia";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -17,34 +20,6 @@
     };
   };
 
-  outputs =
-    {
-      self,
-      nixpkgs,
-      home-manager,
-      ...
-    }@inputs:
-    {
-      nixosConfigurations = {
-        # Laptop (Intel Iris Xe, pollux user)
-        castor = nixpkgs.lib.nixosSystem {
-          system = "x86_64-linux";
-          specialArgs = { inherit inputs self; };
-          modules = [
-            home-manager.nixosModules.home-manager
-            ./hosts/castor
-          ];
-        };
-
-        # Desktop PC (AMD Ryzen 5800X + RX 7600 XT, jekyll user)
-        hyde = nixpkgs.lib.nixosSystem {
-          system = "x86_64-linux";
-          specialArgs = { inherit inputs self; };
-          modules = [
-            home-manager.nixosModules.home-manager
-            ./hosts/hyde
-          ];
-        };
-      };
-    };
+  outputs = inputs:
+    inputs.flake-parts.lib.mkFlake { inherit inputs; } (inputs.import-tree ./modules);
 }

@@ -1,0 +1,49 @@
+"$schema" = "https://starship.rs/config-schema.json"
+
+add_newline = true
+continuation_prompt = "[▸▹ ](dimmed white)"
+
+format = """($nix_shell$container$fill$git_metrics\n)$cmd_duration$hostname$localip$shlvl$shell$env_var$jobs$sudo$username$character"""
+
+right_format = """$directory$git_branch$git_status$battery$time"""
+
+[fill]
+symbol = " "
+
+[character]
+format = "$symbol "
+success_symbol = "[◎](bold #2aa198)"
+error_symbol = "[○](bold #dc322f)"
+vimcmd_symbol = "[■](bold #859900)"
+
+[directory]
+home_symbol = "⌂"
+truncation_length = 2
+style = "italic #268bd2"
+format = "[$path]($style) "
+
+[git_branch]
+format = "[$symbol$branch]($style) "
+symbol = "△ "
+style = "italic #2aa198"
+
+[git_status]
+style = "bold #b58900"
+format = "([$all_status$ahead_behind]($style) )"
+
+[nix_shell]
+style = "bold #268bd2"
+symbol = "✶ "
+format = "[$symbol nix]($style) "
+
+[time]
+disabled = false
+format = "[ $time]($style)"
+time_format = "%R"
+style = "dimmed #586e75"
+
+[battery]
+format = "[ $percentage $symbol]($style)"
+full_symbol = "█"
+charging_symbol = "↑"
+discharging_symbol = "↓"
