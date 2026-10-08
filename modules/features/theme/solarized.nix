@@ -36,6 +36,7 @@
       xdg.configFile."gtk-3.0/gtk.css".text = "@import 'noctalia.css';\n";
       xdg.configFile."gtk-4.0/gtk.css".text = "@import 'noctalia.css';\n";
 
+      # Pure Qt configuration pointing to Noctalia generated palettes
       xdg.configFile."qt6ct/qt6ct.conf".text = ''
         [Appearance]
         color_scheme_path=/home/${user}/.config/qt6ct/colors/noctalia.conf
