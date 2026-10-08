@@ -7,7 +7,8 @@
     environment.systemPackages = [ pkgs.ghostty ];
 
     home-manager.users.${user} = {
-      xdg.configFile."ghostty/themes/solarized-osaka".text = ''
+      # Seed initial Noctalia theme with Solarized Osaka
+      xdg.configFile."ghostty/themes/noctalia".text = ''
         palette = 0=#073642
         palette = 1=#dc322f
         palette = 2=#859900
@@ -35,7 +36,7 @@
       xdg.configFile."ghostty/config".text = ''
         font-family = Lilex Nerd Font
         font-size = 13
-        theme = solarized-osaka
+        theme = noctalia
         background-opacity = 0.85
         background-blur = true
         window-decoration = false

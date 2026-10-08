@@ -28,8 +28,13 @@
     environment.systemPackages = [ wrappedHelix ];
 
     home-manager.users.${user} = {
+      xdg.configFile."helix/themes/noctalia.toml".text = ''
+        inherits = "solarized_dark"
+        "ui.background" = { bg = "none" }
+      '';
+
       xdg.configFile."helix/config.toml".text = ''
-        theme = "solarized_dark"
+        theme = "noctalia"
 
         [editor]
         line-number = "relative"
