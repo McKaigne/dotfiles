@@ -42,12 +42,12 @@ layout {
   center-focused-column "on-overflow"
   default-column-width { proportion 0.5; }
 
-  // Disable outer focus ring to avoid clunky double borders
+  // Off to prevent double outlines
   focus-ring {
     off
   }
 
-  // Ly-sec signature 45-degree workspace-relative gradient border
+  // Ly-sec 45-degree workspace-relative gradient border
   border {
     width 2
     active-gradient from="#2aa198" to="#268bd2" angle=45 relative-to="workspace-view"
@@ -96,10 +96,11 @@ blur {
 include optional=true "~/.config/niri/noctalia.kdl"
 include optional=true "~/.config/niri/custom.kdl"
 
-// Base window geometry: sharp 4px architectural radius with complete background fill
+// Base window geometry: 4px radius with hollow border background to preserve transparency & blur
 window-rule {
   geometry-corner-radius 4
   clip-to-geometry true
+  draw-border-with-background false
 }
 
 // Terminal & editor blur

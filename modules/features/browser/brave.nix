@@ -24,9 +24,6 @@
       DnsOverHttpsMode = "secure";
       DnsOverHttpsTemplates = "https://dns.quad9.net/dns-query";
 
-      # Desaturate Brave: Force Base03 dark teal frame matching Solarized Osaka
-      BrowserThemeColor = "#002b36";
-
       ExtensionInstallAllowlist = [ "*" ];
       ExtensionInstallForcelist = [
         "hfjbmagddngcpeloejdejnfgbamkjaeg;https://clients2.google.com/service/update2/crx"
@@ -51,21 +48,6 @@
           rm -rf "$TARGET_DIR/Brave-Browser"
         fi
         ln -sfn "$TARGET_DIR/Brave-Origin" "$TARGET_DIR/Brave-Browser"
-
-        # Enforce non-custom frame so Brave fills the Niri window without corner gaps
-        PREF_DIR="$HOME/.config/BraveSoftware/Brave-Origin/Default"
-        PREF_FILE="$PREF_DIR/Preferences"
-        mkdir -p "$PREF_DIR"
-        if [ ! -f "$PREF_FILE" ]; then
-          echo '{}' > "$PREF_FILE"
-        fi
-        ${pkgs.jq}/bin/jq '
-          .browser = (.browser // {}) |
-          .browser.custom_chrome_frame = false |
-          .brave = (.brave // {}) |
-          .brave.vertical_tabs = (.brave.vertical_tabs // {}) |
-          .brave.vertical_tabs.enabled = false
-        ' "$PREF_FILE" > "$PREF_FILE.tmp" && mv "$PREF_FILE.tmp" "$PREF_FILE"
       '';
     };
   };
