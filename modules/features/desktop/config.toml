@@ -1,0 +1,92 @@
+[general]
+avatar_image = ""
+enable_blur_behind = true
+clock_format = "HH:mm"
+language = ""
+
+[theme]
+mode = "dark"
+source = "palette"
+palette = "Solarized"
+
+[theme.templates]
+enable_builtin_templates = true
+
+[theme.templates.user.cliamp]
+input_path = "~/.config/noctalia/user-templates/cliamp.toml"
+output_path = "~/.config/cliamp/themes/noctalia.toml"
+
+[theme.templates.user.zellij]
+input_path = "~/.config/noctalia/user-templates/zellij.kdl"
+output_path = "~/.config/zellij/themes/noctalia.kdl"
+
+[wallpaper]
+directory = "/etc/nixos/wallpapers"
+fill_mode = "crop"
+set_on_all_monitors = true
+transition_duration = 1500
+transition_type = "honeycomb"
+
+[bar.top]
+enabled = true
+position = "top"
+bar_type = "floating"
+density = "compact"
+background_opacity = 0.82
+capsule_opacity = 0.88
+show_capsules = true
+margin_top = 6
+margin_sides = 12
+radius = 14
+content_padding = 4
+widget_spacing = 8
+
+[bar.top.widgets]
+left = ["launcher", "workspaces"]
+center = ["active_window", "clock"]
+right = ["media", "sysmon", "tray", "notifications", "network", "battery", "control_center"]
+
+[bar.top.widgets.launcher]
+icon = "rocket"
+icon_color = "primary"
+
+[bar.top.widgets.workspaces]
+pill_size = 0.5
+focused_color = "primary"
+occupied_color = "secondary"
+empty_color = "surface_container_high"
+show_labels_only_when_occupied = true
+font_weight = "bold"
+
+[bar.top.widgets.active_window]
+show_app_icon = true
+max_width = 260
+hide_when_empty = true
+
+[bar.top.widgets.clock]
+format_horizontal = "HH:mm  •  ddd, MMM dd"
+clock_color = "primary"
+
+[bar.top.widgets.media]
+max_width = 160
+show_album_art = true
+show_progress_ring = true
+hide_when_idle = true
+
+[bar.top.widgets.sysmon]
+compact_mode = true
+show_cpu_usage = true
+show_memory_usage = true
+show_disk_usage = false
+
+[bar.top.widgets.notifications]
+show_unread_badge = true
+unread_badge_color = "primary"
+
+[bar.top.widgets.battery]
+hide_if_not_detected = true
+display_mode = "graphic"
+
+[bar.top.widgets.control_center]
+icon = "assembly-filled"
+icon_color = "primary"

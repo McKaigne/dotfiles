@@ -2,18 +2,15 @@
   flake.nixosModules.noctalia = { config, pkgs, lib, ... }:
   let
     user = config.mainUser;
-    noctaliaJson = ./noctalia.json;
+    noctaliaConfigToml = ./config.toml;
 
     syncScript = pkgs.writeShellScript "noctalia-sync-to-git" ''
       set -euo pipefail
-      SRC="$HOME/.config/noctalia/settings.json"
-      DEST="/etc/nixos/modules/features/desktop/noctalia.json"
+      SRC_CFG="$HOME/.config/noctalia/config.toml"
+      DEST="/etc/nixos/modules/features/desktop/config.toml"
 
-      if [ -f "$SRC" ] && [ -w "/etc/nixos" ]; then
-        ${pkgs.jq}/bin/jq '
-          .general.avatarImage = "" |
-          .wallpaper.directory = "/etc/nixos/wallpapers"
-        ' "$SRC" > "$DEST"
+      if [ -w "/etc/nixos" ] && [ -f "$SRC_CFG" ]; then
+        cp -f "$SRC_CFG" "$DEST"
         ${pkgs.git}/bin/git -C /etc/nixos add "$DEST" 2>/dev/null || true
       fi
     '';
@@ -26,16 +23,16 @@
     ];
 
     systemd.user.paths.noctalia-sync = {
-      description = "Watch Noctalia settings.json for GUI updates";
+      description = "Watch Noctalia v5 config for updates";
       wantedBy = [ "graphical-session.target" ];
       pathConfig = {
-        PathModified = "%h/.config/noctalia/settings.json";
+        PathModified = "%h/.config/noctalia/config.toml";
         Unit = "noctalia-sync.service";
       };
     };
 
     systemd.user.services.noctalia-sync = {
-      description = "Sync updated Noctalia GUI settings into Git tree";
+      description = "Sync updated Noctalia v5 config into Git tree";
       serviceConfig = {
         Type = "oneshot";
         ExecStart = "${syncScript}";
@@ -46,42 +43,19 @@
       imports = [ inputs.noctalia.homeModules.default ];
       programs.noctalia.enable = true;
 
-      home.activation.seedNoctaliaSettings = lib.hm.dag.entryAfter ["writeBoundary"] ''
-        SETTINGS_DIR="$HOME/.config/noctalia"
-        SETTINGS_FILE="$SETTINGS_DIR/settings.json"
-        mkdir -p "$SETTINGS_DIR"
-        rm -f "$SETTINGS_FILE"
-        cp ${noctaliaJson} "$SETTINGS_FILE"
-        chmod 644 "$SETTINGS_FILE"
+      home.activation.seedNoctaliaConfig = lib.hm.dag.entryAfter ["writeBoundary"] ''
+        CONFIG_DIR="$HOME/.config/noctalia"
+        CONFIG_FILE="$CONFIG_DIR/config.toml"
+        mkdir -p "$CONFIG_DIR"
+        rm -f "$CONFIG_FILE"
+        cp ${noctaliaConfigToml} "$CONFIG_FILE"
+        chmod 644 "$CONFIG_FILE"
+
+        # Remove dead legacy v4 settings.json
+        rm -f "$CONFIG_DIR/settings.json"
       '';
 
-      # Full dynamic 16-color ANSI template for Ghostty
-      xdg.configFile."noctalia/templates/ghostty".text = ''
-        palette = 0={{ colors.surface_container_high.default.hex }}
-        palette = 1={{ colors.error.default.hex }}
-        palette = 2={{ colors.tertiary.default.hex }}
-        palette = 3={{ colors.secondary.default.hex }}
-        palette = 4={{ colors.primary.default.hex }}
-        palette = 5={{ colors.tertiary.default.hex }}
-        palette = 6={{ colors.secondary.default.hex }}
-        palette = 7={{ colors.on_surface.default.hex }}
-        palette = 8={{ colors.surface_container_highest.default.hex }}
-        palette = 9={{ colors.error.default.hex }}
-        palette = 10={{ colors.tertiary.default.hex }}
-        palette = 11={{ colors.secondary.default.hex }}
-        palette = 12={{ colors.primary.default.hex }}
-        palette = 13={{ colors.tertiary.default.hex }}
-        palette = 14={{ colors.secondary.default.hex }}
-        palette = 15={{ colors.on_surface.default.hex }}
-        background = {{ colors.surface.default.hex }}
-        foreground = {{ colors.on_surface.default.hex }}
-        selection-background = {{ colors.surface_container_highest.default.hex }}
-        selection-foreground = {{ colors.on_surface.default.hex }}
-        cursor-color = {{ colors.primary.default.hex }}
-        cursor-text = {{ colors.surface.default.hex }}
-      '';
-
-      xdg.configFile."noctalia/templates/cliamp.toml".text = ''
+      xdg.configFile."noctalia/user-templates/cliamp.toml".text = ''
         accent = "{{ colors.primary.default.hex }}"
         bright_fg = "{{ colors.on_surface.default.hex }}"
         fg = "{{ colors.on_surface_variant.default.hex }}"
@@ -90,7 +64,7 @@
         red = "{{ colors.error.default.hex }}"
       '';
 
-      xdg.configFile."noctalia/templates/zellij.kdl".text = ''
+      xdg.configFile."noctalia/user-templates/zellij.kdl".text = ''
         themes {
           noctalia {
             fg "{{ colors.on_surface.default.hex }}"
@@ -107,40 +81,6 @@
           }
         }
       '';
-
-      xdg.configFile."noctalia/templates/helix.toml".text = ''
-        inherits = "solarized_dark"
-        "ui.background" = { bg = "none" }
-        "ui.cursor.primary" = { fg = "{{ colors.surface.default.hex }}", bg = "{{ colors.primary.default.hex }}" }
-      '';
-
-      xdg.configFile."noctalia/templates/zathurarc".text = ''
-        set default-bg "{{ colors.surface.default.hex }}"
-        set default-fg "{{ colors.on_surface.default.hex }}"
-        set statusbar-bg "{{ colors.surface_container.default.hex }}"
-        set statusbar-fg "{{ colors.on_surface.default.hex }}"
-        set highlight-color "{{ colors.primary.default.hex }}"
-      '';
-
-      xdg.configFile."noctalia/templates/btop.theme".text = ''
-        theme[main_bg]="{{ colors.surface.default.hex }}"
-        theme[main_fg]="{{ colors.on_surface.default.hex }}"
-        theme[title]="{{ colors.primary.default.hex }}"
-        theme[selected_bg]="{{ colors.surface_container.default.hex }}"
-        theme[selected_fg]="{{ colors.on_surface.default.hex }}"
-      '';
-
-      xdg.configFile."noctalia/plugins.json".text = builtins.toJSON {
-        sources = [
-          {
-            enabled = true;
-            name = "Noctalia Plugins";
-            url = "https://github.com/noctalia-dev/noctalia-plugins";
-          }
-        ];
-        states = {};
-        version = 2;
-      };
     };
   };
 }

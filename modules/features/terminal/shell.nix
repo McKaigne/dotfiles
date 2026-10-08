@@ -117,8 +117,8 @@
       }
 
       def sync-noctalia [] {
-        let src = ($env.HOME | path join ".config/noctalia/settings.json")
-        let dest = "/etc/nixos/modules/features/desktop/noctalia.json"
+        let src = ($env.HOME | path join ".config/noctalia/config.toml")
+        let dest = "/etc/nixos/modules/features/desktop/config.toml"
         if ($src | path exists) {
           cp -f $src $dest
           print $"Successfully synced ($src) -> ($dest)"

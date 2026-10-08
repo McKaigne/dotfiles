@@ -7,7 +7,6 @@
     environment.systemPackages = [ pkgs.ghostty ];
 
     home-manager.users.${user} = {
-      # No hardcoded palettes. Ghostty strictly consumes Noctalia's dynamic theme file.
       xdg.configFile."ghostty/config".text = ''
         font-family = Lilex Nerd Font
         font-size = 13
