@@ -63,6 +63,8 @@ occupied_color = "secondary"
 empty_color = "surface_container_high"
 show_labels_only_when_occupied = true
 font_weight = "bold"
+max_workspaces = 9
+hide_unoccupied = true
 
 [bar.top.widgets.active_window]
 show_app_icon = true

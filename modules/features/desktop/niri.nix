@@ -50,7 +50,7 @@ let
         "@ghostty@"
         "@brave@"
         "@obsidian@"
-        "@nautilus@"
+        "@pcmanfm@"
         "@wpctl@"
         "@playerctl@"
         "@zellijFocus@"
@@ -68,7 +68,7 @@ let
         "${pkgs.ghostty}/bin/ghostty"
         "${lib.getExe pkgs.brave-origin}"
         "${pkgs.obsidian}/bin/obsidian"
-        "${pkgs.nautilus}/bin/nautilus"
+        "${pkgs.pcmanfm}/bin/pcmanfm"
         "${pkgs.wireplumber}/bin/wpctl"
         "${pkgs.playerctl}/bin/playerctl"
         "${zellijFocus}/bin/zellij-focus"
@@ -113,7 +113,6 @@ in
   in
   {
     programs.niri.enable = true;
-    # Maintain pkgs.niri as the canonical sessionPackage while using myNiri for runtime executions
     programs.niri.package = pkgs.niri;
 
     services.greetd = {
