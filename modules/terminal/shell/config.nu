@@ -98,6 +98,18 @@ $env.config = {
   }
 }
 
+# Sync live Noctalia GUI settings back into /etc/nixos for Git tracking
+def sync-noctalia [] {
+  let src = ($env.HOME | path join ".config/noctalia/settings.json")
+  let dest = "/etc/nixos/modules/desktop/noctalia/settings.json"
+  if ($src | path exists) {
+    cp -f $src $dest
+    print $"Successfully synced ($src) -> ($dest)"
+  } else {
+    print $"Error: ($src) does not exist."
+  }
+}
+
 def fkill [] {
   let selected = (ps | select pid name cpu mem | to text | lines | skip 1 | ^fzf --header="Select process to kill (ESC to cancel)")
   if ($selected | is-not-empty) {
