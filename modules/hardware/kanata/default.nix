@@ -74,7 +74,7 @@ let
     ;; ========================================================================
     (deflayer ext
       _    _         _       _       _        _        _      _     _     _     _    _    _    _
-      _    esc       A-left  C-f     A-rght   ins      pgup   home  up    end   caps _    _    _
+      _    esc       bck     C-f     fwd      ins      pgup   home  up    end   caps _    _    _
       _    @os_alt   @os_met @os_sft @os_ctl  @os_altgr pgdn  left  down  rght  del  _    _
       _    C-z       S-del   C-ins   lmet     S-ins    ret    bspc  tab   menu  prnt _
       _    _                         ret                      @to_fn @to_fn
@@ -107,7 +107,7 @@ let
     ;; ========================================================================
     (deflayer fn
       _    _         _       _       _        _        _      _     _     _     _    _    _    _
-      _    mstp      mprev   mpp     mnext    brup     f12    f7    f8    f9    slck _    _    _
+      _    _         prev    pp      next     brup     f12    f7    f8    f9    slck _    _    _
       _    @os_alt   @os_met @os_sft @os_ctl  brdn     f11    f4    f5    f6    _    _    _
       _    mute      voldwn  C-S-c   volu     C-S-v    f10    f1    f2    f3    _    _
       _    _                         _                        _     _
