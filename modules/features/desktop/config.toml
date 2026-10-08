@@ -4,6 +4,12 @@ enable_blur_behind = true
 clock_format = "HH:mm"
 language = ""
 
+[location]
+auto_locate = true
+
+[weather]
+enabled = true
+
 [theme]
 mode = "dark"
 source = "palette"
@@ -43,7 +49,7 @@ widget_spacing = 8
 
 [bar.top.widgets]
 left = ["launcher", "workspaces"]
-center = ["active_window", "clock"]
+center = ["active_window", "weather", "clock"]
 right = ["media", "sysmon", "tray", "notifications", "network", "battery", "control_center"]
 
 [bar.top.widgets.launcher]
@@ -60,8 +66,12 @@ font_weight = "bold"
 
 [bar.top.widgets.active_window]
 show_app_icon = true
-max_width = 260
+max_width = 240
 hide_when_empty = true
+
+[bar.top.widgets.weather]
+show_icon = true
+show_temperature = true
 
 [bar.top.widgets.clock]
 format_horizontal = "HH:mm  •  ddd, MMM dd"

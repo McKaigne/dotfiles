@@ -95,9 +95,9 @@ blur {
 include optional=true "~/.config/niri/noctalia.kdl"
 include optional=true "~/.config/niri/custom.kdl"
 
-// Base window geometry
+// Base window geometry: 4px radius (near-square architectural bevel)
 window-rule {
-  geometry-corner-radius 12
+  geometry-corner-radius 4
   clip-to-geometry true
   draw-border-with-background false
 }
