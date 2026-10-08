@@ -46,15 +46,14 @@
       imports = [ inputs.noctalia.homeModules.default ];
       programs.noctalia.enable = true;
 
+      # Unconditionally synchronize Git configuration to live settings while preserving write permissions
       home.activation.seedNoctaliaSettings = lib.hm.dag.entryAfter ["writeBoundary"] ''
         SETTINGS_DIR="$HOME/.config/noctalia"
         SETTINGS_FILE="$SETTINGS_DIR/settings.json"
         mkdir -p "$SETTINGS_DIR"
-        if [ ! -f "$SETTINGS_FILE" ] || [ -L "$SETTINGS_FILE" ]; then
-          rm -f "$SETTINGS_FILE"
-          cp ${noctaliaJson} "$SETTINGS_FILE"
-          chmod 644 "$SETTINGS_FILE"
-        fi
+        rm -f "$SETTINGS_FILE"
+        cp ${noctaliaJson} "$SETTINGS_FILE"
+        chmod 644 "$SETTINGS_FILE"
       '';
 
       xdg.configFile."noctalia/templates/cliamp.toml".text = ''
