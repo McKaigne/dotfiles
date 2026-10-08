@@ -1,7 +1,6 @@
 output "DP-1" {
   mode "1920x1080@240.000"
   scale 1.0
-  variable-refresh-rate
 }
 
 hotkey-overlay {
