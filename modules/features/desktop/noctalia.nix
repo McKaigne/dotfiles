@@ -46,7 +46,6 @@
       imports = [ inputs.noctalia.homeModules.default ];
       programs.noctalia.enable = true;
 
-      # Unconditionally synchronize Git configuration to live settings while preserving write permissions
       home.activation.seedNoctaliaSettings = lib.hm.dag.entryAfter ["writeBoundary"] ''
         SETTINGS_DIR="$HOME/.config/noctalia"
         SETTINGS_FILE="$SETTINGS_DIR/settings.json"
@@ -54,6 +53,32 @@
         rm -f "$SETTINGS_FILE"
         cp ${noctaliaJson} "$SETTINGS_FILE"
         chmod 644 "$SETTINGS_FILE"
+      '';
+
+      # Full dynamic 16-color ANSI template for Ghostty
+      xdg.configFile."noctalia/templates/ghostty".text = ''
+        palette = 0={{ colors.surface_container_high.default.hex }}
+        palette = 1={{ colors.error.default.hex }}
+        palette = 2={{ colors.tertiary.default.hex }}
+        palette = 3={{ colors.secondary.default.hex }}
+        palette = 4={{ colors.primary.default.hex }}
+        palette = 5={{ colors.tertiary.default.hex }}
+        palette = 6={{ colors.secondary.default.hex }}
+        palette = 7={{ colors.on_surface.default.hex }}
+        palette = 8={{ colors.surface_container_highest.default.hex }}
+        palette = 9={{ colors.error.default.hex }}
+        palette = 10={{ colors.tertiary.default.hex }}
+        palette = 11={{ colors.secondary.default.hex }}
+        palette = 12={{ colors.primary.default.hex }}
+        palette = 13={{ colors.tertiary.default.hex }}
+        palette = 14={{ colors.secondary.default.hex }}
+        palette = 15={{ colors.on_surface.default.hex }}
+        background = {{ colors.surface.default.hex }}
+        foreground = {{ colors.on_surface.default.hex }}
+        selection-background = {{ colors.surface_container_highest.default.hex }}
+        selection-foreground = {{ colors.on_surface.default.hex }}
+        cursor-color = {{ colors.primary.default.hex }}
+        cursor-text = {{ colors.surface.default.hex }}
       '';
 
       xdg.configFile."noctalia/templates/cliamp.toml".text = ''
@@ -76,19 +101,11 @@
             yellow "{{ colors.secondary.default.hex }}"
             blue "{{ colors.primary.default.hex }}"
             magenta "{{ colors.tertiary.default.hex }}"
-            cyan "{{ colors.primary.default.hex }}"
+            cyan "{{ colors.secondary.default.hex }}"
             white "{{ colors.on_surface_variant.default.hex }}"
             orange "{{ colors.primary_container.default.hex }}"
           }
         }
-      '';
-
-      xdg.configFile."noctalia/templates/ghostty".text = ''
-        background = {{ colors.surface.default.hex }}
-        foreground = {{ colors.on_surface.default.hex }}
-        selection-background = {{ colors.surface_container.default.hex }}
-        selection-foreground = {{ colors.on_surface.default.hex }}
-        cursor-color = {{ colors.primary.default.hex }}
       '';
 
       xdg.configFile."noctalia/templates/helix.toml".text = ''
