@@ -10,6 +10,17 @@
       xdg.configFile."ghostty/config".text = ''
         font-family = Lilex Nerd Font
         font-size = 13
+
+        # Lilex OpenType stylistic & character variants
+        font-feature = locl
+        font-feature = cv01
+        font-feature = cv09
+        font-feature = cv15
+        font-feature = cv03
+        font-feature = cv13
+        font-feature = cv11
+        font-feature = ss01
+
         theme = noctalia
         background-opacity = 0.85
         background-blur = true

@@ -39,7 +39,7 @@
         splitter_pos=180
         side_pane_mode=places
         view_mode=detailed
-        show_hidden=0
+        show_hidden=1
         sort_type=0
         sort_by=0
       '';
