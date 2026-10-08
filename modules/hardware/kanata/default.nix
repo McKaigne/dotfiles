@@ -59,12 +59,12 @@ let
     )
 
     ;; ========================================================================
-    ;; Layer 0: Base Layer (QWERTY Alphas + Full ANSI Restored)
+    ;; Layer 0: Base Layer (QWERTY Alphas + Full ANSI Restored + Caps->Esc)
     ;; ========================================================================
     (deflayer base
       esc  1    2    3    4    5    6    7    8    9    0    -    =    bspc
       tab  q    w    e    r    t    y    u    i    o    p    [    ]    \
-      caps a    s    @b_d @b_f g    h    @b_j @b_k l    scln '    ret
+      esc  a    s    @b_d @b_f g    h    @b_j @b_k l    scln '    ret
       lsft z    x    c    v    b    n    m    ,    .    /    rsft
       ${row5Thumbs}
     )
@@ -109,7 +109,7 @@ let
       _    _         _       _       _        _        _      _     _     _     _    _    _    _
       _    _         prev    pp      next     brup     f12    f7    f8    f9    slck _    _    _
       _    @os_alt   @os_met @os_sft @os_ctl  brdn     f11    f4    f5    f6    _    _    _
-      _    mute      voldwn  C-S-c   volu     C-S-v    f10    f1    f2    f3    _    _
+      _    mute      vold    C-S-c   volu     C-S-v    f10    f1    f2    f3    _    _
       _    _                         _                        _     _
     )
   '';
