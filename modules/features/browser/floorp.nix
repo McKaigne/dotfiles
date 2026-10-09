@@ -26,6 +26,12 @@
         };
 
         ExtensionSettings = {
+          # Solarized Osaka Browser Theme
+          "solarized-osaka@hhschen.local" = {
+            installation_mode = "force_installed";
+            install_url = "https://addons.mozilla.org/firefox/downloads/latest/solarized-osaka/latest.xpi";
+          };
+
           # Sidebery
           "{3c078156-979c-498b-8990-85f7987dd929}" = {
             installation_mode = "force_installed";
