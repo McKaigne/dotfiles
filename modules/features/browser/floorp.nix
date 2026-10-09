@@ -32,6 +32,12 @@
             install_url = "https://addons.mozilla.org/firefox/downloads/latest/solarized-osaka/latest.xpi";
           };
 
+          # Stylus (UserCSS Engine)
+          "{7a7a4a84-a635-4252-a727-43fb57ba7059}" = {
+            installation_mode = "force_installed";
+            install_url = "https://addons.mozilla.org/firefox/downloads/latest/styl-us/latest.xpi";
+          };
+
           # Sidebery
           "{3c078156-979c-498b-8990-85f7987dd929}" = {
             installation_mode = "force_installed";
