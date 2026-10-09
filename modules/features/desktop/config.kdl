@@ -48,7 +48,6 @@ layout {
     off
   }
 
-  // Ly-sec 45-degree workspace-relative gradient border
   border {
     width 2
     active-gradient from="#2aa198" to="#268bd2" angle=45 relative-to="workspace-view"
@@ -97,14 +96,12 @@ blur {
 include optional=true "~/.config/niri/noctalia.kdl"
 include optional=true "~/.config/niri/custom.kdl"
 
-// Base window geometry: sharp 4px radius with hollow border background
 window-rule {
   geometry-corner-radius 4
   clip-to-geometry true
   draw-border-with-background false
 }
 
-// Terminal & editor blur
 window-rule {
   match app-id="^ghostty$"
   match app-id="^com.mitchellh.ghostty$"
@@ -114,7 +111,6 @@ window-rule {
   }
 }
 
-// Noctalia popups & settings
 window-rule {
   match app-id=r#"^dev\.noctalia\.Noctalia.*$"#
   open-floating true
@@ -124,7 +120,6 @@ window-rule {
   }
 }
 
-// Dialogs, pickers, and portals (Ly-sec ruleset)
 window-rule {
   match app-id=r#"^org\.freedesktop\.impl\.portal\.desktop.*$"#
   match app-id=r#"^xdg-desktop-portal.*$"#
@@ -141,7 +136,6 @@ window-rule {
   open-floating true
 }
 
-// Compositor layers
 layer-rule {
   match namespace="^wallpaper$"
   place-within-backdrop true
@@ -167,7 +161,6 @@ debug {
   honor-xdg-activation-with-invalid-serial
 }
 
-// Strictly 9 workspaces (w1 - w9)
 workspace "w1"
 workspace "w2"
 workspace "w3"
@@ -184,29 +177,28 @@ spawn-at-startup "@systemctl@" "--user" "import-environment" "PATH" "XDG_DATA_DI
 spawn-at-startup "@systemctl@" "--user" "start" "graphical-session.target"
 
 binds {
-  // Primary Applications
   Mod+Return             hotkey-overlay-title="Terminal: Ghostty"                   { spawn "@ghostty@"; }
+  Mod+Shift+Return       hotkey-overlay-title="Editor: Meow Emacs"                  { spawn "@emacs@"; }
   Mod+A                  hotkey-overlay-title="Workspace Sessionizer: Zellij"       { spawn "@zellijFocus@"; }
-  Mod+W                  hotkey-overlay-title="Web Browser: Brave Origin"           { spawn "@brave@"; }
+  Mod+W                  hotkey-overlay-title="Web Browser: Floorp (Tree Tabs)"     { spawn "@floorp@"; }
+  Mod+Shift+W            hotkey-overlay-title="Web Browser: Brave Origin"           { spawn "@brave@"; }
   Mod+O                  hotkey-overlay-title="Notes: Obsidian"                     { spawn "@obsidian@"; }
   Mod+S                  hotkey-overlay-title="Area Screenshot (Drag)"              { spawn "@screenshotArea@"; }
   Mod+E                  hotkey-overlay-title="File Manager: PCManFM"               { spawn "@pcmanfm@"; }
   Mod+D                  hotkey-overlay-title="Application Launcher"                { spawn "@noctalia@" "msg" "panel-toggle" "launcher"; }
 
-  // Noctalia Panels
   Mod+V                  hotkey-overlay-title="Clipboard History"                   { spawn "@noctalia@" "msg" "panel-toggle" "clipboard"; }
   Mod+N                  hotkey-overlay-title="Notification Center"                 { spawn "@noctalia@" "msg" "panel-toggle" "notifications"; }
   Mod+C                  hotkey-overlay-title="Control Center"                      { spawn "@noctalia@" "msg" "panel-toggle" "control-center"; }
   Mod+B                  hotkey-overlay-title="Bluetooth Panel"                     { spawn "@noctalia@" "msg" "panel-toggle" "bluetooth"; }
   Mod+I                  hotkey-overlay-title="Internet / Wi-Fi Panel"              { spawn "@noctalia@" "msg" "panel-toggle" "network"; }
   Mod+P                  hotkey-overlay-title="Power & Session Menu"                { spawn "@noctalia@" "msg" "panel-toggle" "session"; }
-  Mod+Shift+W            hotkey-overlay-title="Wallpaper Selector"                  { spawn "@noctalia@" "msg" "panel-toggle" "wallpaper"; }
+  Mod+Ctrl+W             hotkey-overlay-title="Wallpaper Selector"                  { spawn "@noctalia@" "msg" "panel-toggle" "wallpaper"; }
   Mod+Comma              hotkey-overlay-title="Noctalia Settings"                   { spawn "@noctalia@" "msg" "settings-toggle"; }
   Mod+Shift+B            hotkey-overlay-title="Toggle Bar Visibility"               { spawn "@noctalia@" "msg" "bar-toggle"; }
   Mod+Escape             hotkey-overlay-title="Lock Screen"                         { spawn "@noctalia@" "msg" "session" "lock"; }
   Mod+Slash              hotkey-overlay-title="Hotkey Cheat Sheet"                  { show-hotkey-overlay; }
 
-  // Window Layout & Cycling
   Mod+Q                  hotkey-overlay-title="Close Focused Window"                { close-window; }
   Mod+F                  hotkey-overlay-title="Maximize Column"                     { maximize-column; }
   Mod+Shift+F            hotkey-overlay-title="Fullscreen Window"                   { fullscreen-window; }
@@ -214,15 +206,12 @@ binds {
   Mod+R                  hotkey-overlay-title="Cycle Column Width Presets"          { switch-preset-column-width; }
   Mod+Shift+C            hotkey-overlay-title="Center Column on Screen"             { center-column; }
 
-  // Ly-sec Column Stacking (Accordion) Controls
   Mod+BracketLeft        hotkey-overlay-title="Consume Window Left"                 { consume-or-expel-window-left; }
   Mod+BracketRight       hotkey-overlay-title="Consume Window Right"                { consume-or-expel-window-right; }
 
-  // Audio Utilities
   Mod+M                  hotkey-overlay-title="Audio Effects: EasyEffects"          { spawn "@easyeffects@"; }
   Mod+Shift+M            hotkey-overlay-title="Volume Mixer: Pavucontrol"           { spawn "@pavucontrol@"; }
 
-  // Navigation (Vim + Arrows)
   Mod+H                  { focus-column-left; }
   Mod+L                  { focus-column-right; }
   Mod+J                  { focus-workspace-down; }
@@ -242,11 +231,9 @@ binds {
   Mod+Shift+Down         { move-column-to-workspace-down; }
   Mod+Shift+Up           { move-column-to-workspace-up; }
 
-  // Mouse Wheel Navigation
   Mod+WheelScrollDown    cooldown-ms=150 { focus-column-right; }
   Mod+WheelScrollUp      cooldown-ms=150 { focus-column-left; }
 
-  // Strictly Workspaces 1-9
   Mod+1                  { focus-workspace "w1"; }
   Mod+2                  { focus-workspace "w2"; }
   Mod+3                  { focus-workspace "w3"; }
@@ -267,14 +254,12 @@ binds {
   Mod+Shift+8            { move-column-to-workspace "w8"; }
   Mod+Shift+9            { move-column-to-workspace "w9"; }
 
-  // Width adjustments
   Mod+Minus              { set-column-width "-5%"; }
   Mod+Equal              { set-column-width "+5%"; }
   Mod+Shift+Minus        { set-window-height "-5%"; }
   Mod+Shift+Equal        { set-window-height "+5%"; }
   Mod+Backspace          { spawn "@noctalia@" "msg" "notification-clear-active"; }
 
-  // Hardware Keys
   Print                  hotkey-overlay-title="Fullscreen Screenshot"               { spawn "@screenshotFull@"; }
   XF86MonBrightnessUp    { spawn "@brightnessUp@"; }
   XF86MonBrightnessDown  { spawn "@brightnessDown@"; }

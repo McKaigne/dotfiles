@@ -8,6 +8,7 @@
 
     environment.etc."brave/policies/managed/brave-policies.json".text = builtins.toJSON {
       RestoreOnStartup = 1;
+      UseCustomChromeFrame = false;
       BraveRewardsDisabled = true;
       BraveWalletDisabled = true;
       BraveVPNDisabled = true;

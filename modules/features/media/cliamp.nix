@@ -27,28 +27,22 @@
   {
     environment.systemPackages = [ self.packages.${system}.myCliamp ];
 
-    home-manager.users.${user} = { lib, ... }: {
-      home.activation.setupCliampConfig = lib.hm.dag.entryAfter ["writeBoundary"] ''
-        mkdir -p $HOME/.config/cliamp/themes
-        if [ ! -f $HOME/.config/cliamp/config.toml ]; then
-          cat <<'EOF' > $HOME/.config/cliamp/config.toml
-theme = "noctalia"
-visualizer = "Retro"
-provider = "ytmusic"
-eq_preset = "Flat"
-eq = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
-volume = 80
-expanded = true
-hide_help_bar = true
-hide_settings_pane = true
-vis_volume_linked = false
+    home-manager.users.${user} = {
+      xdg.configFile."cliamp/config.toml".text = ''
+        theme = "noctalia"
+        visualizer = "Retro"
+        provider = "ytmusic"
+        eq_preset = "Flat"
+        eq = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+        volume = 80
+        expanded = true
+        hide_help_bar = true
+        hide_settings_pane = true
+        vis_volume_linked = false
 
-[ytmusic]
-enabled = true
-cookies_from = "brave+gnomekeyring"
-EOF
-          chmod 644 $HOME/.config/cliamp/config.toml
-        fi
+        [ytmusic]
+        enabled = true
+        cookies_from = "brave+gnomekeyring"
       '';
     };
   };

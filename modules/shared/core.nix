@@ -18,7 +18,6 @@
       ];
     };
 
-    # Group wheel recursive permissions on /etc/nixos for unprivileged Git & GUI sync
     systemd.tmpfiles.rules = [
       "d /etc/nixos 0775 root wheel -"
       "Z /etc/nixos 0775 root wheel -"
@@ -38,8 +37,8 @@
     programs.nix-ld.enable = true;
 
     environment.sessionVariables = {
-      EDITOR = "nvim";
-      VISUAL = "nvim";
+      EDITOR = "hx";
+      VISUAL = "hx";
     };
 
     environment.systemPackages = with pkgs; [

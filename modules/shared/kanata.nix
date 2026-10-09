@@ -29,18 +29,18 @@
       )
 
       (defalias
-        ext (tap-hold 200 200 (one-shot 2000 (layer-while-held ext)) (layer-while-held ext))
-        sym (tap-hold 200 200 (one-shot 2000 (layer-while-held sym)) (layer-while-held sym))
-        sft_thumb (tap-hold 200 200 (one-shot 2000 lsft) lsft)
+        ext (tap-hold-release 200 200 (one-shot 2000 (layer-while-held ext)) (layer-while-held ext))
+        sym (tap-hold-release 200 200 (one-shot 2000 (layer-while-held sym)) (layer-while-held sym))
+        sft_thumb (tap-hold-release 200 200 (one-shot 2000 lsft) lsft)
 
         to_fn  (layer-while-held fn)
         to_num (layer-while-held num)
 
-        os_alt   (tap-hold 200 200 (one-shot 2000 lalt) lalt)
-        os_ctl   (tap-hold 200 200 (one-shot 2000 lctl) lctl)
-        os_met   (tap-hold 200 200 (one-shot 2000 lmet) lmet)
-        os_sft   (tap-hold 200 200 (one-shot 2000 lsft) lsft)
-        os_altgr (tap-hold 200 200 (one-shot 2000 ralt) ralt)
+        os_alt   (tap-hold-release 200 200 (one-shot 2000 lalt) lalt)
+        os_ctl   (tap-hold-release 200 200 (one-shot 2000 lctl) lctl)
+        os_met   (tap-hold-release 200 200 (one-shot 2000 lmet) lmet)
+        os_sft   (tap-hold-release 200 200 (one-shot 2000 lsft) lsft)
+        os_altgr (tap-hold-release 200 200 (one-shot 2000 ralt) ralt)
       )
 
       (deflayer base

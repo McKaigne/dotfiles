@@ -3,17 +3,6 @@
   let
     user = config.mainUser;
     noctaliaConfigToml = ./config.toml;
-
-    syncScript = pkgs.writeShellScript "noctalia-sync-to-git" ''
-      set -euo pipefail
-      SRC_CFG="$HOME/.config/noctalia/config.toml"
-      DEST="/etc/nixos/modules/features/desktop/config.toml"
-
-      if [ -w "/etc/nixos" ] && [ -f "$SRC_CFG" ]; then
-        cp -f "$SRC_CFG" "$DEST"
-        ${pkgs.git}/bin/git -C /etc/nixos add "$DEST" 2>/dev/null || true
-      fi
-    '';
   in
   {
     environment.systemPackages = [
@@ -21,23 +10,6 @@
       pkgs.dconf
       pkgs.gsettings-desktop-schemas
     ];
-
-    systemd.user.paths.noctalia-sync = {
-      description = "Watch Noctalia v5 config for updates";
-      wantedBy = [ "graphical-session.target" ];
-      pathConfig = {
-        PathModified = "%h/.config/noctalia/config.toml";
-        Unit = "noctalia-sync.service";
-      };
-    };
-
-    systemd.user.services.noctalia-sync = {
-      description = "Sync updated Noctalia v5 config into Git tree";
-      serviceConfig = {
-        Type = "oneshot";
-        ExecStart = "${syncScript}";
-      };
-    };
 
     home-manager.users.${user} = { lib, ... }: {
       imports = [ inputs.noctalia.homeModules.default ];
@@ -50,8 +22,6 @@
         rm -f "$CONFIG_FILE"
         cp ${noctaliaConfigToml} "$CONFIG_FILE"
         chmod 644 "$CONFIG_FILE"
-
-        # Remove dead legacy v4 settings.json
         rm -f "$CONFIG_DIR/settings.json"
       '';
 

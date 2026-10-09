@@ -41,23 +41,7 @@
         pane_frames false
         default_layout "default"
         default_mode "locked"
-        theme "solarized-osaka"
-
-        themes {
-          solarized-osaka {
-            fg "#839496"
-            bg "#002b36"
-            black "#073642"
-            red "#dc322f"
-            green "#859900"
-            yellow "#b58900"
-            blue "#268bd2"
-            magenta "#d33682"
-            cyan "#2aa198"
-            white "#93a1a1"
-            orange "#cb4b16"
-          }
-        }
+        theme "noctalia"
 
         keybinds clear-defaults=true {
           locked {

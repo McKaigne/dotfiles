@@ -10,14 +10,15 @@
       self.nixosModules.niri
       self.nixosModules.noctalia
       self.nixosModules.fuzzel
-      self.nixosModules.solarizedTheme
+      self.nixosModules.noctaliaTheme
       self.nixosModules.fonts
       self.nixosModules.xdg
       self.nixosModules.ghostty
       self.nixosModules.zellij
-      self.nixosModules.shell
-      self.nixosModules.neovim
+      self.nixosModules.fish
+      self.nixosModules.emacs
       self.nixosModules.helix
+      self.nixosModules.floorp
       self.nixosModules.brave
       self.nixosModules.cliamp
       self.nixosModules.media

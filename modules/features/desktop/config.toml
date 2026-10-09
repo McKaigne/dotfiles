@@ -13,7 +13,7 @@ enabled = true
 [theme]
 mode = "dark"
 source = "palette"
-palette = "Solarized"
+palette = "Solarized Osaka"
 
 [theme.templates]
 enable_builtin_templates = true

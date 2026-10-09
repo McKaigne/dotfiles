@@ -1,5 +1,5 @@
 { self, inputs, ... }: {
-  flake.nixosModules.solarizedTheme = { config, pkgs, lib, ... }:
+  flake.nixosModules.noctaliaTheme = { config, pkgs, lib, ... }:
   let
     user = config.mainUser;
     bibataCursorsFixed = pkgs.runCommand "bibata-modern-classic-fixed" { } ''
@@ -24,6 +24,11 @@
           name = "WhiteSur";
           package = pkgs.whitesur-icon-theme;
         };
+        font = {
+          name = "IBM Plex Sans";
+          size = 11;
+          package = pkgs.ibm-plex;
+        };
         gtk4.theme = null;
       };
 
@@ -31,12 +36,48 @@
         color-scheme = "prefer-dark";
         gtk-theme = "adw-gtk3-dark";
         icon-theme = "WhiteSur";
+        font-name = "IBM Plex Sans 11";
       };
 
-      xdg.configFile."gtk-3.0/gtk.css".text = "@import 'noctalia.css';\n";
-      xdg.configFile."gtk-4.0/gtk.css".text = "@import 'noctalia.css';\n";
+      xdg.configFile."gtk-3.0/gtk.css".text = ''
+        @import 'noctalia.css';
 
-      # Pure Qt configuration pointing to Noctalia generated palettes
+        /* Eradicate window controls and close buttons */
+        headerbar windowcontrols,
+        headerbar button.close,
+        tab button.close,
+        button.close {
+          display: none;
+          margin: 0;
+          padding: 0;
+        }
+
+        /* Modern flat styling for PCManFM */
+        .pcmanfm-sidebar,
+        pcmanfm frame,
+        pcmanfm treeview {
+          border: none;
+          box-shadow: none;
+        }
+
+        pcmanfm treeview {
+          padding: 2px 4px;
+        }
+      '';
+
+      xdg.configFile."gtk-4.0/gtk.css".text = ''
+        @import 'noctalia.css';
+
+        headerbar windowcontrols,
+        headerbar button.close,
+        tab button.close,
+        button.close {
+          display: none;
+          margin: 0;
+          padding: 0;
+        }
+      '';
+
       xdg.configFile."qt6ct/qt6ct.conf".text = ''
         [Appearance]
         color_scheme_path=/home/${user}/.config/qt6ct/colors/noctalia.conf
@@ -44,6 +85,10 @@
         icon_theme=WhiteSur
         standard_dialogs=default
         style=Adwaita-Dark
+
+        [Fonts]
+        fixed="Lilex Nerd Font,11,-1,5,50,0,0,0,0,0"
+        general="IBM Plex Sans,11,-1,5,50,0,0,0,0,0"
       '';
 
       xdg.configFile."qt5ct/qt5ct.conf".text = ''
@@ -53,6 +98,10 @@
         icon_theme=WhiteSur
         standard_dialogs=default
         style=Adwaita-Dark
+
+        [Fonts]
+        fixed="Lilex Nerd Font,11,-1,5,50,0,0,0,0,0"
+        general="IBM Plex Sans,11,-1,5,50,0,0,0,0,0"
       '';
     };
 
@@ -76,6 +125,7 @@
       bibataCursorsFixed
       libsForQt5.qt5ct
       kdePackages.qt6ct
+      ibm-plex
     ];
   };
 }

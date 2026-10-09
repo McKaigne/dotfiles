@@ -9,9 +9,8 @@
     home-manager.users.${user} = {
       xdg.configFile."ghostty/config".text = ''
         font-family = Lilex Nerd Font
-        font-size = 13
+        font-size = 14
 
-        # Lilex OpenType stylistic & character variants
         font-feature = locl
         font-feature = cv01
         font-feature = cv09
