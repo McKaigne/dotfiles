@@ -33,24 +33,36 @@
       )
 
       ;; ------------------------------------------------------------------------
-      ;; Timeless Home Row Modifiers (Order: Alt, Ctrl, Gui, Shift)
+      ;; Bilateral Key Hand Groups
+      ;; ------------------------------------------------------------------------
+      (defvirtualkeys
+        v_dummy
+      )
+
+      ;; Keys on the right half of the keyboard (triggers left-hand modifiers)
+      ;; y u i o p [ ] \ h j k l ; ' n m , . / ret bspc
+      ;; Keys on the left half of the keyboard (triggers right-hand modifiers)
+      ;; q w e r t tab a s d f g caps z x c v b
+
+      ;; ------------------------------------------------------------------------
+      ;; Bilateral Timeless Home Row Modifiers (Order: Alt, Ctrl, Gui, Shift)
       ;; ------------------------------------------------------------------------
       (defalias
-        ha (tap-hold-release 200 250 a lalt)
-        hs (tap-hold-release 200 250 s lctl)
-        hd (tap-hold-release 200 250 d lmet)
-        hf (tap-hold-release 200 250 f lsft)
+        ha  (tap-hold-release-keys 200 250 a lalt (y u i o p [ ] \ h j k l scln ' n m , . / ret bspc))
+        hs  (tap-hold-release-keys 200 250 s lctl (y u i o p [ ] \ h j k l scln ' n m , . / ret bspc))
+        hd  (tap-hold-release-keys 200 250 d lmet (y u i o p [ ] \ h j k l scln ' n m , . / ret bspc))
+        hf  (tap-hold-release-keys 200 250 f lsft (y u i o p [ ] \ h j k l scln ' n m , . / ret bspc))
 
-        hj (tap-hold-release 200 250 j rsft)
-        hk (tap-hold-release 200 250 k rmet)
-        hl (tap-hold-release 200 250 l rctl)
-        hsc (tap-hold-release 200 250 scln ralt)
+        hj  (tap-hold-release-keys 200 250 j rsft (q w e r t tab a s d f g caps z x c v b))
+        hk  (tap-hold-release-keys 200 250 k rmet (q w e r t tab a s d f g caps z x c v b))
+        hl  (tap-hold-release-keys 200 250 l rctl (q w e r t tab a s d f g caps z x c v b))
+        hsc (tap-hold-release-keys 200 250 scln ralt (q w e r t tab a s d f g caps z x c v b))
       )
 
       ;; ------------------------------------------------------------------------
-      ;; Combos / Chords (50ms Threshold)
+      ;; Hardware Chords (Tight 25ms Threshold to Eliminate Rolling Misfires)
       ;; ------------------------------------------------------------------------
-      (defchords combos 50
+      (defchords combos 25
         (z) z
         (x) x
         (c) c
@@ -78,7 +90,7 @@
       )
 
       ;; ------------------------------------------------------------------------
-      ;; Single Unified Layerless Layout
+      ;; Layerless Programmer QWERTY Base Layout
       ;; ------------------------------------------------------------------------
       (deflayer base
         @pq_grv @pq_1 @pq_2 @pq_3 @pq_4 @pq_5 @pq_6 @pq_7 @pq_8 @pq_9 @pq_0 @pq_min @pq_eql bspc
@@ -98,7 +110,6 @@
         devices = [ ];
         extraDefCfg = ''
           process-unmapped-keys yes
-          concurrent-tap-hold yes
           linux-dev-names-exclude (
             "Corne"
           )
