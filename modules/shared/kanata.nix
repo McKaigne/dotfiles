@@ -33,21 +33,27 @@
       )
 
       ;; ------------------------------------------------------------------------
-      ;; Bilateral Timeless Home Row Modifiers
-      ;; Left-hand mods only trigger on right-hand key release.
-      ;; Right-hand mods only trigger on left-hand key release.
-      ;; Space is excluded so typing words ending in home-row keys never misfires.
+      ;; Physical Hand Groups (Kanata v1.12.0 Native Engine)
+      ;; ------------------------------------------------------------------------
+      (defhands
+        (left  q w e r t a s d f g z x c v b)
+        (right y u i o p h j k l scln ' n m , . /)
+      )
+
+      ;; ------------------------------------------------------------------------
+      ;; Bilateral Timeless Home Row Modifiers (ACGS Order)
+      ;; Opposite hand activates hold; same hand forces tap immediately.
       ;; ------------------------------------------------------------------------
       (defalias
-        ha  (tap-hold-release-keys 200 200 a lalt (y u i o p [ ] \ h j k l scln ' n m , . / ret bspc))
-        hs  (tap-hold-release-keys 200 200 s lctl (y u i o p [ ] \ h j k l scln ' n m , . / ret bspc))
-        hd  (tap-hold-release-keys 200 200 d lmet (y u i o p [ ] \ h j k l scln ' n m , . / ret bspc))
-        hf  (tap-hold-release-keys 200 200 f lsft (y u i o p [ ] \ h j k l scln ' n m , . / ret bspc))
+        ha  (tap-hold-opposite-hand 200 a lalt)
+        hs  (tap-hold-opposite-hand 200 s lctl)
+        hd  (tap-hold-opposite-hand 200 d lmet)
+        hf  (tap-hold-opposite-hand 200 f lsft)
 
-        hj  (tap-hold-release-keys 200 200 j rsft (q w e r t tab a s d f g caps z x c v b))
-        hk  (tap-hold-release-keys 200 200 k rmet (q w e r t tab a s d f g caps z x c v b))
-        hl  (tap-hold-release-keys 200 200 l rctl (q w e r t tab a s d f g caps z x c v b))
-        hsc (tap-hold-release-keys 200 200 scln ralt (q w e r t tab a s d f g caps z x c v b))
+        hj  (tap-hold-opposite-hand 200 j rsft)
+        hk  (tap-hold-opposite-hand 200 k rmet)
+        hl  (tap-hold-opposite-hand 200 l rctl)
+        hsc (tap-hold-opposite-hand 200 scln ralt)
       )
 
       ;; ------------------------------------------------------------------------
@@ -102,6 +108,7 @@
         extraDefCfg = ''
           process-unmapped-keys yes
           concurrent-tap-hold yes
+          tap-hold-require-prior-idle 120
           linux-dev-names-exclude (
             "Corne"
           )
