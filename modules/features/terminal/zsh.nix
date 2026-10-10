@@ -4,6 +4,7 @@
     user = config.mainUser;
   in
   {
+    # NixOS system-level Zsh management
     programs.zsh = {
       enable = true;
       enableCompletion = true;
@@ -51,22 +52,20 @@
     home-manager.users.${user} = {
       programs.zsh = {
         enable = true;
-        enableCompletion = true;
-        autosuggestion.enable = true;
-        syntaxHighlighting.enable = true;
+        # Handled at system level to eliminate double-hook latency
+        enableCompletion = false;
+        autosuggestion.enable = false;
+        syntaxHighlighting.enable = false;
 
         initContent = ''
           # ----------------------------------------------------------------------
-          # Interactive Tools Integration
+          # Asynchronous Performance & Highlighting Optimization
           # ----------------------------------------------------------------------
-          eval "$(${pkgs.starship}/bin/starship init zsh)"
-          eval "$(${pkgs.zoxide}/bin/zoxide init zsh)"
-          eval "$(${pkgs.direnv}/bin/direnv hook zsh)"
-
-          # ----------------------------------------------------------------------
-          # Solarized Osaka Syntax Highlighting & Autosuggestions
-          # ----------------------------------------------------------------------
+          export ZSH_AUTOSUGGEST_USE_ASYNC=1
+          export ZSH_AUTOSUGGEST_BUFFER_MAX_SIZE=20
           export ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE='fg=#586e75'
+
+          typeset -ga ZSH_HIGHLIGHT_HIGHLIGHTERS=(main)
 
           typeset -A ZSH_HIGHLIGHT_STYLES
           ZSH_HIGHLIGHT_STYLES[command]='fg=#2aa198,bold'
@@ -85,19 +84,25 @@
           ZSH_HIGHLIGHT_STYLES[unknown-token]='fg=#dc322f,bold'
 
           # ----------------------------------------------------------------------
-          # ZLE Cursor Shape Synchronization
+          # Interactive Tools (Single-Hook Execution)
+          # ----------------------------------------------------------------------
+          eval "$(${pkgs.zoxide}/bin/zoxide init zsh)"
+          eval "$(${pkgs.direnv}/bin/direnv hook zsh)"
+
+          # ----------------------------------------------------------------------
+          # ZLE Cursor Shape Synchronization (POSIX printf)
           # ----------------------------------------------------------------------
           zle-keymap-select() {
             if [[ $KEYMAP == vicmd ]]; then
-              print -ne '\e[2 q' # Steady block
+              printf '\e[2 q' # Steady block
             else
-              print -ne '\e[6 q' # Steady beam
+              printf '\e[6 q' # Steady beam
             fi
           }
           zle -N zle-keymap-select
 
           zle-line-init() {
-            print -ne '\e[6 q' # Default to steady beam in insert
+            printf '\e[6 q' # Steady beam in insert mode
           }
           zle -N zle-line-init
 
