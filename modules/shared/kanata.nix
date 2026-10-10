@@ -33,20 +33,21 @@
       )
 
       ;; ------------------------------------------------------------------------
-      ;; Bilateral Timeless Home Row Modifiers (Urob Specification)
-      ;; Left-hand mods only trigger on right-hand key press.
-      ;; Right-hand mods only trigger on left-hand key press.
+      ;; Bilateral Timeless Home Row Modifiers
+      ;; Left-hand mods only trigger on right-hand key release.
+      ;; Right-hand mods only trigger on left-hand key release.
+      ;; Space is excluded so typing words ending in home-row keys never misfires.
       ;; ------------------------------------------------------------------------
       (defalias
-        ha  (tap-hold-press-keys 200 280 a lalt (y u i o p [ ] \ h j k l scln ' n m , . / ret bspc))
-        hs  (tap-hold-press-keys 200 280 s lctl (y u i o p [ ] \ h j k l scln ' n m , . / ret bspc))
-        hd  (tap-hold-press-keys 200 280 d lmet (y u i o p [ ] \ h j k l scln ' n m , . / ret bspc))
-        hf  (tap-hold-press-keys 200 280 f lsft (y u i o p [ ] \ h j k l scln ' n m , . / ret bspc))
+        ha  (tap-hold-release-keys 200 200 a lalt (y u i o p [ ] \ h j k l scln ' n m , . / ret bspc))
+        hs  (tap-hold-release-keys 200 200 s lctl (y u i o p [ ] \ h j k l scln ' n m , . / ret bspc))
+        hd  (tap-hold-release-keys 200 200 d lmet (y u i o p [ ] \ h j k l scln ' n m , . / ret bspc))
+        hf  (tap-hold-release-keys 200 200 f lsft (y u i o p [ ] \ h j k l scln ' n m , . / ret bspc))
 
-        hj  (tap-hold-press-keys 200 280 j rsft (q w e r t tab a s d f g caps z x c v b))
-        hk  (tap-hold-press-keys 200 280 k rmet (q w e r t tab a s d f g caps z x c v b))
-        hl  (tap-hold-press-keys 200 280 l rctl (q w e r t tab a s d f g caps z x c v b))
-        hsc (tap-hold-press-keys 200 280 scln ralt (q w e r t tab a s d f g caps z x c v b))
+        hj  (tap-hold-release-keys 200 200 j rsft (q w e r t tab a s d f g caps z x c v b))
+        hk  (tap-hold-release-keys 200 200 k rmet (q w e r t tab a s d f g caps z x c v b))
+        hl  (tap-hold-release-keys 200 200 l rctl (q w e r t tab a s d f g caps z x c v b))
+        hsc (tap-hold-release-keys 200 200 scln ralt (q w e r t tab a s d f g caps z x c v b))
       )
 
       ;; ------------------------------------------------------------------------
