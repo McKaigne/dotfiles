@@ -72,9 +72,9 @@
         (f j) (caps-word 2000)
         (j k) C-bspc
         (d f) C-b
-        (n m) S-u
-        (m comm) u
-        (comm dot) S-u
+        (n m) C-y
+        (m comm) C-z
+        (comm dot) C-f
       )
 
       ;; ------------------------------------------------------------------------
