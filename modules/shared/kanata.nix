@@ -36,14 +36,14 @@
       (defvirtualkeys relf24 (release-key f24))
 
       (defalias
-        ha  (multi f24 (tap-hold-opposite-hand-release 200 a lalt (timeout hold) (unknown-hand hold) (tap-repress-timeout 150)) (macro 5 (on-press tap-vkey relf24)))
-        hs  (multi f24 (tap-hold-opposite-hand-release 200 s lctl (timeout hold) (unknown-hand hold) (tap-repress-timeout 150)) (macro 5 (on-press tap-vkey relf24)))
+        ha  (multi f24 (tap-hold-opposite-hand-release 250 a lalt (timeout hold) (unknown-hand hold) (tap-repress-timeout 150) (require-prior-idle 160)) (macro 5 (on-press tap-vkey relf24)))
+        hs  (multi f24 (tap-hold-opposite-hand-release 250 s lctl (timeout hold) (unknown-hand hold) (tap-repress-timeout 150) (require-prior-idle 160)) (macro 5 (on-press tap-vkey relf24)))
         hd  (multi f24 (tap-hold-opposite-hand-release 200 d lmet (timeout hold) (unknown-hand hold) (tap-repress-timeout 150)) (macro 5 (on-press tap-vkey relf24)))
         hf  (multi f24 (tap-hold-opposite-hand-release 200 f lsft (timeout hold) (unknown-hand hold) (tap-repress-timeout 150)) (macro 5 (on-press tap-vkey relf24)))
         hj  (multi f24 (tap-hold-opposite-hand-release 200 j rsft (timeout hold) (unknown-hand hold) (tap-repress-timeout 150)) (macro 5 (on-press tap-vkey relf24)))
         hk  (multi f24 (tap-hold-opposite-hand-release 200 k rmet (timeout hold) (unknown-hand hold) (tap-repress-timeout 150)) (macro 5 (on-press tap-vkey relf24)))
-        hl  (multi f24 (tap-hold-opposite-hand-release 200 l rctl (timeout hold) (unknown-hand hold) (tap-repress-timeout 150)) (macro 5 (on-press tap-vkey relf24)))
-        hsc (multi f24 (tap-hold-opposite-hand-release 200 scln ralt (timeout hold) (unknown-hand hold) (tap-repress-timeout 150)) (macro 5 (on-press tap-vkey relf24)))
+        hl  (multi f24 (tap-hold-opposite-hand-release 250 l rctl (timeout hold) (unknown-hand hold) (tap-repress-timeout 150) (require-prior-idle 160)) (macro 5 (on-press tap-vkey relf24)))
+        hsc (multi f24 (tap-hold-opposite-hand-release 250 scln ralt (timeout hold) (unknown-hand hold) (tap-repress-timeout 150) (require-prior-idle 160)) (macro 5 (on-press tap-vkey relf24)))
       )
 
       (defchordsv2
