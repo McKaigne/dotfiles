@@ -14,7 +14,7 @@
       self.nixosModules.fonts
       self.nixosModules.xdg
       self.nixosModules.ghostty
-      self.nixosModules.zellij
+      self.nixosModules.tmux
       self.nixosModules.fish
       self.nixosModules.emacs
       self.nixosModules.helix

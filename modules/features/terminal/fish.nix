@@ -14,8 +14,13 @@
 
     environment.sessionVariables = {
       STARSHIP_CONFIG = "/etc/starship.toml";
+      SHELL = "${pkgs.fish}/bin/fish";
       EDITOR = "hx";
       VISUAL = "hx";
+    };
+
+    environment.variables = {
+      SHELL = "${pkgs.fish}/bin/fish";
     };
 
     environment.etc."starship.toml".source = ./starship.toml;
@@ -95,12 +100,12 @@
           nwork   = "niri msg -j workspaces";
           nmon    = "niri msg -j outputs";
 
-          # Zellij
-          zj   = "zellij";
-          zja  = "zellij attach";
-          zjl  = "zellij list-sessions";
-          zjk  = "zellij kill-session";
-          zjka = "zellij kill-all-sessions";
+          # Tmux
+          t      = "tmux";
+          ta     = "tmux attach -t";
+          tls    = "tmux ls";
+          tkill  = "tmux kill-session -t";
+          tkilla = "tmux kill-server";
 
           # Zoxide
           zq  = "zoxide query";
@@ -118,7 +123,7 @@
           hxh = "hx /etc/nixos/modules/hosts/hyde/default.nix";
           hxc = "hx /etc/nixos/modules/shared/core.nix";
           hxi = "hx /etc/nixos/modules/features/desktop/config.kdl";
-          hxz = "hx /etc/nixos/modules/features/terminal/zellij.nix";
+          hxt = "hx /etc/nixos/modules/features/terminal/tmux.nix";
         };
 
         shellAliases = {

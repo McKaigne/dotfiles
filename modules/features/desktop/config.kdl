@@ -173,13 +173,13 @@ workspace "w9"
 
 spawn-at-startup "@noctalia@"
 spawn-at-startup "@xwaylandSatellite@"
-spawn-at-startup "@systemctl@" "--user" "import-environment" "PATH" "XDG_DATA_DIRS" "WAYLAND_DISPLAY" "XDG_CURRENT_DESKTOP"
+spawn-at-startup "@systemctl@" "--user" "import-environment" "PATH" "XDG_DATA_DIRS" "WAYLAND_DISPLAY" "XDG_CURRENT_DESKTOP" "SHELL"
 spawn-at-startup "@systemctl@" "--user" "start" "graphical-session.target"
 
 binds {
   Mod+Return             hotkey-overlay-title="Terminal: Ghostty"                   { spawn "@ghostty@"; }
   Mod+Shift+Return       hotkey-overlay-title="Editor: Meow Emacs"                  { spawn "@emacs@"; }
-  Mod+A                  hotkey-overlay-title="Workspace Sessionizer: Zellij"       { spawn "@zellijFocus@"; }
+  Mod+A                  hotkey-overlay-title="Workspace Sessionizer: Tmux"         { spawn "@tmuxFocus@"; }
   Mod+W                  hotkey-overlay-title="Web Browser: Floorp (Tree Tabs)"     { spawn "@floorp@"; }
   Mod+Shift+W            hotkey-overlay-title="Web Browser: Brave Origin"           { spawn "@brave@"; }
   Mod+O                  hotkey-overlay-title="Notes: Obsidian"                     { spawn "@obsidian@"; }

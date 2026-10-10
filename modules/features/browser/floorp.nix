@@ -32,8 +32,14 @@
             install_url = "https://addons.mozilla.org/firefox/downloads/latest/solarized-osaka/latest.xpi";
           };
 
-          # Stylus (UserCSS Engine)
-          "{7a7a4a84-a635-4252-a727-43fb57ba7059}" = {
+          # Enhancer for YouTube
+          "enhancerforyoutube@maximerf.addons.mozilla.org" = {
+            installation_mode = "force_installed";
+            install_url = "https://addons.mozilla.org/firefox/downloads/latest/enhancer-for-youtube/latest.xpi";
+          };
+
+          # Stylus (Corrected Manifest ID)
+          "{7a7a4a92-a2a0-41d1-9fd7-1e92480d612d}" = {
             installation_mode = "force_installed";
             install_url = "https://addons.mozilla.org/firefox/downloads/latest/styl-us/latest.xpi";
           };

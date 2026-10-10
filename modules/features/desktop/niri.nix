@@ -29,16 +29,16 @@ let
         fi
       '';
 
-      zellijFocus = pkgs.writeShellScriptBin "zellij-focus" ''
+      tmuxFocus = pkgs.writeShellScriptBin "tmux-focus" ''
         set -euo pipefail
         WINDOW_ID=$(${pkgs.niri}/bin/niri msg -j windows 2>/dev/null | \
-          ${pkgs.jq}/bin/jq -r '.[] | select((.app_id == "ghostty.zellij") or (.title | test("zellij-terminal"; "i"))) | .id' | head -n1 || true)
+          ${pkgs.jq}/bin/jq -r '.[] | select((.app_id == "ghostty.tmux") or (.title | test("tmux-terminal"; "i"))) | .id' | head -n1 || true)
         if [ -n "$WINDOW_ID" ] && [ "$WINDOW_ID" != "null" ]; then
           ${pkgs.niri}/bin/niri msg action focus-window --id "$WINDOW_ID"
         else
           exec ${pkgs.ghostty}/bin/ghostty \
-            --class="ghostty.zellij" --title="zellij-terminal" \
-            -e ${pkgs.zellij}/bin/zellij attach --create
+            --class="ghostty.tmux" --title="tmux-terminal" \
+            -e ${pkgs.tmux}/bin/tmux new-session -A -s main
         fi
       '';
     in
@@ -55,7 +55,7 @@ let
         "@pcmanfm@"
         "@wpctl@"
         "@playerctl@"
-        "@zellijFocus@"
+        "@tmuxFocus@"
         "@easyeffects@"
         "@pavucontrol@"
         "@screenshotArea@"
@@ -75,7 +75,7 @@ let
         "${pkgs.pcmanfm}/bin/pcmanfm"
         "${pkgs.wireplumber}/bin/wpctl"
         "${pkgs.playerctl}/bin/playerctl"
-        "${zellijFocus}/bin/zellij-focus"
+        "${tmuxFocus}/bin/tmux-focus"
         "${pkgs.easyeffects}/bin/easyeffects"
         "${pkgs.pavucontrol}/bin/pavucontrol"
         "${screenshotArea}/bin/screenshot-area"
