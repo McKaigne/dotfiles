@@ -33,19 +33,9 @@
       )
 
       ;; ------------------------------------------------------------------------
-      ;; Bilateral Key Hand Groups
-      ;; ------------------------------------------------------------------------
-      (defvirtualkeys
-        v_dummy
-      )
-
-      ;; Keys on the right half of the keyboard (triggers left-hand modifiers)
-      ;; y u i o p [ ] \ h j k l ; ' n m , . / ret bspc
-      ;; Keys on the left half of the keyboard (triggers right-hand modifiers)
-      ;; q w e r t tab a s d f g caps z x c v b
-
-      ;; ------------------------------------------------------------------------
       ;; Bilateral Timeless Home Row Modifiers (Order: Alt, Ctrl, Gui, Shift)
+      ;; Left-hand mods only trigger on right-hand key release.
+      ;; Right-hand mods only trigger on left-hand key release.
       ;; ------------------------------------------------------------------------
       (defalias
         ha  (tap-hold-release-keys 200 250 a lalt (y u i o p [ ] \ h j k l scln ' n m , . / ret bspc))
