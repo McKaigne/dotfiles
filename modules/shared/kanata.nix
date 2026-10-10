@@ -10,9 +10,6 @@
         lctl lmet lalt           spc                 ralt rmet rctl
       )
 
-      ;; ------------------------------------------------------------------------
-      ;; Programmer QWERTY ANSI Custom Shift/Unshift Forks
-      ;; ------------------------------------------------------------------------
       (defalias
         pq_grv (fork S-\ S-grv (lsft rsft))
         pq_1   (fork S-= (unmod (lsft rsft) 1) (lsft rsft))
@@ -27,72 +24,54 @@
         pq_0   (fork S-8 (unmod (lsft rsft) 0) (lsft rsft))
         pq_min (fork S-1 S-5 (lsft rsft))
         pq_eql (fork S-4 (unmod (lsft rsft) grv) (lsft rsft))
-
         pq_rbk (fork S-2 S-6 (lsft rsft))
         pq_bsh (fork \ S-3 (lsft rsft))
       )
 
-      ;; ------------------------------------------------------------------------
-      ;; 1. Strict Bilateral Hand Definition (Opposite-Hand Enforcement)
-      ;; ------------------------------------------------------------------------
       (defhands
-        (left  q w e r t a s d f g z x c v b)
-        (right y u i o p h j k l scln ' n m , . /)
+        (left  grv 1 2 3 4 5 q w e r t a s d f g z x c v b)
+        (right 6 7 8 9 0 - = y u i o p [ ] \ h j k l scln ' n m , . /)
       )
 
-      ;; ------------------------------------------------------------------------
-      ;; 2. Chordal Hold Decider (Instant Opposite Hand, Immediate Same-Hand Tap)
-      ;; ------------------------------------------------------------------------
       (defalias
-        ha  (tap-hold-opposite-hand 200 a lalt)
-        hs  (tap-hold-opposite-hand 200 s lctl)
-        hd  (tap-hold-opposite-hand 200 d lmet)
-        hf  (tap-hold-opposite-hand 200 f lsft)
-
-        hj  (tap-hold-opposite-hand 200 j rsft)
-        hk  (tap-hold-opposite-hand 200 k rmet)
-        hl  (tap-hold-opposite-hand 200 l rctl)
-        hsc (tap-hold-opposite-hand 200 scln ralt)
+        ha  (tap-hold-opposite-hand 200 a lalt (timeout hold) (unknown-hand hold))
+        hs  (tap-hold-opposite-hand 200 s lctl (timeout hold) (unknown-hand hold))
+        hd  (tap-hold-opposite-hand 200 d lmet (timeout hold) (unknown-hand hold))
+        hf  (tap-hold-opposite-hand 200 f lsft (timeout hold) (unknown-hand hold))
+        hj  (tap-hold-opposite-hand 200 j rsft (timeout hold) (unknown-hand hold))
+        hk  (tap-hold-opposite-hand 200 k rmet (timeout hold) (unknown-hand hold))
+        hl  (tap-hold-opposite-hand 200 l rctl (timeout hold) (unknown-hand hold))
+        hsc (tap-hold-opposite-hand 200 scln ralt (timeout hold) (unknown-hand hold))
       )
 
-      ;; ------------------------------------------------------------------------
-      ;; 3. Hardware Chords (25ms Window)
-      ;; ------------------------------------------------------------------------
       (defchords combos 25
         (z) z
         (x) x
         (c) c
         (v) v
         (b) b
-        (d) @hd
         (f) @hf
         (j) @hj
-        (k) @hk
         (n) n
         (m) m
-        (comm) ,
-        (dot) .
+        (,) ,
+        (.) .
 
         (z x) S-del
         (x c) C-ins
         (c v) S-ins
         (v b) C-a
         (f j) (caps-word 2000)
-        (j k) C-bspc
-        (d f) C-b
         (n m) C-y
-        (m comm) C-z
-        (comm dot) C-f
+        (m ,) C-z
+        (, .) C-f
       )
 
-      ;; ------------------------------------------------------------------------
-      ;; Layerless Base Layout
-      ;; ------------------------------------------------------------------------
       (deflayer base
         @pq_grv @pq_1 @pq_2 @pq_3 @pq_4 @pq_5 @pq_6 @pq_7 @pq_8 @pq_9 @pq_0 @pq_min @pq_eql bspc
         tab     q     w     e     r     t     y     u     i     o     p     -       @pq_rbk @pq_bsh
-        esc     @ha   @hs   (chord combos d) (chord combos f) g h (chord combos j) (chord combos k) @hl @hsc ' ret
-        lsft    (chord combos z) (chord combos x) (chord combos c) (chord combos v) (chord combos b) (chord combos n) (chord combos m) (chord combos comm) (chord combos dot) / rsft
+        esc     @ha   @hs   @hd   (chord combos f) g h (chord combos j) @hk @hl @hsc ' ret
+        lsft    (chord combos z) (chord combos x) (chord combos c) (chord combos v) (chord combos b) (chord combos n) (chord combos m) (chord combos ,) (chord combos .) / rsft
         lctl    lmet  lalt                    spc                       ralt  rmet    rctl
       )
     '';
