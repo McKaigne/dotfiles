@@ -34,23 +34,42 @@
         [editor]
         line-number = "relative"
         mouse = false
-        cursorline = true
-        bufferline = "always"
+        cursorline = false
+        color-modes = true
+        scrolloff = 5
         auto-save = true
+        auto-format = true
+        idle-timeout = 50
+        completion-timeout = 5
+        bufferline = "multiple"
+        gutters = ["diagnostics", "spacer", "line-numbers", "spacer", "diff"]
 
         [editor.cursor-shape]
         normal = "block"
         insert = "bar"
-        select = "block"
+        select = "underline"
 
         [editor.indent-guides]
         render = true
+        character = "│"
+        skip-levels = 1
 
         [editor.soft-wrap]
         enable = true
+        wrap-indicator = ""
 
         [editor.lsp]
         display-inlay-hints = true
+        display-messages = true
+
+        [editor.statusline]
+        left = ["mode", "spinner", "file-name", "read-only-indicator", "file-modification-indicator"]
+        center = []
+        right = ["diagnostics", "selections", "position", "file-type"]
+        separator = "│"
+        mode.normal = "NORMAL"
+        mode.insert = "INSERT"
+        mode.select = "SELECT"
       '';
     };
   };

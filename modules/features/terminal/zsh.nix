@@ -64,11 +64,49 @@
           eval "$(${pkgs.direnv}/bin/direnv hook zsh)"
 
           # ----------------------------------------------------------------------
+          # Solarized Osaka Syntax Highlighting & Autosuggestions
+          # ----------------------------------------------------------------------
+          export ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE='fg=#586e75'
+
+          typeset -A ZSH_HIGHLIGHT_STYLES
+          ZSH_HIGHLIGHT_STYLES[command]='fg=#2aa198,bold'
+          ZSH_HIGHLIGHT_STYLES[alias]='fg=#2aa198'
+          ZSH_HIGHLIGHT_STYLES[builtin]='fg=#268bd2,bold'
+          ZSH_HIGHLIGHT_STYLES[function]='fg=#268bd2'
+          ZSH_HIGHLIGHT_STYLES[single-quoted-argument]='fg=#859900'
+          ZSH_HIGHLIGHT_STYLES[double-quoted-argument]='fg=#859900'
+          ZSH_HIGHLIGHT_STYLES[dollar-quoted-argument]='fg=#859900'
+          ZSH_HIGHLIGHT_STYLES[path]='fg=#93a1a1,underline'
+          ZSH_HIGHLIGHT_STYLES[path_prefix]='fg=#586e75,underline'
+          ZSH_HIGHLIGHT_STYLES[globbing]='fg=#b58900'
+          ZSH_HIGHLIGHT_STYLES[history-expansion]='fg=#268bd2'
+          ZSH_HIGHLIGHT_STYLES[command-separator]='fg=#586e75'
+          ZSH_HIGHLIGHT_STYLES[redirection]='fg=#586e75'
+          ZSH_HIGHLIGHT_STYLES[unknown-token]='fg=#dc322f,bold'
+
+          # ----------------------------------------------------------------------
+          # ZLE Cursor Shape Synchronization
+          # ----------------------------------------------------------------------
+          zle-keymap-select() {
+            if [[ $KEYMAP == vicmd ]]; then
+              print -ne '\e[2 q' # Steady block
+            else
+              print -ne '\e[6 q' # Steady beam
+            fi
+          }
+          zle -N zle-keymap-select
+
+          zle-line-init() {
+            print -ne '\e[6 q' # Default to steady beam in insert
+          }
+          zle -N zle-line-init
+
+          # ----------------------------------------------------------------------
           # Native ZLE Auto-Expanding Abbreviations (Zero Aliases)
           # ----------------------------------------------------------------------
           typeset -Ag abbreviations
           abbreviations=(
-            # Clipboard
+            # Clipboard & Streams
             [toclip]="| wl-copy"
             [fromclip]="wl-paste"
             [silent]="&> /dev/null"
@@ -137,7 +175,10 @@
             [tkill]="tmux kill-session -t"
             [tkilla]="tmux kill-server"
 
-            # Zoxide
+            # Directory Navigation & Zoxide
+            [l]="ls"
+            [ll]="ls -l"
+            [la]="ls -a"
             [zq]="zoxide query"
             [zql]="zoxide query -l"
             [za]="zoxide add"
@@ -165,9 +206,9 @@
           )
 
           expand-abbreviation() {
-            local match_word="''${LBUFFER##*[$' \t;|']}"
+            local match_word="${LBUFFER##*[$' \t;|']}"
             if [[ -n "$match_word" && -n "$abbreviations[$match_word]" ]]; then
-              LBUFFER="''${LBUFFER%$match_word}$abbreviations[$match_word]"
+              LBUFFER="${LBUFFER%$match_word}$abbreviations[$match_word]"
             fi
           }
 
@@ -204,15 +245,15 @@
             [[ $# -ge 1 ]] && target="$1"
             local extensions=(-e nix -e kdl -e toml -e conf -e ini -e el -e json -e zsh -e py -e css -e lua)
             local excludes=(-E .git -E flake.lock -E node_modules -E target -E result -E "*cache*" -E "*Cache*" -E "*.log")
-            local files=($(fd . "$(realpath "$target")" -t f -L -H -S -50k "''${extensions[@]}" "''${excludes[@]}"))
-            if [[ ''${#files[@]} -eq 0 ]]; then
+            local files=($(fd . "$(realpath "$target")" -t f -L -H -S -50k "${extensions[@]}" "${excludes[@]}"))
+            if [[ ${#files[@]} -eq 0 ]]; then
               echo "No configuration files found in $target"
               return
             fi
-            local tree_out=$(printf "%s\n" "''${files[@]}" | tree -a -F --fromfile)
+            local tree_out=$(printf "%s\n" "${files[@]}" | tree -a -F --fromfile)
             echo "$tree_out" | wl-copy
             echo "$tree_out"
-            echo -e "\n[Copied tree of ''${#files[@]} core config files to clipboard]"
+            echo -e "\n[Copied tree of ${#files[@]} core config files to clipboard]"
           }
 
           cfb() {
@@ -220,17 +261,17 @@
             [[ $# -ge 1 ]] && target="$1"
             local extensions=(-e nix -e kdl -e toml -e conf -e ini -e el -e json -e zsh -e py -e css -e lua)
             local excludes=(-E .git -E flake.lock -E node_modules -E target -E result -E "*cache*" -E "*Cache*" -E "*.log")
-            local files=($(fd . "$(realpath "$target")" -t f -L -H -S -50k "''${extensions[@]}" "''${excludes[@]}"))
-            if [[ ''${#files[@]} -eq 0 ]]; then
+            local files=($(fd . "$(realpath "$target")" -t f -L -H -S -50k "${extensions[@]}" "${excludes[@]}"))
+            if [[ ${#files[@]} -eq 0 ]]; then
               echo "No configuration files found in $target"
               return
             fi
             local content=""
-            for f in "''${files[@]}"; do
+            for f in "${files[@]}"; do
               content+="$(bat --style=header,grid --paging=never "$f")"$'\n'
             done
             printf "%s" "$content" | wl-copy
-            echo "[Copied full content of ''${#files[@]} config files to clipboard]"
+            echo "[Copied full content of ${#files[@]} config files to clipboard]"
           }
         '';
       };
