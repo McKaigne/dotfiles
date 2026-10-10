@@ -26,6 +26,7 @@
         window-decoration = false
         cursor-style = block
         shell-integration = detect
+        command = ${pkgs.zsh}/bin/zsh
       '';
     };
   };

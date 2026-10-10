@@ -15,8 +15,7 @@
       self.nixosModules.xdg
       self.nixosModules.ghostty
       self.nixosModules.tmux
-      self.nixosModules.fish
-      self.nixosModules.emacs
+      self.nixosModules.zsh
       self.nixosModules.helix
       self.nixosModules.floorp
       self.nixosModules.brave

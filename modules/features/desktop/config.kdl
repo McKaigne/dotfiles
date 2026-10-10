@@ -178,7 +178,6 @@ spawn-at-startup "@systemctl@" "--user" "start" "graphical-session.target"
 
 binds {
   Mod+Return             hotkey-overlay-title="Terminal: Ghostty"                   { spawn "@ghostty@"; }
-  Mod+Shift+Return       hotkey-overlay-title="Editor: Meow Emacs"                  { spawn "@emacs@"; }
   Mod+A                  hotkey-overlay-title="Workspace Sessionizer: Tmux"         { spawn "@tmuxFocus@"; }
   Mod+W                  hotkey-overlay-title="Web Browser: Floorp (Tree Tabs)"     { spawn "@floorp@"; }
   Mod+Shift+W            hotkey-overlay-title="Web Browser: Brave Origin"           { spawn "@brave@"; }
