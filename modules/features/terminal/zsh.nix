@@ -206,9 +206,9 @@
           )
 
           expand-abbreviation() {
-            local match_word="${LBUFFER##*[$' \t;|']}"
-            if [[ -n "$match_word" && -n "$abbreviations[$match_word]" ]]; then
-              LBUFFER="${LBUFFER%$match_word}$abbreviations[$match_word]"
+            local match_word="''${LBUFFER##*[$' \t;|']}"
+            if [[ -n "$match_word" && -n "''${abbreviations[$match_word]}" ]]; then
+              LBUFFER="''${LBUFFER%$match_word}''${abbreviations[$match_word]}"
             fi
           }
 
@@ -245,15 +245,15 @@
             [[ $# -ge 1 ]] && target="$1"
             local extensions=(-e nix -e kdl -e toml -e conf -e ini -e el -e json -e zsh -e py -e css -e lua)
             local excludes=(-E .git -E flake.lock -E node_modules -E target -E result -E "*cache*" -E "*Cache*" -E "*.log")
-            local files=($(fd . "$(realpath "$target")" -t f -L -H -S -50k "${extensions[@]}" "${excludes[@]}"))
-            if [[ ${#files[@]} -eq 0 ]]; then
+            local files=($(fd . "$(realpath "$target")" -t f -L -H -S -50k "''${extensions[@]}" "''${excludes[@]}"))
+            if [[ ''${#files[@]} -eq 0 ]]; then
               echo "No configuration files found in $target"
               return
             fi
-            local tree_out=$(printf "%s\n" "${files[@]}" | tree -a -F --fromfile)
+            local tree_out=$(printf "%s\n" "''${files[@]}" | tree -a -F --fromfile)
             echo "$tree_out" | wl-copy
             echo "$tree_out"
-            echo -e "\n[Copied tree of ${#files[@]} core config files to clipboard]"
+            echo -e "\n[Copied tree of ''${#files[@]} core config files to clipboard]"
           }
 
           cfb() {
@@ -261,17 +261,17 @@
             [[ $# -ge 1 ]] && target="$1"
             local extensions=(-e nix -e kdl -e toml -e conf -e ini -e el -e json -e zsh -e py -e css -e lua)
             local excludes=(-E .git -E flake.lock -E node_modules -E target -E result -E "*cache*" -E "*Cache*" -E "*.log")
-            local files=($(fd . "$(realpath "$target")" -t f -L -H -S -50k "${extensions[@]}" "${excludes[@]}"))
-            if [[ ${#files[@]} -eq 0 ]]; then
+            local files=($(fd . "$(realpath "$target")" -t f -L -H -S -50k "''${extensions[@]}" "''${excludes[@]}"))
+            if [[ ''${#files[@]} -eq 0 ]]; then
               echo "No configuration files found in $target"
               return
             fi
             local content=""
-            for f in "${files[@]}"; do
+            for f in "''${files[@]}"; do
               content+="$(bat --style=header,grid --paging=never "$f")"$'\n'
             done
             printf "%s" "$content" | wl-copy
-            echo "[Copied full content of ${#files[@]} config files to clipboard]"
+            echo "[Copied full content of ''${#files[@]} config files to clipboard]"
           }
         '';
       };
