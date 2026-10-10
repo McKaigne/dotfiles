@@ -33,24 +33,24 @@
       )
 
       ;; ------------------------------------------------------------------------
-      ;; Bilateral Timeless Home Row Modifiers (Order: Alt, Ctrl, Gui, Shift)
-      ;; Left-hand mods only trigger on right-hand key release.
-      ;; Right-hand mods only trigger on left-hand key release.
+      ;; Bilateral Timeless Home Row Modifiers (Urob Specification)
+      ;; Left-hand mods only trigger on right-hand key press.
+      ;; Right-hand mods only trigger on left-hand key press.
       ;; ------------------------------------------------------------------------
       (defalias
-        ha  (tap-hold-release-keys 200 250 a lalt (y u i o p [ ] \ h j k l scln ' n m , . / ret bspc))
-        hs  (tap-hold-release-keys 200 250 s lctl (y u i o p [ ] \ h j k l scln ' n m , . / ret bspc))
-        hd  (tap-hold-release-keys 200 250 d lmet (y u i o p [ ] \ h j k l scln ' n m , . / ret bspc))
-        hf  (tap-hold-release-keys 200 250 f lsft (y u i o p [ ] \ h j k l scln ' n m , . / ret bspc))
+        ha  (tap-hold-press-keys 200 280 a lalt (y u i o p [ ] \ h j k l scln ' n m , . / ret bspc))
+        hs  (tap-hold-press-keys 200 280 s lctl (y u i o p [ ] \ h j k l scln ' n m , . / ret bspc))
+        hd  (tap-hold-press-keys 200 280 d lmet (y u i o p [ ] \ h j k l scln ' n m , . / ret bspc))
+        hf  (tap-hold-press-keys 200 280 f lsft (y u i o p [ ] \ h j k l scln ' n m , . / ret bspc))
 
-        hj  (tap-hold-release-keys 200 250 j rsft (q w e r t tab a s d f g caps z x c v b))
-        hk  (tap-hold-release-keys 200 250 k rmet (q w e r t tab a s d f g caps z x c v b))
-        hl  (tap-hold-release-keys 200 250 l rctl (q w e r t tab a s d f g caps z x c v b))
-        hsc (tap-hold-release-keys 200 250 scln ralt (q w e r t tab a s d f g caps z x c v b))
+        hj  (tap-hold-press-keys 200 280 j rsft (q w e r t tab a s d f g caps z x c v b))
+        hk  (tap-hold-press-keys 200 280 k rmet (q w e r t tab a s d f g caps z x c v b))
+        hl  (tap-hold-press-keys 200 280 l rctl (q w e r t tab a s d f g caps z x c v b))
+        hsc (tap-hold-press-keys 200 280 scln ralt (q w e r t tab a s d f g caps z x c v b))
       )
 
       ;; ------------------------------------------------------------------------
-      ;; Hardware Chords (Tight 25ms Threshold to Eliminate Rolling Misfires)
+      ;; Hardware Chords (Tight 25ms Threshold)
       ;; ------------------------------------------------------------------------
       (defchords combos 25
         (z) z
@@ -100,6 +100,7 @@
         devices = [ ];
         extraDefCfg = ''
           process-unmapped-keys yes
+          concurrent-tap-hold yes
           linux-dev-names-exclude (
             "Corne"
           )
