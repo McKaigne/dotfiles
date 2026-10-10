@@ -33,7 +33,7 @@
       )
 
       ;; ------------------------------------------------------------------------
-      ;; Physical Hand Groups (Kanata v1.12.0 Native Engine)
+      ;; 1. Strict Bilateral Hand Definition (Opposite-Hand Enforcement)
       ;; ------------------------------------------------------------------------
       (defhands
         (left  q w e r t a s d f g z x c v b)
@@ -41,8 +41,7 @@
       )
 
       ;; ------------------------------------------------------------------------
-      ;; Bilateral Timeless Home Row Modifiers (ACGS Order)
-      ;; Opposite hand activates hold; same hand forces tap immediately.
+      ;; 2. Chordal Hold Decider (Instant Opposite Hand, Immediate Same-Hand Tap)
       ;; ------------------------------------------------------------------------
       (defalias
         ha  (tap-hold-opposite-hand 200 a lalt)
@@ -57,7 +56,7 @@
       )
 
       ;; ------------------------------------------------------------------------
-      ;; Hardware Chords (Tight 25ms Threshold)
+      ;; 3. Hardware Chords (25ms Window)
       ;; ------------------------------------------------------------------------
       (defchords combos 25
         (z) z
@@ -87,7 +86,7 @@
       )
 
       ;; ------------------------------------------------------------------------
-      ;; Layerless Programmer QWERTY Base Layout
+      ;; Layerless Base Layout
       ;; ------------------------------------------------------------------------
       (deflayer base
         @pq_grv @pq_1 @pq_2 @pq_3 @pq_4 @pq_5 @pq_6 @pq_7 @pq_8 @pq_9 @pq_0 @pq_min @pq_eql bspc
