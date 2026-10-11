@@ -24,7 +24,7 @@ hosts/
 modules/
   shared/                         base workstation profile, users, security, audio, core
   features/
-    browser/                      Floorp (Sidebery tree tabs + Stylus Osaka), Brave Origin
+    browser/                      Floorp (Sidebery tree tabs + Dark Reader Osaka), Brave Origin
     desktop/                      Niri compositor, Noctalia v5 shell, fonts, XDG, fuzzel
     terminal/                     Zsh (expanding abbreviations), Ghostty, Tmux (dotbar)
     editor/                       Helix (wrapped LSPs: nixd, marksman, taplo, bash-ls)
@@ -56,7 +56,7 @@ Both hosts share the unified `baseWorkstation` profile while isolating hardware 
 | **Terminal** | [ghostty](https://ghostty.org/) | Native Wayland, Lilex Nerd Font with OpenType features, 14px thickened |
 | **Multiplexer** | [tmux](https://github.com/tmux/tmux) | Custom Osaka "dotbar", popup file explorer (`nnn`), FZF session switchers |
 | **Editor** | [helix](https://helix-editor.com/) | Hermetically wrapped with LSPs (`nixd`, `marksman`, `taplo`, `shfmt`) |
-| **Browsers** | [floorp](https://floorp.app/) + [brave](https://brave.com/) | Floorp: Sidebery tree tabs + Stylus Osaka; Brave Origin: isolated fallback |
+| **Browsers** | [floorp](https://floorp.app/) + [brave](https://brave.com/) | Floorp: Sidebery tree tabs + Dark Reader Osaka; Brave Origin: fallback |
 | **Keymap Engine** | [kanata](https://github.com/jtroo/kanata) | Layerless Programmer QWERTY, Timeless Home-Row Mods (ACGS), Combos |
 | **Audio** | [pipewire](https://pipewire.org/) | WirePlumber + EasyEffects daemon integration |
 
@@ -67,6 +67,7 @@ Desktop theming is governed strictly by **Noctalia**. Applications do not hardco
 * **Qt 5 & Qt 6:** Pointed to `~/.config/qt6ct/colors/noctalia.conf`.
 * **Ghostty & Helix:** Configured with `theme = noctalia`, populated by Noctalia's built-in template engine.
 * **Tmux & Sidebery:** Aligned with Noctalia's active Solarized Osaka palette (`#00141a` base, `#073642` surface, `#2aa198` Osaka Cyan accent).
+* **Web Browsing:** Floorp runs Dark Reader mapped to Solarized Osaka (`#00141a` base, `#839496` text, `#073642` selection).
 * **Typography:** **IBM Plex Sans** for interface chrome paired with **Lilex Nerd Font** for monospace buffers, backed by FreeType subpixel RGB LCD filtering.
 
 ## Keyboard Architecture (Kanata)
@@ -79,25 +80,25 @@ The keyboard layer is completely layerless, built on **Programmer QWERTY ANSI** 
 * **Caps Lock:** Remapped to `Escape`.
 
 ### 2. Timeless Home-Row Mods (ACGS Order)
-Home-row keys use `tap-hold-release` (200ms tap / 250ms hold) to eliminate index-finger rolling misfires:
+Home-row keys use native Kanata v1.12.0 `defhands` with bilateral isolation (`tap-hold-opposite-hand-release` / `tap-hold-opposite-hand`) and `tap-hold-require-prior-idle 120`:
 * **Left Hand:** `a` (Alt) • `s` (Ctrl) • `d` (GUI) • `f` (Shift)
 * **Right Hand:** `j` (Shift) • `k` (GUI) • `l` (Ctrl) • `;` (Alt)
+* Opposite-hand keys activate modifiers cleanly without rolling misfires. Same-hand rolls immediately settle as letters.
+* Chords are completely removed from the home row to prevent modifier interference.
 
-### 3. Hardware Chords (50ms Threshold)
+### 3. Hardware Chords (Input Chords v2)
+Configured on the bottom row via `defchordsv2` with `chords-v2-min-idle 100`:
 * `Z + X` → Cut (`Shift + Delete`)
 * `X + C` → Copy (`Ctrl + Insert`)
 * `C + V` → Paste (`Shift + Insert`)
 * `V + B` → Select All (`Ctrl + A`)
-* `F + J` → CapsWord (`caps-word 2000`)
-* `J + K` → Delete Word Backward (`Ctrl + Backspace`)
-* `D + F` → Tmux Prefix (`Ctrl + B`)
 * `N + M` → Redo (`Ctrl + Y`)
 * `M + ,` → Undo (`Ctrl + Z`)
 * `, + .` → Find (`Ctrl + F`)
 
 ## Multiplexer Binds (Tmux Dotbar)
 
-Tmux runs with a Solarized Osaka dotbar (`●` active, `○` inactive) and un-prefixed `Alt` bindings:
+Tmux runs with a 100% transparent Solarized Osaka dotbar (`●` active, `○` inactive) and un-prefixed `Alt` bindings:
 
 | Keybinding | Action |
 | :--- | :--- |
