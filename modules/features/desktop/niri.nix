@@ -1,6 +1,12 @@
 { self, inputs, ... }:
 let
-  makeNiriConfig = { pkgs, lib, system, noctaliaPkg }:
+  makeNiriConfig =
+    {
+      pkgs,
+      lib,
+      system,
+      noctaliaPkg,
+    }:
     let
       screenshotArea = pkgs.writeShellScriptBin "screenshot-area" ''
         set -euo pipefail
@@ -84,59 +90,95 @@ let
       (builtins.readFile ./config.kdl);
 in
 {
-  perSystem = { pkgs, lib, system, ... }:
-  let
-    noctaliaPkg = inputs.noctalia.packages.${system}.default;
-    niriConfigRaw = makeNiriConfig { inherit pkgs lib system noctaliaPkg; };
-  in
-  {
-    packages.myNiri = pkgs.symlinkJoin {
-      name = "niri-wrapped";
-      paths = [ pkgs.niri ];
-      nativeBuildInputs = [ pkgs.makeWrapper ];
-      postBuild = ''
-        wrapProgram $out/bin/niri \
-          --prefix PATH : "${lib.makeBinPath [ pkgs.xwayland-satellite pkgs.grim pkgs.slurp pkgs.wl-clipboard pkgs.brightnessctl pkgs.playerctl pkgs.wireplumber ]}"
-      '';
-      passthru = (pkgs.niri.passthru or {}) // {
-        providedSessions = [ "niri" ];
-        configKdl = niriConfigRaw;
+  perSystem =
+    {
+      pkgs,
+      lib,
+      system,
+      ...
+    }:
+    let
+      noctaliaPkg = inputs.noctalia.packages.${system}.default;
+      niriConfigRaw = makeNiriConfig {
+        inherit
+          pkgs
+          lib
+          system
+          noctaliaPkg
+          ;
       };
-    };
-  };
-
-  flake.nixosModules.niri = { config, pkgs, lib, ... }:
-  let
-    user = config.mainUser;
-    system = pkgs.stdenv.hostPlatform.system;
-    myNiri = self.packages.${system}.myNiri;
-    noctaliaPkg = inputs.noctalia.packages.${system}.default;
-    niriConfigText = makeNiriConfig { inherit pkgs lib system noctaliaPkg; };
-  in
-  {
-    programs.niri.enable = true;
-    programs.niri.package = pkgs.niri;
-
-    services.greetd = {
-      enable = true;
-      settings = {
-        default_session = {
-          command = "${myNiri}/bin/niri-session";
-          user = user;
+    in
+    {
+      packages.myNiri = pkgs.symlinkJoin {
+        name = "niri-wrapped";
+        paths = [ pkgs.niri ];
+        nativeBuildInputs = [ pkgs.makeWrapper ];
+        postBuild = ''
+          wrapProgram $out/bin/niri \
+            --prefix PATH : "${
+              lib.makeBinPath [
+                pkgs.xwayland-satellite
+                pkgs.grim
+                pkgs.slurp
+                pkgs.wl-clipboard
+                pkgs.brightnessctl
+                pkgs.playerctl
+                pkgs.wireplumber
+              ]
+            }"
+        '';
+        passthru = (pkgs.niri.passthru or { }) // {
+          providedSessions = [ "niri" ];
+          configKdl = niriConfigRaw;
         };
       };
     };
 
-    home-manager.users.${user} = {
-      xdg.configFile."niri/config.kdl" = {
-        text = niriConfigText;
-        force = true;
+  flake.nixosModules.niri =
+    {
+      config,
+      pkgs,
+      lib,
+      ...
+    }:
+    let
+      user = config.mainUser;
+      system = pkgs.stdenv.hostPlatform.system;
+      myNiri = self.packages.${system}.myNiri;
+      noctaliaPkg = inputs.noctalia.packages.${system}.default;
+      niriConfigText = makeNiriConfig {
+        inherit
+          pkgs
+          lib
+          system
+          noctaliaPkg
+          ;
       };
-    };
+    in
+    {
+      programs.niri.enable = true;
+      programs.niri.package = pkgs.niri;
 
-    environment.systemPackages = [
-      myNiri
-      pkgs.xwayland-satellite
-    ];
-  };
+      services.greetd = {
+        enable = true;
+        settings = {
+          default_session = {
+            command = "${myNiri}/bin/niri-session";
+            user = user;
+          };
+        };
+      };
+
+      home-manager.users.${user} = {
+        xdg.configFile."niri/config.kdl" = {
+          text = niriConfigText;
+          force = true;
+        };
+      };
+
+      environment.systemPackages = [
+        myNiri
+        pkgs.xwayland-satellite
+      ];
+    };
 }

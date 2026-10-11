@@ -20,9 +20,18 @@
           lcdfilter = "default";
         };
         defaultFonts = {
-          monospace = [ "Lilex Nerd Font" "IBM Plex Mono" ];
-          sansSerif = [ "IBM Plex Sans" "Noto Sans" ];
-          serif = [ "IBM Plex Serif" "Noto Serif" ];
+          monospace = [
+            "Lilex Nerd Font"
+            "IBM Plex Mono"
+          ];
+          sansSerif = [
+            "IBM Plex Sans"
+            "Noto Sans"
+          ];
+          serif = [
+            "IBM Plex Serif"
+            "Noto Serif"
+          ];
           emoji = [ "Noto Color Emoji" ];
         };
       };

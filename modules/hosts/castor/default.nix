@@ -14,7 +14,10 @@
         boot.loader.systemd-boot.enable = true;
         boot.loader.efi.canTouchEfiVariables = true;
 
-        boot.kernelParams = [ "nowatchdog" "i915.enable_fbc=1" ];
+        boot.kernelParams = [
+          "nowatchdog"
+          "i915.enable_fbc=1"
+        ];
 
         boot.extraModprobeConfig = ''
           options snd_hda_intel power_save=1 power_save_controller=Y
