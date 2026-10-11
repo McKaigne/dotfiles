@@ -41,22 +41,25 @@
       environment.systemPackages = [ self.packages.${system}.myCliamp ];
 
       home-manager.users.${user} = {
-        xdg.configFile."cliamp/config.toml".text = ''
-          theme = "noctalia"
-          visualizer = "Retro"
-          provider = "ytmusic"
-          eq_preset = "Flat"
-          eq = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
-          volume = 80
-          expanded = true
-          hide_help_bar = true
-          hide_settings_pane = true
-          vis_volume_linked = false
+        xdg.configFile."cliamp/config.toml" = {
+          text = ''
+            theme = "noctalia"
+            visualizer = "Retro"
+            provider = "ytmusic"
+            eq_preset = "Flat"
+            eq = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+            volume = 80
+            expanded = true
+            hide_help_bar = true
+            hide_settings_pane = true
+            vis_volume_linked = false
 
-          [ytmusic]
-          enabled = true
-          cookies_from = "brave+gnomekeyring"
-        '';
+            [ytmusic]
+            enabled = true
+            cookies_from = "brave+gnomekeyring"
+          '';
+          force = true;
+        };
       };
     };
 }

@@ -45,70 +45,82 @@
           font-name = "IBM Plex Sans 11";
         };
 
-        xdg.configFile."gtk-3.0/gtk.css".text = ''
-          @import 'noctalia.css';
+        xdg.configFile."gtk-3.0/gtk.css" = {
+          text = ''
+            @import 'noctalia.css';
 
-          /* Eradicate window controls and close buttons */
-          headerbar windowcontrols,
-          headerbar button.close,
-          tab button.close,
-          button.close {
-            display: none;
-            margin: 0;
-            padding: 0;
-          }
+            /* Eradicate window controls and close buttons */
+            headerbar windowcontrols,
+            headerbar button.close,
+            tab button.close,
+            button.close {
+              display: none;
+              margin: 0;
+              padding: 0;
+            }
 
-          /* Modern flat styling for PCManFM */
-          .pcmanfm-sidebar,
-          pcmanfm frame,
-          pcmanfm treeview {
-            border: none;
-            box-shadow: none;
-          }
+            /* Modern flat styling for PCManFM */
+            .pcmanfm-sidebar,
+            pcmanfm frame,
+            pcmanfm treeview {
+              border: none;
+              box-shadow: none;
+            }
 
-          pcmanfm treeview {
-            padding: 2px 4px;
-          }
-        '';
+            pcmanfm treeview {
+              padding: 2px 4px;
+            }
+          '';
+          force = true;
+        };
 
-        xdg.configFile."gtk-4.0/gtk.css".text = ''
-          @import 'noctalia.css';
+        xdg.configFile."gtk-4.0/gtk.css" = {
+          text = ''
+            @import 'noctalia.css';
 
-          headerbar windowcontrols,
-          headerbar button.close,
-          tab button.close,
-          button.close {
-            display: none;
-            margin: 0;
-            padding: 0;
-          }
-        '';
+            headerbar windowcontrols,
+            headerbar button.close,
+            tab button.close,
+            button.close {
+              display: none;
+              margin: 0;
+              padding: 0;
+            }
+          '';
+          force = true;
+        };
 
-        xdg.configFile."qt6ct/qt6ct.conf".text = ''
-          [Appearance]
-          color_scheme_path=/home/${user}/.config/qt6ct/colors/noctalia.conf
-          custom_palette=true
-          icon_theme=WhiteSur
-          standard_dialogs=default
-          style=Adwaita-Dark
+        xdg.configFile."qt6ct/qt6ct.conf" = {
+          text = ''
+            [Appearance]
+            color_scheme_path=/home/${user}/.config/qt6ct/colors/noctalia.conf
+            custom_palette=true
+            icon_theme=WhiteSur
+            standard_dialogs=default
+            style=Adwaita-Dark
 
-          [Fonts]
-          fixed="Lilex Nerd Font,11,-1,5,50,0,0,0,0,0"
-          general="IBM Plex Sans,11,-1,5,50,0,0,0,0,0"
-        '';
+            [Fonts]
+            fixed="Lilex Nerd Font,11,-1,5,50,0,0,0,0,0"
+            general="IBM Plex Sans,11,-1,5,50,0,0,0,0,0"
+          '';
+          force = true;
+        };
 
-        xdg.configFile."qt5ct/qt5ct.conf".text = ''
-          [Appearance]
-          color_scheme_path=/home/${user}/.config/qt5ct/colors/noctalia.conf
-          custom_palette=true
-          icon_theme=WhiteSur
-          standard_dialogs=default
-          style=Adwaita-Dark
+        xdg.configFile."qt5ct/qt5ct.conf" = {
+          text = ''
+            [Appearance]
+            color_scheme_path=/home/${user}/.config/qt5ct/colors/noctalia.conf
+            custom_palette=true
+            icon_theme=WhiteSur
+            standard_dialogs=default
+            style=Adwaita-Dark
 
-          [Fonts]
-          fixed="Lilex Nerd Font,11,-1,5,50,0,0,0,0,0"
-          general="IBM Plex Sans,11,-1,5,50,0,0,0,0,0"
-        '';
+            [Fonts]
+            fixed="Lilex Nerd Font,11,-1,5,50,0,0,0,0,0"
+            general="IBM Plex Sans,11,-1,5,50,0,0,0,0,0"
+          '';
+          force = true;
+        };
       };
 
       qt = {

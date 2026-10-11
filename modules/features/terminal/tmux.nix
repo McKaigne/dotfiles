@@ -18,10 +18,12 @@
       set -g mouse on
       set -g history-limit 100000
 
-      # Base 1 Indexing
+      # Base 1 Indexing & Title Tracking
       set -g base-index 1
       setw -g pane-base-index 1
       set -g renumber-windows on
+      set -g set-titles on
+      set -g set-titles-string "#T"
 
       # Quick Config Reload
       unbind r
@@ -39,42 +41,31 @@
       bind-key -T copy-mode-vi 'y' send -X copy-pipe "${pkgs.wl-clipboard}/bin/wl-copy"
 
       # ------------------------------------------------------------------------
-      # Minimalist Transparent Statusline (Solarized Osaka)
+      # Statusline Structure & Dynamic Theme Sourcing (Noctalia Authority)
       # ------------------------------------------------------------------------
       set -g status on
       set -g status-position top
       set -g status-justify left
       set -g status-interval 2
-
-      # Left: Host & Session
       set -g status-left-length 80
-      set -g status-left "#[fg=#b58900,bold]#{host_short} #[fg=#586e75]· #[fg=#2aa198,bold][#S] #[default]"
-
-      # Right: Clean & Uncluttered
       set -g status-right ""
-
-      # Windows: Minimalist 1:hx format with subtle Osaka zoom dot
       set -g window-status-separator "  "
-      set -g window-status-format "#[fg=#586e75]#I:#W"
-      set -g window-status-current-format "#[fg=#2aa198,bold]#I:#W#{?window_zoomed_flag, #[fg=#dc322f],}"
 
-      # 100% Native Transparency across all surfaces
-      set -g status-style "bg=default,fg=#839496"
-      set -g window-style "bg=default,fg=#839496"
-      set -g window-active-style "bg=default,fg=#839496"
-      set -g pane-border-style "fg=#073642,bg=default"
-      set -g pane-active-border-style "fg=#2aa198,bg=default"
-      set -g popup-border-style "fg=#2aa198,bg=default"
+      # Sourced quietly from Noctalia dynamic template engine
+      source-file -q ~/.config/tmux/themes/noctalia.conf
 
       # ------------------------------------------------------------------------
-      # Panes & Window Splits
+      # Window Creation & Pane Splits (Prefix-guarded: Zero Helix Collisions)
       # ------------------------------------------------------------------------
-      bind _ split-window -h -c "#{pane_current_path}"
-      bind - split-window -v -c "#{pane_current_path}"
       bind c new-window -c "#{pane_current_path}"
+      bind - split-window -v -c "#{pane_current_path}"
+      bind | split-window -h -c "#{pane_current_path}"
+      bind _ split-window -v -c "#{pane_current_path}"
+      bind x kill-pane
+      bind X kill-window
 
       # ------------------------------------------------------------------------
-      # Unprefixed Alt Navigation Suite
+      # Unprefixed Alt Navigation Suite (Safe for Helix Multi-cursor & Treesitter)
       # ------------------------------------------------------------------------
       # Pane Navigation
       bind-key -n M-h select-pane -L
@@ -102,21 +93,15 @@
       bind-key -n M-J switch-client -p
       bind-key -n M-K switch-client -n
 
-      # Window & Pane Management
-      bind-key -n M-x kill-pane
-      bind-key -n M-X kill-window
-      bind-key -n M-c new-window -c "#{pane_current_path}"
-      bind-key -n M-, command-prompt -I "#W" "rename-window -- '%%'"
-      bind-key -n M-$ command-prompt -I "#S" "rename-session -- '%%'"
-      bind-key -n M-n split-window -v -c "#{pane_current_path}"
-      bind-key -n M-v split-window -h -c "#{pane_current_path}"
-
-      # Floating Popups
-      bind-key -n M-e display-popup -E -w 80% -h 80% "${pkgs.nnn}/bin/nnn"
-      bind-key -n M-t display-popup -E -w 80% -h 80% "${pkgs.btop}/bin/btop"
-      bind-key p display-popup -E -e TERM=tmux-256color -w 80% -h 80% -d "#{pane_current_path}"
+      # Window & Session Renaming
+      bind , command-prompt -I "#W" "rename-window -- '%%'"
+      bind $ command-prompt -I "#S" "rename-session -- '%%'"
 
       # Repeatable Pane Resizing
+      bind-key -r -T prefix Up resize-pane -U 5
+      bind-key -r -T prefix Down resize-pane -D 5
+      bind-key -r -T prefix Left resize-pane -L 5
+      bind-key -r -T prefix Right resize-pane -R 5
       bind-key -n -r M-Up resize-pane -U 5
       bind-key -n -r M-Down resize-pane -D 5
       bind-key -n -r M-Left resize-pane -L 5
@@ -133,10 +118,17 @@
       bind-key M-4 select-layout main-vertical
       bind-key -n M-O select-pane -t :.+
 
+      # ------------------------------------------------------------------------
+      # Floating Tool Popups (Overlay bridges accessible while inside Helix)
+      # ------------------------------------------------------------------------
+      bind-key g display-popup -d "#{pane_current_path}" -w 85% -h 85% -E "${pkgs.lazygit}/bin/lazygit"
+      bind-key t display-popup -d "#{pane_current_path}" -w 80% -h 80% -E "${pkgs.btop}/bin/btop"
+      bind-key p display-popup -d "#{pane_current_path}" -w 80% -h 80% -E -e TERM=tmux-256color "${pkgs.zsh}/bin/zsh"
+
       # FZF Pickers
       bind-key C-j display-popup -E "${pkgs.tmux}/bin/tmux list-sessions -F '#{session_name}' | ${pkgs.fzf}/bin/fzf --reverse | xargs ${pkgs.tmux}/bin/tmux switch-client -t"
       bind-key C-k display-popup -E "${pkgs.tmux}/bin/tmux list-windows -a -F '#{session_name}:#{window_index} - #{window_name}' | ${pkgs.fzf}/bin/fzf --reverse | cut -d' ' -f1 | xargs ${pkgs.tmux}/bin/tmux switch-client -t"
-      bind-key C-v display-popup -E "${pkgs.tmux}/bin/tmux list-panes -a -F '#{session_name}:#{window_index}.#{pane_index} #{pane_current_command} #{pane_title}' | grep -E 'hx|nvim|vim' | ${pkgs.fzf}/bin/fzf --reverse | awk '{print \$1}' | xargs -I{} ${pkgs.tmux}/bin/tmux switch-client -t {}"
+      bind-key C-v display-popup -E "${pkgs.tmux}/bin/tmux list-panes -a -F '#{session_name}:#{window_index}.#{pane_index} #{pane_current_command} #{pane_title}' | grep -E 'hx|helix|nvim|vim' | ${pkgs.fzf}/bin/fzf --reverse | awk '{print \$1}' | xargs -I{} ${pkgs.tmux}/bin/tmux switch-client -t {}"
     '';
   in
   {

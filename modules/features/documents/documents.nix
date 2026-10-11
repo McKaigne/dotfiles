@@ -12,11 +12,14 @@
       ];
 
       home-manager.users.${user} = {
-        xdg.configFile."zathura/zathurarc".text = ''
-          include noctaliarc
-          set selection-clipboard clipboard
-          set window-title-basename true
-        '';
+        xdg.configFile."zathura/zathurarc" = {
+          text = ''
+            include noctaliarc
+            set selection-clipboard clipboard
+            set window-title-basename true
+          '';
+          force = true;
+        };
       };
     };
 }

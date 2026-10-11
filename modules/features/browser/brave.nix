@@ -47,15 +47,11 @@
       environment.etc."chromium/policies/managed/brave-policies.json".source =
         config.environment.etc."brave/policies/managed/brave-policies.json".source;
 
-      home-manager.users.${user} = { lib, ... }: {
-        home.activation.setupBraveSymlinks = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
-          TARGET_DIR="$HOME/.config/BraveSoftware"
-          mkdir -p "$TARGET_DIR"
-          if [ -d "$TARGET_DIR/Brave-Browser" ] && [ ! -L "$TARGET_DIR/Brave-Browser" ]; then
-            rm -rf "$TARGET_DIR/Brave-Browser"
-          fi
-          ln -sfn "$TARGET_DIR/Brave-Origin" "$TARGET_DIR/Brave-Browser"
-        '';
+      home-manager.users.${user} = { config, ... }: {
+        home.file.".config/BraveSoftware/Brave-Browser" = {
+          source = config.lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/.config/BraveSoftware/Brave-Origin";
+          force = true;
+        };
       };
     };
 }

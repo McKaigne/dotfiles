@@ -112,7 +112,7 @@ source = "community"
 wallpaper_scheme = "m3-content"
 
 [theme.templates]
-builtin_ids = [ "btop", "cava", "gtk3", "gtk4", "ghostty", "helix", "niri", "qt", "starship" ]
+builtin_ids = [ "btop", "cava", "gtk3", "gtk4", "niri", "qt", "starship" ]
 community_ids = [
     "antigravity",
     "claude-code",
@@ -128,7 +128,8 @@ community_ids = [
     "fzf",
     "glow",
     "lazygit",
-    "yazi"
+    "yazi",
+    "fuzzel"
 ]
 enable_builtin_templates = true
 
@@ -139,6 +140,15 @@ output_path = "~/.config/cliamp/themes/noctalia.toml"
 [theme.templates.user.zellij]
 input_path = "~/.config/noctalia/user-templates/zellij.kdl"
 output_path = "~/.config/zellij/themes/noctalia.kdl"
+
+[theme.templates.user.ghostty]
+input_path = "~/.config/noctalia/user-templates/ghostty"
+output_path = "~/.config/ghostty/themes/noctalia"
+
+[theme.templates.user.tmux]
+input_path = "~/.config/noctalia/user-templates/tmux.conf"
+output_path = "~/.config/tmux/themes/noctalia.conf"
+post_hook = "tmux source-file ~/.config/tmux/tmux.conf 2>/dev/null || true"
 
 [wallpaper]
 directory = "/etc/nixos/wallpapers"

@@ -4,7 +4,6 @@
     user = config.mainUser;
   in
   {
-    # NixOS system-level Zsh management
     programs.zsh = {
       enable = true;
       enableCompletion = true;
@@ -58,29 +57,29 @@
 
         initContent = ''
           # ----------------------------------------------------------------------
-          # Asynchronous Performance & Highlighting Optimization
+          # Asynchronous Performance & Dynamic ANSI Palette Mapping
           # ----------------------------------------------------------------------
           export ZSH_AUTOSUGGEST_USE_ASYNC=1
           export ZSH_AUTOSUGGEST_BUFFER_MAX_SIZE=20
-          export ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE='fg=#586e75'
+          export ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE='fg=8'
 
           typeset -ga ZSH_HIGHLIGHT_HIGHLIGHTERS=(main)
 
           typeset -A ZSH_HIGHLIGHT_STYLES
-          ZSH_HIGHLIGHT_STYLES[command]='fg=#2aa198,bold'
-          ZSH_HIGHLIGHT_STYLES[alias]='fg=#2aa198'
-          ZSH_HIGHLIGHT_STYLES[builtin]='fg=#268bd2,bold'
-          ZSH_HIGHLIGHT_STYLES[function]='fg=#268bd2'
-          ZSH_HIGHLIGHT_STYLES[single-quoted-argument]='fg=#859900'
-          ZSH_HIGHLIGHT_STYLES[double-quoted-argument]='fg=#859900'
-          ZSH_HIGHLIGHT_STYLES[dollar-quoted-argument]='fg=#859900'
-          ZSH_HIGHLIGHT_STYLES[path]='fg=#93a1a1,underline'
-          ZSH_HIGHLIGHT_STYLES[path_prefix]='fg=#586e75,underline'
-          ZSH_HIGHLIGHT_STYLES[globbing]='fg=#b58900'
-          ZSH_HIGHLIGHT_STYLES[history-expansion]='fg=#268bd2'
-          ZSH_HIGHLIGHT_STYLES[command-separator]='fg=#586e75'
-          ZSH_HIGHLIGHT_STYLES[redirection]='fg=#586e75'
-          ZSH_HIGHLIGHT_STYLES[unknown-token]='fg=#dc322f,bold'
+          ZSH_HIGHLIGHT_STYLES[command]='fg=cyan,bold'
+          ZSH_HIGHLIGHT_STYLES[alias]='fg=cyan'
+          ZSH_HIGHLIGHT_STYLES[builtin]='fg=blue,bold'
+          ZSH_HIGHLIGHT_STYLES[function]='fg=blue'
+          ZSH_HIGHLIGHT_STYLES[single-quoted-argument]='fg=green'
+          ZSH_HIGHLIGHT_STYLES[double-quoted-argument]='fg=green'
+          ZSH_HIGHLIGHT_STYLES[dollar-quoted-argument]='fg=green'
+          ZSH_HIGHLIGHT_STYLES[path]='fg=7,underline'
+          ZSH_HIGHLIGHT_STYLES[path_prefix]='fg=8,underline'
+          ZSH_HIGHLIGHT_STYLES[globbing]='fg=yellow'
+          ZSH_HIGHLIGHT_STYLES[history-expansion]='fg=blue'
+          ZSH_HIGHLIGHT_STYLES[command-separator]='fg=8'
+          ZSH_HIGHLIGHT_STYLES[redirection]='fg=8'
+          ZSH_HIGHLIGHT_STYLES[unknown-token]='fg=red,bold'
 
           # ----------------------------------------------------------------------
           # Interactive Tools (Single-Hook Execution)
@@ -244,7 +243,6 @@
             fi
           }
 
-          # Unified LLM System Context Engine (Replaces cft and cfb)
           cfb() {
             local target="."
             if [[ $# -ge 1 ]]; then

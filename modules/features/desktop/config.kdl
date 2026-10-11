@@ -50,9 +50,6 @@ layout {
 
   border {
     width 2
-    active-gradient from="#2aa198" to="#268bd2" angle=45 relative-to="workspace-view"
-    inactive-color "#073642"
-    urgent-color   "#dc322f"
   }
 
   preset-column-widths {

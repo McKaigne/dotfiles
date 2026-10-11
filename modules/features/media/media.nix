@@ -12,11 +12,14 @@
       ];
 
       home-manager.users.${user} = {
-        xdg.configFile."mpv/mpv.conf".text = ''
-          vo=gpu-next
-          gpu-context=wayland
-          hwdec=auto-safe
-        '';
+        xdg.configFile."mpv/mpv.conf" = {
+          text = ''
+            vo=gpu-next
+            gpu-context=wayland
+            hwdec=auto-safe
+          '';
+          force = true;
+        };
       };
     };
 }
