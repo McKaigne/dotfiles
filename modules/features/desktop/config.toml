@@ -1,107 +1,41 @@
 [bar]
 order = [ "top" ]
 
-    [bar.top]
-    background_opacity = 0.84999998100101948
-    bar_type = "floating"
-    capsule_opacity = 0.88
-    capsule_radius = 4
-    center = [ "workspaces" ]
-    concave_edge_corners = false
-    content_padding = 4
-    density = "compact"
-    enabled = true
-    end = [
-        "tray",
-        "notifications",
-        "network",
-        "bluetooth",
-        "battery",
-        "volume",
-        "input_volume",
-        "brightness",
-        "weather",
-        "clock",
-        "session"
-    ]
-    font_family = "Lilex Nerd Font"
-    margin_ends = 0
-    margin_sides = 12
-    margin_top = 6
-    position = "top"
-    radius = 0
-    shadow = false
-    show_capsules = true
-    start = [ "cpu", "temp", "ram" ]
-    thickness = 28
-    widget_spacing = 8
-
-        [bar.top.widgets]
-        center = [ "active_window", "weather", "clock" ]
-        left = [ "launcher", "workspaces" ]
-        right = [ "media", "sysmon", "tray", "notifications", "network", "battery", "control_center" ]
-
-            [bar.top.widgets.active_window]
-            hide_when_empty = true
-            max_width = 240
-            show_app_icon = true
-
-            [bar.top.widgets.battery]
-            display_mode = "graphic"
-            hide_if_not_detected = true
-
-            [bar.top.widgets.clock]
-            clock_color = "primary"
-            format_horizontal = "HH:mm  •  ddd, MMM dd"
-
-            [bar.top.widgets.control_center]
-            icon = "assembly-filled"
-            icon_color = "primary"
-
-            [bar.top.widgets.launcher]
-            icon = "rocket"
-            icon_color = "primary"
-
-            [bar.top.widgets.media]
-            hide_when_idle = true
-            max_width = 160
-            show_album_art = true
-            show_progress_ring = true
-
-            [bar.top.widgets.notifications]
-            show_unread_badge = true
-            unread_badge_color = "primary"
-
-            [bar.top.widgets.sysmon]
-            compact_mode = true
-            show_cpu_usage = true
-            show_disk_usage = false
-            show_memory_usage = true
-
-            [bar.top.widgets.weather]
-            show_icon = true
-            show_temperature = true
-
-            [bar.top.widgets.workspaces]
-            empty_color = "surface_container_high"
-            focused_color = "primary"
-            font_weight = "bold"
-            hide_unoccupied = true
-            max_workspaces = 9
-            occupied_color = "secondary"
-            pill_size = 0.5
-            show_labels_only_when_occupied = true
+[bar.top]
+background_opacity = 0.85
+capsule_opacity = 0.88
+capsule_radius = 4
+center = [ "workspaces" ]
+concave_edge_corners = false
+enabled = true
+end = [
+    "tray",
+    "notifications",
+    "network",
+    "bluetooth",
+    "battery",
+    "volume",
+    "input_volume",
+    "brightness",
+    "weather",
+    "clock",
+    "session"
+]
+font_family = "Lilex Nerd Font"
+margin_edge = 0
+margin_ends = 6
+margin_opposite_edge = 0
+position = "top"
+radius = 0
+shadow = false
+start = [ "cpu", "temp", "ram" ]
+thickness = 28
+widget_spacing = 8
 
 [dock]
-active_opacity = 0.84999998100101948
-background_opacity = 0.84999998100101948
+active_opacity = 0.85
+background_opacity = 0.85
 shadow = false
-
-[general]
-avatar_image = ""
-clock_format = "HH:mm"
-enable_blur_behind = true
-language = ""
 
 [location]
 auto_locate = true
@@ -111,117 +45,114 @@ enabled = false
 schema_version = 2
 widget_order = [ "lockscreen-login-box@DP-1" ]
 
-    [lockscreen_widgets.grid]
-    cell_size = 16
-    major_interval = 4
-    visible = true
+[lockscreen_widgets.grid]
+cell_size = 16
+major_interval = 4
+visible = true
 
-    [lockscreen_widgets.widget."lockscreen-login-box@DP-1"]
-    box_height = 196.0
-    box_width = 810.0
-    cx = 960.0
-    cy = 898.0
-    output = "DP-1"
-    placement_height = 1080.0
-    placement_width = 1920.0
-    rotation = 0.0
-    type = "login_box"
+[lockscreen_widgets.widget."lockscreen-login-box@DP-1"]
+box_height = 196.0
+box_width = 810.0
+cx = 960.0
+cy = 898.0
+output = "DP-1"
+placement_height = 1080.0
+placement_width = 1920.0
+rotation = 0.0
+type = "login_box"
 
-        [lockscreen_widgets.widget."lockscreen-login-box@DP-1".settings]
-        background_color = "surface_variant"
-        background_opacity = 0.88
-        background_radius = 12.0
-        center_password_text = false
-        input_opacity = 1.0
-        input_radius = 6.0
-        layout = "regular"
-        show_caps_lock = true
-        show_keyboard_layout = true
-        show_login_button = true
-        show_media = true
-        show_session_buttons = true
-        show_unlock_hint = true
-        show_weather = true
+[lockscreen_widgets.widget."lockscreen-login-box@DP-1".settings]
+background_color = "surface_variant"
+background_opacity = 0.88
+background_radius = 12.0
+center_password_text = false
+input_opacity = 1.0
+input_radius = 6.0
+layout = "regular"
+show_caps_lock = true
+show_keyboard_layout = true
+show_login_button = true
+show_media = true
+show_session_buttons = true
+show_unlock_hint = true
+show_weather = true
 
 [notification]
-background_opacity = 0.84999998100101948
+background_opacity = 0.85
 
 [osd]
-background_opacity = 0.84999998100101948
+background_opacity = 0.85
 
-    [osd.kinds]
-    media = false
+[osd.kinds]
+media = false
 
 [shell]
 app_icon_color = "on_surface_variant"
 button_borders = false
 card_borders = false
-corner_radius_scale = 0.40000000596046448
+corner_radius_scale = 0.4
 font_family = "Lilex Nerd Font"
 input_borders = false
 popup_borders = false
 popup_shadows = false
 settings_window_translucent = true
 
-    [shell.panel]
-    control_center_placement = "floating"
-    session_placement = "floating"
-    shadow = false
-    transparency_mode = "glass"
-    wallpaper_placement = "floating"
+[shell.panel]
+control_center_placement = "floating"
+session_placement = "floating"
+shadow = false
+transparency_mode = "glass"
+wallpaper_placement = "floating"
 
 [theme]
 builtin = "Noctalia"
 community_palette = "Solarized Osaka"
 mode = "dark"
-palette = "Solarized Osaka"
 source = "community"
 wallpaper_scheme = "m3-content"
 
-    [theme.templates]
-    builtin_ids = [ "btop", "cava", "gtk3", "gtk4", "ghostty", "helix", "niri", "qt", "starship" ]
-    community_ids = [
-        "antigravity",
-        "claude-code",
-        "brave",
-        "brave-origin",
-        "blender",
-        "fastfetch",
-        "obs",
-        "zathura",
-        "zellij",
-        "whitesur-icons",
-        "bat",
-        "fzf",
-        "glow",
-        "lazygit",
-        "yazi"
-    ]
-    enable_builtin_templates = true
+[theme.templates]
+builtin_ids = [ "btop", "cava", "gtk3", "gtk4", "ghostty", "helix", "niri", "qt", "starship" ]
+community_ids = [
+    "antigravity",
+    "claude-code",
+    "brave",
+    "brave-origin",
+    "blender",
+    "fastfetch",
+    "obs",
+    "zathura",
+    "zellij",
+    "whitesur-icons",
+    "bat",
+    "fzf",
+    "glow",
+    "lazygit",
+    "yazi"
+]
+enable_builtin_templates = true
 
-        [theme.templates.user.cliamp]
-        input_path = "~/.config/noctalia/user-templates/cliamp.toml"
-        output_path = "~/.config/cliamp/themes/noctalia.toml"
+[theme.templates.user.cliamp]
+input_path = "~/.config/noctalia/user-templates/cliamp.toml"
+output_path = "~/.config/cliamp/themes/noctalia.toml"
 
-        [theme.templates.user.zellij]
-        input_path = "~/.config/noctalia/user-templates/zellij.kdl"
-        output_path = "~/.config/zellij/themes/noctalia.kdl"
+[theme.templates.user.zellij]
+input_path = "~/.config/noctalia/user-templates/zellij.kdl"
+output_path = "~/.config/zellij/themes/noctalia.kdl"
 
 [wallpaper]
 directory = "/etc/nixos/wallpapers"
 fill_mode = "crop"
-set_on_all_monitors = true
 transition_duration = 1500
-transition_type = "honeycomb"
 
-    [wallpaper.default]
-    path = "/etc/nixos/wallpapers/redSun.jpg"
+[wallpaper.default]
+path = "/etc/nixos/wallpapers/redSun.jpg"
 
-    [wallpaper.last]
-    path = "/etc/nixos/wallpapers/redSun.jpg"
+[wallpaper.last]
+path = "/etc/nixos/wallpapers/redSun.jpg"
 
-    [wallpaper.monitors.DP-1]
-    path = "/etc/nixos/wallpapers/redSun.jpg"
+[wallpaper.monitors.DP-1]
+path = "/etc/nixos/wallpapers/redSun.jpg"
 
 [weather]
 enabled = true
