@@ -36,6 +36,17 @@
 
     programs.nix-ld.enable = true;
 
+    # --------------------------------------------------------------------------
+    # QMK & VIA Hardware Permissions (WebHID / hidraw)
+    # --------------------------------------------------------------------------
+    hardware.keyboard.qmk.enable = true;
+
+    services.udev.extraRules = ''
+      # Weikav Record Alice v2 (Wired Mode: VID 0x369b, PID 0x0051)
+      KERNEL=="hidraw*", SUBSYSTEM=="hidraw", ATTRS{idVendor}=="369b", ATTRS{idProduct}=="0051", MODE="0660", GROUP="users", TAG+="uaccess"
+      KERNEL=="hidraw*", SUBSYSTEM=="hidraw", ATTRS{idVendor}=="369b", MODE="0660", GROUP="users", TAG+="uaccess"
+    '';
+
     environment.sessionVariables = {
       EDITOR = "hx";
       VISUAL = "hx";
