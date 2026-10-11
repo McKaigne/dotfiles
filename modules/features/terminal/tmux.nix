@@ -4,7 +4,9 @@
     user = config.mainUser;
 
     tmuxConf = ''
+      # ------------------------------------------------------------------------
       # General Settings
+      # ------------------------------------------------------------------------
       set -g prefix C-b
       unbind C-b
       bind C-b send-prefix
@@ -22,25 +24,37 @@
       set -g renumber-windows on
 
       # ------------------------------------------------------------------------
-      # Solarized Osaka "Dotbar" Statusline
+      # 100% Transparent Solarized Osaka "Dotbar"
       # ------------------------------------------------------------------------
       set -g status-position top
       set -g status-interval 2
-      set -g status-style "bg=#00141a,fg=#839496"
 
+      # Complete transparency across entire statusline
+      set -g status-style "bg=default,fg=#839496"
+      set -g status-left-style "bg=default"
+      set -g status-right-style "bg=default"
+      setw -g window-status-style "bg=default"
+      setw -g window-status-current-style "bg=default"
+
+      # Session Indicator (Left)
       set -g status-left-length 40
-      set -g status-left "#[fg=#b58900,bold]● #S #[fg=#073642]• "
+      set -g status-left "#[fg=#b58900,bold]#S #[fg=#586e75]• "
 
-      set -g status-right-length 60
-      set -g status-right "#[fg=#586e75]#{?client_prefix,#[fg=#2aa198,bold]PREFIX ,}#{?window_zoomed_flag,#[fg=#dc322f,bold]ZOOM ,}#[fg=#073642]• #[fg=#2aa198]⌂ "
+      # Dotbar Window Separators & Format
+      setw -g window-status-separator "#[fg=#586e75] • "
+      setw -g window-status-format "#[fg=#586e75]#I #W#{?window_zoomed_flag, #[fg=#dc322f]󰊓,}"
+      setw -g window-status-current-format "#[fg=#2aa198,bold]#I #W#{?window_zoomed_flag, #[fg=#dc322f]󰊓,}"
 
-      setw -g window-status-separator " "
-      setw -g window-status-format "#[fg=#586e75]○ #I #W"
-      setw -g window-status-current-format "#[fg=#2aa198,bold]● #I #W"
+      # Right Status (Prefix & Zoom Notifications)
+      set -g status-right-length 50
+      set -g status-right "#{?client_prefix,#[fg=#2aa198,bold]󰘳 PREFIX ,}#{?window_zoomed_flag,#[fg=#dc322f,bold]󰊓 ZOOM ,}"
 
-      set -g pane-border-style "fg=#073642"
-      set -g pane-active-border-style "fg=#2aa198"
-      set -g popup-border-style "fg=#2aa198"
+      # Transparent Pane Borders
+      set -g pane-border-style "fg=#073642,bg=default"
+      set -g pane-active-border-style "fg=#2aa198,bg=default"
+
+      # Popups
+      set -g popup-border-style "fg=#2aa198,bg=default"
 
       # ------------------------------------------------------------------------
       # Keybindings (Alt combos with no prefix)
