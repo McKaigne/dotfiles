@@ -1,93 +1,143 @@
-# nixos
+# Dendritic NixOS Workstations: Castor & Hyde
 
-Dendritic, atomic NixOS flake managing two workstations (`castor` and `hyde`), home-manager, Niri scrollable tiling, Noctalia dynamic theme governance, and custom hardware input layers.
+An atomic, dendritic NixOS configuration managing two specialized workstations (`castor` and `hyde`), scrollable tiling with Niri, Noctalia dynamic theme authority, layerless Programmer QWERTY hardware input interception, and an editor-multiplexer workflow.
 
-## Quick start
+---
+
+## Quick Start
 
 ```sh
-# On workstation Hyde (AMD)
+# On workstation Hyde (AMD Compute Workstation)
 sudo nixos-rebuild switch --flake /etc/nixos#hyde
 
-# On workstation Castor (Intel)
+# On workstation Castor (Intel Mobile Workstation)
 sudo nixos-rebuild switch --flake /etc/nixos#castor
 ```
 
-Checkout expected at `/etc/nixos`.
+Checkout path expected at `/etc/nixos`.
 
-## Layout
+---
+
+## Topology & Workstation Roles
+
+| Host | Primary User | Graphics & Acceleration | Kernel & Memory Tuning | Workstation Role |
+| :--- | :--- | :--- | :--- | :--- |
+| **hyde** | `jekyll` | AMD Radeon (`amdgpu`) + ROCm / HIP compute (`rocmPackages.clr.icd`) | Kingston NV2 APST fix (`nvme_core.default_ps_max_latency_us=0`), `pcie_aspm=off`, low swappiness (`vm.swappiness = 10`) | Main workstation: 3D Blender Cycles rendering, compute & dev |
+| **castor** | `pollux` | Intel Iris Xe (`intel-media-driver` / `iHD`) | Framebuffer compression (`i915.enable_fbc=1`), aggressive zram swappiness (`180`), thermald | Secondary workstation: Lightweight, mobile efficiency & media |
+
+Both hosts share the unified `baseWorkstation` profile while isolating hardware runtimes and user environments.
+
+---
+
+## Repository Layout (Single-Responsibility Architecture)
+
+Every component is an isolated directory with its own dedicated `default.nix` entrypoint and co-located configuration assets:
 
 ```text
-flake.nix                         inputs + flake-parts + import-tree entrypoint
-hosts/
-  castor/                         Intel Iris Xe host configuration (pollux)
-  hyde/                           AMD GPU + ROCm compute host configuration (jekyll)
-modules/
-  shared/                         base workstation profile, users, security, audio, core
-  features/
-    browser/                      Floorp (Sidebery tree tabs + Dark Reader Osaka), Brave Origin
-    desktop/                      Niri compositor, Noctalia v5 shell, fonts, XDG, fuzzel
-    terminal/                     Zsh (expanding abbreviations), Ghostty, Tmux (dotbar)
-    editor/                       Helix (wrapped LSPs: nixd, marksman, taplo, bash-ls)
-    media/                        Cliamp, MPV, Parabolic
-    theme/                        Noctalia dynamic GTK 3/4 & Qt 5/6 palette bindings
-    creative/                     Blender, Kdenlive, OBS Studio (VAAPI + PipeWire capture)
-    documents/                    Obsidian, Zathura, OnlyOffice
-    dev/                          Godot 4, hyperfine, tokei, lazydocker
-wallpapers/                       Managed desktop background repository
+/etc/nixos
+├── flake.nix                         # Inputs, outputs, and import-tree root
+├── README.md                         # Architectural specification & guide
+├── wallpapers/                       # System desktop background repository
+└── modules/
+    ├── hosts/
+    │   ├── castor/                   # Intel host profile & drive UUIDs
+    │   └── hyde/                     # AMD host profile & drive UUIDs
+    ├── shared/                       # Shared workstation infrastructure
+    │   ├── audio/                    # PipeWire, WirePlumber, RTKit, firmwares
+    │   ├── base/                     # baseWorkstation profile uniting modular units
+    │   ├── bluetooth/                # BlueZ, Blueman, Lofree Flow udev rules
+    │   ├── core/                     # Nix daemon, Cachix, system packages
+    │   ├── kanata/                   # Programmer QWERTY, ACGS home-row mods, chords
+    │   ├── security/                 # Polkit agent, GNOME Keyring, SOPS, age
+    │   ├── systems/                  # Systems matrix, formatter, CI check derivations
+    │   └── users/                    # mainUser option, Home Manager integration
+    └── features/                     # Decoupled application modules
+        ├── browser/
+        │   ├── brave/                # Brave Origin + policies + out-of-store link
+        │   └── floorp/               # Floorp browser + Sidebery + Tridactyl native
+        ├── creative/
+        │   ├── blender/              # Blender 3D modeling
+        │   ├── kdenlive/             # Kdenlive video editor & MLT framework
+        │   ├── krita/                # Krita digital raster graphics
+        │   └── obs/                  # OBS Studio + VAAPI + PipeWire capture
+        ├── desktop/
+        │   ├── fonts/                # Lilex Nerd Font, IBM Plex, subpixel rendering
+        │   ├── fuzzel/               # Fuzzel launcher + Noctalia theme import
+        │   ├── niri/                 # Niri compositor wrapper & niri.kdl asset
+        │   ├── noctalia/             # Desktop shell daemon & noctalia.toml asset
+        │   └── xdg/                  # PCManFM, portals, MIME associations
+        ├── dev/
+        │   ├── git/                  # Git user credentials & defaults
+        │   ├── godot/                # Godot 4 game engine
+        │   └── tools/                # lazydocker, tokei, hyperfine, glow
+        ├── documents/
+        │   ├── obsidian/             # Obsidian markdown knowledge base
+        │   ├── onlyoffice/           # OnlyOffice desktop editors suite
+        │   └── zathura/              # Zathura document viewer (Noctalia styled)
+        ├── editor/
+        │   └── helix/                # Wrapped Helix + LSPs + Osaka transparent theme
+        ├── media/
+        │   ├── imv/                  # Imv image viewer
+        │   ├── mpv/                  # MPV video player (gpu-next, wayland)
+        │   └── parabolic/            # Parabolic media downloader
+        ├── network/
+        │   └── localsend/            # LocalSend daemon + port 53317 firewall
+        ├── security/
+        │   └── bitwarden/            # Bitwarden desktop client
+        ├── terminal/
+        │   ├── fetch/                # areofyl/fetch 3D rotating ASCII engine
+        │   ├── ghostty/              # Ghostty terminal + Lilex OpenType features
+        │   ├── starship/             # Starship prompt derivation & starship.toml
+        │   ├── tmux/                 # Tmux multiplexer + non-colliding keymaps
+        │   └── zsh/                  # Zsh + expanding abbreviations + cfb tool
+        └── theme/
+            └── noctalia/             # GTK 3/4 & Qt 5/6 dynamic stylesheet bindings
 ```
 
-## Workstations
+---
 
-| Host | User | Graphics & Acceleration | Kernel & Storage Tuning | Role |
-| :--- | :--- | :--- | :--- | :--- |
-| **hyde** | `jekyll` | AMD Radeon (`amdgpu`) + ROCm / HIP compute | Kingston NV2 APST fix (`nvme_core.default_ps_max_latency_us=0`), `pcie_aspm=off`, zram | Main workstation / 3D & Compute |
-| **castor** | `pollux` | Intel Iris Xe (`iHD` / `intel-media-driver`) | Framebuffer compression (`i915.enable_fbc=1`), aggressive zram swappiness (180), thermald | Secondary workstation / Mobile |
+## Core Stack & Ergonomics
 
-Both hosts share the unified `baseWorkstation` profile while isolating hardware runtimes and state versions.
-
-## Core Stack
-
-| Component | Implementation | Notes |
+| Subsystem | Implementation | Key Operational Notes |
 | :--- | :--- | :--- |
-| **Compositor** | [niri](https://github.com/YaLTeR/niri) | Scrollable tiling, 4px geometry corners, GPU blur, 240Hz DP-1 output |
-| **Desktop Shell** | [noctalia](https://github.com/noctalia-dev/noctalia) | Floating top bar, dynamic templates, Solarized Osaka palette authority |
+| **Compositor** | [niri](https://github.com/YaLTeR/niri) | Scrollable tiling, geometry corners 4px, GPU blur, 240Hz DP-1 display |
+| **Desktop Shell** | [noctalia](https://github.com/noctalia-dev/noctalia) | Dynamic template engine, floating top bar, binary substituted via Cachix |
 | **Display Manager** | [greetd](https://git.sr.ht/~kennylevinsen/greetd) | Auto-launches wrapped `niri-session` via PAM |
-| **Shell** | [zsh](https://www.zsh.org/) | Pure POSIX, zero aliases, native ZLE inline-expanding abbreviations, Starship |
-| **Terminal** | [ghostty](https://ghostty.org/) | Native Wayland, Lilex Nerd Font with OpenType features, 14px thickened |
-| **Multiplexer** | [tmux](https://github.com/tmux/tmux) | Custom Osaka "dotbar", popup file explorer (`nnn`), FZF session switchers |
-| **Editor** | [helix](https://helix-editor.com/) | Hermetically wrapped with LSPs (`nixd`, `marksman`, `taplo`, `shfmt`) |
-| **Browsers** | [floorp](https://floorp.app/) + [brave](https://brave.com/) | Floorp: Sidebery tree tabs + Dark Reader Osaka; Brave Origin: fallback |
-| **Keymap Engine** | [kanata](https://github.com/jtroo/kanata) | Layerless Programmer QWERTY, Timeless Home-Row Mods (ACGS), Combos |
-| **Audio** | [pipewire](https://pipewire.org/) | WirePlumber + EasyEffects daemon integration |
+| **Shell** | [zsh](https://www.zsh.org/) | Pure POSIX, zero aliases, native ZLE expanding abbreviations, Starship |
+| **Terminal** | [ghostty](https://ghostty.org/) | Native Wayland, Lilex Nerd Font with OpenType features (`cv01`, `ss01`), 0.85 blur |
+| **Multiplexer** | [tmux](https://github.com/tmux/tmux) | Custom Osaka dotbar, OSC 52 clipboard, floating tool popups over editor |
+| **Editor** | [helix](https://helix-editor.com/) | Wrapped with LSPs (`nixd`, `marksman`, `taplo`), transparent Osaka palette |
+| **Telemetry** | [fetch](https://github.com/areofyl/fetch) | 3D spinning ASCII distro engine with Blinn-Phong shading and live metrics |
+| **Keyboard Engine** | [kanata](https://github.com/jtroo/kanata) | Layerless Programmer QWERTY, Timeless Home-Row Mods (ACGS), Bottom Chords |
 
-## Theming Architecture
+---
 
-Desktop theming is governed strictly by **Noctalia**. Applications do not hardcode static hex palettes; they consume generated `noctalia` tokens:
+## Theming Governance (Noctalia Authority)
+
+Desktop styling is governed dynamically by **Noctalia**. Downstream tools do not hardcode static color values in Nix code:
 * **GTK 3 & GTK 4:** `@import 'noctalia.css';` dynamically emitted by Noctalia.
 * **Qt 5 & Qt 6:** Pointed to `~/.config/qt6ct/colors/noctalia.conf`.
-* **Ghostty & Helix:** Configured with `theme = noctalia`, populated by Noctalia's built-in template engine.
-* **Tmux & Sidebery:** Aligned with Noctalia's active Solarized Osaka palette (`#00141a` base, `#073642` surface, `#2aa198` Osaka Cyan accent).
-* **Web Browsing:** Floorp runs Dark Reader mapped to Solarized Osaka (`#00141a` base, `#839496` text, `#073642` selection).
-* **Typography:** **IBM Plex Sans** for interface chrome paired with **Lilex Nerd Font** for monospace buffers, backed by FreeType subpixel RGB LCD filtering.
+* **Ghostty & Tmux:** Configured with user templates rendered dynamically by Noctalia on theme or wallpaper switch.
+* **Fuzzel:** Imports `~/.config/fuzzel/themes/noctalia` generated via community template.
+* **Helix:** Configured with a dedicated transparent Solarized Osaka theme (`ui.background = {}`) using the complete 8-accent chromatic palette to preserve syntax discrimination.
+
+---
 
 ## Keyboard Architecture (Kanata)
 
-The keyboard layer is completely layerless, built on **Programmer QWERTY ANSI** with hardware-intercepted chords:
+The keyboard layer runs entirely in software via Kanata v1.12.0 using **Programmer QWERTY ANSI**:
 
-### 1. Programmer QWERTY Inversions
-* **Number Row:** Unshifted outputs symbols (`+ [ { ( & = ) } ] * ! $`); Shifted outputs digits (`1 2 3 4 5 6 7 8 9 0 %`).
-* **Brackets & Backslash:** `[` outputs `-` / `_`; `]` outputs `@` / `^`; `\` outputs `\` / `#`.
+### 1. Inverted Number Row
+* **Unshifted:** Outputs symbols (`+ [ { ( & = ) } ] * ! $`).
+* **Shifted:** Outputs digits (`1 2 3 4 5 6 7 8 9 0 %`).
 * **Caps Lock:** Remapped to `Escape`.
 
 ### 2. Timeless Home-Row Mods (ACGS Order)
-Home-row keys use native Kanata v1.12.0 `defhands` with bilateral isolation (`tap-hold-opposite-hand-release` / `tap-hold-opposite-hand`) and `tap-hold-require-prior-idle 120`:
+Uses native `defhands` bilateral isolation (`tap-hold-opposite-hand-release`) and `tap-hold-require-prior-idle 120`:
 * **Left Hand:** `a` (Alt) • `s` (Ctrl) • `d` (GUI) • `f` (Shift)
 * **Right Hand:** `j` (Shift) • `k` (GUI) • `l` (Ctrl) • `;` (Alt)
-* Opposite-hand keys activate modifiers cleanly without rolling misfires. Same-hand rolls immediately settle as letters.
-* Chords are completely removed from the home row to prevent modifier interference.
 
-### 3. Hardware Chords (Input Chords v2)
-Configured on the bottom row via `defchordsv2` with `chords-v2-min-idle 100`:
+### 3. Hardware Chords (`defchordsv2`)
 * `Z + X` → Cut (`Shift + Delete`)
 * `X + C` → Copy (`Ctrl + Insert`)
 * `C + V` → Paste (`Shift + Insert`)
@@ -96,37 +146,37 @@ Configured on the bottom row via `defchordsv2` with `chords-v2-min-idle 100`:
 * `M + ,` → Undo (`Ctrl + Z`)
 * `, + .` → Find (`Ctrl + F`)
 
-## Multiplexer Binds (Tmux Dotbar)
+---
 
-Tmux runs with a 100% transparent Solarized Osaka dotbar (`●` active, `○` inactive) and un-prefixed `Alt` bindings:
+## Editor & Multiplexer Symbiosis (Helix + Tmux)
 
-| Keybinding | Action |
-| :--- | :--- |
-| `Alt + h/j/k/l` | Navigate panes left / down / up / right |
-| `Alt + 1-9, 0` | Focus window 1–10 (auto-creates window if non-existent) |
-| `Alt + H / L` | Previous / Next window |
-| `Alt + J / K` | Previous / Next session |
-| `Alt + n` / `Alt + v` | Horizontal split / Vertical split |
-| `Alt + x` / `Alt + X` | Kill active pane / Kill active window |
-| `Alt + c` | Create new window |
-| `Alt + ,` / `Alt + $` | Rename active window / Rename active session |
-| `Alt + e` | Floating file explorer popup (`nnn`) |
-| `Alt + t` | Floating system monitor popup (`btop`) |
-| `Alt + z` / `Alt + f` | Toggle pane zoom / fullscreen |
-| `Alt + Arrows` | Resize pane (repeatable / holdable) |
-| `Alt + m` / `Alt + b` | Mark pane / Join marked pane |
-| `Prefix + C-j` | Interactive FZF session switcher |
-| `Prefix + C-k` | Interactive FZF window switcher |
-| `Prefix + C-v` | Interactive FZF running editor switcher (`hx`, `nvim`, `vim`) |
-| `Prefix + Alt-4` | Select `main-vertical` layout (1 primary pane + vertical stack) |
-| `Alt + O` | Cycle panes inside `main-vertical` layout |
+To prevent multiplexer key collisions while inside Helix:
+* **Unprefixed `Alt` Keys:** Reserved strictly for high-frequency window and pane navigation:
+  * `Alt + h/j/k/l`: Move pane left, down, up, right
+  * `Alt + 1-9, 0`: Switch to window 1–10 (auto-creates if non-existent)
+  * `Alt + H / L`: Previous / Next window
+  * `Alt + J / K`: Previous / Next session
+* **Prefix (`Ctrl+b`) Keys:** Manages splits, windows, and floating overlay tools:
+  * `Prefix + c`: New window
+  * `Prefix + -` / `Prefix + |`: Horizontal / Vertical split
+  * `Prefix + x`: Kill active pane
+  * `Prefix + g`: Floating `lazygit` popup centered over active pane
+  * `Prefix + t`: Floating `btop` system monitor popup
+  * `Prefix + p`: Floating scratchpad terminal popup
+  * `Prefix + C-v`: Interactive FZF picker across all running Helix panes
+* Inside Helix, `Alt+x` (shrink selection), `Alt+c` (copy selection below), and `Alt+n` (next AST sibling) execute without Tmux interference.
+* Terminal focus events (`focus-events on`) automatically trigger Helix buffer auto-saving on pane switch.
 
-## Inputs
+---
 
-* `nixpkgs` (`nixos-unstable`)
-* `home-manager`
-* `flake-parts`
-* `import-tree`
-* `noctalia`
-* `cliamp`
-* `wrapper-modules`
+## Adapting This Configuration for New Users
+
+1. **Host & User Configuration:**
+   * Update `mainUser` in `modules/hosts/<host>/default.nix` (e.g., `mainUser = "yourname";`).
+   * Rename `modules/hosts/hyde` or `castor` to your desired hostname.
+2. **Hardware & Filesystems:**
+   * Generate your hardware config with `nixos-generate-config --show-hardware-config`.
+   * Update the drive UUIDs inside `modules/hosts/<host>/hardware.nix`.
+3. **Flake Metadata:**
+   * Run `nix flake check` to verify system evaluation.
+   * Switch with `sudo nixos-rebuild switch --flake /etc/nixos#<host>`.

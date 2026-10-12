@@ -1,22 +1,22 @@
 {
   "nodes": {
-    "cliamp": {
+    "fetch": {
       "inputs": {
         "nixpkgs": [
           "nixpkgs"
         ]
       },
       "locked": {
-        "lastModified": 1790963891,
-        "narHash": "sha256-Sf9QIPNgpHnNSKNC2MeJmaPrztp3s653UGQyZmvz3Zc=",
-        "owner": "bjarneo",
-        "repo": "cliamp",
-        "rev": "9d9e55abd5ba87e1c8de4f9bd3ecc911d0f35b16",
+        "lastModified": 1791768325,
+        "narHash": "sha256-fHG4dOVrVH9ZaLkq8zWB00H+3p1l+D1oIRU6WWX3rfM=",
+        "owner": "areofyl",
+        "repo": "fetch",
+        "rev": "e5e0d414bdca2d67727b6a3b8beead096289e148",
         "type": "github"
       },
       "original": {
-        "owner": "bjarneo",
-        "repo": "cliamp",
+        "owner": "areofyl",
+        "repo": "fetch",
         "type": "github"
       }
     },
@@ -106,6 +106,19 @@
     },
     "nixpkgs_2": {
       "locked": {
+        "lastModified": 1791594108,
+        "narHash": "sha256-V0WmebqwEeAVZMqxfv7Dq7hpKkPPM19W50xQf3D1Kf4=",
+        "rev": "6510408d147d8c5e6d76043e899e9251756f6a75",
+        "type": "tarball",
+        "url": "https://releases.nixos.org/nixos/unstable/nixos-26.11pre1089111.6510408d147d/nixexprs.tar.zst"
+      },
+      "original": {
+        "type": "tarball",
+        "url": "https://channels.nixos.org/nixos-unstable/nixexprs.tar.zst"
+      }
+    },
+    "nixpkgs_3": {
+      "locked": {
         "lastModified": 1788431191,
         "narHash": "sha256-MFClkboDeW56feBCAeAV3Z3J2quGSZFlAOXQ4JjIlIA=",
         "owner": "NixOS",
@@ -122,16 +135,14 @@
     },
     "noctalia": {
       "inputs": {
-        "nixpkgs": [
-          "nixpkgs"
-        ]
+        "nixpkgs": "nixpkgs_2"
       },
       "locked": {
-        "lastModified": 1790412940,
-        "narHash": "sha256-gfqQVe9f9vSdCaof+t4f+ucV82Eg0lfLa0W39hwgwgQ=",
+        "lastModified": 1791799089,
+        "narHash": "sha256-MaI/uiLleCQvsb/3pgsVhZ9l/HfneVcmh1td84ZBwPU=",
         "owner": "noctalia-dev",
         "repo": "noctalia",
-        "rev": "0433e3f8517ffc615906f6a17ac824724353aefb",
+        "rev": "dcfde39b7b1df386d4b063abe471367702725ff6",
         "type": "github"
       },
       "original": {
@@ -142,7 +153,7 @@
     },
     "root": {
       "inputs": {
-        "cliamp": "cliamp",
+        "fetch": "fetch",
         "flake-parts": "flake-parts",
         "home-manager": "home-manager",
         "import-tree": "import-tree",
@@ -153,7 +164,7 @@
     },
     "wrapper-modules": {
       "inputs": {
-        "nixpkgs": "nixpkgs_2"
+        "nixpkgs": "nixpkgs_3"
       },
       "locked": {
         "lastModified": 1791440872,
