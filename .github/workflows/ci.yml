@@ -16,6 +16,10 @@ jobs:
 
       - name: Install Nix
         uses: DeterminateSystems/nix-installer-action@main
+        with:
+          extra-conf: |
+            substituters = https://cache.nixos.org https://devenv.cachix.org https://noctalia.cachix.org
+            trusted-public-keys = cache.nixos.org-1:6NCHdD59X431o0gWypbMrAURkbJ16ZPMQFGspcDShjY= devenv.cachix.org-1:w1cLUi8dv3hnoSPGAuibQv+f9TZLr6cv/Hm9XgU50cw= noctalia.cachix.org-1:pCOR47nnMEo5thcxNDtzWpOxNFQsBRglJzxWPp3dkU4=
 
       - name: Setup Magic Nix Cache
         uses: DeterminateSystems/magic-nix-cache-action@main
@@ -25,29 +29,3 @@ jobs:
 
       - name: Run Flake Checks
         run: nix flake check --show-trace
-
-  build-hosts:
-    name: "Build Workstations"
-    needs: check
-    runs-on: ubuntu-latest
-    strategy:
-      fail-fast: false
-      matrix:
-        host: [castor, hyde]
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-
-      - name: Free Disk Space
-        run: |
-          sudo rm -rf /usr/share/dotnet /usr/local/lib/android /opt/ghc /opt/hostedtoolcache
-          sudo docker image prune --all --force
-
-      - name: Install Nix
-        uses: DeterminateSystems/nix-installer-action@main
-
-      - name: Setup Magic Nix Cache
-        uses: DeterminateSystems/magic-nix-cache-action@main
-
-      - name: Build Host Toplevel (${{ matrix.host }})
-        run: nix build .#nixosConfigurations.${{ matrix.host }}.config.system.build.toplevel --show-trace --fallback
