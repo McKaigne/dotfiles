@@ -11,6 +11,12 @@
         mainUser = "pollux";
         time.timeZone = "Asia/Manila";
 
+        workstation.display = {
+          output = "eDP-1";
+          mode = null;
+          scale = "1.0";
+        };
+
         boot.loader.systemd-boot.enable = true;
         boot.loader.efi.canTouchEfiVariables = true;
 

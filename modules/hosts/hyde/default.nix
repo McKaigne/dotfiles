@@ -19,6 +19,12 @@
         mainUser = "jekyll";
         time.timeZone = "Asia/Manila";
 
+        workstation.display = {
+          output = "DP-1";
+          mode = "1920x1080@240.000";
+          scale = "1.0";
+        };
+
         boot.loader.systemd-boot.enable = true;
         boot.loader.efi.canTouchEfiVariables = true;
 

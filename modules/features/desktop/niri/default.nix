@@ -6,6 +6,7 @@ let
       lib,
       system,
       noctaliaPkg,
+      outputConfig ? "",
     }:
     let
       screenshotArea = pkgs.writeShellScriptBin "screenshot-area" ''
@@ -50,6 +51,7 @@ let
     in
     builtins.replaceStrings
       [
+        "@outputConfig@"
         "@noctalia@"
         "@xwaylandSatellite@"
         "@systemctl@"
@@ -69,6 +71,7 @@ let
         "@brightnessDown@"
       ]
       [
+        outputConfig
         "${noctaliaPkg}/bin/noctalia"
         "${pkgs.xwayland-satellite}/bin/xwayland-satellite"
         "${pkgs.systemd}/bin/systemctl"
@@ -106,6 +109,12 @@ in
           system
           noctaliaPkg
           ;
+        outputConfig = ''
+          output "DP-1" {
+            mode "1920x1080@240.000"
+            scale 1.0
+          }
+        '';
       };
     in
     {
@@ -146,6 +155,13 @@ in
       system = pkgs.stdenv.hostPlatform.system;
       myNiri = self.packages.${system}.myNiri;
       noctaliaPkg = inputs.noctalia.packages.${system}.default;
+      displayCfg = config.workstation.display;
+      modeLine = lib.optionalString (displayCfg.mode != null) "  mode \"${displayCfg.mode}\"\n";
+      renderedOutputConfig = ''
+        output "${displayCfg.output}" {
+        ${modeLine}  scale ${displayCfg.scale}
+        }
+      '';
       niriConfigText = makeNiriConfig {
         inherit
           pkgs
@@ -153,32 +169,53 @@ in
           system
           noctaliaPkg
           ;
+        outputConfig = renderedOutputConfig;
       };
     in
     {
-      programs.niri.enable = true;
-      programs.niri.package = pkgs.niri;
+      options.workstation.display = {
+        output = lib.mkOption {
+          type = lib.types.str;
+          default = "DP-1";
+          description = "Primary display connector identifier.";
+        };
+        mode = lib.mkOption {
+          type = lib.types.nullOr lib.types.str;
+          default = null;
+          description = "Display resolution and refresh rate string. If null, display default is used.";
+        };
+        scale = lib.mkOption {
+          type = lib.types.str;
+          default = "1.0";
+          description = "Display output scaling factor.";
+        };
+      };
 
-      services.greetd = {
-        enable = true;
-        settings = {
-          default_session = {
-            command = "${myNiri}/bin/niri-session";
-            user = user;
+      config = {
+        programs.niri.enable = true;
+        programs.niri.package = pkgs.niri;
+
+        services.greetd = {
+          enable = true;
+          settings = {
+            default_session = {
+              command = "${myNiri}/bin/niri-session";
+              user = user;
+            };
           };
         };
-      };
 
-      home-manager.users.${user} = {
-        xdg.configFile."niri/config.kdl" = {
-          text = niriConfigText;
-          force = true;
+        home-manager.users.${user} = {
+          xdg.configFile."niri/config.kdl" = {
+            text = niriConfigText;
+            force = true;
+          };
         };
-      };
 
-      environment.systemPackages = [
-        myNiri
-        pkgs.xwayland-satellite
-      ];
+        environment.systemPackages = [
+          myNiri
+          pkgs.xwayland-satellite
+        ];
+      };
     };
 }

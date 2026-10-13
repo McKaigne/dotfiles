@@ -69,6 +69,20 @@
           '';
           force = true;
         };
+
+        xdg.configFile."noctalia/user-templates/fuzzel" = {
+          text = ''
+            [colors]
+            background={{ colors.surface.default.hex | hex_stripped }}e6
+            text={{ colors.on_surface.default.hex | hex_stripped }}ff
+            match={{ colors.primary.default.hex | hex_stripped }}ff
+            selection={{ colors.surface_container_highest.default.hex | hex_stripped }}ff
+            selection-text={{ colors.on_surface.default.hex | hex_stripped }}ff
+            selection-match={{ colors.primary.default.hex | hex_stripped }}ff
+            border={{ colors.outline.default.hex | hex_stripped }}ff
+          '';
+          force = true;
+        };
       };
     };
 }

@@ -43,25 +43,25 @@ auto_locate = true
 [lockscreen_widgets]
 enabled = false
 schema_version = 2
-widget_order = [ "lockscreen-login-box@DP-1" ]
+widget_order = [ "lockscreen-login-box" ]
 
 [lockscreen_widgets.grid]
 cell_size = 16
 major_interval = 4
 visible = true
 
-[lockscreen_widgets.widget."lockscreen-login-box@DP-1"]
+[lockscreen_widgets.widget."lockscreen-login-box"]
 box_height = 196.0
 box_width = 810.0
 cx = 960.0
 cy = 898.0
-output = "DP-1"
+output = ""
 placement_height = 1080.0
 placement_width = 1920.0
 rotation = 0.0
 type = "login_box"
 
-[lockscreen_widgets.widget."lockscreen-login-box@DP-1".settings]
+[lockscreen_widgets.widget."lockscreen-login-box".settings]
 background_color = "surface_variant"
 background_opacity = 0.88
 background_radius = 12.0
@@ -127,8 +127,7 @@ community_ids = [
     "fzf",
     "glow",
     "lazygit",
-    "yazi",
-    "fuzzel"
+    "yazi"
 ]
 enable_builtin_templates = true
 
@@ -141,6 +140,10 @@ input_path = "~/.config/noctalia/user-templates/tmux.conf"
 output_path = "~/.config/tmux/themes/noctalia.conf"
 post_hook = "tmux source-file ~/.config/tmux/tmux.conf 2>/dev/null || true"
 
+[theme.templates.user.fuzzel]
+input_path = "~/.config/noctalia/user-templates/fuzzel"
+output_path = "~/.config/fuzzel/themes/noctalia"
+
 [wallpaper]
 directory = "/etc/nixos/wallpapers"
 fill_mode = "crop"
@@ -150,9 +153,6 @@ transition_duration = 1500
 path = "/etc/nixos/wallpapers/redSun.jpg"
 
 [wallpaper.last]
-path = "/etc/nixos/wallpapers/redSun.jpg"
-
-[wallpaper.monitors.DP-1]
 path = "/etc/nixos/wallpapers/redSun.jpg"
 
 [weather]

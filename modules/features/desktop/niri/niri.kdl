@@ -1,9 +1,6 @@
 prefer-no-csd
 
-output "DP-1" {
-  mode "1920x1080@240.000"
-  scale 1.0
-}
+@outputConfig@
 
 hotkey-overlay {
   skip-at-startup
