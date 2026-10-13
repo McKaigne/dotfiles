@@ -160,20 +160,30 @@
             "ui.bufferline.active" = { fg = "base1", modifiers = ["bold"] }
             "ui.bufferline.background" = {}
 
-            # Popups & Menus
-            "ui.popup" = { fg = "base1", bg = "base02" }
-            "ui.popup.info" = { fg = "base02", bg = "base04", modifiers = ["bold"] }
-            "ui.menu" = { fg = "base0", bg = "base03" }
-            "ui.menu.selected" = { fg = "base02", bg = "base2" }
-            "ui.window" = { fg = "base3" }
-            "ui.help" = { modifiers = ["reversed"] }
+            # Menus & Command Palette (:) - Completely Transparent
+            "ui.menu" = { fg = "base1" }
+            "ui.menu.selected" = { fg = "cyan300", modifiers = ["bold", "underlined"] }
+            "ui.menu.scroll" = { fg = "base01" }
 
-            # Text & Highlights
+            # Popups & Which-Key (Space Menu) - Completely Transparent
+            "ui.popup" = { fg = "base1" }
+            "ui.popup.info" = { fg = "blue300", modifiers = ["bold"] }
+            "ui.help" = { fg = "base0" }
+
+            # File & Buffer Pickers (Space + f, Space + b)
+            "ui.picker.header" = { fg = "cyan500", modifiers = ["bold"] }
+            "ui.picker.header.column" = { fg = "cyan500", modifiers = ["bold"] }
+            "ui.picker.header.column.active" = { fg = "blue300", modifiers = ["bold", "underlined"] }
+            "ui.highlight" = { fg = "yellow300", modifiers = ["bold"] }
+
+            # Window Split Borders
+            "ui.window" = { fg = "base02" }
+
+            # General Text Elements in UI
             "ui.text" = { fg = "base1" }
             "ui.text.focus" = { fg = "blue300", modifiers = ["bold"] }
             "ui.text.inactive" = { fg = "base01" }
-            "ui.text.info" = { fg = "base2" }
-            "ui.highlight" = { fg = "yellow100" }
+            "ui.text.info" = { fg = "cyan500" }
 
             # Cursor & Selection
             "ui.cursor" = { fg = "base02", bg = "cyan900" }

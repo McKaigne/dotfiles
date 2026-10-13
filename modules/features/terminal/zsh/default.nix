@@ -188,10 +188,12 @@
 
               if [[ -n "''${cmd_abbreviations[$matchWord]}" ]]; then
                 local trimmed="''${prefix%%[[:space:]]#}"
-                if [[ -z "$trimmed" || "$trimmed" == *(;|'|'|'&'|'||'|'&&') || "$trimmed" == *'sudo' ]]; then
-                  LBUFFER="''${prefix}''${cmd_abbreviations[$matchWord]}"
-                  return 0
-                fi
+                case "$trimmed" in
+                  ""|*";"|*"|"|*"&"|*"sudo")
+                    LBUFFER="''${prefix}''${cmd_abbreviations[$matchWord]}"
+                    return 0
+                    ;;
+                esac
               fi
 
               return 1
