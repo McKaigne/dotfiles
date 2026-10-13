@@ -1,3 +1,4 @@
+# Shared: User Accounts & Home Manager Entrypoint
 { self, inputs, ... }: {
   flake.nixosModules.users =
     { config, lib, ... }:

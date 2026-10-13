@@ -6,6 +6,14 @@
       inputs.home-manager.nixosModules.home-manager
       self.nixosModules.hydeHardware
       self.nixosModules.baseWorkstation
+
+      # Heavy Studio, Compute & Production Suite (Desktop Only)
+      self.nixosModules.blender
+      self.nixosModules.kdenlive
+      self.nixosModules.obs
+      self.nixosModules.godot
+      self.nixosModules.containers
+
       ({ pkgs, ... }: {
         networking.hostName = "hyde";
         mainUser = "jekyll";
