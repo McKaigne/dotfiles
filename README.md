@@ -6,13 +6,13 @@ An atomic, dendritic NixOS configuration managing two specialized workstations (
 
 ## Quick Start
 
-```sh
+~~~sh
 # On workstation Hyde (AMD Compute Workstation)
 sudo nixos-rebuild switch --flake /etc/nixos#hyde
 
 # On workstation Castor (Intel Mobile Workstation)
 sudo nixos-rebuild switch --flake /etc/nixos#castor
-```
+~~~
 
 Checkout path expected at `/etc/nixos`.
 
@@ -33,7 +33,7 @@ Both hosts share the unified `baseWorkstation` profile while isolating hardware 
 
 Every component is an isolated directory with its own dedicated `default.nix` entrypoint and co-located configuration assets:
 
-```text
+~~~text
 /etc/nixos
 ├── flake.nix                         # Inputs, outputs, and import-tree root
 ├── README.md                         # Architectural specification & guide
@@ -67,9 +67,10 @@ Every component is an isolated directory with its own dedicated `default.nix` en
         │   ├── noctalia/             # Desktop shell daemon & noctalia.toml asset
         │   └── xdg/                  # PCManFM, portals, MIME associations
         ├── dev/
+        │   ├── containers/           # Rootless Podman & Docker socket emulation
         │   ├── git/                  # Git user credentials & defaults
         │   ├── godot/                # Godot 4 game engine
-        │   └── tools/                # lazydocker, tokei, hyperfine, glow
+        │   └── tools/                # lazydocker, tokei, hyperfine, ast-grep, ghgrab
         ├── documents/
         │   ├── obsidian/             # Obsidian markdown knowledge base
         │   ├── onlyoffice/           # OnlyOffice desktop editors suite
@@ -92,7 +93,7 @@ Every component is an isolated directory with its own dedicated `default.nix` en
         │   └── zsh/                  # Zsh + expanding abbreviations + cfb tool
         └── theme/
             └── noctalia/             # GTK 3/4 & Qt 5/6 dynamic stylesheet bindings
-```
+~~~
 
 ---
 
@@ -102,12 +103,13 @@ Every component is an isolated directory with its own dedicated `default.nix` en
 | :--- | :--- | :--- |
 | **Compositor** | [niri](https://github.com/YaLTeR/niri) | Scrollable tiling, geometry corners 4px, GPU blur, 240Hz DP-1 display |
 | **Desktop Shell** | [noctalia](https://github.com/noctalia-dev/noctalia) | Dynamic template engine, floating top bar, binary substituted via Cachix |
-| **Display Manager** | [greetd](https://git.sr.ht/~kennylevinsen/greetd) | Auto-launches wrapped `niri-session` via PAM |
-| **Shell** | [zsh](https://www.zsh.org/) | Pure POSIX, zero aliases, native ZLE expanding abbreviations, Starship |
-| **Terminal** | [ghostty](https://ghostty.org/) | Native Wayland, Lilex Nerd Font with OpenType features (`cv01`, `ss01`), 0.85 blur |
-| **Multiplexer** | [tmux](https://github.com/tmux/tmux) | Custom Osaka dotbar, OSC 52 clipboard, floating tool popups over editor |
-| **Editor** | [helix](https://helix-editor.com/) | Wrapped with LSPs (`nixd`, `marksman`, `taplo`), transparent Osaka palette |
+| **Containers** | [podman](https://podman.io/) | Daemonless, rootless containers powering `lazydocker` via `/run/podman/podman.sock` |
+| **Code Refactoring** | [ast-grep](https://ast-grep.github.io/) | Tree-sitter syntax-aware code search and rewriting (`sg`) |
+| **Forge Extractor** | [ghgrab](https://github.com/abhixdd/ghgrab) | Ratatui TUI for pulling isolated folders/files from GitHub without full clones |
 | **Telemetry** | [fetch](https://github.com/areofyl/fetch) | 3D spinning ASCII distro engine with Blinn-Phong shading and live metrics |
+| **Pipelining** | [viddy](https://github.com/sachaos/viddy) + [choose](https://github.com/theryangeary/choose) | Time-travel diff watcher replacing `watch`; ergonomic field slicer replacing `cut` |
+| **Editor** | [helix](https://helix-editor.com/) | Wrapped with LSPs (`nixd`, `marksman`, `taplo`), transparent Osaka palette |
+| **Multiplexer** | [tmux](https://github.com/tmux/tmux) | Custom Osaka dotbar, OSC 52 clipboard, floating tool popups over editor |
 | **Keyboard Engine** | [kanata](https://github.com/jtroo/kanata) | Layerless Programmer QWERTY, Timeless Home-Row Mods (ACGS), Bottom Chords |
 
 ---
@@ -166,17 +168,3 @@ To prevent multiplexer key collisions while inside Helix:
   * `Prefix + C-v`: Interactive FZF picker across all running Helix panes
 * Inside Helix, `Alt+x` (shrink selection), `Alt+c` (copy selection below), and `Alt+n` (next AST sibling) execute without Tmux interference.
 * Terminal focus events (`focus-events on`) automatically trigger Helix buffer auto-saving on pane switch.
-
----
-
-## Adapting This Configuration for New Users
-
-1. **Host & User Configuration:**
-   * Update `mainUser` in `modules/hosts/<host>/default.nix` (e.g., `mainUser = "yourname";`).
-   * Rename `modules/hosts/hyde` or `castor` to your desired hostname.
-2. **Hardware & Filesystems:**
-   * Generate your hardware config with `nixos-generate-config --show-hardware-config`.
-   * Update the drive UUIDs inside `modules/hosts/<host>/hardware.nix`.
-3. **Flake Metadata:**
-   * Run `nix flake check` to verify system evaluation.
-   * Switch with `sudo nixos-rebuild switch --flake /etc/nixos#<host>`.
