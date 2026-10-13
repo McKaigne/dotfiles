@@ -25,27 +25,6 @@
           force = true;
         };
 
-        xdg.configFile."noctalia/user-templates/zellij.kdl" = {
-          text = ''
-            themes {
-              noctalia {
-                fg "{{ colors.on_surface.default.hex }}"
-                bg "{{ colors.surface.default.hex }}"
-                black "{{ colors.surface_container_high.default.hex }}"
-                red "{{ colors.error.default.hex }}"
-                green "{{ colors.tertiary.default.hex }}"
-                yellow "{{ colors.secondary.default.hex }}"
-                blue "{{ colors.primary.default.hex }}"
-                magenta "{{ colors.tertiary.default.hex }}"
-                cyan "{{ colors.secondary.default.hex }}"
-                white "{{ colors.on_surface_variant.default.hex }}"
-                orange "{{ colors.primary_container.default.hex }}"
-              }
-            }
-          '';
-          force = true;
-        };
-
         xdg.configFile."noctalia/user-templates/ghostty" = {
           text = ''
             background = {{ colors.surface.default.hex }}

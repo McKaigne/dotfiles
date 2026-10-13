@@ -12,14 +12,12 @@
           text = ''
             font-family = Lilex Nerd Font
             font-size = 14
-
-            font-feature = locl
             font-feature = cv01
+            font-feature = cv02
             font-feature = cv09
-            font-feature = cv15
-            font-feature = cv03
-            font-feature = cv13
             font-feature = cv11
+            font-feature = cv13
+            font-feature = cv15
             font-feature = ss01
 
             theme = noctalia

@@ -6,9 +6,6 @@
       lib,
       ...
     }:
-    let
-      user = config.mainUser;
-    in
     {
       environment.systemPackages = [ pkgs.brave-origin ];
 
@@ -46,12 +43,5 @@
 
       environment.etc."chromium/policies/managed/brave-policies.json".source =
         config.environment.etc."brave/policies/managed/brave-policies.json".source;
-
-      home-manager.users.${user} = { config, ... }: {
-        home.file.".config/BraveSoftware/Brave-Browser" = {
-          source = config.lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/.config/BraveSoftware/Brave-Origin";
-          force = true;
-        };
-      };
     };
 }

@@ -75,15 +75,6 @@
             [editor.lsp]
             display-inlay-hints = true
             display-messages = true
-
-            [editor.statusline]
-            left = ["mode", "spacer", "spinner", "spacer", "file-name", "spacer", "read-only-indicator", "file-modification-indicator", "spacer", "version-control"]
-            center = []
-            right = ["diagnostics", "spacer", "selections", "spacer", "position", "spacer", "file-encoding", "spacer", "file-type"]
-            separator = "│"
-            mode.normal = "NORMAL"
-            mode.insert = "INSERT"
-            mode.select = "SELECT"
           '';
           force = true;
         };
@@ -142,24 +133,32 @@
             "diff.delta" = { fg = "orange900" }
             "diff.minus" = { fg = "red900" }
 
-            # User Interface (Transparent Canvas)
+            # User Interface (100% Transparent Canvas)
             "ui.background" = {}
             "ui.virtual.whitespace" = { fg = "base01" }
             "ui.virtual.inlay-hint" = { fg = "base01", modifiers = ["italic"] }
 
-            # Line Numbers & Gutters
+            # Line Numbers & Gutters (No Opaque Bars)
             "ui.linenr" = { fg = "base01" }
             "ui.linenr.selected" = { fg = "yellow500", modifiers = ["bold"] }
-            "ui.gutter.selected" = { bg = "base02" }
-            "ui.cursorline" = { bg = "base04" }
+            "ui.gutter" = { fg = "base01" }
+            "ui.gutter.selected" = { fg = "yellow500", modifiers = ["bold"] }
+            "ui.cursorline" = {}
+            "ui.cursorline.primary" = {}
+            "ui.cursorline.secondary" = {}
 
-            # Statusline
-            "ui.statusline" = { fg = "base1", bg = "base03" }
-            "ui.statusline.inactive" = { fg = "base0", bg = "base04" }
-            "ui.statusline.normal" = { fg = "base03", bg = "blue500", modifiers = ["bold"] }
-            "ui.statusline.insert" = { fg = "base04", bg = "green500", modifiers = ["bold"] }
-            "ui.statusline.select" = { fg = "base04", bg = "yellow500", modifiers = ["bold"] }
-            "ui.statusline.separator" = { fg = "yellow500" }
+            # Statusline (Transparent Background with Colored Text)
+            "ui.statusline" = { fg = "base1" }
+            "ui.statusline.inactive" = { fg = "base01" }
+            "ui.statusline.normal" = { fg = "blue500", modifiers = ["bold"] }
+            "ui.statusline.insert" = { fg = "green500", modifiers = ["bold"] }
+            "ui.statusline.select" = { fg = "yellow500", modifiers = ["bold"] }
+            "ui.statusline.separator" = { fg = "base01" }
+
+            # Bufferline / Tab Bar (Transparent)
+            "ui.bufferline" = { fg = "base01" }
+            "ui.bufferline.active" = { fg = "base1", modifiers = ["bold"] }
+            "ui.bufferline.background" = {}
 
             # Popups & Menus
             "ui.popup" = { fg = "base1", bg = "base02" }
@@ -182,8 +181,6 @@
             "ui.cursor.select" = { fg = "base02", bg = "cyan900" }
             "ui.cursor.insert" = { fg = "base04", bg = "base3" }
             "ui.cursor.match" = { fg = "base04", bg = "base00" }
-            "ui.cursorline.primary" = { bg = "base02" }
-            "ui.cursorline.secondary" = { bg = "base03" }
 
             "ui.selection" = { bg = "base02" }
             "ui.selection.primary" = { bg = "base01" }

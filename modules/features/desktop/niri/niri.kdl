@@ -109,6 +109,22 @@ window-rule {
 }
 
 window-rule {
+  match app-id="^pcmanfm$"
+  match app-id=r#"^org\.pwmt\.zathura.*$"#
+  match app-id="^pavucontrol$"
+  match app-id="^com.saivert.pwvucontrol$"
+  match app-id="^easyeffects$"
+  match app-id="^com.gabm.satty$"
+  match app-id="^xarchiver$"
+  match app-id="^blueman-manager$"
+  opacity 0.85
+  background-effect {
+    blur true
+    xray false
+  }
+}
+
+window-rule {
   match app-id=r#"^dev\.noctalia\.Noctalia.*$"#
   open-floating true
   background-effect {

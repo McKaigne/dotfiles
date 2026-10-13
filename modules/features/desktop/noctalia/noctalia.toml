@@ -122,7 +122,6 @@ community_ids = [
     "fastfetch",
     "obs",
     "zathura",
-    "zellij",
     "whitesur-icons",
     "bat",
     "fzf",
@@ -132,10 +131,6 @@ community_ids = [
     "fuzzel"
 ]
 enable_builtin_templates = true
-
-[theme.templates.user.zellij]
-input_path = "~/.config/noctalia/user-templates/zellij.kdl"
-output_path = "~/.config/zellij/themes/noctalia.kdl"
 
 [theme.templates.user.ghostty]
 input_path = "~/.config/noctalia/user-templates/ghostty"

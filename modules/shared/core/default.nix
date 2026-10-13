@@ -13,7 +13,6 @@
       nixpkgs.config.allowUnfree = true;
       i18n.defaultLocale = "en_US.UTF-8";
 
-      # Nix daemon settings and binary cache substituters
       nix.settings = {
         experimental-features = [
           "nix-command"
@@ -93,6 +92,7 @@
         devenv
         nvd
         nix-output-monitor
+        wl-clipboard
       ];
     };
 }
