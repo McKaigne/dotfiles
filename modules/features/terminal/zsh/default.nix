@@ -25,6 +25,7 @@
 
       environment.systemPackages = with pkgs; [
         zsh
+        zsh-abbr
         zoxide
         fzf
         wl-clipboard
@@ -47,6 +48,98 @@
             ignoreDups = true;
             ignoreAllDups = true;
             ignoreSpace = true;
+          };
+
+          zsh-abbr = {
+            enable = true;
+            abbreviations = {
+              rebuild = "sudo nixos-rebuild switch --flake /etc/nixos";
+              rebuildc = "sudo nixos-rebuild switch --flake /etc/nixos#castor";
+              rebuildh = "sudo nixos-rebuild switch --flake /etc/nixos#hyde";
+              nr = "sudo nixos-rebuild switch --flake /etc/nixos";
+              nboot = "sudo nixos-rebuild boot --flake /etc/nixos";
+              ntest = "sudo nixos-rebuild test --flake /etc/nixos";
+              ncd = "cd /etc/nixos";
+              nupdate = "nix flake update --flake /etc/nixos";
+              nclean = "nix-collect-garbage -d";
+              ntry = "nix run nixpkgs#";
+              nshell = "nix shell nixpkgs#";
+              ntrace = "--show-trace";
+
+              ga = "git add -A";
+              gstage = "git add -A";
+              gpatch = "git add -p";
+              gundo = "git reset --soft HEAD~1";
+              gunstage = "git restore --staged .";
+              gwipe = "git reset --hard HEAD";
+              gamend = "git commit --amend --no-edit";
+              gst = "git status";
+              gc = "git commit -m";
+              gdiff = "git diff";
+              gdiffs = "git diff --staged";
+              gp = "git push";
+              gpushf = "git push --force-with-lease";
+              gpl = "git pull";
+              glg = "git log --oneline --graph -n 20";
+              gbranch = "git switch";
+              gnew = "git switch -c";
+
+              nlaunch = "noctalia msg panel-toggle launcher";
+              ncontrol = "noctalia msg panel-toggle control-center";
+              nsession = "noctalia msg panel-toggle session";
+              nclip = "noctalia msg panel-toggle clipboard";
+              nsettings = "noctalia msg settings-toggle";
+              nbar = "noctalia msg bar-toggle";
+              nlock = "noctalia msg session lock";
+              nclosemsg = "noctalia msg notification-clear-active";
+
+              nreload = "niri msg action load-config-file";
+              nclose = "niri msg action close-window";
+              nquit = "niri msg action quit";
+              nfocus = "niri msg action focus-window --id";
+              nwins = "niri msg -j windows";
+              nwork = "niri msg -j workspaces";
+              nmon = "niri msg -j outputs";
+
+              t = "tmux";
+              ta = "tmux attach -t";
+              tls = "tmux ls";
+              tkill = "tmux kill-session -t";
+              tkilla = "tmux kill-server";
+
+              l = "ls";
+              ll = "ls -l";
+              la = "ls -a";
+              zq = "zoxide query";
+              zql = "zoxide query -l";
+              za = "zoxide add";
+              zr = "zoxide remove";
+
+              v = "hx";
+              vi = "hx";
+              vim = "hx";
+              bottom = "btop";
+              btm = "btop";
+              y = "yazi";
+              g = "git";
+              lg = "lazygit";
+              fetch = "fetch";
+
+              hxf = "hx /etc/nixos/flake.nix";
+              hxh = "hx /etc/nixos/modules/hosts/hyde/default.nix";
+              hxc = "hx /etc/nixos/modules/shared/core/default.nix";
+              hxz = "hx /etc/nixos/modules/features/terminal/zsh/default.nix";
+              hxi = "hx /etc/nixos/modules/features/desktop/niri/niri.kdl";
+              hxt = "hx /etc/nixos/modules/features/terminal/tmux/default.nix";
+            };
+            globalAbbreviations = {
+              toclip = "| wl-copy";
+              fromclip = "wl-paste";
+              silent = "&> /dev/null";
+              noerr = "2> /dev/null";
+              tojson = "| jq .";
+              fromjson = "| jq .";
+            };
           };
 
           initContent = ''
@@ -76,144 +169,6 @@
             eval "$(${pkgs.direnv}/bin/direnv hook zsh)"
 
             bindkey -e
-
-            typeset -Ag cmd_abbreviations
-            cmd_abbreviations=(
-              [rebuild]="sudo nixos-rebuild switch --flake /etc/nixos"
-              [rebuildc]="sudo nixos-rebuild switch --flake /etc/nixos#castor"
-              [rebuildh]="sudo nixos-rebuild switch --flake /etc/nixos#hyde"
-              [nr]="sudo nixos-rebuild switch --flake /etc/nixos"
-              [nboot]="sudo nixos-rebuild boot --flake /etc/nixos"
-              [ntest]="sudo nixos-rebuild test --flake /etc/nixos"
-              [ncd]="cd /etc/nixos"
-              [nupdate]="nix flake update --flake /etc/nixos"
-              [nclean]="nix-collect-garbage -d"
-              [ntry]="nix run nixpkgs#"
-              [nshell]="nix shell nixpkgs#"
-              [ntrace]="--show-trace"
-
-              [ga]="git add -A"
-              [gstage]="git add -A"
-              [gpatch]="git add -p"
-              [gundo]="git reset --soft HEAD~1"
-              [gunstage]="git restore --staged ."
-              [gwipe]="git reset --hard HEAD"
-              [gamend]="git commit --amend --no-edit"
-              [gst]="git status"
-              [gc]="git commit -m"
-              [gdiff]="git diff"
-              [gdiffs]="git diff --staged"
-              [gp]="git push"
-              [gpushf]="git push --force-with-lease"
-              [gpl]="git pull"
-              [glg]="git log --oneline --graph -n 20"
-              [gbranch]="git switch"
-              [gnew]="git switch -c"
-
-              [nlaunch]="noctalia msg panel-toggle launcher"
-              [ncontrol]="noctalia msg panel-toggle control-center"
-              [nsession]="noctalia msg panel-toggle session"
-              [nclip]="noctalia msg panel-toggle clipboard"
-              [nsettings]="noctalia msg settings-toggle"
-              [nbar]="noctalia msg bar-toggle"
-              [nlock]="noctalia msg session lock"
-              [nclosemsg]="noctalia msg notification-clear-active"
-
-              [nreload]="niri msg action load-config-file"
-              [nclose]="niri msg action close-window"
-              [nquit]="niri msg action quit"
-              [nfocus]="niri msg action focus-window --id"
-              [nwins]="niri msg -j windows"
-              [nwork]="niri msg -j workspaces"
-              [nmon]="niri msg -j outputs"
-
-              [t]="tmux"
-              [ta]="tmux attach -t"
-              [tls]="tmux ls"
-              [tkill]="tmux kill-session -t"
-              [tkilla]="tmux kill-server"
-
-              [l]="ls"
-              [ll]="ls -l"
-              [la]="ls -a"
-              [zq]="zoxide query"
-              [zql]="zoxide query -l"
-              [za]="zoxide add"
-              [zr]="zoxide remove"
-
-              [v]="hx"
-              [vi]="hx"
-              [vim]="hx"
-              [bottom]="btop"
-              [btm]="btop"
-              [y]="yazi"
-              [g]="git"
-              [lg]="lazygit"
-              [fetch]="fetch"
-
-              [hxf]="hx /etc/nixos/flake.nix"
-              [hxh]="hx /etc/nixos/modules/hosts/hyde/default.nix"
-              [hxc]="hx /etc/nixos/modules/shared/core/default.nix"
-              [hxz]="hx /etc/nixos/modules/features/terminal/zsh/default.nix"
-              [hxi]="hx /etc/nixos/modules/features/desktop/niri/niri.kdl"
-              [hxt]="hx /etc/nixos/modules/features/terminal/tmux/default.nix"
-            )
-
-            typeset -Ag mod_abbreviations
-            mod_abbreviations=(
-              [toclip]="| wl-copy"
-              [fromclip]="wl-paste"
-              [silent]="&> /dev/null"
-              [noerr]="2> /dev/null"
-              [tojson]="| jq ."
-              [fromjson]="| jq ."
-            )
-
-            expand-abbreviation() {
-              local sq="''${LBUFFER//[^\']/}"
-              local dq="''${LBUFFER//[^\"]/}"
-              if (( ''${#sq} % 2 != 0 || ''${#dq} % 2 != 0 )); then
-                return 1
-              fi
-
-              local matchWord="''${LBUFFER##*[$' \t;|']}"
-              [[ -z "$matchWord" ]] && return 1
-
-              local prefix="''${LBUFFER%$matchWord}"
-
-              if [[ -n "''${mod_abbreviations[$matchWord]}" ]]; then
-                LBUFFER="''${prefix}''${mod_abbreviations[$matchWord]}"
-                return 0
-              fi
-
-              if [[ -n "''${cmd_abbreviations[$matchWord]}" ]]; then
-                local trimmed="''${prefix%%[[:space:]]#}"
-                case "$trimmed" in
-                  ""|*";"|*"|"|*"&"|*"sudo")
-                    LBUFFER="''${prefix}''${cmd_abbreviations[$matchWord]}"
-                    return 0
-                    ;;
-                esac
-              fi
-
-              return 1
-            }
-
-            expand-abbreviation-space() {
-              expand-abbreviation
-              zle self-insert
-            }
-
-            expand-abbreviation-enter() {
-              expand-abbreviation
-              zle accept-line
-            }
-
-            zle -N expand-abbreviation-space
-            zle -N expand-abbreviation-enter
-            bindkey " " expand-abbreviation-space
-            bindkey "^M" expand-abbreviation-enter
-            bindkey -M isearch " " self-insert
 
             fkill() {
               local selectedProc=$(ps -eo pid,user,comm,%cpu,%mem | fzf --header="Select process to kill (ESC to cancel)")

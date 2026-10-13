@@ -79,9 +79,10 @@
           force = true;
         };
 
-        xdg.configFile."helix/themes/noctalia.toml" = {
+        # Pure base theme providing full Solarized Osaka syntax highlighting & palette
+        xdg.configFile."helix/themes/solarized_osaka.toml" = {
           text = ''
-            # Syntax Highlighting (Solarized Osaka)
+            # Syntax Highlighting
             "attribute" = { fg = "blue300" }
             "keyword" = { fg = "green500" }
             "keyword.directive" = { fg = "red500" }
@@ -133,70 +134,19 @@
             "diff.delta" = { fg = "orange900" }
             "diff.minus" = { fg = "red900" }
 
-            # User Interface (100% Transparent Canvas)
-            "ui.background" = {}
-            "ui.virtual.whitespace" = { fg = "base01" }
-            "ui.virtual.inlay-hint" = { fg = "base01", modifiers = ["italic"] }
-
-            # Line Numbers & Gutters (No Opaque Bars)
-            "ui.linenr" = { fg = "base01" }
-            "ui.linenr.selected" = { fg = "yellow500", modifiers = ["bold"] }
-            "ui.gutter" = { fg = "base01" }
-            "ui.gutter.selected" = { fg = "yellow500", modifiers = ["bold"] }
-            "ui.cursorline" = {}
-            "ui.cursorline.primary" = {}
-            "ui.cursorline.secondary" = {}
-
-            # Statusline (Transparent Background with Colored Text)
-            "ui.statusline" = { fg = "base1" }
-            "ui.statusline.inactive" = { fg = "base01" }
-            "ui.statusline.normal" = { fg = "blue500", modifiers = ["bold"] }
-            "ui.statusline.insert" = { fg = "green500", modifiers = ["bold"] }
-            "ui.statusline.select" = { fg = "yellow500", modifiers = ["bold"] }
-            "ui.statusline.separator" = { fg = "base01" }
-
-            # Bufferline / Tab Bar (Transparent)
-            "ui.bufferline" = { fg = "base01" }
-            "ui.bufferline.active" = { fg = "base1", modifiers = ["bold"] }
-            "ui.bufferline.background" = {}
-
-            # Menus & Command Palette (:) - Completely Transparent
-            "ui.menu" = { fg = "base1" }
-            "ui.menu.selected" = { fg = "cyan300", modifiers = ["bold", "underlined"] }
-            "ui.menu.scroll" = { fg = "base01" }
-
-            # Popups & Which-Key (Space Menu) - Completely Transparent
-            "ui.popup" = { fg = "base1" }
-            "ui.popup.info" = { fg = "blue300", modifiers = ["bold"] }
-            "ui.help" = { fg = "base0" }
-
-            # File & Buffer Pickers (Space + f, Space + b)
-            "ui.picker.header" = { fg = "cyan500", modifiers = ["bold"] }
-            "ui.picker.header.column" = { fg = "cyan500", modifiers = ["bold"] }
-            "ui.picker.header.column.active" = { fg = "blue300", modifiers = ["bold", "underlined"] }
-            "ui.highlight" = { fg = "yellow300", modifiers = ["bold"] }
-
-            # Window Split Borders
-            "ui.window" = { fg = "base02" }
-
-            # General Text Elements in UI
-            "ui.text" = { fg = "base1" }
-            "ui.text.focus" = { fg = "blue300", modifiers = ["bold"] }
-            "ui.text.inactive" = { fg = "base01" }
-            "ui.text.info" = { fg = "cyan500" }
-
-            # Cursor & Selection
+            # Cursors & Selection
             "ui.cursor" = { fg = "base02", bg = "cyan900" }
             "ui.cursor.primary" = { fg = "base04", bg = "base1" }
             "ui.cursor.select" = { fg = "base02", bg = "cyan900" }
             "ui.cursor.insert" = { fg = "base04", bg = "base3" }
             "ui.cursor.match" = { fg = "base04", bg = "base00" }
-
             "ui.selection" = { bg = "base02" }
             "ui.selection.primary" = { bg = "base01" }
 
             "ui.virtual.indent-guide" = { fg = "base02" }
             "ui.virtual.ruler" = { fg = "red900" }
+            "ui.virtual.whitespace" = { fg = "base01" }
+            "ui.virtual.inlay-hint" = { fg = "base01", modifiers = ["italic"] }
 
             # Diagnostics
             "warning" = { fg = "orange500", modifiers = ["bold", "underlined"] }
@@ -268,6 +218,64 @@
             green500 = "#859900"
             green300 = "#BAFB00"
             green100 = "#D6FFAC"
+          '';
+          force = true;
+        };
+
+        # Noctalia theme: inherits solarized_osaka and overrides UI for 100% transparency
+        xdg.configFile."helix/themes/noctalia.toml" = {
+          text = ''
+            inherits = "solarized_osaka"
+
+            # 100% Transparent Canvas
+            "ui.background" = {}
+            "ui.cursorline" = {}
+            "ui.cursorline.primary" = {}
+            "ui.cursorline.secondary" = {}
+
+            # Line Numbers & Gutters (No Opaque Bars)
+            "ui.linenr" = { fg = "base01" }
+            "ui.linenr.selected" = { fg = "yellow500", modifiers = ["bold"] }
+            "ui.gutter" = { fg = "base01" }
+            "ui.gutter.selected" = { fg = "yellow500", modifiers = ["bold"] }
+
+            # Statusline (Transparent Canvas with Colored Typography)
+            "ui.statusline" = { fg = "base1" }
+            "ui.statusline.inactive" = { fg = "base01" }
+            "ui.statusline.normal" = { fg = "blue500", modifiers = ["bold"] }
+            "ui.statusline.insert" = { fg = "green500", modifiers = ["bold"] }
+            "ui.statusline.select" = { fg = "yellow500", modifiers = ["bold"] }
+            "ui.statusline.separator" = { fg = "base01" }
+
+            # Bufferline Tabs (Transparent)
+            "ui.bufferline" = { fg = "base01" }
+            "ui.bufferline.active" = { fg = "base1", modifiers = ["bold"] }
+            "ui.bufferline.background" = {}
+
+            # Menus & Command Palette (:) - Completely Transparent
+            "ui.menu" = { fg = "base1" }
+            "ui.menu.selected" = { fg = "cyan300", modifiers = ["bold", "underlined"] }
+            "ui.menu.scroll" = { fg = "base01" }
+
+            # Popups & Which-Key (Space Menu) - Completely Transparent
+            "ui.popup" = { fg = "base1" }
+            "ui.popup.info" = { fg = "blue300", modifiers = ["bold"] }
+            "ui.help" = { fg = "base0" }
+
+            # File & Buffer Pickers (Space + f, Space + b)
+            "ui.picker.header" = { fg = "cyan500", modifiers = ["bold"] }
+            "ui.picker.header.column" = { fg = "cyan500", modifiers = ["bold"] }
+            "ui.picker.header.column.active" = { fg = "blue300", modifiers = ["bold", "underlined"] }
+            "ui.highlight" = { fg = "yellow300", modifiers = ["bold"] }
+
+            # Window Split Borders
+            "ui.window" = { fg = "base02" }
+
+            # General Text Elements in UI
+            "ui.text" = { fg = "base1" }
+            "ui.text.focus" = { fg = "blue300", modifiers = ["bold"] }
+            "ui.text.inactive" = { fg = "base01" }
+            "ui.text.info" = { fg = "cyan500" }
           '';
           force = true;
         };
