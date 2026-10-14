@@ -7,68 +7,67 @@
       ...
     }:
     let
-      user = config.mainUser;
+      system = pkgs.stdenv.hostPlatform.system;
+      stablePkgs = inputs.nixpkgs-stable.legacyPackages.${system};
+
+      stableFloorp = stablePkgs.floorp-bin.override {
+        nativeMessagingHosts = [
+          pkgs.tridactyl-native
+        ];
+      };
     in
     {
+      nixpkgs.overlays = [
+        (final: prev: {
+          floorp-bin = stableFloorp;
+          floorp = stableFloorp;
+        })
+      ];
+
       environment.systemPackages = [
-        pkgs.floorp-bin
+        stableFloorp
         pkgs.tridactyl-native
       ];
 
-      environment.etc."floorp/native-messaging-hosts/tridactyl.json".source =
-        "${pkgs.tridactyl-native}/share/domingo/tridactyl.json";
-      environment.etc."mozilla/native-messaging-hosts/tridactyl.json".source =
-        "${pkgs.tridactyl-native}/share/domingo/tridactyl.json";
-
-      environment.etc."floorp/policies/policies.json".text = builtins.toJSON {
+      environment.etc."floorp/policies/managed/policies.json".text = builtins.toJSON {
         policies = {
           DisableAppUpdate = true;
+          DisableFirefoxStudies = true;
           DisableTelemetry = true;
+          DisableFeedbackCommands = true;
           DisablePocket = true;
-
+          OverrideFirstRunPage = "";
+          OverridePostUpdatePage = "";
           Preferences = {
-            "xpinstall.signatures.required" = false;
-            "extensions.experiments.enabled" = true;
-          };
-
-          ExtensionSettings = {
-            "solarized-osaka@hhschen.local" = {
-              installation_mode = "force_installed";
-              install_url = "https://addons.mozilla.org/firefox/downloads/latest/solarized-osaka/latest.xpi";
+            "app.update.channel" = {
+              Value = "release";
+              Status = "locked";
             };
-            "enhancerforyoutube@maximerf.addons.mozilla.org" = {
-              installation_mode = "force_installed";
-              install_url = "https://addons.mozilla.org/firefox/downloads/latest/enhancer-for-youtube/latest.xpi";
+            "floorp.browser.experiments.enabled" = {
+              Value = false;
+              Status = "locked";
             };
-            "{7a7a4a92-a2a0-41d1-9fd7-1e92480d612d}" = {
-              installation_mode = "force_installed";
-              install_url = "https://addons.mozilla.org/firefox/downloads/latest/styl-us/latest.xpi";
+            "experiments.supported" = {
+              Value = false;
+              Status = "locked";
             };
-            "{3c078156-979c-498b-8990-85f7987dd929}" = {
-              installation_mode = "force_installed";
-              install_url = "https://addons.mozilla.org/firefox/downloads/latest/sidebery/latest.xpi";
+            "experiments.enabled" = {
+              Value = false;
+              Status = "locked";
             };
-            "tridactyl.vim@cmcaine.co.uk" = {
-              installation_mode = "force_installed";
-              install_url = "https://addons.mozilla.org/firefox/downloads/latest/tridactyl-vim/latest.xpi";
+            "network.trr.mode" = {
+              Value = 3;
+              Status = "locked";
             };
-            "{446900e4-71c2-419f-a6a7-df9c091e268b}" = {
-              installation_mode = "force_installed";
-              install_url = "https://addons.mozilla.org/firefox/downloads/latest/bitwarden-password-manager/latest.xpi";
-            };
-            "sponsorBlocker@ajay.app" = {
-              installation_mode = "force_installed";
-              install_url = "https://addons.mozilla.org/firefox/downloads/latest/sponsorblock/latest.xpi";
-            };
-            "uBlock0@raymondhill.net" = {
-              installation_mode = "force_installed";
-              install_url = "https://addons.mozilla.org/firefox/downloads/latest/ublock-origin/latest.xpi";
+            "network.trr.uri" = {
+              Value = "https://dns.quad9.net/dns-query";
+              Status = "locked";
             };
           };
         };
       };
 
-      environment.etc."firefox/policies/policies.json".source =
-        config.environment.etc."floorp/policies/policies.json".source;
+      environment.etc."firefox/policies/managed/policies.json".source =
+        config.environment.etc."floorp/policies/managed/policies.json".source;
     };
 }

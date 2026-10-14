@@ -139,8 +139,6 @@
         adw-gtk3
         whitesur-icon-theme
         bibataCursorsFixed
-        qt5.qt5ct
-        kdePackages.qt6ct
         ibm-plex
       ];
     };
