@@ -112,7 +112,7 @@ source = "community"
 wallpaper_scheme = "m3-content"
 
 [theme.templates]
-builtin_ids = [ "btop", "cava", "gtk3", "gtk4", "niri", "qt", "starship" ]
+builtin_ids = [ "btop", "cava", "gtk3", "gtk4", "niri", "qt" ]
 community_ids = [
     "brave",
     "brave-origin",
@@ -127,6 +127,7 @@ community_ids = [
     "yazi"
 ]
 enable_builtin_templates = true
+enable_community_templates = true
 
 [theme.templates.user.ghostty]
 input_path = "~/.config/noctalia/user-templates/ghostty"
@@ -142,15 +143,15 @@ input_path = "~/.config/noctalia/user-templates/fuzzel"
 output_path = "~/.config/fuzzel/themes/noctalia"
 
 [wallpaper]
-directory = "/etc/nixos/wallpapers"
+directory = "/etc/wallpapers"
 fill_mode = "crop"
 transition_duration = 1500
 
 [wallpaper.default]
-path = "/etc/nixos/wallpapers/redSun.jpg"
+path = "/etc/wallpapers/redSun.jpg"
 
 [wallpaper.last]
-path = "/etc/nixos/wallpapers/redSun.jpg"
+path = "/etc/wallpapers/redSun.jpg"
 
 [weather]
 enabled = true

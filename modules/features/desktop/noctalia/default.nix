@@ -16,6 +16,9 @@
         pkgs.gsettings-desktop-schemas
       ];
 
+      # Immutable store-backed wallpapers directory
+      environment.etc."wallpapers".source = ../../../../wallpapers;
+
       home-manager.users.${user} = {
         imports = [ inputs.noctalia.homeModules.default ];
         programs.noctalia.enable = true;

@@ -37,7 +37,6 @@
       systemd.tmpfiles.rules = [
         "d /etc/nixos 0775 ${user} wheel -"
         "Z /etc/nixos 0775 ${user} wheel -"
-        "d /etc/nixos/wallpapers 0775 ${user} wheel -"
       ];
 
       boot.kernel.sysctl = {

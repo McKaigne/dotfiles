@@ -31,6 +31,7 @@ environment {
   XCURSOR_SIZE "16"
   ELECTRON_OZONE_PLATFORM_HINT "auto"
   QT_QPA_PLATFORM "wayland"
+  QT_QPA_PLATFORMTHEME "qt5ct"
   QT_WAYLAND_DISABLE_WINDOWDECORATION "1"
   XDG_SESSION_TYPE "wayland"
   XDG_CURRENT_DESKTOP "niri"
@@ -146,11 +147,6 @@ window-rule {
 }
 
 layer-rule {
-  match namespace="^wallpaper$"
-  place-within-backdrop true
-}
-
-layer-rule {
   match namespace="^noctalia-(bar-[^\"]+|notification|dock|panel|attached-panel|osd)$"
   background-effect {
     blur true
@@ -180,7 +176,7 @@ workspace "w7"
 workspace "w8"
 workspace "w9"
 
-spawn-at-startup "@systemctl@" "--user" "import-environment" "PATH" "XDG_DATA_DIRS" "WAYLAND_DISPLAY" "XDG_CURRENT_DESKTOP" "SHELL"
+spawn-at-startup "@systemctl@" "--user" "import-environment" "PATH" "XDG_DATA_DIRS" "WAYLAND_DISPLAY" "XDG_CURRENT_DESKTOP" "SHELL" "QT_QPA_PLATFORM" "QT_QPA_PLATFORMTHEME"
 spawn-at-startup "@systemctl@" "--user" "start" "graphical-session.target"
 spawn-at-startup "@xwaylandSatellite@"
 spawn-at-startup "@noctalia@"
