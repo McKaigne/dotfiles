@@ -20,10 +20,10 @@ Checkout path expected at `/etc/nixos`.
 
 ## Topology & Workstation Roles
 
-| Host | Primary User | Graphics & Acceleration | Kernel & Memory Tuning | Workstation Role |
+| Host | Primary User | Graphics & Acceleration | Kernel, Storage & Memory Tuning | Workstation Role |
 | :--- | :--- | :--- | :--- | :--- |
-| **hyde** | `jekyll` | AMD Radeon (`amdgpu`) + ROCm / HIP compute (`rocmPackages.clr.icd`) | Kingston NV2 APST fix (`nvme_core.default_ps_max_latency_us=0`), `pcie_aspm=off`, low swappiness (`vm.swappiness = 10`) | Main workstation: 3D Blender Cycles rendering, compute & dev |
-| **castor** | `pollux` | Intel Iris Xe (`intel-media-driver` / `iHD`) | Framebuffer compression (`i915.enable_fbc=1`), aggressive zram swappiness (`180`), thermald | Secondary workstation: Lightweight, mobile efficiency & media |
+| **hyde** | `jekyll` | AMD Radeon (`amdgpu`) + declarative OpenCL (`hardware.amdgpu.opencl.enable`) + cached HIP Cycles compute (`pkgs.pkgsRocm.blender`) | Kingston NV2 APST fix (`nvme_core.default_ps_max_latency_us=0`), `pcie_aspm=off`, deterministic device timeout (`systemd.default_device_timeout_sec=30`), root ext4 flags (`noatime,nodiratime,commit=60`), low swappiness (`vm.swappiness = 10`) | Main workstation: 3D Blender Cycles rendering, compute & dev |
+| **castor** | `pollux` | Intel Iris Xe (`intel-media-driver` / `iHD`) | Framebuffer compression (`i915.enable_fbc=1`), aggressive zram swappiness (`180`), root ext4 flags (`noatime,nodiratime,commit=60`), thermald | Secondary workstation: Lightweight, mobile efficiency & media |
 
 Both hosts share the unified `baseWorkstation` profile while isolating hardware runtimes and user environments.
 
@@ -41,38 +41,38 @@ Every component is an isolated directory with its own dedicated `default.nix` en
 └── modules/
     ├── hosts/
     │   ├── castor/                   # Intel host profile & drive UUIDs
-    │   └── hyde/                     # AMD host profile & drive UUIDs
+    │   └── hyde/                     # AMD host profile, OpenCL & drive UUIDs
     ├── shared/                       # Shared workstation infrastructure
     │   ├── audio/                    # PipeWire, WirePlumber, RTKit, firmwares
     │   ├── base/                     # baseWorkstation profile uniting modular units
     │   ├── bluetooth/                # BlueZ, Blueman, Lofree Flow udev rules
-    │   ├── core/                     # Nix daemon, Cachix, system packages
-    │   ├── kanata/                   # Programmer QWERTY, ACGS home-row mods, chords
+    │   ├── core/                     # Nix daemon, Cachix, system packages, unfree allowed
+    │   ├── kanata/                   # Programmer QWERTY, ACGS home-row mods (150ms idle), chords
     │   ├── security/                 # Polkit agent, GNOME Keyring, SOPS, age
-    │   ├── systems/                  # Systems matrix, formatter, CI check derivations
+    │   ├── systems/                  # Systems matrix, RFC 166 formatter, CI check derivations
     │   └── users/                    # mainUser option, Home Manager integration
     └── features/                     # Decoupled application modules
         ├── browser/
-        │   ├── brave/                # Brave Origin + policies + out-of-store link
-        │   └── floorp/               # Floorp browser + Sidebery + Tridactyl native
+        │   ├── brave/                # Brave Origin + enterprise policies + Quad9 DoH
+        │   └── floorp/               # Floorp (release channel locked) + Sidebery + Tridactyl native
         ├── creative/
-        │   ├── blender/              # Blender 3D modeling
+        │   ├── blender/              # Blender with cached ROCm/HIP Cycles GPU acceleration
         │   ├── kdenlive/             # Kdenlive video editor & MLT framework
         │   ├── krita/                # Krita digital raster graphics
-        │   └── obs/                  # OBS Studio + VAAPI + PipeWire capture
+        │   └── obs/                  # OBS Studio + VAAPI + native PipeWire audio/video capture
         ├── desktop/
         │   ├── fonts/                # Lilex Nerd Font, IBM Plex, subpixel rendering
         │   ├── fuzzel/               # Fuzzel launcher + Noctalia theme import
-        │   ├── niri/                 # Niri compositor wrapper & niri.kdl asset
+        │   ├── niri/                 # Niri compositor wrapper, 240Hz 2-pass blur & niri.kdl asset
         │   ├── noctalia/             # Desktop shell daemon & noctalia.toml asset
         │   └── xdg/                  # PCManFM, portals, MIME associations
         ├── dev/
-        │   ├── containers/           # Rootless Podman & Docker socket emulation
+        │   ├── containers/           # Rootless Podman & active Docker socket emulation
         │   ├── git/                  # Git user credentials & defaults
         │   ├── godot/                # Godot 4 game engine
         │   └── tools/                # lazydocker, tokei, hyperfine, ast-grep, ghgrab
         ├── documents/
-        │   ├── obsidian/             # Obsidian markdown knowledge base
+        │   ├── obsidian/             # Obsidian markdown knowledge base (unfree permitted)
         │   ├── onlyoffice/           # OnlyOffice desktop editors suite
         │   └── zathura/              # Zathura document viewer (Noctalia styled)
         ├── editor/
@@ -88,11 +88,11 @@ Every component is an isolated directory with its own dedicated `default.nix` en
         ├── terminal/
         │   ├── fetch/                # areofyl/fetch 3D rotating ASCII engine
         │   ├── ghostty/              # Ghostty terminal + Lilex OpenType features
-        │   ├── starship/             # Starship prompt derivation & starship.toml
+        │   ├── starship/             # Starship prompt derivation & /etc/starship.toml authority
         │   ├── tmux/                 # Tmux multiplexer + non-colliding keymaps
-        │   └── zsh/                  # Zsh + expanding abbreviations + cfb tool
+        │   └── zsh/                  # Zsh + expanding abbreviations + cfb context tool
         └── theme/
-            └── noctalia/             # GTK 3/4 & Qt 5/6 dynamic stylesheet bindings
+            └── noctalia/             # Declarative GTK 3/4 & Qt 5/6 dynamic stylesheet bindings
 ~~~
 
 ---
@@ -101,16 +101,18 @@ Every component is an isolated directory with its own dedicated `default.nix` en
 
 | Subsystem | Implementation | Key Operational Notes |
 | :--- | :--- | :--- |
-| **Compositor** | [niri](https://github.com/YaLTeR/niri) | Scrollable tiling, geometry corners 4px, GPU blur, 240Hz DP-1 display |
-| **Desktop Shell** | [noctalia](https://github.com/noctalia-dev/noctalia) | Dynamic template engine, floating top bar, binary substituted via Cachix |
-| **Containers** | [podman](https://podman.io/) | Daemonless, rootless containers powering `lazydocker` via `/run/podman/podman.sock` |
+| **Compositor** | [niri](https://github.com/YaLTeR/niri) | Scrollable tiling, geometry corners 4px, 2-pass GPU blur tuned for 240Hz DP-1, systemd-first session launch |
+| **Desktop Shell** | [noctalia](https://github.com/noctalia-dev/noctalia) | Dynamic template engine, floating top bar, wallpaper layer-shell authority, binary substituted via Cachix |
+| **Containers** | [podman](https://podman.io/) | Daemonless, rootless containers with active `dockerSocket.enable` powering `lazydocker` via `/run/podman/podman.sock` |
+| **Web Browsers** | [floorp](https://floorp.app/) & [brave](https://brave.com/) | Floorp locked to `"release"` channel with experimental progressive rollouts disabled; Tridactyl native messaging; Quad9 DoH |
+| **Render Compute** | [blender](https://www.blender.org/) | Pre-built cached HIP Cycles GPU rendering on AMD via `pkgs.pkgsRocm.blender` without local LLVM source compilations |
 | **Code Refactoring** | [ast-grep](https://ast-grep.github.io/) | Tree-sitter syntax-aware code search and rewriting (`sg`) |
-| **Forge Extractor** | [ghgrab](https://github.com/abhixdd/ghgrab) | Ratatui TUI for pulling isolated folders/files from GitHub without full clones |
 | **Telemetry** | [fetch](https://github.com/areofyl/fetch) | 3D spinning ASCII distro engine with Blinn-Phong shading and live metrics |
 | **Pipelining** | [viddy](https://github.com/sachaos/viddy) + [choose](https://github.com/theryangeary/choose) | Time-travel diff watcher replacing `watch`; ergonomic field slicer replacing `cut` |
-| **Editor** | [helix](https://helix-editor.com/) | Wrapped with LSPs (`nixd`, `marksman`, `taplo`), transparent Osaka palette |
-| **Multiplexer** | [tmux](https://github.com/tmux/tmux) | Custom Osaka dotbar, OSC 52 clipboard, floating tool popups over editor |
-| **Keyboard Engine** | [kanata](https://github.com/jtroo/kanata) | Layerless Programmer QWERTY, Timeless Home-Row Mods (ACGS), Bottom Chords |
+| **Editor** | [helix](https://helix-editor.com/) | Wrapped with LSPs (`nixd`, `marksman`, `taplo`), RFC 166 `nixfmt`, transparent Osaka palette |
+| **Multiplexer** | [tmux](https://github.com/tmux/tmux) | Custom Osaka dotbar, OSC 52 clipboard, floating tool popups over editor with empty-safe xargs |
+| **Keyboard Engine** | [kanata](https://github.com/jtroo/kanata) | Layerless Programmer QWERTY, Timeless Home-Row Mods (ACGS) with harmonized 150ms idle timings, Bottom Chords |
+| **Shell Prompt** | [starship](https://starship.rs/) | Declarative system-level authority at `/etc/starship.toml` ensuring universal prompt metrics across shells |
 
 ---
 
@@ -118,7 +120,7 @@ Every component is an isolated directory with its own dedicated `default.nix` en
 
 Desktop styling is governed dynamically by **Noctalia**. Downstream tools do not hardcode static color values in Nix code:
 * **GTK 3 & GTK 4:** `@import 'noctalia.css';` dynamically emitted by Noctalia.
-* **Qt 5 & Qt 6:** Pointed to `~/.config/qt6ct/colors/noctalia.conf`.
+* **Qt 5 & Qt 6:** Declaratively bridged via `qt.platformTheme = "qt5ct"` pointing to `~/.config/qt6ct/colors/noctalia.conf` and `~/.config/qt5ct/colors/noctalia.conf`.
 * **Ghostty & Tmux:** Configured with user templates rendered dynamically by Noctalia on theme or wallpaper switch.
 * **Fuzzel:** Imports `~/.config/fuzzel/themes/noctalia` generated via community template.
 * **Helix:** Configured with a dedicated transparent Solarized Osaka theme (`ui.background = {}`) using the complete 8-accent chromatic palette to preserve syntax discrimination.
@@ -135,7 +137,7 @@ The keyboard layer runs entirely in software via Kanata v1.12.0 using **Programm
 * **Caps Lock:** Remapped to `Escape`.
 
 ### 2. Timeless Home-Row Mods (ACGS Order)
-Uses native `defhands` bilateral isolation (`tap-hold-opposite-hand-release`) and `tap-hold-require-prior-idle 120`:
+Uses native `defhands` bilateral isolation (`tap-hold-opposite-hand-release`) and harmonized `require-prior-idle 150`:
 * **Left Hand:** `a` (Alt) • `s` (Ctrl) • `d` (GUI) • `f` (Shift)
 * **Right Hand:** `j` (Shift) • `k` (GUI) • `l` (Ctrl) • `;` (Alt)
 
@@ -144,6 +146,7 @@ Uses native `defhands` bilateral isolation (`tap-hold-opposite-hand-release`) an
 * `X + C` → Copy (`Ctrl + Insert`)
 * `C + V` → Paste (`Shift + Insert`)
 * `V + B` → Select All (`Ctrl + A`)
+* `F + J` → Caps Word (2000ms timeout)
 * `N + M` → Redo (`Ctrl + Y`)
 * `M + ,` → Undo (`Ctrl + Z`)
 * `, + .` → Find (`Ctrl + F`)
