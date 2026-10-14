@@ -8,7 +8,7 @@
       name = "nixfmt-wrapper";
       runtimeInputs = [
         pkgs.fd
-        pkgs.nixfmt-rfc-style
+        pkgs.nixfmt
       ];
       text = ''
         export LC_ALL=C.UTF-8

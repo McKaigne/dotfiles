@@ -11,7 +11,7 @@
       helixLspPath = lib.makeBinPath [
         pkgs.marksman
         pkgs.nixd
-        pkgs.nixfmt-rfc-style
+        pkgs.nixfmt
         pkgs.bash-language-server
         pkgs.shellcheck
         pkgs.shfmt
@@ -79,7 +79,6 @@
           force = true;
         };
 
-        # Pure base theme providing full Solarized Osaka syntax highlighting & palette
         xdg.configFile."helix/themes/solarized_osaka.toml" = {
           text = ''
             # Syntax Highlighting
@@ -222,7 +221,6 @@
           force = true;
         };
 
-        # Noctalia theme: inherits solarized_osaka and overrides UI for 100% transparency
         xdg.configFile."helix/themes/noctalia.toml" = {
           text = ''
             inherits = "solarized_osaka"
