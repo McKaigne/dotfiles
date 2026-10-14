@@ -83,6 +83,7 @@
             process-unmapped-keys yes
             concurrent-tap-hold yes
             tap-hold-require-prior-idle 150
+            linux-device-detect-mode keyboard-only
             linux-dev-names-exclude (
               "Corne"
             )

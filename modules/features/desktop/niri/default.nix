@@ -77,7 +77,6 @@ let
       [
         "@outputConfig@"
         "@noctalia@"
-        "@xwaylandSatellite@"
         "@systemctl@"
         "@ghostty@"
         "@brave@"
@@ -97,7 +96,6 @@ let
       [
         outputConfig
         "${noctaliaPkg}/bin/noctalia"
-        "${pkgs.xwayland-satellite}/bin/xwayland-satellite"
         "${pkgs.systemd}/bin/systemctl"
         "${pkgs.ghostty}/bin/ghostty"
         "${lib.getExe pkgs.brave-origin}"

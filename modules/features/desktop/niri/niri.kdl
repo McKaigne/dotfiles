@@ -177,8 +177,6 @@ workspace "w8"
 workspace "w9"
 
 spawn-at-startup "@systemctl@" "--user" "import-environment" "PATH" "XDG_DATA_DIRS" "WAYLAND_DISPLAY" "XDG_CURRENT_DESKTOP" "SHELL" "QT_QPA_PLATFORM" "QT_QPA_PLATFORMTHEME"
-spawn-at-startup "@systemctl@" "--user" "start" "graphical-session.target"
-spawn-at-startup "@xwaylandSatellite@"
 spawn-at-startup "@noctalia@"
 
 binds {

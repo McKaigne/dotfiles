@@ -27,21 +27,6 @@
           '';
           force = true;
         };
-
-        # Fallback theme for clean bootstrap before Noctalia execution
-        xdg.configFile."fuzzel/themes/noctalia" = {
-          text = ''
-            [colors]
-            background=001419e6
-            text=839395ff
-            match=29a298ff
-            selection=002c38ff
-            selection-text=839395ff
-            selection-match=29a298ff
-            border=002c38ff
-          '';
-          force = true;
-        };
       };
     };
 }

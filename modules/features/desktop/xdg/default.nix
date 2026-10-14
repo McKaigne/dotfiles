@@ -8,6 +8,15 @@
       programs.dconf.enable = true;
       services.gvfs.enable = true;
 
+      xdg.portal = {
+        enable = true;
+        extraPortals = [ pkgs.xdg-desktop-portal-gtk ];
+        config.niri = {
+          default = [ "gnome" "gtk" ];
+          "org.freedesktop.impl.portal.FileChooser" = [ "gtk" ];
+        };
+      };
+
       home-manager.users.${user} = {
         xdg.mimeApps = {
           enable = true;
@@ -58,7 +67,6 @@
         shared-mime-info
         cliphist
         satty
-        hyprpicker
         wl-clipboard
       ];
     };

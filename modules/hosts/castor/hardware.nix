@@ -22,7 +22,7 @@
         "rtsx_pci_sdmmc"
       ];
       boot.initrd.kernelModules = [ ];
-      boot.kernelModules = [ "kvm-intel" ];
+      boot.kernelModules = [ ];
       boot.extraModulePackages = [ ];
 
       fileSystems."/" = {
@@ -30,7 +30,6 @@
         fsType = "ext4";
         options = [
           "noatime"
-          "nodiratime"
           "commit=60"
         ];
       };

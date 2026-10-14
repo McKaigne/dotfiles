@@ -26,7 +26,8 @@
         postBuild = ''
           wrapProgram $out/bin/hx \
             --prefix PATH : "${helixLspPath}"
-          [ -e $out/bin/helix ] || ln -sf $out/bin/hx $out/bin/helix
+          rm -f $out/bin/helix
+          ln -sf hx $out/bin/helix
         '';
       };
     in
@@ -34,6 +35,17 @@
       environment.systemPackages = [ wrappedHelix ];
 
       home-manager.users.${user} = {
+        xdg.configFile."helix/languages.toml" = {
+          text = ''
+            [[language]]
+            name = "nix"
+            auto-format = true
+            formatter = { command = "nixfmt" }
+            language-servers = [ "nixd" ]
+          '';
+          force = true;
+        };
+
         xdg.configFile."helix/config.toml" = {
           text = ''
             theme = "noctalia"

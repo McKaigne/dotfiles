@@ -36,7 +36,7 @@
 
       systemd.tmpfiles.rules = [
         "d /etc/nixos 0775 ${user} wheel -"
-        "Z /etc/nixos 0775 ${user} wheel -"
+        "z /etc/nixos 0775 ${user} wheel -"
       ];
 
       boot.kernel.sysctl = {

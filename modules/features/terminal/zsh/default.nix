@@ -32,8 +32,8 @@
         programs.zsh = {
           enable = true;
           enableCompletion = false;
-          autosuggestion.enable = false;
-          syntaxHighlighting.enable = false;
+          autosuggestion.enable = true;
+          syntaxHighlighting.enable = true;
 
           history = {
             size = 50000;
@@ -163,6 +163,8 @@
             eval "$(${pkgs.zoxide}/bin/zoxide init zsh)"
             eval "$(${pkgs.direnv}/bin/direnv hook zsh)"
 
+            [ -f "$HOME/.config/fzf/themes/noctalia.sh" ] && source "$HOME/.config/fzf/themes/noctalia.sh"
+
             bindkey -e
 
             fkill() {
@@ -221,7 +223,7 @@ FILE CONTENTS
               local excludes=(-E .git -E flake.lock -E node_modules -E target -E result -E "*cache*" -E "*Cache*" -E "*.log" -E "*.sqlite*" -E "*.db*" -E "BraveSoftware" -E ".config/floorp" -E ".mozilla" -E "google-chrome")
 
               local -a files
-              files=("''${(@f)$(fd . "$targetPath" -t f -L -H -S -50k "''${extensions[@]}" "''${excludes[@]}" 2>/dev/null)}")
+              files=("''${(@f)$(fd . "$targetPath" -t f -L -H -S -250k "''${extensions[@]}" "''${excludes[@]}" 2>/dev/null)}")
               files=("''${files[@]:#}")
               local fileCount=''${#files[@]}
 

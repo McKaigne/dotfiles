@@ -29,7 +29,6 @@
         fsType = "ext4";
         options = [
           "noatime"
-          "nodiratime"
           "commit=60"
         ];
       };

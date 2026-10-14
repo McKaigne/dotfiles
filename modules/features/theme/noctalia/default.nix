@@ -141,6 +141,7 @@
         whitesur-icon-theme
         bibataCursorsFixed
         ibm-plex
+        kdePackages.qt6ct
       ];
     };
 }
