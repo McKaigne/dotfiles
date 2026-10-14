@@ -20,12 +20,31 @@ Checkout path expected at `/etc/nixos`.
 
 ## Topology & Workstation Roles
 
-| Host | Primary User | Graphics & Acceleration | Kernel, Storage & Memory Tuning | Workstation Role |
+| Host | Primary User | Graphics & Compute Stack | Storage, Kernel & Memory Invariants | Workstation Role |
 | :--- | :--- | :--- | :--- | :--- |
-| **hyde** | `jekyll` | AMD Radeon (`amdgpu`) + declarative OpenCL (`hardware.amdgpu.opencl.enable`) + cached HIP Cycles compute (`pkgs.pkgsRocm.blender`) | Kingston NV2 APST fix (`nvme_core.default_ps_max_latency_us=0`), `pcie_aspm=off`, deterministic device timeout (`systemd.default_device_timeout_sec=30`), root ext4 flags (`noatime,nodiratime,commit=60`), low swappiness (`vm.swappiness = 10`) | Main workstation: 3D Blender Cycles rendering, compute & dev |
+| **hyde** | `jekyll` | AMD Radeon (`amdgpu`) + declarative OpenCL (`hardware.amdgpu.opencl.enable`) + pre-built HIP Cycles compute (`pkgs.pkgsRocm.blender`) | Kingston NV2 APST fix (`nvme_core.default_ps_max_latency_us=0`), `pcie_aspm=off`, deterministic device timeout (`systemd.default_device_timeout_sec=30`), root ext4 flags (`noatime,nodiratime,commit=60`), low swappiness (`vm.swappiness = 10`) | Main workstation: 3D Blender Cycles rendering, compute & dev |
 | **castor** | `pollux` | Intel Iris Xe (`intel-media-driver` / `iHD`) | Framebuffer compression (`i915.enable_fbc=1`), aggressive zram swappiness (`180`), root ext4 flags (`noatime,nodiratime,commit=60`), thermald | Secondary workstation: Lightweight, mobile efficiency & media |
 
 Both hosts share the unified `baseWorkstation` profile while isolating hardware runtimes and user environments.
+
+---
+
+## Agent & LLM Operational Guardrails (Do Not Violate)
+
+When an automated agent or LLM reasons over this configuration (via `cfb` snapshots), the following invariants must be strictly respected:
+
+1. **Starship Configuration Authority**:
+   * Starship is managed strictly at `/etc/starship.toml` via `environment.etc` and `environment.sessionVariables.STARSHIP_CONFIG = "/etc/starship.toml"`.
+   * **Do not** refactor Starship into Home Manager user templates or attempt to make it dynamic via Noctalia hooks. User-level templating causes environment desynchronization across subshells, Tmux panes, root sessions, and remote logins.
+2. **Niri Layer-Shell & Wallpaper Invariant**:
+   * Desktop wallpapers are rendered directly by Noctalia on the standard Wayland background layer (`Layer::Background`).
+   * **Do not** add `noctalia-wallpaper` or Noctalia wallpaper namespaces to `place-within-backdrop true` in `niri.kdl`. Niri's workspace layer sits between the backdrop and active windows; forcing the wallpaper into the backdrop causes Niri's workspace canvas to render an opaque solid gray box over the screen.
+3. **Compute & Binary Cache Invariants**:
+   * Host `hyde` uses `pkgs.pkgsRocm.blender` and `hardware.amdgpu.opencl.enable`.
+   * **Do not** add `rocmPackages.clr.icd` or un-cached ROCm packages to `environment.systemPackages` or `hardware.graphics.extraPackages`. On `nixos-unstable`, this triggers un-cached LLVM/ROCm source compilations that stall rebuilds for hours.
+4. **Flake Architecture Memoization**:
+   * In `modules/shared/systems/default.nix`, consume `inputs.nixpkgs.legacyPackages.${system}`.
+   * **Do not** call `import inputs.nixpkgs { ... }` inside `perSystem`, as this breaks Nix memoization and causes memory spikes during flake evaluation.
 
 ---
 
@@ -53,13 +72,13 @@ Every component is an isolated directory with its own dedicated `default.nix` en
     │   └── users/                    # mainUser option, Home Manager integration
     └── features/                     # Decoupled application modules
         ├── browser/
-        │   ├── brave/                # Brave Origin + enterprise policies + Quad9 DoH
+        │   ├── brave/                # Brave Origin + policies + Quad9 DoH
         │   └── floorp/               # Floorp (release channel locked) + Sidebery + Tridactyl native
         ├── creative/
         │   ├── blender/              # Blender with cached ROCm/HIP Cycles GPU acceleration
         │   ├── kdenlive/             # Kdenlive video editor & MLT framework
         │   ├── krita/                # Krita digital raster graphics
-        │   └── obs/                  # OBS Studio + VAAPI + native PipeWire audio/video capture
+        │   └── obs/                  # OBS Studio + VAAPI + native PipeWire audio capture
         ├── desktop/
         │   ├── fonts/                # Lilex Nerd Font, IBM Plex, subpixel rendering
         │   ├── fuzzel/               # Fuzzel launcher + Noctalia theme import
@@ -112,18 +131,23 @@ Every component is an isolated directory with its own dedicated `default.nix` en
 | **Editor** | [helix](https://helix-editor.com/) | Wrapped with LSPs (`nixd`, `marksman`, `taplo`), RFC 166 `nixfmt`, transparent Osaka palette |
 | **Multiplexer** | [tmux](https://github.com/tmux/tmux) | Custom Osaka dotbar, OSC 52 clipboard, floating tool popups over editor with empty-safe xargs |
 | **Keyboard Engine** | [kanata](https://github.com/jtroo/kanata) | Layerless Programmer QWERTY, Timeless Home-Row Mods (ACGS) with harmonized 150ms idle timings, Bottom Chords |
-| **Shell Prompt** | [starship](https://starship.rs/) | Declarative system-level authority at `/etc/starship.toml` ensuring universal prompt metrics across shells |
+| **Shell Prompt** | [starship](https://starship.rs/) | System-level authority at `/etc/starship.toml` ensuring universal prompt metrics across all shells |
 
 ---
 
-## Theming Governance (Noctalia Authority)
+## Theming Scope & Runtime Exceptions
 
-Desktop styling is governed dynamically by **Noctalia**. Downstream tools do not hardcode static color values in Nix code:
+Desktop styling is governed dynamically by **Noctalia** across supported applications, with explicit exceptions maintained for system stability:
+
+### 1. Dynamic Noctalia Scope
 * **GTK 3 & GTK 4:** `@import 'noctalia.css';` dynamically emitted by Noctalia.
 * **Qt 5 & Qt 6:** Declaratively bridged via `qt.platformTheme = "qt5ct"` pointing to `~/.config/qt6ct/colors/noctalia.conf` and `~/.config/qt5ct/colors/noctalia.conf`.
 * **Ghostty & Tmux:** Configured with user templates rendered dynamically by Noctalia on theme or wallpaper switch.
 * **Fuzzel:** Imports `~/.config/fuzzel/themes/noctalia` generated via community template.
-* **Helix:** Configured with a dedicated transparent Solarized Osaka theme (`ui.background = {}`) using the complete 8-accent chromatic palette to preserve syntax discrimination.
+
+### 2. Static Runtime Exceptions
+* **Starship Prompt**: Configured statically at `/etc/starship.toml` via `environment.etc`. Dynamic templating is deliberately suppressed to ensure the custom status line and git metrics remain identical in subshells, root contexts, and remote sessions.
+* **Helix Editor**: Configured with a dedicated transparent Solarized Osaka theme (`ui.background = {}`) using the complete 8-accent chromatic palette to preserve syntax discrimination regardless of desktop wallpaper changes.
 
 ---
 
@@ -137,7 +161,7 @@ The keyboard layer runs entirely in software via Kanata v1.12.0 using **Programm
 * **Caps Lock:** Remapped to `Escape`.
 
 ### 2. Timeless Home-Row Mods (ACGS Order)
-Uses native `defhands` bilateral isolation (`tap-hold-opposite-hand-release`) and harmonized `require-prior-idle 150`:
+Uses native `defhands` bilateral isolation (`tap-hold-opposite-hand-release`) and harmonized `require-prior-idle 150` across all home-row keys:
 * **Left Hand:** `a` (Alt) • `s` (Ctrl) • `d` (GUI) • `f` (Shift)
 * **Right Hand:** `j` (Shift) • `k` (GUI) • `l` (Ctrl) • `;` (Alt)
 
