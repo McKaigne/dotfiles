@@ -114,12 +114,9 @@ wallpaper_scheme = "m3-content"
 [theme.templates]
 builtin_ids = [ "btop", "cava", "gtk3", "gtk4", "niri", "qt", "starship" ]
 community_ids = [
-    "antigravity",
-    "claude-code",
     "brave",
     "brave-origin",
     "blender",
-    "fastfetch",
     "obs",
     "zathura",
     "whitesur-icons",

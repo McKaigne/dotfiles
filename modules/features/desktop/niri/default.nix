@@ -1,10 +1,34 @@
 { self, inputs, ... }:
 let
+  makeNiriWrapper =
+    { pkgs, lib }:
+    pkgs.symlinkJoin {
+      name = "niri-wrapped";
+      paths = [ pkgs.niri ];
+      nativeBuildInputs = [ pkgs.makeWrapper ];
+      postBuild = ''
+        wrapProgram $out/bin/niri \
+          --prefix PATH : "${
+            lib.makeBinPath [
+              pkgs.xwayland-satellite
+              pkgs.grim
+              pkgs.slurp
+              pkgs.wl-clipboard
+              pkgs.brightnessctl
+              pkgs.playerctl
+              pkgs.wireplumber
+            ]
+          }"
+      '';
+      passthru = (pkgs.niri.passthru or { }) // {
+        providedSessions = [ "niri" ];
+      };
+    };
+
   makeNiriConfig =
     {
       pkgs,
       lib,
-      system,
       noctaliaPkg,
       outputConfig ? "",
     }:
@@ -97,50 +121,10 @@ in
     {
       pkgs,
       lib,
-      system,
       ...
     }:
-    let
-      noctaliaPkg = inputs.noctalia.packages.${system}.default;
-      niriConfigRaw = makeNiriConfig {
-        inherit
-          pkgs
-          lib
-          system
-          noctaliaPkg
-          ;
-        outputConfig = ''
-          output "DP-1" {
-            mode "1920x1080@240.000"
-            scale 1.0
-          }
-        '';
-      };
-    in
     {
-      packages.myNiri = pkgs.symlinkJoin {
-        name = "niri-wrapped";
-        paths = [ pkgs.niri ];
-        nativeBuildInputs = [ pkgs.makeWrapper ];
-        postBuild = ''
-          wrapProgram $out/bin/niri \
-            --prefix PATH : "${
-              lib.makeBinPath [
-                pkgs.xwayland-satellite
-                pkgs.grim
-                pkgs.slurp
-                pkgs.wl-clipboard
-                pkgs.brightnessctl
-                pkgs.playerctl
-                pkgs.wireplumber
-              ]
-            }"
-        '';
-        passthru = (pkgs.niri.passthru or { }) // {
-          providedSessions = [ "niri" ];
-          configKdl = niriConfigRaw;
-        };
-      };
+      packages.myNiri = makeNiriWrapper { inherit pkgs lib; };
     };
 
   flake.nixosModules.niri =
@@ -153,7 +137,7 @@ in
     let
       user = config.mainUser;
       system = pkgs.stdenv.hostPlatform.system;
-      myNiri = self.packages.${system}.myNiri;
+      myNiri = makeNiriWrapper { inherit pkgs lib; };
       noctaliaPkg = inputs.noctalia.packages.${system}.default;
       displayCfg = config.workstation.display;
       modeLine = lib.optionalString (displayCfg.mode != null) "  mode \"${displayCfg.mode}\"\n";
@@ -166,7 +150,6 @@ in
         inherit
           pkgs
           lib
-          system
           noctaliaPkg
           ;
         outputConfig = renderedOutputConfig;
@@ -193,7 +176,7 @@ in
 
       config = {
         programs.niri.enable = true;
-        programs.niri.package = pkgs.niri;
+        programs.niri.package = myNiri;
 
         services.greetd = {
           enable = true;
@@ -213,7 +196,6 @@ in
         };
 
         environment.systemPackages = [
-          myNiri
           pkgs.xwayland-satellite
         ];
       };

@@ -81,8 +81,8 @@ animations {
 }
 
 blur {
-  passes 3
-  offset 3.0
+  passes 2
+  offset 2.5
   noise 0.02
   saturation 1.2
 }
@@ -97,8 +97,7 @@ window-rule {
 }
 
 window-rule {
-  match app-id="^ghostty$"
-  match app-id="^com.mitchellh.ghostty$"
+  match app-id=r#"^(com\.mitchellh\.)?ghostty(\..+)?$"#
   background-effect {
     blur true
     xray false
@@ -117,7 +116,7 @@ window-rule {
   opacity 0.85
   background-effect {
     blur true
-    xray false
+    xray true
   }
 }
 
@@ -147,6 +146,7 @@ window-rule {
 }
 
 layer-rule {
+  match namespace="^noctalia-(backdrop|wallpaper)$"
   match namespace="^wallpaper$"
   place-within-backdrop true
 }
@@ -155,7 +155,7 @@ layer-rule {
   match namespace="^noctalia-(bar-[^\"]+|notification|dock|panel|attached-panel|osd)$"
   background-effect {
     blur true
-    xray false
+    xray true
   }
 }
 
@@ -181,10 +181,10 @@ workspace "w7"
 workspace "w8"
 workspace "w9"
 
-spawn-at-startup "@noctalia@"
-spawn-at-startup "@xwaylandSatellite@"
 spawn-at-startup "@systemctl@" "--user" "import-environment" "PATH" "XDG_DATA_DIRS" "WAYLAND_DISPLAY" "XDG_CURRENT_DESKTOP" "SHELL"
 spawn-at-startup "@systemctl@" "--user" "start" "graphical-session.target"
+spawn-at-startup "@xwaylandSatellite@"
+spawn-at-startup "@noctalia@"
 
 binds {
   Mod+Return             hotkey-overlay-title="Terminal: Ghostty"                   { spawn "@ghostty@"; }

@@ -28,14 +28,12 @@
         boot.loader.systemd-boot.enable = true;
         boot.loader.efi.canTouchEfiVariables = true;
 
-        hardware.enableAllHardware = true;
-
         # Kingston NV2 APST fix + AMD KMS
         boot.initrd.kernelModules = [ "amdgpu" ];
         boot.kernelParams = [
           "nvme_core.default_ps_max_latency_us=0"
           "pcie_aspm=off"
-          "systemd.default_device_timeout_sec=infinity"
+          "systemd.default_device_timeout_sec=30"
         ];
 
         boot.tmp.useTmpfs = true;
@@ -54,14 +52,12 @@
         networking.networkmanager.enable = true;
         services.openssh.enable = true;
 
-        # AMD Graphics & HIP ROCm Compute for Blender Cycles
+        # Declarative AMD OpenCL & Graphics Runtime
         hardware.graphics = {
           enable = true;
           enable32Bit = true;
-          extraPackages = with pkgs; [
-            rocmPackages.clr.icd
-          ];
         };
+        hardware.amdgpu.opencl.enable = true;
 
         system.stateVersion = "25.05";
       })

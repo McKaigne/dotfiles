@@ -13,8 +13,6 @@
       programs.zsh = {
         enable = true;
         enableCompletion = true;
-        autosuggestions.enable = true;
-        syntaxHighlighting.enable = true;
       };
 
       users.users.${user}.shell = pkgs.zsh;
@@ -28,9 +26,6 @@
         zsh-abbr
         zoxide
         fzf
-        wl-clipboard
-        tree
-        fd
       ];
 
       home-manager.users.${user} = {
@@ -211,7 +206,7 @@ DIRECTORY TOPOLOGY (including empty directories)
 "
 
               if [[ "$targetPath" == *".config"* ]]; then
-                outputStr+=$(tree "$targetPath" -a -I '.git|flake.lock|result|node_modules|target|*cache*|*Cache*|*.log|*.sqlite*|*.db*|*.bin|*.dat|BraveSoftware|floorp|google-chrome|chromium' --noreport 2>/dev/null || tree "$targetPath" -a -I '.git|result' --noreport)
+                outputStr+=$(tree "$targetPath" -a -I '.git|flake.lock|result|node_modules|target|*cache*|*Cache*|*.log|*.sqlite*|*.db*|*.bin|*.dat|BraveSoftware|.config/floorp|.mozilla|google-chrome|chromium' --noreport 2>/dev/null || tree "$targetPath" -a -I '.git|result' --noreport)
               else
                 outputStr+=$(tree "$targetPath" -a -I '.git|flake.lock|result|node_modules|target|*cache*|*Cache*|*.log|*.sqlite*|*.db*' --noreport 2>/dev/null || tree "$targetPath" --noreport)
               fi
@@ -223,7 +218,7 @@ FILE CONTENTS
               outputStr+=$'\n'
 
               local extensions=(-e nix -e kdl -e toml -e conf -e ini -e el -e json -e zsh -e sh -e py -e css -e lua -e md)
-              local excludes=(-E .git -E flake.lock -E node_modules -E target -E result -E "*cache*" -E "*Cache*" -E "*.log" -E "*.sqlite*" -E "*.db*" -E "BraveSoftware" -E "floorp" -E "google-chrome")
+              local excludes=(-E .git -E flake.lock -E node_modules -E target -E result -E "*cache*" -E "*Cache*" -E "*.log" -E "*.sqlite*" -E "*.db*" -E "BraveSoftware" -E ".config/floorp" -E ".mozilla" -E "google-chrome")
 
               local -a files
               files=("''${(@f)$(fd . "$targetPath" -t f -L -H -S -50k "''${extensions[@]}" "''${excludes[@]}" 2>/dev/null)}")

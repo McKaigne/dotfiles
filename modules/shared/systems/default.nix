@@ -2,16 +2,13 @@
   systems = [ "x86_64-linux" ];
 
   perSystem = { pkgs, system, ... }: {
-    _module.args.pkgs = import inputs.nixpkgs {
-      inherit system;
-      config.allowUnfree = true;
-    };
+    _module.args.pkgs = inputs.nixpkgs.legacyPackages.${system};
 
     formatter = pkgs.writeShellApplication {
       name = "nixfmt-wrapper";
       runtimeInputs = [
         pkgs.fd
-        pkgs.nixfmt
+        pkgs.nixfmt-rfc-style
       ];
       text = ''
         export LC_ALL=C.UTF-8
@@ -40,8 +37,6 @@
       hyde-eval = pkgs.runCommand "check-hyde-eval" { } ''
         echo "${self.nixosConfigurations.hyde.config.system.build.toplevel.drvPath}" > $out
       '';
-
-      myNiri = self.packages.${system}.myNiri;
     };
   };
 }

@@ -100,9 +100,9 @@
         bind-key t display-popup -d "#{pane_current_path}" -w 80% -h 80% -E "${pkgs.btop}/bin/btop"
         bind-key p display-popup -d "#{pane_current_path}" -w 80% -h 80% -E -e TERM=tmux-256color "${pkgs.zsh}/bin/zsh"
 
-        bind-key C-j display-popup -E "${pkgs.tmux}/bin/tmux list-sessions -F '#{session_name}' | ${pkgs.fzf}/bin/fzf --reverse | xargs ${pkgs.tmux}/bin/tmux switch-client -t"
-        bind-key C-k display-popup -E "${pkgs.tmux}/bin/tmux list-windows -a -F '#{session_name}:#{window_index} - #{window_name}' | ${pkgs.fzf}/bin/fzf --reverse | cut -d' ' -f1 | xargs ${pkgs.tmux}/bin/tmux switch-client -t"
-        bind-key C-v display-popup -E "${pkgs.tmux}/bin/tmux list-panes -a -F '#{session_name}:#{window_index}.#{pane_index} #{pane_current_command} #{pane_title}' | grep -E 'hx|helix|nvim|vim' | ${pkgs.fzf}/bin/fzf --reverse | awk '{print \$1}' | xargs -I{} ${pkgs.tmux}/bin/tmux switch-client -t {}"
+        bind-key C-j display-popup -E "${pkgs.tmux}/bin/tmux list-sessions -F '#{session_name}' | ${pkgs.fzf}/bin/fzf --reverse | xargs -r ${pkgs.tmux}/bin/tmux switch-client -t"
+        bind-key C-k display-popup -E "${pkgs.tmux}/bin/tmux list-windows -a -F '#{session_name}:#{window_index} - #{window_name}' | ${pkgs.fzf}/bin/fzf --reverse | cut -d' ' -f1 | xargs -r ${pkgs.tmux}/bin/tmux switch-client -t"
+        bind-key C-v display-popup -E "${pkgs.tmux}/bin/tmux list-panes -a -F '#{session_name}:#{window_index}.#{pane_index} #{pane_current_command} #{pane_title}' | grep -E 'hx|helix|nvim|vim' | ${pkgs.fzf}/bin/fzf --reverse | awk '{print $1}' | xargs -r -I{} ${pkgs.tmux}/bin/tmux switch-client -t {}"
       '';
     in
     {

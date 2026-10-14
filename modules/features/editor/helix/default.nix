@@ -11,7 +11,7 @@
       helixLspPath = lib.makeBinPath [
         pkgs.marksman
         pkgs.nixd
-        pkgs.nixfmt
+        pkgs.nixfmt-rfc-style
         pkgs.bash-language-server
         pkgs.shellcheck
         pkgs.shfmt

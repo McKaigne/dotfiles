@@ -123,6 +123,7 @@
 
       qt = {
         enable = true;
+        platformTheme = "qt5ct";
         style = "adwaita-dark";
       };
 
@@ -131,7 +132,6 @@
         XCURSOR_SIZE = "16";
         NIXOS_OZONE_WL = "1";
         QT_QPA_PLATFORM = "wayland";
-        QT_QPA_PLATFORMTHEME = lib.mkForce "qt6ct";
         QT_WAYLAND_DISABLE_WINDOWDECORATION = "1";
       };
 
@@ -139,7 +139,7 @@
         adw-gtk3
         whitesur-icon-theme
         bibataCursorsFixed
-        libsForQt5.qt5ct
+        qt5.qt5ct
         kdePackages.qt6ct
         ibm-plex
       ];

@@ -1,9 +1,9 @@
-# Feature: Container Virtualization (Podman & Docker Socket Emulation)
 { self, inputs, ... }: {
   flake.nixosModules.containers = { config, pkgs, ... }: {
     virtualisation.podman = {
       enable = true;
       dockerCompat = true;
+      dockerSocket.enable = true;
       defaultNetwork.settings.dns_enabled = true;
     };
 
