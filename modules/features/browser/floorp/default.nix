@@ -6,26 +6,20 @@
       lib,
       ...
     }:
-    let
-      system = pkgs.stdenv.hostPlatform.system;
-      stablePkgs = inputs.nixpkgs-stable.legacyPackages.${system};
-
-      stableFloorp = stablePkgs.floorp-bin.override {
-        nativeMessagingHosts = [
-          pkgs.tridactyl-native
-        ];
-      };
-    in
     {
       nixpkgs.overlays = [
         (final: prev: {
-          floorp-bin = stableFloorp;
-          floorp = stableFloorp;
+          floorp-bin = prev.floorp-bin.override {
+            nativeMessagingHosts = [
+              prev.tridactyl-native
+            ];
+          };
+          floorp = final.floorp-bin;
         })
       ];
 
       environment.systemPackages = [
-        stableFloorp
+        pkgs.floorp-bin
         pkgs.tridactyl-native
       ];
 
