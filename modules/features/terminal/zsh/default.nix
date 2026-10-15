@@ -88,7 +88,7 @@
               nlock = "noctalia msg session lock";
               nclosemsg = "noctalia msg notification-clear-active";
 
-              nsync = "cp -L ~/.config/noctalia/config.toml /etc/nixos/modules/features/desktop/noctalia/noctalia.toml && cd /etc/nixos && git diff modules/features/desktop/noctalia/noctalia.toml";
+              nsync = "noctalia config export > /etc/nixos/modules/features/desktop/noctalia/noctalia.toml && cd /etc/nixos && git diff modules/features/desktop/noctalia/noctalia.toml";
 
               nreload = "niri msg action load-config-file";
               nclose = "niri msg action close-window";

@@ -1,40 +1,43 @@
 [bar]
 order = [ "top" ]
 
-[bar.top]
-background_opacity = 0.85
-capsule_opacity = 0.88
-capsule_radius = 4
-center = [ "workspaces" ]
-concave_edge_corners = false
-enabled = true
-end = [
-    "tray",
-    "notifications",
-    "network",
-    "bluetooth",
-    "battery",
-    "volume",
-    "input_volume",
-    "brightness",
-    "weather",
-    "clock",
-    "session"
-]
-font_family = "Lilex Nerd Font"
-margin_edge = 0
-margin_ends = 6
-margin_opposite_edge = 0
-position = "top"
-radius = 0
-shadow = false
-start = [ "cpu", "temp", "ram" ]
-thickness = 28
-widget_spacing = 8
+    [bar.top]
+    background_opacity = 0.84999998100101948
+    border = "primary"
+    border_width = 2.0
+    capsule_opacity = 0.88
+    capsule_radius = 4
+    center = [ "workspaces" ]
+    concave_edge_corners = false
+    enabled = true
+    end = [
+        "tray",
+        "notifications",
+        "network",
+        "bluetooth",
+        "volume",
+        "input_volume",
+        "brightness",
+        "weather",
+        "battery",
+        "clock",
+        "session"
+    ]
+    font_family = "IBM Plex Sans"
+    font_scale = 1.0999999828636646
+    margin_edge = 5
+    margin_ends = 400
+    margin_opposite_edge = 1
+    position = "top"
+    radius = 4
+    shadow = false
+    start = [ "cpu", "temp", "ram" ]
+    thickness = 28
+    widget_spacing = 8
 
 [dock]
-active_opacity = 0.85
-background_opacity = 0.85
+active_opacity = 0.84999998100101948
+background_opacity = 0.84999998100101948
 shadow = false
 
 [location]
@@ -43,115 +46,149 @@ auto_locate = true
 [lockscreen_widgets]
 enabled = false
 schema_version = 2
-widget_order = [ "lockscreen-login-box" ]
+widget_order = [ "lockscreen-login-box@DP-1" ]
 
-[lockscreen_widgets.grid]
-cell_size = 16
-major_interval = 4
-visible = true
+    [lockscreen_widgets.grid]
+    cell_size = 16
+    major_interval = 4
+    visible = true
 
-[lockscreen_widgets.widget."lockscreen-login-box"]
-box_height = 196.0
-box_width = 810.0
-cx = 960.0
-cy = 898.0
-output = ""
-placement_height = 1080.0
-placement_width = 1920.0
-rotation = 0.0
-type = "login_box"
+    [lockscreen_widgets.widget.lockscreen-login-box]
+    box_height = 196.0
+    box_width = 810.0
+    cx = 960.0
+    cy = 898.0
+    output = ""
+    placement_height = 1080.0
+    placement_width = 1920.0
+    rotation = 0.0
+    type = "login_box"
 
-[lockscreen_widgets.widget."lockscreen-login-box".settings]
-background_color = "surface_variant"
-background_opacity = 0.88
-background_radius = 12.0
-center_password_text = false
-input_opacity = 1.0
-input_radius = 6.0
-layout = "regular"
-show_caps_lock = true
-show_keyboard_layout = true
-show_login_button = true
-show_media = true
-show_session_buttons = true
-show_unlock_hint = true
-show_weather = true
+        [lockscreen_widgets.widget.lockscreen-login-box.settings]
+        background_color = "surface_variant"
+        background_opacity = 0.88
+        background_radius = 12.0
+        center_password_text = false
+        input_opacity = 1.0
+        input_radius = 6.0
+        layout = "regular"
+        show_caps_lock = true
+        show_keyboard_layout = true
+        show_login_button = true
+        show_media = true
+        show_session_buttons = true
+        show_unlock_hint = true
+        show_weather = true
+
+    [lockscreen_widgets.widget."lockscreen-login-box@DP-1"]
+    box_height = 196.0
+    box_width = 810.0
+    cx = 960.0
+    cy = 898.0
+    output = "DP-1"
+    placement_height = 1080.0
+    placement_width = 1920.0
+    rotation = 0.0
+    type = "login_box"
+
+        [lockscreen_widgets.widget."lockscreen-login-box@DP-1".settings]
+        background_color = "surface_variant"
+        background_opacity = 0.88
+        background_radius = 12.0
+        center_password_text = false
+        input_opacity = 1.0
+        input_radius = 6.0
+        layout = "regular"
+        show_caps_lock = true
+        show_keyboard_layout = true
+        show_login_button = true
+        show_media = true
+        show_session_buttons = true
+        show_unlock_hint = true
+        show_weather = true
 
 [notification]
-background_opacity = 0.85
+background_opacity = 0.84999998100101948
 
 [osd]
-background_opacity = 0.85
+background_opacity = 0.84999998100101948
 
-[osd.kinds]
-media = false
+    [osd.kinds]
+    media = false
 
 [shell]
 app_icon_color = "on_surface_variant"
 button_borders = false
 card_borders = false
-corner_radius_scale = 0.4
-font_family = "Lilex Nerd Font"
+corner_radius_scale = 0.40000000596046448
+font_family = "IBM Plex Sans"
 input_borders = false
 popup_borders = false
 popup_shadows = false
 settings_window_translucent = true
 
-[shell.panel]
-control_center_placement = "floating"
-session_placement = "floating"
-shadow = false
-transparency_mode = "glass"
-wallpaper_placement = "floating"
+    [shell.panel]
+    control_center_placement = "floating"
+    session_placement = "floating"
+    shadow = false
+    transparency_mode = "glass"
+    wallpaper_placement = "floating"
 
 [theme]
-builtin = "Noctalia"
-community_palette = "Solarized Osaka"
+builtin = "Catppuccin"
+community_palette = "Lilac AMOLED"
 mode = "dark"
-source = "community"
+source = "builtin"
 wallpaper_scheme = "m3-content"
 
-[theme.templates]
-builtin_ids = [ "btop", "cava", "gtk3", "gtk4", "niri", "qt" ]
-community_ids = [
-    "brave",
-    "brave-origin",
-    "blender",
-    "obs",
-    "zathura",
-    "whitesur-icons",
-    "bat",
-    "fzf",
-    "glow",
-    "lazygit",
-    "yazi"
-]
-enable_builtin_templates = true
-enable_community_templates = true
+    [theme.templates]
+    builtin_ids = [ "btop", "cava", "gtk3", "gtk4", "ghostty", "helix", "niri", "qt", "starship" ]
+    community_ids = [
+        "antigravity",
+        "claude-code",
+        "brave",
+        "brave-origin",
+        "blender",
+        "fastfetch",
+        "obs",
+        "zathura",
+        "zellij",
+        "whitesur-icons",
+        "bat",
+        "fzf",
+        "glow",
+        "lazygit",
+        "yazi"
+    ]
+    enable_builtin_templates = true
+    enable_community_templates = true
 
-[theme.templates.user.ghostty]
-input_path = "~/.config/noctalia/user-templates/ghostty"
-output_path = "~/.config/ghostty/themes/noctalia"
+        [theme.templates.user.fuzzel]
+        input_path = "~/.config/noctalia/user-templates/fuzzel"
+        output_path = "~/.config/fuzzel/themes/noctalia"
 
-[theme.templates.user.tmux]
-input_path = "~/.config/noctalia/user-templates/tmux.conf"
-output_path = "~/.config/tmux/themes/noctalia.conf"
-post_hook = "tmux source-file ~/.config/tmux/tmux.conf 2>/dev/null || true"
+        [theme.templates.user.ghostty]
+        input_path = "~/.config/noctalia/user-templates/ghostty"
+        output_path = "~/.config/ghostty/themes/noctalia"
 
-[theme.templates.user.fuzzel]
-input_path = "~/.config/noctalia/user-templates/fuzzel"
-output_path = "~/.config/fuzzel/themes/noctalia"
+        [theme.templates.user.tmux]
+        input_path = "~/.config/noctalia/user-templates/tmux.conf"
+        output_path = "~/.config/tmux/themes/noctalia.conf"
+        post_hook = "tmux source-file ~/.config/tmux/tmux.conf 2>/dev/null || true"
 
 [wallpaper]
-directory = "/etc/wallpapers"
+directory = "/etc/nixos/wallpapers"
 fill_mode = "crop"
 transition_duration = 1500
 
-[wallpaper.default]
-path = "/etc/wallpapers/redSun.jpg"
+    [wallpaper.default]
+    path = "/etc/nixos/wallpapers/isekaiJoucho.jpg"
 
-[wallpaper.last]
-path = "/etc/wallpapers/redSun.jpg"
+    [wallpaper.last]
+    path = "/etc/nixos/wallpapers/isekaiJoucho.jpg"
+
+    [wallpaper.monitors.DP-1]
+    path = "/etc/nixos/wallpapers/isekaiJoucho.jpg"
 
 [weather]
 enabled = true
@@ -159,9 +196,15 @@ enabled = true
 [widget.bluetooth]
 hide_when_no_connected_device = true
 
+[widget.brightness]
+enabled = false
+
 [widget.cpu]
-show_glyph = false
+show_glyph = true
 visualization = "none"
+
+[widget.input_volume]
+enabled = false
 
 [widget.media]
 hide_album_art = true
@@ -170,23 +213,27 @@ title_scroll = "on_hover"
 
 [widget.network]
 show_label = false
-vpn_status = "both"
+vpn_status = "replace"
 
 [widget.notifications]
 hide_when_no_unread = true
 
 [widget.ram]
-show_glyph = false
+show_glyph = true
 visualization = "none"
 
 [widget.temp]
-show_glyph = false
+show_glyph = true
 visualization = "none"
 
 [widget.tray]
 drawer = true
 
+[widget.volume]
+enabled = false
+
 [widget.weather]
+enabled = false
 show_condition = false
 
 [widget.workspaces]
