@@ -173,6 +173,17 @@ debug {
 }
 
 
+workspace "1"
+workspace "2"
+workspace "3"
+workspace "4"
+workspace "5"
+workspace "6"
+workspace "7"
+workspace "8"
+workspace "9"
+workspace "10"
+
 spawn-at-startup "@systemctl@" "--user" "import-environment" "PATH" "XDG_DATA_DIRS" "WAYLAND_DISPLAY" "XDG_CURRENT_DESKTOP" "SHELL" "QT_QPA_PLATFORM" "QT_QPA_PLATFORMTHEME"
 spawn-at-startup "@noctalia@"
 
