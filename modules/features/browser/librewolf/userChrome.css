@@ -1,5 +1,37 @@
 #TabsToolbar { display: none !important; }
 #sidebar-panel-header { display: none !important; }
-#sidebar-box { padding-inline-start: 0px !important; }
 
-* { border-radius: 0px !important; }
+#sidebar-box {
+  padding-inline-start: 0px !important;
+  border-right: none !important;
+}
+
+#sidebar-splitter {
+  display: none !important;
+  width: 0px !important;
+  border: none !important;
+}
+
+/* Eliminate Firefox Proton circular bubbles and stadium pills */
+:root {
+  --toolbarbutton-border-radius: 4px !important;
+  --urlbar-icon-border-radius: 4px !important;
+  --urlbar-border-radius: 4px !important;
+  --arrowpanel-border-radius: 4px !important;
+  --arrowpanel-menuitem-border-radius: 4px !important;
+}
+
+/* System Geometry Parity: Crisp squares with subtle 4px corners */
+* {
+  border-radius: 4px !important;
+}
+
+/* Structural containers docked to window edges remain flush (0px) */
+#main-window,
+#navigator-toolbox,
+#nav-bar,
+#sidebar-box,
+#sidebar-splitter,
+#sidebar {
+  border-radius: 0px !important;
+}

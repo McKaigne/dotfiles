@@ -60,17 +60,17 @@
             auto-format = true
             idle-timeout = 50
             completion-timeout = 5
-            bufferline = "multiple"
-            gutters = ["diagnostics", "line-numbers", "diff"]
+            bufferline = "never"
+            gutters = ["diagnostics", "line-numbers", "spacer", "diff"]
 
             [editor.statusline]
-            left = ["mode", "spinner", "file-name", "file-modification-indicator"]
+            left = ["mode", "file-name", "file-modification-indicator", "read-only-indicator"]
             center = []
             right = ["diagnostics", "selections", "position", "file-type"]
-            separator = " │ "
-            mode.normal = "NORMAL"
-            mode.insert = "INSERT"
-            mode.select = "SELECT"
+            separator = " "
+            mode.normal = "NOR"
+            mode.insert = "INS"
+            mode.select = "SEL"
 
             [editor.cursor-shape]
             normal = "block"
@@ -78,23 +78,10 @@
             select = "underline"
 
             [editor.indent-guides]
-            render = true
-            character = "│"
-            skip-levels = 1
-
-            [editor.inline-diagnostics]
-            cursor-line = "warning"
-
-            [editor.whitespace]
-            render = { space = "none", tab = "all", newline = "none" }
-            characters = { tab = "→", tabpad = " " }
-
-            [editor.soft-wrap]
-            enable = true
-            wrap-indicator = ""
+            render = false
 
             [editor.lsp]
-            display-inlay-hints = true
+            display-inlay-hints = false
             display-messages = true
           '';
           force = true;
@@ -104,39 +91,34 @@
           text = ''
             inherits = "catppuccin_mocha"
 
-            # 100% Transparent Canvas & Cursorlines
+            # Transparent Canvas & Cursorlines
             "ui.background" = {}
             "ui.cursorline" = {}
             "ui.cursorline.primary" = {}
             "ui.cursorline.secondary" = {}
 
-            # Flat Gutters & Line Numbers (No Background Highlights)
+            # Minimal Gutters & Relative Line Numbers
             "ui.linenr" = { fg = "surface1" }
-            "ui.linenr.selected" = { fg = "mauve", modifiers = ["bold"] }
-            "ui.gutter" = { fg = "surface1" }
-            "ui.gutter.selected" = { fg = "mauve", modifiers = ["bold"] }
+            "ui.linenr.selected" = { fg = "lavender", modifiers = ["bold"] }
+            "ui.gutter" = {}
+            "ui.gutter.selected" = {}
 
-            # Pure Typographic Statusline (Zero Background Fills, Zero Capsules)
-            "ui.statusline" = { fg = "text" }
-            "ui.statusline.inactive" = { fg = "overlay0" }
-            "ui.statusline.normal" = { fg = "mauve", modifiers = ["bold"] }
-            "ui.statusline.insert" = { fg = "green", modifiers = ["bold"] }
-            "ui.statusline.select" = { fg = "peach", modifiers = ["bold"] }
-            "ui.statusline.separator" = { fg = "surface1" }
+            # Minimal Statusline with Pill Badges
+            "ui.statusline" = { fg = "subtext0", bg = "mantle" }
+            "ui.statusline.inactive" = { fg = "overlay0", bg = "mantle" }
+            "ui.statusline.normal" = { fg = "crust", bg = "mauve", modifiers = ["bold"] }
+            "ui.statusline.insert" = { fg = "crust", bg = "green", modifiers = ["bold"] }
+            "ui.statusline.select" = { fg = "crust", bg = "peach", modifiers = ["bold"] }
+            "ui.statusline.separator" = { fg = "surface0" }
 
-            # Borderless Tab Typography (No Boxes, Transparent Strip)
-            "ui.bufferline" = { fg = "overlay0" }
-            "ui.bufferline.active" = { fg = "text", modifiers = ["bold"] }
-            "ui.bufferline.background" = {}
-
-            # Floating Overlays (Flat Solid Surface for Readability Over Code)
+            # Overlays & Popups (Solid Surfaces for Code Readability)
             "ui.popup" = { fg = "text", bg = "surface0" }
             "ui.popup.info" = { fg = "blue", modifiers = ["bold"] }
             "ui.help" = { fg = "subtext1", bg = "surface0" }
 
             "ui.menu" = { fg = "text", bg = "surface0" }
-            "ui.menu.selected" = { fg = "teal", bg = "surface1", modifiers = ["bold"] }
-            "ui.menu.scroll" = { fg = "surface2" }
+            "ui.menu.selected" = { fg = "crust", bg = "mauve", modifiers = ["bold"] }
+            "ui.menu.scroll" = { fg = "surface2", bg = "surface0" }
 
             "ui.window" = { fg = "surface0" }
           '';

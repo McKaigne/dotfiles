@@ -64,10 +64,6 @@
               installation_mode = "force_installed";
               install_url = "https://addons.mozilla.org/firefox/downloads/latest/sidebery/latest.xpi";
             };
-            "FirefoxColor@mozilla.com" = {
-              installation_mode = "force_installed";
-              install_url = "https://addons.mozilla.org/firefox/downloads/latest/firefox-color/latest.xpi";
-            };
             "addon@darkreader.org" = {
               installation_mode = "force_installed";
               install_url = "https://addons.mozilla.org/firefox/downloads/latest/darkreader/latest.xpi";
@@ -76,9 +72,13 @@
               installation_mode = "force_installed";
               install_url = "https://addons.mozilla.org/firefox/downloads/latest/styl-us/latest.xpi";
             };
-            "{6f2518e3-095a-493e-862d-0a866d8b671a}" = {
+            "{7aa7c68a-141f-45c9-a1c6-6e7382debbe1}" = {
               installation_mode = "force_installed";
-              install_url = "https://addons.mozilla.org/firefox/downloads/latest/600-sound-volume/latest.xpi";
+              install_url = "https://addons.mozilla.org/firefox/downloads/latest/catppuccin-mocha/latest.xpi";
+            };
+            "{26b4f076-089c-4c69-8497-44b7e5c9faef}" = {
+              installation_mode = "force_installed";
+              install_url = "https://addons.mozilla.org/firefox/downloads/latest/socialfocus/latest.xpi";
             };
           };
 
@@ -111,6 +111,38 @@
               Value = 0;
               Status = "locked";
             };
+
+            # System & Content Dark Mode
+            "ui.systemUsesDarkTheme" = {
+              Value = 1;
+              Status = "locked";
+            };
+            "layout.css.prefers-color-scheme.content-override" = {
+              Value = 0;
+              Status = "locked";
+            };
+            "browser.in-content.dark-mode" = {
+              Value = true;
+              Status = "locked";
+            };
+
+            # Automatic Session Restore (No Crash Prompt)
+            "browser.startup.page" = {
+              Value = 3;
+              Status = "locked";
+            };
+            "browser.sessionstore.resume_from_crash" = {
+              Value = true;
+              Status = "locked";
+            };
+            "browser.sessionstore.max_resumed_crashes" = {
+              Value = -1;
+              Status = "locked";
+            };
+            "browser.sessionstore.resuming_after_os_restart" = {
+              Value = true;
+              Status = "locked";
+            };
           };
         };
       };
@@ -121,6 +153,20 @@
       home-manager.users.${user} = {
         xdg.configFile."librewolf/sidebery-sidebar.css" = {
           source = ./sidebery-sidebar.css;
+          force = true;
+        };
+
+        # Tridactyl Dark Mode Authority
+        xdg.configFile."tridactyl/tridactylrc" = {
+          text = ''
+            colours dark
+          '';
+          force = true;
+        };
+        home.file.".tridactylrc" = {
+          text = ''
+            colours dark
+          '';
           force = true;
         };
 
@@ -138,6 +184,13 @@
               "privacy.clearOnShutdown_v2.cookiesAndStorage" = false;
               "privacy.clearOnShutdown.history" = false;
               "network.cookie.lifetimePolicy" = 0;
+              "ui.systemUsesDarkTheme" = 1;
+              "layout.css.prefers-color-scheme.content-override" = 0;
+              "browser.in-content.dark-mode" = true;
+              "browser.startup.page" = 3;
+              "browser.sessionstore.resume_from_crash" = true;
+              "browser.sessionstore.max_resumed_crashes" = -1;
+              "browser.sessionstore.resuming_after_os_restart" = true;
             };
           };
         };

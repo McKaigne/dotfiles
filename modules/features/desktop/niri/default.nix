@@ -15,6 +15,7 @@ let
               pkgs.slurp
               pkgs.wl-clipboard
               pkgs.brightnessctl
+              pkgs.ddcutil
               pkgs.playerctl
               pkgs.wireplumber
             ]
@@ -45,18 +46,30 @@ let
 
       brightnessUp = pkgs.writeShellScriptBin "brightness-up" ''
         set -euo pipefail
-        ${pkgs.brightnessctl}/bin/brightnessctl set +5%
+        if command -v noctalia >/dev/null 2>&1 && noctalia msg ping >/dev/null 2>&1; then
+          noctalia msg brightness-up 5
+        elif [ -d /sys/class/backlight ] && [ -n "$(ls -A /sys/class/backlight 2>/dev/null)" ]; then
+          ${pkgs.brightnessctl}/bin/brightnessctl set +5%
+        else
+          ${pkgs.ddcutil}/bin/ddcutil setvcp 10 + 5 2>/dev/null || true
+        fi
       '';
 
       brightnessDown = pkgs.writeShellScriptBin "brightness-down" ''
         set -euo pipefail
-        curr=$(${pkgs.brightnessctl}/bin/brightnessctl get)
-        max=$(${pkgs.brightnessctl}/bin/brightnessctl max)
-        new=$((curr - max * 5 / 100))
-        if [ "$new" -lt "$((max * 5 / 100))" ]; then
-          ${pkgs.brightnessctl}/bin/brightnessctl set 5%
+        if command -v noctalia >/dev/null 2>&1 && noctalia msg ping >/dev/null 2>&1; then
+          noctalia msg brightness-down 5
+        elif [ -d /sys/class/backlight ] && [ -n "$(ls -A /sys/class/backlight 2>/dev/null)" ]; then
+          curr=$(${pkgs.brightnessctl}/bin/brightnessctl get)
+          max=$(${pkgs.brightnessctl}/bin/brightnessctl max)
+          new=$((curr - max * 5 / 100))
+          if [ "$new" -lt "$((max * 5 / 100))" ]; then
+            ${pkgs.brightnessctl}/bin/brightnessctl set 5%
+          else
+            ${pkgs.brightnessctl}/bin/brightnessctl set 5%-
+          fi
         else
-          ${pkgs.brightnessctl}/bin/brightnessctl set 5%-
+          ${pkgs.ddcutil}/bin/ddcutil setvcp 10 - 5 2>/dev/null || true
         fi
       '';
 
@@ -175,6 +188,7 @@ in
       config = {
         programs.niri.enable = true;
         programs.niri.package = myNiri;
+        programs.niri.useNautilus = false;
 
         services.greetd = {
           enable = true;
@@ -195,6 +209,7 @@ in
 
         environment.systemPackages = [
           pkgs.xwayland-satellite
+          pkgs.ddcutil
         ];
       };
     };

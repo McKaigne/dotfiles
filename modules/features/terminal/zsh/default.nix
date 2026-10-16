@@ -48,12 +48,12 @@
           zsh-abbr = {
             enable = true;
             abbreviations = {
-              rebuild = "sudo nixos-rebuild switch --flake /etc/nixos";
-              rebuildc = "sudo nixos-rebuild switch --flake /etc/nixos#castor";
-              rebuildh = "sudo nixos-rebuild switch --flake /etc/nixos#hyde";
-              nr = "sudo nixos-rebuild switch --flake /etc/nixos";
-              nboot = "sudo nixos-rebuild boot --flake /etc/nixos";
-              ntest = "sudo nixos-rebuild test --flake /etc/nixos";
+              rebuild = "git -C /etc/nixos add -A && sudo nixos-rebuild switch --flake /etc/nixos";
+              rebuildc = "git -C /etc/nixos add -A && sudo nixos-rebuild switch --flake /etc/nixos#castor";
+              rebuildh = "git -C /etc/nixos add -A && sudo nixos-rebuild switch --flake /etc/nixos#hyde";
+              nr = "git -C /etc/nixos add -A && sudo nixos-rebuild switch --flake /etc/nixos";
+              nboot = "git -C /etc/nixos add -A && sudo nixos-rebuild boot --flake /etc/nixos";
+              ntest = "git -C /etc/nixos add -A && sudo nixos-rebuild test --flake /etc/nixos";
               ncd = "cd /etc/nixos";
               nupdate = "nix flake update --flake /etc/nixos";
               nclean = "nix-collect-garbage -d";
@@ -87,8 +87,6 @@
               nbar = "noctalia msg bar-toggle";
               nlock = "noctalia msg session lock";
               nclosemsg = "noctalia msg notification-clear-active";
-
-              nsync = "noctalia config export > /etc/nixos/modules/features/desktop/noctalia/noctalia.toml && cd /etc/nixos && git diff modules/features/desktop/noctalia/noctalia.toml";
 
               nreload = "niri msg action load-config-file";
               nclose = "niri msg action close-window";
@@ -177,6 +175,46 @@
               fi
             }
 
+            nsync() {
+              local targetHost
+              targetHost=$(hostname 2>/dev/null || echo "hyde")
+              local targetFile="/etc/nixos/modules/features/desktop/noctalia/noctalia.toml"
+              local stateFile="$HOME/.local/state/noctalia/settings.toml"
+
+              echo "==> [1/5] Exporting Noctalia merged configuration via IPC..."
+              noctalia config export > "$targetFile" || {
+                echo "Error: Failed to export config via noctalia IPC." >&2
+                return 1
+              }
+
+              echo "==> [2/5] Normalizing wallpaper paths and enforcing template suppression..."
+              sed -i -E 's|directory = "[^"]*wallpapers"|directory = "/etc/wallpapers"|g' "$targetFile"
+              sed -i -E 's|path = "[^"]*/wallpapers/([^"]+)"|path = "/etc/wallpapers/\1"|g' "$targetFile"
+
+              if grep -q "\[theme\.templates\]" "$targetFile"; then
+                sed -i -E 's/enable_builtin_templates = true/enable_builtin_templates = false/g' "$targetFile"
+                sed -i -E 's/enable_community_templates = true/enable_community_templates = false/g' "$targetFile"
+              else
+                printf '\n[theme.templates]\nenable_builtin_templates = false\nenable_community_templates = false\n' >> "$targetFile"
+              fi
+
+              echo "==> [3/5] Staging changes in git..."
+              git -C /etc/nixos add -A || {
+                echo "Error: Git staging failed." >&2
+                return 1
+              }
+
+              echo "==> [4/5] Rebuilding NixOS generation for host: ''${targetHost}..."
+              if sudo nixos-rebuild switch --flake "/etc/nixos#''${targetHost}"; then
+                echo "==> [5/5] Purging mutable runtime state override..."
+                rm -f "$stateFile"
+                echo "==> Noctalia declarative state synchronized and baked into system generation."
+              else
+                echo "Error: nixos-rebuild failed. Runtime state preserved for recovery." >&2
+                return 1
+              fi
+            }
+
             cfb() {
               local targetPath="."
               if [[ $# -ge 1 ]]; then
@@ -209,10 +247,16 @@ DIRECTORY TOPOLOGY (including empty directories)
 --------------------------------------------------------------------------------
 "
 
+              local extensions=(-e nix -e kdl -e toml -e conf -e ini -e el -e json -e zsh -e sh -e py -e css -e lua -e md)
+              local -a fdExcludes
+
               if [[ "$targetPath" == *".config"* ]]; then
-                outputStr+=$(tree "$targetPath" -a -I '.git|flake.lock|result|node_modules|target|*cache*|*Cache*|*.log|*.sqlite*|*.db*|*.bin|*.dat|BraveSoftware|.config/floorp|.config/librewolf|.mozilla|google-chrome|chromium' --noreport 2>/dev/null || tree "$targetPath" -a -I '.git|result' --noreport)
+                local treeIgnores='.git|flake.lock|result|node_modules|target|*cache*|*Cache*|*.log|*.sqlite*|*.db*|*.bin|*.dat|*asar*|*BraveSoftware*|*brave*|*chromium*|*floorp*|*librewolf*|*mozilla*|*google-chrome*|*obsidian*'
+                outputStr+=$(tree "$targetPath" -a -I "$treeIgnores" --noreport 2>/dev/null || tree "$targetPath" -a -I '.git|result' --noreport)
+                fdExcludes=(-E .git -E flake.lock -E node_modules -E target -E result -E "*cache*" -E "*Cache*" -E "*.log" -E "*.sqlite*" -E "*.db*" -E "*asar" -E "*BraveSoftware*" -E "*brave*" -E "*chromium*" -E "*floorp*" -E "*librewolf*" -E "*mozilla*" -E "*google-chrome*" -E "*obsidian*")
               else
                 outputStr+=$(tree "$targetPath" -a -I '.git|flake.lock|result|node_modules|target|*cache*|*Cache*|*.log|*.sqlite*|*.db*' --noreport 2>/dev/null || tree "$targetPath" --noreport)
+                fdExcludes=(-E .git -E flake.lock -E node_modules -E target -E result -E "*cache*" -E "*Cache*" -E "*.log" -E "*.sqlite*" -E "*.db*")
               fi
 
               outputStr+=$'\n\n'
@@ -221,11 +265,8 @@ FILE CONTENTS
 --------------------------------------------------------------------------------"
               outputStr+=$'\n'
 
-              local extensions=(-e nix -e kdl -e toml -e conf -e ini -e el -e json -e zsh -e sh -e py -e css -e lua -e md)
-              local excludes=(-E .git -E flake.lock -E node_modules -E target -E result -E "*cache*" -E "*Cache*" -E "*.log" -E "*.sqlite*" -E "*.db*" -E "BraveSoftware" -E ".config/floorp" -E ".config/librewolf" -E ".mozilla" -E "google-chrome")
-
               local -a files
-              files=("''${(@f)$(fd . "$targetPath" -t f -L -H -S -250k "''${extensions[@]}" "''${excludes[@]}" 2>/dev/null)}")
+              files=("''${(@f)$(fd . "$targetPath" -t f -L -H -S -250k "''${extensions[@]}" "''${fdExcludes[@]}" 2>/dev/null)}")
               files=("''${files[@]:#}")
               local fileCount=''${#files[@]}
 

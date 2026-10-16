@@ -28,8 +28,9 @@
         boot.loader.systemd-boot.enable = true;
         boot.loader.efi.canTouchEfiVariables = true;
 
-        # Kingston NV2 APST fix + AMD KMS
+        # Kingston NV2 APST fix + AMD KMS + DDC/CI I2C driver
         boot.initrd.kernelModules = [ "amdgpu" ];
+        boot.kernelModules = [ "i2c-dev" ];
         boot.kernelParams = [
           "nvme_core.default_ps_max_latency_us=0"
           "pcie_aspm=off"
@@ -59,12 +60,17 @@
         networking.networkmanager.enable = true;
         services.openssh.enable = true;
 
-        # Declarative AMD OpenCL & Graphics Runtime
+        # Declarative AMD OpenCL, Graphics Runtime & Hardware I2C for DDC/CI
         hardware.graphics = {
           enable = true;
           enable32Bit = true;
         };
         hardware.amdgpu.opencl.enable = true;
+        hardware.i2c.enable = true;
+
+        environment.systemPackages = with pkgs; [
+          ddcutil
+        ];
 
         system.stateVersion = "25.05";
       })

@@ -4,8 +4,8 @@ order = [ "top" ]
     [bar.top]
     background_opacity = 0.85
     border = "primary"
-    border_width = 1.0
-    capsule_opacity = 0.88
+    border_width = 2.0
+    capsule_opacity = 0.85
     capsule_radius = 4
     center = [ "workspaces" ]
     concave_edge_corners = false
@@ -34,6 +34,9 @@ order = [ "top" ]
     start = [ "cpu", "temp", "ram" ]
     thickness = 28
     widget_spacing = 8
+
+[brightness]
+enable_ddcutil = true
 
 [dock]
 active_opacity = 0.85
@@ -103,7 +106,7 @@ settings_window_translucent = true
     [shell.panel]
     borders = true
     border_color = "primary"
-    border_width = 1.0
+    border_width = 2.0
     control_center_placement = "floating"
     session_placement = "floating"
     shadow = false
@@ -112,9 +115,8 @@ settings_window_translucent = true
 
 [theme]
 builtin = "Catppuccin"
-community_palette = "Catppuccin Mocha Lavender"
 mode = "dark"
-source = "community"
+source = "builtin"
 wallpaper_scheme = "m3-content"
 
 [theme.templates]
@@ -139,7 +141,7 @@ enabled = true
 hide_when_no_connected_device = true
 
 [widget.brightness]
-enabled = false
+enabled = true
 
 [widget.cpu]
 show_glyph = true
@@ -181,6 +183,8 @@ show_condition = false
 [widget.workspaces]
 empty_color = "primary"
 focused_color = "secondary"
+hide_when_empty = false
+label_source = "name"
 occupied_color = "primary"
 scroll_repeat = "steps"
 style = "minimal"

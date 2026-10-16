@@ -31,8 +31,8 @@
             border=${p.hex.mauve}ff
 
             [border]
-            width=1
-            radius=12
+            width=2
+            radius=4
           '';
           force = true;
         };

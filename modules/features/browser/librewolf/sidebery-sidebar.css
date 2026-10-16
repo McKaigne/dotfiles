@@ -6,6 +6,21 @@
 #root.root {--general-margin: 4px;}
 #root.root {--general-border-radius: 4px;}
 
+#root, #root.root {
+  border-right: none !important;
+  background-color: transparent !important;
+}
+
+.NavigationBar {
+  flex-direction: column !important;
+  width: auto !important;
+  background-color: transparent !important;
+}
+
+.NavigationBar .main-items {
+  flex-direction: column !important;
+}
+
 .Tab[data-active="true"] .body {
 	border: 2px solid #cba6f7 !important;
 	border-radius: 4px;
@@ -21,5 +36,5 @@
 }
 
 .NavigationBar .nav-item[data-active="true"] {
-	border: 1px solid #cba6f7 !important;
+	border: 2px solid #cba6f7 !important;
 }

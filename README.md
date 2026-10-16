@@ -22,8 +22,8 @@ Checkout path expected at `/etc/nixos`.
 
 | Host | Primary User | Graphics & Compute Stack | Storage, Kernel & Memory Invariants | Workstation Role |
 | :--- | :--- | :--- | :--- | :--- |
-| **hyde** | `jekyll` | AMD Radeon (`amdgpu`) + declarative OpenCL (`hardware.amdgpu.opencl.enable`) + pre-built HIP Cycles compute (`pkgs.pkgsRocm.blender`) | Kingston NV2 APST fix (`nvme_core.default_ps_max_latency_us=0`), `pcie_aspm=off`, deterministic device timeout (`systemd.default_device_timeout_sec=30`), root ext4 flags (`noatime,nodiratime,commit=60`), low swappiness (`vm.swappiness = 10`) | Main workstation: 3D Blender Cycles rendering, compute & dev |
-| **castor** | `pollux` | Intel Iris Xe (`intel-media-driver` / `iHD`) | Framebuffer compression (`i915.enable_fbc=1`), aggressive zram swappiness (`180`), root ext4 flags (`noatime,nodiratime,commit=60`), thermald | Secondary workstation: Lightweight, mobile efficiency & media |
+| **hyde** | `jekyll` | AMD Radeon (`amdgpu`) + declarative OpenCL (`hardware.amdgpu.opencl.enable`) + pre-built HIP Cycles compute (`pkgs.pkgsRocm.blender`) | Kingston NV2 APST fix (`nvme_core.default_ps_max_latency_us=0`), `pcie_aspm=off`, deterministic device timeout (`systemd.default_device_timeout_sec=30`), root ext4 flags (`noatime,commit=60`), pure ZRAM swappiness (`vm.swappiness = 180`) | Main workstation: 3D Blender Cycles rendering, compute & dev |
+| **castor** | `pollux` | Intel Iris Xe (`intel-media-driver` / `iHD`) | Framebuffer compression (`i915.enable_fbc=1`), aggressive zram swappiness (`180`), root ext4 flags (`noatime,commit=60`), thermald | Secondary workstation: Lightweight, mobile efficiency & media |
 
 Both hosts share the unified `baseWorkstation` profile while isolating hardware runtimes and user environments.
 
@@ -35,22 +35,20 @@ When an automated agent or LLM reasons over this configuration (via `cfb` snapsh
 
 1. **Starship Configuration Authority**:
    * Starship is managed strictly at `/etc/starship.toml` via `environment.etc` and `environment.sessionVariables.STARSHIP_CONFIG = "/etc/starship.toml"`.
-   * **Do not** refactor Starship into Home Manager user templates or attempt to make it dynamic via Noctalia hooks. User-level templating causes environment desynchronization across subshells, Tmux panes, root sessions, and remote logins.
+   * **Do not** refactor Starship into Home Manager user templates or attempt to make it dynamic via Noctalia hooks.
 2. **Niri Layer-Shell & Wallpaper Invariant**:
    * Desktop wallpapers are rendered directly by Noctalia on the standard Wayland background layer (`Layer::Background`).
-   * **Do not** add `noctalia-wallpaper` or Noctalia wallpaper namespaces to `place-within-backdrop true` in `niri.kdl`. Niri's workspace layer sits between the backdrop and active windows; forcing the wallpaper into the backdrop causes Niri's workspace canvas to render an opaque solid gray box over the screen.
+   * **Do not** add `noctalia-wallpaper` or Noctalia wallpaper namespaces to `place-within-backdrop true` in `niri.kdl`.
 3. **Compute & Binary Cache Invariants**:
    * Host `hyde` uses `pkgs.pkgsRocm.blender` and `hardware.amdgpu.opencl.enable`.
-   * **Do not** add `rocmPackages.clr.icd` or un-cached ROCm packages to `environment.systemPackages` or `hardware.graphics.extraPackages`. On `nixos-unstable`, this triggers un-cached LLVM/ROCm source compilations that stall rebuilds for hours.
+   * **Do not** add un-cached ROCm packages or `rocmPackages.clr.icd` directly.
 4. **Flake Architecture Memoization**:
    * In `modules/shared/systems/default.nix`, consume `inputs.nixpkgs.legacyPackages.${system}`.
-   * **Do not** call `import inputs.nixpkgs { ... }` inside `perSystem`, as this breaks Nix memoization and causes memory spikes during flake evaluation.
+   * **Do not** call `import inputs.nixpkgs { ... }` inside `perSystem`.
 
 ---
 
 ## Repository Layout (Single-Responsibility Architecture)
-
-Every component is an isolated directory with its own dedicated `default.nix` entrypoint and co-located configuration assets:
 
 ~~~text
 /etc/nixos
@@ -73,7 +71,7 @@ Every component is an isolated directory with its own dedicated `default.nix` en
     └── features/                     # Decoupled application modules
         ├── browser/
         │   ├── brave/                # Brave Origin + policies + Quad9 DoH
-        │   └── floorp/               # Floorp (release channel locked) + Sidebery + Tridactyl native
+        │   └── librewolf/            # LibreWolf + Sidebery vertical trees + Tridactyl native
         ├── creative/
         │   ├── blender/              # Blender with cached ROCm/HIP Cycles GPU acceleration
         │   ├── kdenlive/             # Kdenlive video editor & MLT framework
@@ -81,7 +79,7 @@ Every component is an isolated directory with its own dedicated `default.nix` en
         │   └── obs/                  # OBS Studio + VAAPI + native PipeWire audio capture
         ├── desktop/
         │   ├── fonts/                # Lilex Nerd Font, IBM Plex, subpixel rendering
-        │   ├── fuzzel/               # Fuzzel launcher + Noctalia theme import
+        │   ├── fuzzel/               # Fuzzel launcher + Catppuccin Mocha theme
         │   ├── niri/                 # Niri compositor wrapper, 240Hz 2-pass blur & niri.kdl asset
         │   ├── noctalia/             # Desktop shell daemon & noctalia.toml asset
         │   └── xdg/                  # PCManFM, portals, MIME associations
@@ -93,9 +91,9 @@ Every component is an isolated directory with its own dedicated `default.nix` en
         ├── documents/
         │   ├── obsidian/             # Obsidian markdown knowledge base (unfree permitted)
         │   ├── onlyoffice/           # OnlyOffice desktop editors suite
-        │   └── zathura/              # Zathura document viewer (Noctalia styled)
+        │   └── zathura/              # Zathura document viewer (Catppuccin styled)
         ├── editor/
-        │   └── helix/                # Wrapped Helix + LSPs + Osaka transparent theme
+        │   └── helix/                # Wrapped Helix + LSPs + Catppuccin transparent theme
         ├── media/
         │   ├── imv/                  # Imv image viewer
         │   ├── mpv/                  # MPV video player (gpu-next, wayland)
@@ -108,10 +106,10 @@ Every component is an isolated directory with its own dedicated `default.nix` en
         │   ├── fetch/                # areofyl/fetch 3D rotating ASCII engine
         │   ├── ghostty/              # Ghostty terminal + Lilex OpenType features
         │   ├── starship/             # Starship prompt derivation & /etc/starship.toml authority
-        │   ├── tmux/                 # Tmux multiplexer + non-colliding keymaps
+        │   ├── tmux/                 # Tmux multiplexer + dotbar Catppuccin theme
         │   └── zsh/                  # Zsh + expanding abbreviations + cfb context tool
         └── theme/
-            └── noctalia/             # Declarative GTK 3/4 & Qt 5/6 dynamic stylesheet bindings
+            └── catppuccin/           # Declarative GTK 3/4 & Qt 5/6 Catppuccin Mocha styling
 ~~~
 
 ---
@@ -121,77 +119,14 @@ Every component is an isolated directory with its own dedicated `default.nix` en
 | Subsystem | Implementation | Key Operational Notes |
 | :--- | :--- | :--- |
 | **Compositor** | [niri](https://github.com/YaLTeR/niri) | Scrollable tiling, geometry corners 4px, 2-pass GPU blur tuned for 240Hz DP-1, systemd-first session launch |
-| **Desktop Shell** | [noctalia](https://github.com/noctalia-dev/noctalia) | Dynamic template engine, floating top bar, wallpaper layer-shell authority, binary substituted via Cachix |
+| **Desktop Shell** | [noctalia](https://github.com/noctalia-dev/noctalia) | Static template authority, floating top bar, wallpaper layer-shell authority, binary substituted via Cachix |
 | **Containers** | [podman](https://podman.io/) | Daemonless, rootless containers with active `dockerSocket.enable` powering `lazydocker` via `/run/podman/podman.sock` |
-| **Web Browsers** | [floorp](https://floorp.app/) & [brave](https://brave.com/) | Floorp locked to `"release"` channel with experimental progressive rollouts disabled; Tridactyl native messaging; Quad9 DoH |
-| **Render Compute** | [blender](https://www.blender.org/) | Pre-built cached HIP Cycles GPU rendering on AMD via `pkgs.pkgsRocm.blender` without local LLVM source compilations |
+| **Web Browsers** | [librewolf](https://librewolf.net/) & [brave](https://brave.com/) | LibreWolf with container persistence, Sidebery vertical trees, Tridactyl native messaging; Quad9 DoH |
+| **Render Compute** | [blender](https://www.blender.org/) | Pre-built cached HIP Cycles GPU rendering on AMD via `pkgs.pkgsRocm.blender` without local LLVM compilations |
 | **Code Refactoring** | [ast-grep](https://ast-grep.github.io/) | Tree-sitter syntax-aware code search and rewriting (`sg`) |
 | **Telemetry** | [fetch](https://github.com/areofyl/fetch) | 3D spinning ASCII distro engine with Blinn-Phong shading and live metrics |
 | **Pipelining** | [viddy](https://github.com/sachaos/viddy) + [choose](https://github.com/theryangeary/choose) | Time-travel diff watcher replacing `watch`; ergonomic field slicer replacing `cut` |
-| **Editor** | [helix](https://helix-editor.com/) | Wrapped with LSPs (`nixd`, `marksman`, `taplo`), RFC 166 `nixfmt`, transparent Osaka palette |
-| **Multiplexer** | [tmux](https://github.com/tmux/tmux) | Custom Osaka dotbar, OSC 52 clipboard, floating tool popups over editor with empty-safe xargs |
+| **Editor** | [helix](https://helix-editor.com/) | Wrapped with LSPs (`nixd`, `marksman`, `taplo`), RFC 166 `nixfmt`, transparent Catppuccin palette |
+| **Multiplexer** | [tmux](https://github.com/tmux/tmux) | Dotbar with Catppuccin borders, OSC 52 clipboard, floating tool popups over editor with empty-safe xargs |
 | **Keyboard Engine** | [kanata](https://github.com/jtroo/kanata) | Layerless Programmer QWERTY, Timeless Home-Row Mods (ACGS) with harmonized 150ms idle timings, Bottom Chords |
 | **Shell Prompt** | [starship](https://starship.rs/) | System-level authority at `/etc/starship.toml` ensuring universal prompt metrics across all shells |
-
----
-
-## Theming Scope & Runtime Exceptions
-
-Desktop styling is governed dynamically by **Noctalia** across supported applications, with explicit exceptions maintained for system stability:
-
-### 1. Dynamic Noctalia Scope
-* **GTK 3 & GTK 4:** `@import 'noctalia.css';` dynamically emitted by Noctalia.
-* **Qt 5 & Qt 6:** Declaratively bridged via `qt.platformTheme = "qt5ct"` pointing to `~/.config/qt6ct/colors/noctalia.conf` and `~/.config/qt5ct/colors/noctalia.conf`.
-* **Ghostty & Tmux:** Configured with user templates rendered dynamically by Noctalia on theme or wallpaper switch.
-* **Fuzzel:** Imports `~/.config/fuzzel/themes/noctalia` generated via community template.
-
-### 2. Static Runtime Exceptions
-* **Starship Prompt**: Configured statically at `/etc/starship.toml` via `environment.etc`. Dynamic templating is deliberately suppressed to ensure the custom status line and git metrics remain identical in subshells, root contexts, and remote sessions.
-* **Helix Editor**: Configured with a dedicated transparent Solarized Osaka theme (`ui.background = {}`) using the complete 8-accent chromatic palette to preserve syntax discrimination regardless of desktop wallpaper changes.
-
----
-
-## Keyboard Architecture (Kanata)
-
-The keyboard layer runs entirely in software via Kanata v1.12.0 using **Programmer QWERTY ANSI**:
-
-### 1. Inverted Number Row
-* **Unshifted:** Outputs symbols (`+ [ { ( & = ) } ] * ! $`).
-* **Shifted:** Outputs digits (`1 2 3 4 5 6 7 8 9 0 %`).
-* **Caps Lock:** Remapped to `Escape`.
-
-### 2. Timeless Home-Row Mods (ACGS Order)
-Uses native `defhands` bilateral isolation (`tap-hold-opposite-hand-release`) and harmonized `require-prior-idle 150` across all home-row keys:
-* **Left Hand:** `a` (Alt) • `s` (Ctrl) • `d` (GUI) • `f` (Shift)
-* **Right Hand:** `j` (Shift) • `k` (GUI) • `l` (Ctrl) • `;` (Alt)
-
-### 3. Hardware Chords (`defchordsv2`)
-* `Z + X` → Cut (`Shift + Delete`)
-* `X + C` → Copy (`Ctrl + Insert`)
-* `C + V` → Paste (`Shift + Insert`)
-* `V + B` → Select All (`Ctrl + A`)
-* `F + J` → Caps Word (2000ms timeout)
-* `N + M` → Redo (`Ctrl + Y`)
-* `M + ,` → Undo (`Ctrl + Z`)
-* `, + .` → Find (`Ctrl + F`)
-
----
-
-## Editor & Multiplexer Symbiosis (Helix + Tmux)
-
-To prevent multiplexer key collisions while inside Helix:
-* **Unprefixed `Alt` Keys:** Reserved strictly for high-frequency window and pane navigation:
-  * `Alt + h/j/k/l`: Move pane left, down, up, right
-  * `Alt + 1-9, 0`: Switch to window 1–10 (auto-creates if non-existent)
-  * `Alt + H / L`: Previous / Next window
-  * `Alt + J / K`: Previous / Next session
-* **Prefix (`Ctrl+b`) Keys:** Manages splits, windows, and floating overlay tools:
-  * `Prefix + c`: New window
-  * `Prefix + -` / `Prefix + |`: Horizontal / Vertical split
-  * `Prefix + x`: Kill active pane
-  * `Prefix + g`: Floating `lazygit` popup centered over active pane
-  * `Prefix + t`: Floating `btop` system monitor popup
-  * `Prefix + p`: Floating scratchpad terminal popup
-  * `Prefix + C-v`: Interactive FZF picker across all running Helix panes
-* Inside Helix, `Alt+x` (shrink selection), `Alt+c` (copy selection below), and `Alt+n` (next AST sibling) execute without Tmux interference.
-* Terminal focus events (`focus-events on`) automatically trigger Helix buffer auto-saving on pane switch.
