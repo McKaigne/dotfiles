@@ -2,7 +2,7 @@
 order = [ "top" ]
 
     [bar.top]
-    background_opacity = 0.84999999999999998
+    background_opacity = 0.84999998100101948
     border = "primary"
     border_width = 2.0
     capsule_opacity = 0.84999999999999998
@@ -49,7 +49,7 @@ auto_locate = true
 [lockscreen_widgets]
 enabled = false
 schema_version = 2
-widget_order = [ "lockscreen-login-box" ]
+widget_order = [ "lockscreen-login-box@DP-1" ]
 
     [lockscreen_widgets.grid]
     cell_size = 16
@@ -83,6 +83,33 @@ widget_order = [ "lockscreen-login-box" ]
         show_unlock_hint = true
         show_weather = true
 
+    [lockscreen_widgets.widget."lockscreen-login-box@DP-1"]
+    box_height = 196.0
+    box_width = 810.0
+    cx = 960.0
+    cy = 898.0
+    output = "DP-1"
+    placement_height = 1080.0
+    placement_width = 1920.0
+    rotation = 0.0
+    type = "login_box"
+
+        [lockscreen_widgets.widget."lockscreen-login-box@DP-1".settings]
+        background_color = "surface_variant"
+        background_opacity = 0.88
+        background_radius = 12.0
+        center_password_text = false
+        input_opacity = 1.0
+        input_radius = 6.0
+        layout = "regular"
+        show_caps_lock = true
+        show_keyboard_layout = true
+        show_login_button = true
+        show_media = true
+        show_session_buttons = true
+        show_unlock_hint = true
+        show_weather = true
+
 [notification]
 background_opacity = 0.84999999999999998
 
@@ -94,6 +121,7 @@ background_opacity = 0.84999999999999998
 
 [shell]
 app_icon_color = "on_surface_variant"
+avatar_path = "/etc/nixos/avatar.jpg"
 button_borders = false
 card_borders = false
 corner_radius_scale = 0.40000000000000002
