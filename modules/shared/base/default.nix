@@ -14,7 +14,7 @@
       self.nixosModules.fuzzel
       self.nixosModules.fonts
       self.nixosModules.xdg
-      self.nixosModules.noctaliaTheme
+      self.nixosModules.catppuccinTheme
 
       self.nixosModules.ghostty
       self.nixosModules.tmux
@@ -23,7 +23,7 @@
       self.nixosModules.fetch
 
       self.nixosModules.helix
-      self.nixosModules.floorp
+      self.nixosModules.librewolf
       self.nixosModules.brave
 
       # Mobile-friendly sketching & documents

@@ -40,13 +40,12 @@
 
         set -g status on
         set -g status-position top
-        set -g status-justify left
-        set -g status-interval 2
-        set -g status-left-length 80
-        set -g status-right ""
-        set -g window-status-separator "  "
 
-        source-file -q ~/.config/tmux/themes/noctalia.conf
+        set -g pane-border-style "fg=#313244,bg=default"
+        set -g pane-active-border-style "fg=#cba6f7,bg=default"
+        set -g popup-border-style "fg=#cba6f7,bg=default"
+
+        run-shell ${pkgs.tmuxPlugins.dotbar}/share/tmux-plugins/dotbar/dotbar.tmux
 
         bind c new-window -c "#{pane_current_path}"
         bind - split-window -v -c "#{pane_current_path}"
@@ -108,10 +107,10 @@
     {
       environment.systemPackages = with pkgs; [
         tmux
-        nnn
         fzf
         btop
         wl-clipboard
+        tmuxPlugins.dotbar
       ];
 
       home-manager.users.${user} = {

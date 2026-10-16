@@ -20,7 +20,7 @@
             font-feature = cv15
             font-feature = ss01
 
-            theme = noctalia
+            theme = catppuccin-mocha
             background-opacity = 0.85
             background-blur = true
             window-decoration = false

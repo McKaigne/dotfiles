@@ -147,25 +147,25 @@
             typeset -ga ZSH_HIGHLIGHT_HIGHLIGHTERS=(main)
 
             typeset -A ZSH_HIGHLIGHT_STYLES
-            ZSH_HIGHLIGHT_STYLES[command]='fg=cyan,bold'
-            ZSH_HIGHLIGHT_STYLES[alias]='fg=cyan'
-            ZSH_HIGHLIGHT_STYLES[builtin]='fg=blue,bold'
-            ZSH_HIGHLIGHT_STYLES[function]='fg=blue'
-            ZSH_HIGHLIGHT_STYLES[single-quoted-argument]='fg=green'
-            ZSH_HIGHLIGHT_STYLES[double-quoted-argument]='fg=green'
-            ZSH_HIGHLIGHT_STYLES[dollar-quoted-argument]='fg=green'
-            ZSH_HIGHLIGHT_STYLES[path]='fg=7,underline'
-            ZSH_HIGHLIGHT_STYLES[path_prefix]='fg=8,underline'
-            ZSH_HIGHLIGHT_STYLES[globbing]='fg=yellow'
-            ZSH_HIGHLIGHT_STYLES[history-expansion]='fg=blue'
-            ZSH_HIGHLIGHT_STYLES[command-separator]='fg=8'
-            ZSH_HIGHLIGHT_STYLES[redirection]='fg=8'
-            ZSH_HIGHLIGHT_STYLES[unknown-token]='fg=red,bold'
+            ZSH_HIGHLIGHT_STYLES[command]='fg=#cba6f7,bold'
+            ZSH_HIGHLIGHT_STYLES[alias]='fg=#b4befe'
+            ZSH_HIGHLIGHT_STYLES[builtin]='fg=#89b4fa,bold'
+            ZSH_HIGHLIGHT_STYLES[function]='fg=#89b4fa'
+            ZSH_HIGHLIGHT_STYLES[single-quoted-argument]='fg=#a6e3a1'
+            ZSH_HIGHLIGHT_STYLES[double-quoted-argument]='fg=#a6e3a1'
+            ZSH_HIGHLIGHT_STYLES[dollar-quoted-argument]='fg=#a6e3a1'
+            ZSH_HIGHLIGHT_STYLES[path]='fg=#cdd6f4,underline'
+            ZSH_HIGHLIGHT_STYLES[path_prefix]='fg=#6c7086,underline'
+            ZSH_HIGHLIGHT_STYLES[globbing]='fg=#f9e2af'
+            ZSH_HIGHLIGHT_STYLES[history-expansion]='fg=#89b4fa'
+            ZSH_HIGHLIGHT_STYLES[command-separator]='fg=#6c7086'
+            ZSH_HIGHLIGHT_STYLES[redirection]='fg=#6c7086'
+            ZSH_HIGHLIGHT_STYLES[unknown-token]='fg=#f38ba8,bold'
+
+            export FZF_DEFAULT_OPTS="--color=bg+:#313244,bg:#1e1e2e,spinner:#f5e0dc,hl:#f38ba8 --color=fg:#cdd6f4,header:#f38ba8,info:#cba6f7,pointer:#f5e0dc --color=marker:#b4befe,fg+:#cdd6f4,prompt:#cba6f7,hl+:#f38ba8"
 
             eval "$(${pkgs.zoxide}/bin/zoxide init zsh)"
             eval "$(${pkgs.direnv}/bin/direnv hook zsh)"
-
-            [ -f "$HOME/.config/fzf/themes/noctalia.sh" ] && source "$HOME/.config/fzf/themes/noctalia.sh"
 
             bindkey -e
 
@@ -210,7 +210,7 @@ DIRECTORY TOPOLOGY (including empty directories)
 "
 
               if [[ "$targetPath" == *".config"* ]]; then
-                outputStr+=$(tree "$targetPath" -a -I '.git|flake.lock|result|node_modules|target|*cache*|*Cache*|*.log|*.sqlite*|*.db*|*.bin|*.dat|BraveSoftware|.config/floorp|.mozilla|google-chrome|chromium' --noreport 2>/dev/null || tree "$targetPath" -a -I '.git|result' --noreport)
+                outputStr+=$(tree "$targetPath" -a -I '.git|flake.lock|result|node_modules|target|*cache*|*Cache*|*.log|*.sqlite*|*.db*|*.bin|*.dat|BraveSoftware|.config/floorp|.config/librewolf|.mozilla|google-chrome|chromium' --noreport 2>/dev/null || tree "$targetPath" -a -I '.git|result' --noreport)
               else
                 outputStr+=$(tree "$targetPath" -a -I '.git|flake.lock|result|node_modules|target|*cache*|*Cache*|*.log|*.sqlite*|*.db*' --noreport 2>/dev/null || tree "$targetPath" --noreport)
               fi
@@ -222,7 +222,7 @@ FILE CONTENTS
               outputStr+=$'\n'
 
               local extensions=(-e nix -e kdl -e toml -e conf -e ini -e el -e json -e zsh -e sh -e py -e css -e lua -e md)
-              local excludes=(-E .git -E flake.lock -E node_modules -E target -E result -E "*cache*" -E "*Cache*" -E "*.log" -E "*.sqlite*" -E "*.db*" -E "BraveSoftware" -E ".config/floorp" -E ".mozilla" -E "google-chrome")
+              local excludes=(-E .git -E flake.lock -E node_modules -E target -E result -E "*cache*" -E "*Cache*" -E "*.log" -E "*.sqlite*" -E "*.db*" -E "BraveSoftware" -E ".config/floorp" -E ".config/librewolf" -E ".mozilla" -E "google-chrome")
 
               local -a files
               files=("''${(@f)$(fd . "$targetPath" -t f -L -H -S -250k "''${extensions[@]}" "''${excludes[@]}" 2>/dev/null)}")

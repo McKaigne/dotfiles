@@ -11,7 +11,6 @@
         xdg.configFile."fuzzel/fuzzel.ini" = {
           text = ''
             [main]
-            include=~/.config/fuzzel/themes/noctalia
             font=Lilex Nerd Font:size=14
             prompt="➜ "
             lines=12
@@ -20,6 +19,15 @@
             vertical-pad=15
             inner-pad=10
             prefer-no-csd
+
+            [colors]
+            background=1e1e2ee6
+            text=cdd6f4ff
+            match=cba6f7ff
+            selection=313244ff
+            selection-text=cdd6f4ff
+            selection-match=cba6f7ff
+            border=cba6f7ff
 
             [border]
             width=1

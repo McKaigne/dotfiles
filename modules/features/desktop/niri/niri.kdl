@@ -6,6 +6,12 @@ hotkey-overlay {
   skip-at-startup
 }
 
+gestures {
+  hot-corners {
+    off
+  }
+}
+
 input {
   focus-follows-mouse max-scroll-amount="0%"
 
@@ -38,7 +44,7 @@ environment {
 }
 
 layout {
-  gaps 4
+  gaps 10
   center-focused-column "on-overflow"
   default-column-width { proportion 0.5; }
 
@@ -48,6 +54,9 @@ layout {
 
   border {
     width 2
+    active-color "#cba6f7"
+    inactive-color "#1e1e2e"
+    urgent-color "#f38ba8"
   }
 
   preset-column-widths {
@@ -87,9 +96,6 @@ blur {
   noise 0.02
   saturation 1.2
 }
-
-include optional=true "~/.config/niri/noctalia.kdl"
-include optional=true "~/.config/niri/custom.kdl"
 
 window-rule {
   geometry-corner-radius 4
@@ -182,7 +188,7 @@ spawn-at-startup "@noctalia@"
 binds {
   Mod+Return             hotkey-overlay-title="Terminal: Ghostty"                   { spawn "@ghostty@"; }
   Mod+A                  hotkey-overlay-title="Workspace Sessionizer: Tmux"         { spawn "@tmuxFocus@"; }
-  Mod+W                  hotkey-overlay-title="Web Browser: Floorp (Tree Tabs)"     { spawn "@floorp@"; }
+  Mod+W                  hotkey-overlay-title="Web Browser: LibreWolf (Sidebery)"   { spawn "@librewolf@"; }
   Mod+Shift+W            hotkey-overlay-title="Web Browser: Brave Origin"           { spawn "@brave@"; }
   Mod+O                  hotkey-overlay-title="Notes: Obsidian"                     { spawn "@obsidian@"; }
   Mod+S                  hotkey-overlay-title="Area Screenshot (Drag)"              { spawn "@screenshotArea@"; }
