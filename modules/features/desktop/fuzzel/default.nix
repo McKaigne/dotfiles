@@ -3,6 +3,7 @@
     { config, pkgs, ... }:
     let
       user = config.mainUser;
+      p = config.palette;
     in
     {
       environment.systemPackages = [ pkgs.fuzzel ];
@@ -21,13 +22,13 @@
             prefer-no-csd
 
             [colors]
-            background=1e1e2ed9
-            text=cdd6f4ff
-            match=cba6f7ff
-            selection=313244ff
-            selection-text=cdd6f4ff
-            selection-match=cba6f7ff
-            border=cba6f7ff
+            background=${p.hex.base}d9
+            text=${p.hex.text}ff
+            match=${p.hex.mauve}ff
+            selection=${p.hex.surface0}ff
+            selection-text=${p.hex.text}ff
+            selection-match=${p.hex.mauve}ff
+            border=${p.hex.mauve}ff
 
             [border]
             width=1

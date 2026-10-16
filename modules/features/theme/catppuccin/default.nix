@@ -8,6 +8,8 @@
     }:
     let
       user = config.mainUser;
+      p = config.palette;
+
       bibataCursorsFixed = pkgs.runCommand "bibata-modern-classic-fixed" { } ''
         mkdir -p $out/share/icons
         cp -r ${pkgs.bibata-cursors}/share/icons/Bibata-Modern-Classic $out/share/icons/Bibata-Modern-Classic
@@ -47,37 +49,37 @@
 
         xdg.configFile."gtk-3.0/gtk.css" = {
           text = ''
-            @define-color accent_color #cba6f7;
-            @define-color accent_bg_color #cba6f7;
-            @define-color accent_fg_color #11111b;
+            @define-color accent_color ${p.mauve};
+            @define-color accent_bg_color ${p.mauve};
+            @define-color accent_fg_color ${p.crust};
 
-            @define-color destructive_bg_color #f38ba8;
-            @define-color destructive_fg_color #11111b;
+            @define-color destructive_bg_color ${p.red};
+            @define-color destructive_fg_color ${p.crust};
 
-            @define-color error_bg_color #f38ba8;
-            @define-color error_fg_color #11111b;
+            @define-color error_bg_color ${p.red};
+            @define-color error_fg_color ${p.crust};
 
-            @define-color window_bg_color #1e1e2e;
-            @define-color window_fg_color #cdd6f4;
+            @define-color window_bg_color ${p.base};
+            @define-color window_fg_color ${p.text};
 
-            @define-color view_bg_color #1e1e2e;
-            @define-color view_fg_color #cdd6f4;
+            @define-color view_bg_color ${p.base};
+            @define-color view_fg_color ${p.text};
 
-            @define-color headerbar_bg_color #1e1e2e;
-            @define-color headerbar_fg_color #cdd6f4;
+            @define-color headerbar_bg_color ${p.base};
+            @define-color headerbar_fg_color ${p.text};
             @define-color headerbar_backdrop_color @window_bg_color;
 
-            @define-color popover_bg_color #313244;
-            @define-color popover_fg_color #cdd6f4;
+            @define-color popover_bg_color ${p.surface0};
+            @define-color popover_fg_color ${p.text};
 
-            @define-color card_bg_color #313244;
-            @define-color card_fg_color #cdd6f4;
+            @define-color card_bg_color ${p.surface0};
+            @define-color card_fg_color ${p.text};
 
-            @define-color dialog_bg_color #1e1e2e;
-            @define-color dialog_fg_color #cdd6f4;
+            @define-color dialog_bg_color ${p.base};
+            @define-color dialog_fg_color ${p.text};
 
-            @define-color sidebar_bg_color #181825;
-            @define-color sidebar_fg_color #cdd6f4;
+            @define-color sidebar_bg_color ${p.mantle};
+            @define-color sidebar_fg_color ${p.text};
 
             headerbar windowcontrols,
             headerbar button.close,
@@ -104,36 +106,36 @@
 
         xdg.configFile."gtk-4.0/gtk.css" = {
           text = ''
-            @define-color accent_color #cba6f7;
-            @define-color accent_bg_color #cba6f7;
-            @define-color accent_fg_color #11111b;
+            @define-color accent_color ${p.mauve};
+            @define-color accent_bg_color ${p.mauve};
+            @define-color accent_fg_color ${p.crust};
 
-            @define-color destructive_bg_color #f38ba8;
-            @define-color destructive_fg_color #11111b;
+            @define-color destructive_bg_color ${p.red};
+            @define-color destructive_fg_color ${p.crust};
 
-            @define-color error_bg_color #f38ba8;
-            @define-color error_fg_color #11111b;
+            @define-color error_bg_color ${p.red};
+            @define-color error_fg_color ${p.crust};
 
-            @define-color window_bg_color #1e1e2e;
-            @define-color window_fg_color #cdd6f4;
+            @define-color window_bg_color ${p.base};
+            @define-color window_fg_color ${p.text};
 
-            @define-color view_bg_color #1e1e2e;
-            @define-color view_fg_color #cdd6f4;
+            @define-color view_bg_color ${p.base};
+            @define-color view_fg_color ${p.text};
 
-            @define-color headerbar_bg_color #1e1e2e;
-            @define-color headerbar_fg_color #cdd6f4;
+            @define-color headerbar_bg_color ${p.base};
+            @define-color headerbar_fg_color ${p.text};
 
-            @define-color popover_bg_color #313244;
-            @define-color popover_fg_color #cdd6f4;
+            @define-color popover_bg_color ${p.surface0};
+            @define-color popover_fg_color ${p.text};
 
-            @define-color card_bg_color #313244;
-            @define-color card_fg_color #cdd6f4;
+            @define-color card_bg_color ${p.surface0};
+            @define-color card_fg_color ${p.text};
 
-            @define-color dialog_bg_color #1e1e2e;
-            @define-color dialog_fg_color #cdd6f4;
+            @define-color dialog_bg_color ${p.base};
+            @define-color dialog_fg_color ${p.text};
 
-            @define-color sidebar_bg_color #181825;
-            @define-color sidebar_fg_color #cdd6f4;
+            @define-color sidebar_bg_color ${p.mantle};
+            @define-color sidebar_fg_color ${p.text};
 
             headerbar windowcontrols,
             headerbar button.close,
@@ -182,9 +184,9 @@
         xdg.configFile."qt6ct/colors/catppuccin.conf" = {
           text = ''
             [ColorScheme]
-            active_colors=#cdd6f4, #313244, #45475a, #313244, #181825, #585b70, #cdd6f4, #f5e0dc, #cdd6f4, #1e1e2e, #1e1e2e, #11111b, #cba6f7, #11111b, #89b4fa, #b4befe, #181825, #1e1e2e, #181825, #cdd6f4, #6c7086, #cba6f7
-            disabled_colors=#6c7086, #181825, #313244, #181825, #11111b, #45475a, #6c7086, #f5e0dc, #6c7086, #1e1e2e, #1e1e2e, #11111b, #45475a, #11111b, #89b4fa, #b4befe, #181825, #1e1e2e, #181825, #6c7086, #45475a, #cba6f7
-            inactive_colors=#cdd6f4, #313244, #45475a, #313244, #181825, #585b70, #cdd6f4, #f5e0dc, #cdd6f4, #1e1e2e, #1e1e2e, #11111b, #cba6f7, #11111b, #89b4fa, #b4befe, #181825, #1e1e2e, #181825, #cdd6f4, #6c7086, #cba6f7
+            active_colors=${p.text}, ${p.surface0}, ${p.surface1}, ${p.surface0}, ${p.mantle}, ${p.surface2}, ${p.text}, ${p.rosewater}, ${p.text}, ${p.base}, ${p.base}, ${p.crust}, ${p.mauve}, ${p.crust}, ${p.blue}, ${p.lavender}, ${p.mantle}, ${p.base}, ${p.mantle}, ${p.text}, ${p.overlay0}, ${p.mauve}
+            disabled_colors=${p.overlay0}, ${p.mantle}, ${p.surface0}, ${p.mantle}, ${p.crust}, ${p.surface1}, ${p.overlay0}, ${p.rosewater}, ${p.overlay0}, ${p.base}, ${p.base}, ${p.crust}, ${p.surface1}, ${p.crust}, ${p.blue}, ${p.lavender}, ${p.mantle}, ${p.base}, ${p.mantle}, ${p.overlay0}, ${p.surface1}, ${p.mauve}
+            inactive_colors=${p.text}, ${p.surface0}, ${p.surface1}, ${p.surface0}, ${p.mantle}, ${p.surface2}, ${p.text}, ${p.rosewater}, ${p.text}, ${p.base}, ${p.base}, ${p.crust}, ${p.mauve}, ${p.crust}, ${p.blue}, ${p.lavender}, ${p.mantle}, ${p.base}, ${p.mantle}, ${p.text}, ${p.overlay0}, ${p.mauve}
           '';
           force = true;
         };
@@ -192,9 +194,9 @@
         xdg.configFile."qt5ct/colors/catppuccin.conf" = {
           text = ''
             [ColorScheme]
-            active_colors=#cdd6f4, #313244, #45475a, #313244, #181825, #585b70, #cdd6f4, #f5e0dc, #cdd6f4, #1e1e2e, #1e1e2e, #11111b, #cba6f7, #11111b, #89b4fa, #b4befe, #181825, #1e1e2e, #181825, #cdd6f4, #6c7086, #cba6f7
-            disabled_colors=#6c7086, #181825, #313244, #181825, #11111b, #45475a, #6c7086, #f5e0dc, #6c7086, #1e1e2e, #1e1e2e, #11111b, #45475a, #11111b, #89b4fa, #b4befe, #181825, #1e1e2e, #181825, #6c7086, #45475a, #cba6f7
-            inactive_colors=#cdd6f4, #313244, #45475a, #313244, #181825, #585b70, #cdd6f4, #f5e0dc, #cdd6f4, #1e1e2e, #1e1e2e, #11111b, #cba6f7, #11111b, #89b4fa, #b4befe, #181825, #1e1e2e, #181825, #cdd6f4, #6c7086, #cba6f7
+            active_colors=${p.text}, ${p.surface0}, ${p.surface1}, ${p.surface0}, ${p.mantle}, ${p.surface2}, ${p.text}, ${p.rosewater}, ${p.text}, ${p.base}, ${p.base}, ${p.crust}, ${p.mauve}, ${p.crust}, ${p.blue}, ${p.lavender}, ${p.mantle}, ${p.base}, ${p.mantle}, ${p.text}, ${p.overlay0}, ${p.mauve}
+            disabled_colors=${p.overlay0}, ${p.mantle}, ${p.surface0}, ${p.mantle}, ${p.crust}, ${p.surface1}, ${p.overlay0}, ${p.rosewater}, ${p.overlay0}, ${p.base}, ${p.base}, ${p.crust}, ${p.surface1}, ${p.crust}, ${p.blue}, ${p.lavender}, ${p.mantle}, ${p.base}, ${p.mantle}, ${p.overlay0}, ${p.surface1}, ${p.mauve}
+            inactive_colors=${p.text}, ${p.surface0}, ${p.surface1}, ${p.surface0}, ${p.mantle}, ${p.surface2}, ${p.text}, ${p.rosewater}, ${p.text}, ${p.base}, ${p.base}, ${p.crust}, ${p.mauve}, ${p.crust}, ${p.blue}, ${p.lavender}, ${p.mantle}, ${p.base}, ${p.mantle}, ${p.text}, ${p.overlay0}, ${p.mauve}
           '';
           force = true;
         };

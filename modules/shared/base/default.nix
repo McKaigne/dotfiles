@@ -2,6 +2,7 @@
 { self, inputs, ... }: {
   flake.nixosModules.baseWorkstation = { ... }: {
     imports = [
+      self.nixosModules.palette
       self.nixosModules.core
       self.nixosModules.users
       self.nixosModules.security

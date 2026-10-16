@@ -8,6 +8,7 @@
     }:
     let
       user = config.mainUser;
+      p = config.palette;
 
       tmuxConf = ''
         set -g prefix C-b
@@ -41,16 +42,16 @@
         set -g status on
         set -g status-position top
 
-        set -g pane-border-style "fg=#313244,bg=default"
-        set -g pane-active-border-style "fg=#cba6f7,bg=default"
-        set -g popup-border-style "fg=#cba6f7,bg=default"
-
         set -g @tmux-dotbar-bg "default"
-        set -g @tmux-dotbar-fg "#585b70"
-        set -g @tmux-dotbar-fg-current "#cdd6f4"
-        set -g @tmux-dotbar-fg-session "#cba6f7"
-        set -g @tmux-dotbar-fg-prefix "#f38ba8"
+        set -g @tmux-dotbar-fg "${p.surface2}"
+        set -g @tmux-dotbar-fg-current "${p.text}"
+        set -g @tmux-dotbar-fg-session "${p.mauve}"
+        set -g @tmux-dotbar-fg-prefix "${p.red}"
         set -g @tmux-dotbar-bold-current-window true
+
+        set -g pane-border-style "fg=${p.surface0},bg=default"
+        set -g pane-active-border-style "fg=${p.mauve},bg=default"
+        set -g popup-border-style "fg=${p.mauve},bg=default"
 
         run-shell ${pkgs.tmuxPlugins.dotbar}/share/tmux-plugins/dotbar/dotbar.tmux
 
