@@ -60,8 +60,17 @@
             auto-format = true
             idle-timeout = 50
             completion-timeout = 5
-            bufferline = "always"
-            gutters = ["diagnostics", "line-numbers", "spacer", "diff"]
+            bufferline = "multiple"
+            gutters = ["diagnostics", "line-numbers", "diff"]
+
+            [editor.statusline]
+            left = ["mode", "spinner", "file-name", "file-modification-indicator"]
+            center = []
+            right = ["diagnostics", "selections", "position", "file-type"]
+            separator = " │ "
+            mode.normal = "NORMAL"
+            mode.insert = "INSERT"
+            mode.select = "SELECT"
 
             [editor.cursor-shape]
             normal = "block"
@@ -95,46 +104,41 @@
           text = ''
             inherits = "catppuccin_mocha"
 
+            # 100% Transparent Canvas & Cursorlines
             "ui.background" = {}
             "ui.cursorline" = {}
             "ui.cursorline.primary" = {}
             "ui.cursorline.secondary" = {}
 
+            # Flat Gutters & Line Numbers (No Background Highlights)
             "ui.linenr" = { fg = "surface1" }
             "ui.linenr.selected" = { fg = "mauve", modifiers = ["bold"] }
             "ui.gutter" = { fg = "surface1" }
             "ui.gutter.selected" = { fg = "mauve", modifiers = ["bold"] }
 
-            "ui.statusline" = { fg = "text", bg = "mantle" }
-            "ui.statusline.inactive" = { fg = "overlay0", bg = "mantle" }
-            "ui.statusline.normal" = { fg = "crust", bg = "mauve", modifiers = ["bold"] }
-            "ui.statusline.insert" = { fg = "crust", bg = "green", modifiers = ["bold"] }
-            "ui.statusline.select" = { fg = "crust", bg = "peach", modifiers = ["bold"] }
-            "ui.statusline.separator" = { fg = "surface2" }
+            # Pure Typographic Statusline (Zero Background Fills, Zero Capsules)
+            "ui.statusline" = { fg = "text" }
+            "ui.statusline.inactive" = { fg = "overlay0" }
+            "ui.statusline.normal" = { fg = "mauve", modifiers = ["bold"] }
+            "ui.statusline.insert" = { fg = "green", modifiers = ["bold"] }
+            "ui.statusline.select" = { fg = "peach", modifiers = ["bold"] }
+            "ui.statusline.separator" = { fg = "surface1" }
 
+            # Borderless Tab Typography (No Boxes, Transparent Strip)
             "ui.bufferline" = { fg = "overlay0" }
             "ui.bufferline.active" = { fg = "text", modifiers = ["bold"] }
             "ui.bufferline.background" = {}
+
+            # Floating Overlays (Flat Solid Surface for Readability Over Code)
+            "ui.popup" = { fg = "text", bg = "surface0" }
+            "ui.popup.info" = { fg = "blue", modifiers = ["bold"] }
+            "ui.help" = { fg = "subtext1", bg = "surface0" }
 
             "ui.menu" = { fg = "text", bg = "surface0" }
             "ui.menu.selected" = { fg = "teal", bg = "surface1", modifiers = ["bold"] }
             "ui.menu.scroll" = { fg = "surface2" }
 
-            "ui.popup" = { fg = "text", bg = "surface0" }
-            "ui.popup.info" = { fg = "blue", modifiers = ["bold"] }
-            "ui.help" = { fg = "subtext1", bg = "surface0" }
-
-            "ui.picker.header" = { fg = "teal", modifiers = ["bold"] }
-            "ui.picker.header.column" = { fg = "teal", modifiers = ["bold"] }
-            "ui.picker.header.column.active" = { fg = "blue", modifiers = ["bold", "underlined"] }
-            "ui.highlight" = { fg = "yellow", modifiers = ["bold"] }
-
             "ui.window" = { fg = "surface0" }
-
-            "ui.text" = { fg = "text" }
-            "ui.text.focus" = { fg = "blue", modifiers = ["bold"] }
-            "ui.text.inactive" = { fg = "overlay0" }
-            "ui.text.info" = { fg = "teal" }
           '';
           force = true;
         };
