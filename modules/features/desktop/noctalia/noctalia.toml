@@ -2,10 +2,10 @@
 order = [ "top" ]
 
     [bar.top]
-    background_opacity = 0.85
+    background_opacity = 0.84999999999999998
     border = "primary"
     border_width = 2.0
-    capsule_opacity = 0.85
+    capsule_opacity = 0.84999999999999998
     capsule_radius = 4
     center = [ "workspaces" ]
     concave_edge_corners = false
@@ -24,7 +24,7 @@ order = [ "top" ]
         "session"
     ]
     font_family = "IBM Plex Sans"
-    font_scale = 1.1
+    font_scale = 1.1000000000000001
     margin_edge = 8
     margin_ends = 350
     margin_opposite_edge = 0
@@ -39,8 +39,8 @@ order = [ "top" ]
 enable_ddcutil = true
 
 [dock]
-active_opacity = 0.85
-background_opacity = 0.85
+active_opacity = 0.84999999999999998
+background_opacity = 0.84999999999999998
 shadow = false
 
 [location]
@@ -84,10 +84,10 @@ widget_order = [ "lockscreen-login-box" ]
         show_weather = true
 
 [notification]
-background_opacity = 0.85
+background_opacity = 0.84999999999999998
 
 [osd]
-background_opacity = 0.85
+background_opacity = 0.84999999999999998
 
     [osd.kinds]
     media = false
@@ -96,7 +96,7 @@ background_opacity = 0.85
 app_icon_color = "on_surface_variant"
 button_borders = false
 card_borders = false
-corner_radius_scale = 0.4
+corner_radius_scale = 0.40000000000000002
 font_family = "IBM Plex Sans"
 input_borders = false
 popup_borders = false
@@ -104,9 +104,9 @@ popup_shadows = false
 settings_window_translucent = true
 
     [shell.panel]
-    borders = true
     border_color = "primary"
     border_width = 2.0
+    borders = true
     control_center_placement = "floating"
     session_placement = "floating"
     shadow = false
@@ -119,9 +119,9 @@ mode = "dark"
 source = "builtin"
 wallpaper_scheme = "m3-content"
 
-[theme.templates]
-enable_builtin_templates = false
-enable_community_templates = false
+    [theme.templates]
+    enable_builtin_templates = false
+    enable_community_templates = false
 
 [wallpaper]
 directory = "/etc/wallpapers"
