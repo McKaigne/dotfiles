@@ -105,24 +105,24 @@
             "ui.gutter" = { fg = "surface1" }
             "ui.gutter.selected" = { fg = "mauve", modifiers = ["bold"] }
 
-            "ui.statusline" = { fg = "text" }
-            "ui.statusline.inactive" = { fg = "overlay0" }
-            "ui.statusline.normal" = { fg = "mauve", modifiers = ["bold"] }
-            "ui.statusline.insert" = { fg = "green", modifiers = ["bold"] }
-            "ui.statusline.select" = { fg = "peach", modifiers = ["bold"] }
+            "ui.statusline" = { fg = "text", bg = "mantle" }
+            "ui.statusline.inactive" = { fg = "overlay0", bg = "mantle" }
+            "ui.statusline.normal" = { fg = "crust", bg = "mauve", modifiers = ["bold"] }
+            "ui.statusline.insert" = { fg = "crust", bg = "green", modifiers = ["bold"] }
+            "ui.statusline.select" = { fg = "crust", bg = "peach", modifiers = ["bold"] }
             "ui.statusline.separator" = { fg = "surface2" }
 
             "ui.bufferline" = { fg = "overlay0" }
             "ui.bufferline.active" = { fg = "text", modifiers = ["bold"] }
             "ui.bufferline.background" = {}
 
-            "ui.menu" = { fg = "text" }
-            "ui.menu.selected" = { fg = "teal", modifiers = ["bold", "underlined"] }
+            "ui.menu" = { fg = "text", bg = "surface0" }
+            "ui.menu.selected" = { fg = "teal", bg = "surface1", modifiers = ["bold"] }
             "ui.menu.scroll" = { fg = "surface2" }
 
-            "ui.popup" = { fg = "text" }
+            "ui.popup" = { fg = "text", bg = "surface0" }
             "ui.popup.info" = { fg = "blue", modifiers = ["bold"] }
-            "ui.help" = { fg = "subtext1" }
+            "ui.help" = { fg = "subtext1", bg = "surface0" }
 
             "ui.picker.header" = { fg = "teal", modifiers = ["bold"] }
             "ui.picker.header.column" = { fg = "teal", modifiers = ["bold"] }

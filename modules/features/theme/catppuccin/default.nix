@@ -182,9 +182,9 @@
         xdg.configFile."qt6ct/colors/catppuccin.conf" = {
           text = ''
             [ColorScheme]
-            active_colors=#cdd6f4, #1e1e2e, #ffffff, #cacaca, #9f9f9f, #b8b8b8, #cdd6f4, #ffffff, #cdd6f4, #1e1e2e, #1e1e2e, #11111b, #6d10da, #e4d0fb, #fab387, #cba6f7, #313244, #1e1e2e, #313244, #cdd6f4, #cdd6f4, #cba6f7
-            disabled_colors=#cdd6f4, #1e1e2e, #ffffff, #cacaca, #9f9f9f, #b8b8b8, #cdd6f4, #ffffff, #cdd6f4, #1e1e2e, #1e1e2e, #11111b, #6d10da, #e4d0fb, #fab387, #cba6f7, #313244, #1e1e2e, #313244, #cdd6f4, #cdd6f4, #cba6f7
-            inactive_colors=#cdd6f4, #1e1e2e, #ffffff, #cacaca, #9f9f9f, #b8b8b8, #cdd6f4, #ffffff, #cdd6f4, #1e1e2e, #1e1e2e, #11111b, #6d10da, #e4d0fb, #fab387, #cba6f7, #313244, #1e1e2e, #313244, #cdd6f4, #cdd6f4, #cba6f7
+            active_colors=#cdd6f4, #313244, #45475a, #313244, #181825, #585b70, #cdd6f4, #f5e0dc, #cdd6f4, #1e1e2e, #1e1e2e, #11111b, #cba6f7, #11111b, #89b4fa, #b4befe, #181825, #1e1e2e, #181825, #cdd6f4, #6c7086, #cba6f7
+            disabled_colors=#6c7086, #181825, #313244, #181825, #11111b, #45475a, #6c7086, #f5e0dc, #6c7086, #1e1e2e, #1e1e2e, #11111b, #45475a, #11111b, #89b4fa, #b4befe, #181825, #1e1e2e, #181825, #6c7086, #45475a, #cba6f7
+            inactive_colors=#cdd6f4, #313244, #45475a, #313244, #181825, #585b70, #cdd6f4, #f5e0dc, #cdd6f4, #1e1e2e, #1e1e2e, #11111b, #cba6f7, #11111b, #89b4fa, #b4befe, #181825, #1e1e2e, #181825, #cdd6f4, #6c7086, #cba6f7
           '';
           force = true;
         };
@@ -192,9 +192,9 @@
         xdg.configFile."qt5ct/colors/catppuccin.conf" = {
           text = ''
             [ColorScheme]
-            active_colors=#cdd6f4, #1e1e2e, #ffffff, #cacaca, #9f9f9f, #b8b8b8, #cdd6f4, #ffffff, #cdd6f4, #1e1e2e, #1e1e2e, #11111b, #6d10da, #e4d0fb, #fab387, #cba6f7, #313244, #1e1e2e, #313244, #cdd6f4, #cdd6f4, #cba6f7
-            disabled_colors=#cdd6f4, #1e1e2e, #ffffff, #cacaca, #9f9f9f, #b8b8b8, #cdd6f4, #ffffff, #cdd6f4, #1e1e2e, #1e1e2e, #11111b, #6d10da, #e4d0fb, #fab387, #cba6f7, #313244, #1e1e2e, #313244, #cdd6f4, #cdd6f4, #cba6f7
-            inactive_colors=#cdd6f4, #1e1e2e, #ffffff, #cacaca, #9f9f9f, #b8b8b8, #cdd6f4, #ffffff, #cdd6f4, #1e1e2e, #1e1e2e, #11111b, #6d10da, #e4d0fb, #fab387, #cba6f7, #313244, #1e1e2e, #313244, #cdd6f4, #cdd6f4, #cba6f7
+            active_colors=#cdd6f4, #313244, #45475a, #313244, #181825, #585b70, #cdd6f4, #f5e0dc, #cdd6f4, #1e1e2e, #1e1e2e, #11111b, #cba6f7, #11111b, #89b4fa, #b4befe, #181825, #1e1e2e, #181825, #cdd6f4, #6c7086, #cba6f7
+            disabled_colors=#6c7086, #181825, #313244, #181825, #11111b, #45475a, #6c7086, #f5e0dc, #6c7086, #1e1e2e, #1e1e2e, #11111b, #45475a, #11111b, #89b4fa, #b4befe, #181825, #1e1e2e, #181825, #6c7086, #45475a, #cba6f7
+            inactive_colors=#cdd6f4, #313244, #45475a, #313244, #181825, #585b70, #cdd6f4, #f5e0dc, #cdd6f4, #1e1e2e, #1e1e2e, #11111b, #cba6f7, #11111b, #89b4fa, #b4befe, #181825, #1e1e2e, #181825, #cdd6f4, #6c7086, #cba6f7
           '';
           force = true;
         };

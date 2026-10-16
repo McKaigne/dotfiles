@@ -20,7 +20,7 @@
             font-feature = cv15
             font-feature = ss01
 
-            theme = "Catppuccin Mocha"
+            theme = "Catppuccin-Mocha"
             background-opacity = 0.85
             background-blur = true
             window-decoration = false
@@ -30,8 +30,15 @@
           force = true;
         };
 
-        xdg.configFile."ghostty/themes/Catppuccin Mocha" = {
+        xdg.configFile."ghostty/themes/Catppuccin-Mocha" = {
           text = ''
+            background = #1e1e2e
+            foreground = #cdd6f4
+            selection-background = #585b70
+            selection-foreground = #cdd6f4
+            cursor-color = #f5e0dc
+            cursor-text = #11111b
+
             palette = 0=#45475a
             palette = 1=#f38ba8
             palette = 2=#a6e3a1
@@ -48,12 +55,6 @@
             palette = 13=#f5c2e7
             palette = 14=#94e2d5
             palette = 15=#a6adc8
-            background = #1e1e2e
-            foreground = #cdd6f4
-            cursor-color = #f5e0dc
-            cursor-text = #11111b
-            selection-background = #585b70
-            selection-foreground = #cdd6f4
           '';
           force = true;
         };

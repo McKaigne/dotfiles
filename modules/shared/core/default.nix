@@ -60,6 +60,7 @@
       environment.sessionVariables = {
         EDITOR = "hx";
         VISUAL = "hx";
+        BAT_THEME = "Catppuccin Mocha";
       };
 
       environment.systemPackages = with pkgs; [

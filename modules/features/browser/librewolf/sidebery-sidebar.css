@@ -1,14 +1,15 @@
 #root.root {--tabs-height: 36px;}
 #root.root {--tabs-inner-gap: 8px;}
 #root.root {--tabs-margin: 4px;}
-#root.root {--tabs-font: 16px sans-serif;}
-#root.root {--tabs-count-font: 16px sans-serif;}
+#root.root {--tabs-font: 14px "Lilex Nerd Font", sans-serif;}
+#root.root {--tabs-count-font: 12px "Lilex Nerd Font", sans-serif;}
 #root.root {--general-margin: 4px;}
-#root.root {--general-border-radius: 0px;}
+#root.root {--general-border-radius: 4px;}
 
 .Tab[data-active="true"] .body {
-	border: 2px solid #ef944dff !important;
-	border-radius: 0px;
+	border: 2px solid #cba6f7 !important;
+	border-radius: 4px;
+	background-color: #313244 !important;
 }
 
 .NavigationBar .main-items .nav-item[data-class="panel"] .name-box {
@@ -20,5 +21,5 @@
 }
 
 .NavigationBar .nav-item[data-active="true"] {
-	border: 1px solid #ef944dff !important;
+	border: 1px solid #cba6f7 !important;
 }

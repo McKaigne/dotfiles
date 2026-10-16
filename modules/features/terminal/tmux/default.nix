@@ -45,6 +45,13 @@
         set -g pane-active-border-style "fg=#cba6f7,bg=default"
         set -g popup-border-style "fg=#cba6f7,bg=default"
 
+        set -g @tmux-dotbar-bg "default"
+        set -g @tmux-dotbar-fg "#585b70"
+        set -g @tmux-dotbar-fg-current "#cdd6f4"
+        set -g @tmux-dotbar-fg-session "#cba6f7"
+        set -g @tmux-dotbar-fg-prefix "#f38ba8"
+        set -g @tmux-dotbar-bold-current-window true
+
         run-shell ${pkgs.tmuxPlugins.dotbar}/share/tmux-plugins/dotbar/dotbar.tmux
 
         bind c new-window -c "#{pane_current_path}"
