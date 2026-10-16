@@ -11,9 +11,9 @@
       p = config.palette;
 
       tmuxConf = ''
-        set -g prefix C-b
+        set -g prefix C-Space
         unbind C-b
-        bind C-b send-prefix
+        bind C-Space send-prefix
 
         set -g default-terminal "tmux-256color"
         set -as terminal-features "*:RGB"
