@@ -44,7 +44,7 @@ environment {
 }
 
 layout {
-  gaps 10
+  gaps 8
   center-focused-column "on-overflow"
   default-column-width { proportion 0.5; }
 
@@ -123,7 +123,7 @@ window-rule {
   opacity 0.85
   background-effect {
     blur true
-    xray true
+    xray false
   }
 }
 
@@ -153,10 +153,10 @@ window-rule {
 }
 
 layer-rule {
-  match namespace="^noctalia-(bar-[^\"]+|notification|dock|panel|attached-panel|osd)$"
+  match namespace="^noctalia-(bar-[^\"]+|notification|dock|panel|attached-panel|osd|window-switcher)$"
   background-effect {
     blur true
-    xray true
+    xray false
   }
 }
 

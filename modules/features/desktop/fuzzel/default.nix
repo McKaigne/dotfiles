@@ -21,7 +21,7 @@
             prefer-no-csd
 
             [colors]
-            background=1e1e2ee6
+            background=1e1e2ed9
             text=cdd6f4ff
             match=cba6f7ff
             selection=313244ff
