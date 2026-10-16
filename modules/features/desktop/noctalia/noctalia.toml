@@ -36,8 +36,6 @@ order = [ "top" ]
     widget_spacing = 8
 
     # Proportional margins for laptop panel to prevent horizontal widget overflow
-    [bar.top.monitor."eDP-1"]
-    margin_ends = 40
 
 [brightness]
 enable_ddcutil = true
