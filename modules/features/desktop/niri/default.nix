@@ -14,10 +14,13 @@ let
               pkgs.grim
               pkgs.slurp
               pkgs.wl-clipboard
+              pkgs.wtype
               pkgs.brightnessctl
               pkgs.ddcutil
               pkgs.playerctl
               pkgs.wireplumber
+              pkgs.fuzzel
+              pkgs.jq
             ]
           }"
       '';
@@ -34,6 +37,137 @@ let
       outputConfig ? "",
     }:
     let
+      runOrRaise = pkgs.writeShellScriptBin "run-or-raise" ''
+        set -euo pipefail
+        app_id="$1"
+        shift
+        launch_cmd="$*"
+
+        window_id=$(${pkgs.niri}/bin/niri msg -j windows 2>/dev/null | \
+          ${pkgs.jq}/bin/jq -r ".[] | select((.app_id // \"\" | test(\"^\" + \"$app_id\" + \"$\"; \"i\")) or (.title // \"\" | test(\"$app_id\"; \"i\"))) | .id" | head -n1 || true)
+
+        if [ -n "$window_id" ] && [ "$window_id" != "null" ]; then
+          ${pkgs.niri}/bin/niri msg action focus-window --id "$window_id"
+        else
+          exec ''${launch_cmd}
+        fi
+      '';
+
+      toggleScratchpad = pkgs.writeShellScriptBin "toggle-scratchpad" ''
+        set -euo pipefail
+        app_id="$1"
+        shift
+        launch_cmd="$*"
+
+        focused_id=$(${pkgs.niri}/bin/niri msg -j windows 2>/dev/null | \
+          ${pkgs.jq}/bin/jq -r '.[] | select(.is_focused == true) | .id' || true)
+
+        floating_match=$(${pkgs.niri}/bin/niri msg -j windows 2>/dev/null | \
+          ${pkgs.jq} -r ".[] | select((.app_id // \"\" | test(\"$app_id\"; \"i\")) or (.title // \"\" | test(\"$app_id\"; \"i\"))) | select(.is_floating == true) | \"\(.id) \(.is_focused)\"" | head -n1 || true)
+
+        if [ -n "$floating_match" ] && [ "$floating_match" != "null" ]; then
+          target_id=$(echo "$floating_match" | awk '{print $1}')
+          is_focused=$(echo "$floating_match" | awk '{print $2}')
+          if [ "$is_focused" = "true" ]; then
+            ${pkgs.niri}/bin/niri msg action close-window
+          else
+            ${pkgs.niri}/bin/niri msg action focus-window --id "$target_id"
+          fi
+        else
+          exec ''${launch_cmd}
+        fi
+      '';
+
+      tmuxSessionizer = pkgs.writeShellScriptBin "tmux-sessionizer" ''
+        set -euo pipefail
+        target=$( (
+          echo "$HOME/.config"
+          echo "/etc/nixos"
+          [ -d "$HOME/projects" ] && find "$HOME/projects" -mindepth 1 -maxdepth 2 -type d 2>/dev/null
+          [ -d "$HOME/dev" ] && find "$HOME/dev" -mindepth 1 -maxdepth 2 -type d 2>/dev/null
+          ${pkgs.zoxide}/bin/zoxide query -l 2>/dev/null
+        ) | grep -v -E '/\.git(/|$)' | awk '!seen[$0]++' | ${pkgs.fzf}/bin/fzf --reverse --header="Select project session:" )
+
+        if [ -z "$target" ]; then
+          exit 0
+        fi
+
+        session_name=$(basename "$target" | tr '.' '_')
+
+        if ! ${pkgs.tmux}/bin/tmux has-session -t "$session_name" 2>/dev/null; then
+          ${pkgs.tmux}/bin/tmux new-session -d -s "$session_name" -c "$target"
+        fi
+
+        if [ -n "''${TMUX:-}" ]; then
+          ${pkgs.tmux}/bin/tmux switch-client -t "$session_name"
+        else
+          exec ${pkgs.tmux}/bin/tmux attach-session -t "$session_name"
+        fi
+      '';
+
+      fuzzelCheatsheet = pkgs.writeShellScriptBin "fuzzel-cheatsheet" ''
+        set -euo pipefail
+        cat << 'SHEET_EOF' | ${pkgs.fuzzel}/bin/fuzzel --dmenu --prompt "⌨ Keybinds ➜ " --lines 18 --width 52
+Mod + Return        Maximize column width
+Mod + Shift + Ret   Fullscreen window
+Mod + Space         Switch focus floating/tiling
+Mod + Shift + Space Toggle focused window floating
+Mod + A             Launcher: Noctalia App Runner
+Mod + Shift + A     Overview: Niri Workspace View
+Mod + Ctrl + A      Control Center: Noctalia Panel
+Mod + S             Search: Focus / Launch LibreWolf
+Mod + Shift + S     Popup: Toggle Floating LibreWolf
+Mod + Ctrl + S      New Tiled: Force New LibreWolf
+Mod + Alt + S       Private: LibreWolf Incognito
+Mod + D             Dev: Focus / Launch Ghostty Terminal
+Mod + Shift + D     Popup: Toggle Floating Scratchpad
+Mod + Ctrl + D      New Tiled: Force New Ghostty
+Mod + Alt + D       Sessionizer: Fuzzy Project Tmux
+Mod + F             Files: Focus / Launch PCManFM
+Mod + Shift + F     Popup: Toggle Floating PCManFM
+Mod + Ctrl + F      New Tiled: Force New PCManFM
+Mod + G             Notices: Noctalia Notification Center
+Mod + Shift + G     Notices: Dismiss Active Notification
+Mod + Ctrl + G      Bar: Toggle Noctalia Top Bar
+Mod + Z             Notes: Focus / Launch ZenNotes
+Mod + Shift + Z     Popup: Toggle Floating ZenNotes
+Mod + Ctrl + Z      New Tiled: Force New ZenNotes
+Mod + X             Explore: Focus / Launch nnn (into Helix)
+Mod + Shift + X     Popup: Toggle Floating nnn Dashboard
+Mod + Ctrl + X      New Tiled: Force New nnn
+Mod + C             Universal Copy (Ctrl+Insert)
+Mod + Shift + C     Universal Cut (Shift+Delete)
+Mod + V             Universal Paste (Shift+Insert)
+Mod + Shift + V     Clipboard History Panel
+Mod + B             Bluetooth: Noctalia Panel
+Mod + Shift + B     Bitwarden Desktop Client
+Mod + Q             Close Focused Window
+Mod + Shift + Q     Kill / Force Close Window
+Mod + W             Wallpaper: Noctalia Panel
+Mod + E             Audio: Pavucontrol Volume Mixer
+Mod + Shift + E     Audio: EasyEffects DSP Effects
+Mod + R             Snip: Area Screenshot to Clipboard
+Mod + Shift + R     Snip: Fullscreen to Clipboard
+Mod + T             Settings: Noctalia Settings GUI
+Mod + P             Power: Noctalia Session Menu
+Mod + Shift + P     Lock: Lock Screen
+Mod + Ctrl + P      Monitors: Turn Off Displays
+Mod + H / L         Navigate: Focus Column Left / Right
+Mod + Shift + H / L Move: Move Column Left / Right
+Mod + J / K         Workspace: Focus Workspace Down / Up
+Mod + Shift + J / K Workspace: Move Column Down / Up
+Mod + N / M         Stack: Focus Window Down / Up (Column)
+Mod + Shift + N / M Stack: Move Window Down / Up (Column)
+Mod + U / I         Stack: Consume / Expel Left / Right
+Mod + Y / O         Width: Shrink / Expand Column Width
+Mod + Shift + Y / O Height: Shrink / Expand Window Height
+Mod + , / .         Monitor: Focus Monitor Left / Right
+Mod + Shift + , / . Monitor: Move Column to Monitor L / R
+Mod + 1..9          Workspace: Focus Named "one".."nine"
+Mod + 0             Workspace: Focus Dynamic 10th
+SHEET_EOF
+      '';
+
       screenshotArea = pkgs.writeShellScriptBin "screenshot-area" ''
         set -euo pipefail
         ${pkgs.grim}/bin/grim -g "$(${pkgs.slurp}/bin/slurp)" - | ${pkgs.wl-clipboard}/bin/wl-copy
@@ -72,19 +206,6 @@ let
           ${pkgs.ddcutil}/bin/ddcutil setvcp 10 - 5 2>/dev/null || true
         fi
       '';
-
-      tmuxFocus = pkgs.writeShellScriptBin "tmux-focus" ''
-        set -euo pipefail
-        windowId=$(${pkgs.niri}/bin/niri msg -j windows 2>/dev/null | \
-          ${pkgs.jq}/bin/jq -r '.[] | select((.app_id == "ghostty.tmux") or (.title | test("tmux-terminal"; "i"))) | .id' | head -n1 || true)
-        if [ -n "$windowId" ] && [ "$windowId" != "null" ]; then
-          ${pkgs.niri}/bin/niri msg action focus-window --id "$windowId"
-        else
-          exec ${pkgs.ghostty}/bin/ghostty \
-            --class="ghostty.tmux" --title="tmux-terminal" \
-            -e ${pkgs.tmux}/bin/tmux new-session -A -s main
-        fi
-      '';
     in
     builtins.replaceStrings
       [
@@ -94,17 +215,22 @@ let
         "@ghostty@"
         "@brave@"
         "@librewolf@"
-        "@obsidian@"
+        "@zennotes@"
         "@pcmanfm@"
+        "@nnn@"
         "@wpctl@"
         "@playerctl@"
-        "@tmuxFocus@"
+        "@runOrRaise@"
+        "@toggleScratchpad@"
+        "@tmuxSessionizer@"
+        "@fuzzelCheatsheet@"
         "@easyeffects@"
         "@pavucontrol@"
         "@screenshotArea@"
         "@screenshotFull@"
         "@brightnessUp@"
         "@brightnessDown@"
+        "@wtype@"
       ]
       [
         outputConfig
@@ -113,17 +239,22 @@ let
         "${pkgs.ghostty}/bin/ghostty"
         "${lib.getExe pkgs.brave-origin}"
         "${pkgs.librewolf}/bin/librewolf"
-        "${pkgs.obsidian}/bin/obsidian"
+        "${pkgs.zennotes-desktop}/bin/zennotes-desktop"
         "${pkgs.pcmanfm}/bin/pcmanfm"
+        "${pkgs.nnn}/bin/nnn"
         "${pkgs.wireplumber}/bin/wpctl"
         "${pkgs.playerctl}/bin/playerctl"
-        "${tmuxFocus}/bin/tmux-focus"
+        "${runOrRaise}/bin/run-or-raise"
+        "${toggleScratchpad}/bin/toggle-scratchpad"
+        "${tmuxSessionizer}/bin/tmux-sessionizer"
+        "${fuzzelCheatsheet}/bin/fuzzel-cheatsheet"
         "${pkgs.easyeffects}/bin/easyeffects"
         "${pkgs.pavucontrol}/bin/pavucontrol"
         "${screenshotArea}/bin/screenshot-area"
         "${screenshotFull}/bin/screenshot-full"
         "${brightnessUp}/bin/brightness-up"
         "${brightnessDown}/bin/brightness-down"
+        "${pkgs.wtype}/bin/wtype"
       ]
       (builtins.readFile ./niri.kdl);
 in
@@ -210,6 +341,8 @@ in
         environment.systemPackages = [
           pkgs.xwayland-satellite
           pkgs.ddcutil
+          pkgs.wtype
+          pkgs.nnn
         ];
       };
     };

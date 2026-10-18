@@ -18,6 +18,28 @@
       };
 
       home-manager.users.${user} = {
+        xdg.desktopEntries.Helix = {
+          name = "Helix";
+          genericName = "Text Editor";
+          comment = "Modal terminal text editor";
+          exec = "ghostty -e hx %F";
+          icon = "helix";
+          terminal = false;
+          categories = [ "Utility" "TextEditor" "Development" ];
+          mimeType = [
+            "text/plain"
+            "text/markdown"
+            "text/x-nix"
+            "text/x-c"
+            "text/x-c++"
+            "text/x-python"
+            "text/x-shellscript"
+            "application/json"
+            "application/toml"
+            "application/yaml"
+          ];
+        };
+
         xdg.mimeApps = {
           enable = true;
           defaultApplications = {
@@ -28,6 +50,23 @@
             "text/html" = "librewolf.desktop";
             "x-scheme-handler/http" = "librewolf.desktop";
             "x-scheme-handler/https" = "librewolf.desktop";
+
+            "image/png" = "imv.desktop";
+            "image/jpeg" = "imv.desktop";
+            "image/webp" = "imv.desktop";
+            "image/gif" = "imv.desktop";
+            "image/svg+xml" = "imv.desktop";
+
+            "text/plain" = "Helix.desktop";
+            "text/markdown" = "Helix.desktop";
+            "text/x-nix" = "Helix.desktop";
+            "text/x-c" = "Helix.desktop";
+            "text/x-c++" = "Helix.desktop";
+            "text/x-python" = "Helix.desktop";
+            "text/x-shellscript" = "Helix.desktop";
+            "application/json" = "Helix.desktop";
+            "application/toml" = "Helix.desktop";
+            "application/yaml" = "Helix.desktop";
           };
         };
 

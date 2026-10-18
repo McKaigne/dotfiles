@@ -1,3 +1,8 @@
+[backdrop]
+blur_intensity = 0.6
+enabled = true
+tint_intensity = 0.35
+
 [bar]
 order = [ "top" ]
 
@@ -34,8 +39,6 @@ order = [ "top" ]
     start = [ "cpu", "temp", "ram" ]
     thickness = 28
     widget_spacing = 8
-
-    # Proportional margins for laptop panel to prevent horizontal widget overflow
 
 [brightness]
 enable_ddcutil = true

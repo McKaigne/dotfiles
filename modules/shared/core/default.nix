@@ -49,7 +49,19 @@
         Defaults timestamp_timeout=30
       '';
 
-      programs.nix-ld.enable = true;
+      environment.localBinInPath = true;
+
+      programs.nix-ld = {
+        enable = true;
+        libraries = with pkgs; [
+          stdenv.cc.cc.lib
+          zlib
+          openssl
+          curl
+          glibc
+        ];
+      };
+
       hardware.keyboard.qmk.enable = true;
 
       services.udev.extraRules = ''
@@ -84,6 +96,8 @@
         xh
         curl
         yazi
+        nnn
+        wtype
         aria2
         p7zip
         unrar

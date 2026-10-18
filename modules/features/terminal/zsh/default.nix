@@ -138,7 +138,7 @@
           };
 
           initContent = ''
-            setopt INTERACTIVE_COMMENTS
+            export PATH="$HOME/.local/bin:$HOME/.cargo/bin:$PATH"
             export ZSH_AUTOSUGGEST_USE_ASYNC=1
             export ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE='fg=244'
             export ZSH_AUTOSUGGEST_STRATEGY=(history completion)

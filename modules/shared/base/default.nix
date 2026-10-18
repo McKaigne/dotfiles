@@ -29,7 +29,7 @@
 
       # Mobile-friendly sketching & documents
       self.nixosModules.krita
-      self.nixosModules.obsidian
+      self.nixosModules.zennotes
       self.nixosModules.onlyoffice
       self.nixosModules.zathura
 

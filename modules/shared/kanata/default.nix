@@ -52,17 +52,6 @@
           hsc (multi f24 (tap-hold-opposite-hand-release 220 scln ralt (timeout hold) (unknown-hand hold) (neutral-keys spc ret bspc tab esc) (tap-repress-timeout 150) (require-prior-idle 150)) (macro 5 (on-press tap-vkey relf24)))
         )
 
-        (defchordsv2
-          (z x) S-del 25 first-release ()
-          (x c) C-ins 25 first-release ()
-          (c v) S-ins 25 first-release ()
-          (v b) C-a 25 first-release ()
-          (f j) (caps-word 2000) 25 first-release ()
-          (n m) C-y 25 first-release ()
-          (m ,) C-z 25 first-release ()
-          (, .) C-f 25 first-release ()
-        )
-
         (deflayer base
           @pq_grv @pq_1 @pq_2 @pq_3 @pq_4 @pq_5 @pq_6 @pq_7 @pq_8 @pq_9 @pq_0 @pq_min @pq_eql bspc
           tab     q     w     e     r     t     y     u     i     o     p     -       @pq_rbk @pq_bsh

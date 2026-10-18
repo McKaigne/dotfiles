@@ -124,6 +124,7 @@
 
             @define-color headerbar_bg_color ${p.base};
             @define-color headerbar_fg_color ${p.text};
+            @define-color headerbar_backdrop_color @window_bg_color;
 
             @define-color popover_bg_color ${p.surface0};
             @define-color popover_fg_color ${p.text};
