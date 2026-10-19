@@ -9,7 +9,6 @@
       environment.systemPackages = [ pkgs.ghostty ];
 
       home-manager.users.${user} = {
-        # Explicit fallback theme file for Ghostty >= 1.2.0
         xdg.configFile."ghostty/themes/Catppuccin Mocha" = {
           text = ''
             palette = 0=${p.surface1}
@@ -49,6 +48,8 @@
             font-feature = cv13
             font-feature = cv15
             font-feature = ss01
+
+            command = fish
 
             theme = "Catppuccin Mocha"
             background = ${p.base}

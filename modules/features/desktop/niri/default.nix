@@ -37,47 +37,6 @@ let
       outputConfig ? "",
     }:
     let
-      runOrRaise = pkgs.writeShellScriptBin "run-or-raise" ''
-        set -euo pipefail
-        app_id="$1"
-        shift
-        launch_cmd="$*"
-
-        window_id=$(${pkgs.niri}/bin/niri msg -j windows 2>/dev/null | \
-          ${pkgs.jq}/bin/jq -r ".[] | select((.app_id // \"\" | test(\"^\" + \"$app_id\" + \"$\"; \"i\")) or (.title // \"\" | test(\"$app_id\"; \"i\"))) | .id" | head -n1 || true)
-
-        if [ -n "$window_id" ] && [ "$window_id" != "null" ]; then
-          ${pkgs.niri}/bin/niri msg action focus-window --id "$window_id"
-        else
-          exec ''${launch_cmd}
-        fi
-      '';
-
-      toggleScratchpad = pkgs.writeShellScriptBin "toggle-scratchpad" ''
-        set -euo pipefail
-        app_id="$1"
-        shift
-        launch_cmd="$*"
-
-        focused_id=$(${pkgs.niri}/bin/niri msg -j windows 2>/dev/null | \
-          ${pkgs.jq}/bin/jq -r '.[] | select(.is_focused == true) | .id' || true)
-
-        floating_match=$(${pkgs.niri}/bin/niri msg -j windows 2>/dev/null | \
-          ${pkgs.jq} -r ".[] | select((.app_id // \"\" | test(\"$app_id\"; \"i\")) or (.title // \"\" | test(\"$app_id\"; \"i\"))) | select(.is_floating == true) | \"\(.id) \(.is_focused)\"" | head -n1 || true)
-
-        if [ -n "$floating_match" ] && [ "$floating_match" != "null" ]; then
-          target_id=$(echo "$floating_match" | awk '{print $1}')
-          is_focused=$(echo "$floating_match" | awk '{print $2}')
-          if [ "$is_focused" = "true" ]; then
-            ${pkgs.niri}/bin/niri msg action close-window
-          else
-            ${pkgs.niri}/bin/niri msg action focus-window --id "$target_id"
-          fi
-        else
-          exec ''${launch_cmd}
-        fi
-      '';
-
       tmuxSessionizer = pkgs.writeShellScriptBin "tmux-sessionizer" ''
         set -euo pipefail
         target=$( (
@@ -107,7 +66,7 @@ let
 
       fuzzelCheatsheet = pkgs.writeShellScriptBin "fuzzel-cheatsheet" ''
         set -euo pipefail
-        cat << 'SHEET_EOF' | ${pkgs.fuzzel}/bin/fuzzel --dmenu --prompt "⌨ Keybinds ➜ " --lines 18 --width 52
+        cat << 'SHEET_EOF' | ${pkgs.fuzzel}/bin/fuzzel --dmenu --prompt "⌨ Keybinds ➜ " --lines 18 --width 54
 Mod + Return        Maximize column width
 Mod + Shift + Ret   Fullscreen window
 Mod + Space         Switch focus floating/tiling
@@ -115,26 +74,21 @@ Mod + Shift + Space Toggle focused window floating
 Mod + A             Launcher: Noctalia App Runner
 Mod + Shift + A     Overview: Niri Workspace View
 Mod + Ctrl + A      Control Center: Noctalia Panel
-Mod + S             Search: Focus / Launch LibreWolf
-Mod + Shift + S     Popup: Toggle Floating LibreWolf
-Mod + Ctrl + S      New Tiled: Force New LibreWolf
-Mod + Alt + S       Private: LibreWolf Incognito
-Mod + D             Dev: Focus / Launch Ghostty Terminal
-Mod + Shift + D     Popup: Toggle Floating Scratchpad
-Mod + Ctrl + D      New Tiled: Force New Ghostty
-Mod + Alt + D       Sessionizer: Fuzzy Project Tmux
-Mod + F             Files: Focus / Launch PCManFM
-Mod + Shift + F     Popup: Toggle Floating PCManFM
-Mod + Ctrl + F      New Tiled: Force New PCManFM
+Mod + S             Search: LibreWolf (Tiled)
+Mod + Shift + S     Popup: Floating 16:9 LibreWolf
+Mod + Ctrl + S      Private: LibreWolf Incognito
+Mod + D             Dev: Ghostty Terminal (Tiled)
+Mod + Shift + D     Popup: Floating 16:9 Scratchpad
+Mod + Ctrl + D      Sessionizer: Fuzzy Project Tmux
+Mod + F             Files: PCManFM File Manager (Tiled)
+Mod + Shift + F     Popup: Floating 16:9 PCManFM
 Mod + G             Notices: Noctalia Notification Center
 Mod + Shift + G     Notices: Dismiss Active Notification
 Mod + Ctrl + G      Bar: Toggle Noctalia Top Bar
-Mod + Z             Notes: Focus / Launch ZenNotes
-Mod + Shift + Z     Popup: Toggle Floating ZenNotes
-Mod + Ctrl + Z      New Tiled: Force New ZenNotes
-Mod + X             Explore: Focus / Launch nnn (into Helix)
-Mod + Shift + X     Popup: Toggle Floating nnn Dashboard
-Mod + Ctrl + X      New Tiled: Force New nnn
+Mod + Z             Notes: ZenNotes (Tiled)
+Mod + Shift + Z     Popup: Floating 16:9 ZenNotes
+Mod + X             Explore: nnn Helix Dashboard (Tiled)
+Mod + Shift + X     Popup: Floating 16:9 nnn Dashboard
 Mod + C             Universal Copy (Ctrl+Insert)
 Mod + Shift + C     Universal Cut (Shift+Delete)
 Mod + V             Universal Paste (Shift+Insert)
@@ -142,7 +96,6 @@ Mod + Shift + V     Clipboard History Panel
 Mod + B             Bluetooth: Noctalia Panel
 Mod + Shift + B     Bitwarden Desktop Client
 Mod + Q             Close Focused Window
-Mod + Shift + Q     Kill / Force Close Window
 Mod + W             Wallpaper: Noctalia Panel
 Mod + E             Audio: Pavucontrol Volume Mixer
 Mod + Shift + E     Audio: EasyEffects DSP Effects
@@ -220,8 +173,6 @@ SHEET_EOF
         "@nnn@"
         "@wpctl@"
         "@playerctl@"
-        "@runOrRaise@"
-        "@toggleScratchpad@"
         "@tmuxSessionizer@"
         "@fuzzelCheatsheet@"
         "@easyeffects@"
@@ -244,8 +195,6 @@ SHEET_EOF
         "${pkgs.nnn}/bin/nnn"
         "${pkgs.wireplumber}/bin/wpctl"
         "${pkgs.playerctl}/bin/playerctl"
-        "${runOrRaise}/bin/run-or-raise"
-        "${toggleScratchpad}/bin/toggle-scratchpad"
         "${tmuxSessionizer}/bin/tmux-sessionizer"
         "${fuzzelCheatsheet}/bin/fuzzel-cheatsheet"
         "${pkgs.easyeffects}/bin/easyeffects"

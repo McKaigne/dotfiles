@@ -147,15 +147,18 @@ window-rule {
   }
 }
 
+// 16:9 Floating Popups and Scratchpads
 window-rule {
   match app-id=r#"^.*\.scratchpad.*$"#
   match app-id=r#"^.*\.popup.*$"#
   match app-id=r#"^.*\.floating.*$"#
-  match title=r#"^.*\(Scratchpad\)$"#
+  match title=r#"^.*\(Floating\)$"#
   open-floating true
   default-column-width { proportion 0.65; }
+  default-window-height { proportion 0.65; }
 }
 
+// Automatic Floating for Auth, Pickers, Extension Menus, Portals
 window-rule {
   match title=r#"^Sign in.*"#
   match title=r#"^Sign In.*"#
@@ -226,32 +229,27 @@ binds {
   Mod+Shift+A            hotkey-overlay-title="Overview: Niri Workspace View"       { toggle-overview; }
   Mod+Ctrl+A             hotkey-overlay-title="Control Center: Noctalia Panel"      { spawn "@noctalia@" "msg" "panel-toggle" "control-center"; }
 
-  Mod+S                  hotkey-overlay-title="Search: LibreWolf (Run/Raise)"       { spawn "@runOrRaise@" "librewolf" "@librewolf@"; }
-  Mod+Shift+S            hotkey-overlay-title="Search: Toggle Floating LibreWolf"   { spawn "@toggleScratchpad@" "librewolf" "@librewolf@" "--class=librewolf.popup"; }
-  Mod+Ctrl+S             hotkey-overlay-title="Search: Force New Tiled LibreWolf"   { spawn "@librewolf@"; }
-  Mod+Alt+S              hotkey-overlay-title="Search: LibreWolf Private Window"    { spawn "@librewolf@" "--private-window"; }
+  Mod+S                  hotkey-overlay-title="Search: LibreWolf (Tiled)"           { spawn "@librewolf@"; }
+  Mod+Shift+S            hotkey-overlay-title="Search: 16:9 Floating LibreWolf"     { spawn "@librewolf@" "--class=librewolf.popup"; }
+  Mod+Ctrl+S             hotkey-overlay-title="Search: LibreWolf Private Window"    { spawn "@librewolf@" "--private-window"; }
 
-  Mod+D                  hotkey-overlay-title="Dev: Ghostty (Run/Raise)"            { spawn "@runOrRaise@" "ghostty" "@ghostty@"; }
-  Mod+Shift+D            hotkey-overlay-title="Dev: Toggle Floating Terminal"       { spawn "@toggleScratchpad@" "ghostty.scratchpad" "@ghostty@" "--class=ghostty.scratchpad"; }
-  Mod+Ctrl+D             hotkey-overlay-title="Dev: Force New Tiled Ghostty"        { spawn "@ghostty@"; }
-  Mod+Alt+D              hotkey-overlay-title="Dev: Fuzzy Project Tmux Sessionizer" { spawn "@ghostty@" "--class=ghostty.scratchpad" "-e" "@tmuxSessionizer@"; }
+  Mod+D                  hotkey-overlay-title="Dev: Ghostty Terminal (Tiled)"       { spawn "@ghostty@"; }
+  Mod+Shift+D            hotkey-overlay-title="Dev: 16:9 Floating Scratchpad"       { spawn "@ghostty@" "--class=ghostty.scratchpad"; }
+  Mod+Ctrl+D             hotkey-overlay-title="Dev: Fuzzy Project Tmux Sessionizer" { spawn "@ghostty@" "--class=ghostty.scratchpad" "-e" "@tmuxSessionizer@"; }
 
-  Mod+F                  hotkey-overlay-title="Files: PCManFM (Run/Raise)"          { spawn "@runOrRaise@" "pcmanfm" "@pcmanfm@"; }
-  Mod+Shift+F            hotkey-overlay-title="Files: Toggle Floating PCManFM"      { spawn "@toggleScratchpad@" "pcmanfm" "@pcmanfm@"; }
-  Mod+Ctrl+F             hotkey-overlay-title="Files: Force New Tiled PCManFM"      { spawn "@pcmanfm@"; }
+  Mod+F                  hotkey-overlay-title="Files: PCManFM File Manager (Tiled)" { spawn "@pcmanfm@"; }
+  Mod+Shift+F            hotkey-overlay-title="Files: 16:9 Floating PCManFM"        { spawn "@pcmanfm@" "--role=floating"; }
 
   Mod+G                  hotkey-overlay-title="Glance: Notification Center"         { spawn "@noctalia@" "msg" "panel-toggle" "notifications"; }
   Mod+Shift+G            hotkey-overlay-title="Glance: Dismiss Active Notice"       { spawn "@noctalia@" "msg" "notification-clear-active"; }
   Mod+Ctrl+G             hotkey-overlay-title="Bar: Toggle Noctalia Top Bar"        { spawn "@noctalia@" "msg" "bar-toggle"; }
 
   // === LEFT HAND: NEIGHBORS (Z X C V B & Q W E R T) ===
-  Mod+Z                  hotkey-overlay-title="Notes: ZenNotes (Run/Raise)"         { spawn "@runOrRaise@" "zennotes-desktop" "@zennotes@"; }
-  Mod+Shift+Z            hotkey-overlay-title="Notes: Toggle Floating ZenNotes"     { spawn "@toggleScratchpad@" "zennotes-desktop" "@zennotes@"; }
-  Mod+Ctrl+Z             hotkey-overlay-title="Notes: Force New Tiled ZenNotes"     { spawn "@zennotes@"; }
+  Mod+Z                  hotkey-overlay-title="Notes: ZenNotes (Tiled)"             { spawn "@zennotes@"; }
+  Mod+Shift+Z            hotkey-overlay-title="Notes: 16:9 Floating ZenNotes"       { spawn "@zennotes@"; }
 
-  Mod+X                  hotkey-overlay-title="Explore: nnn Helix Dashboard"        { spawn "@runOrRaise@" "ghostty.nnn" "@ghostty@" "--class=ghostty.nnn" "-e" "@nnn@" "-e" "-C"; }
-  Mod+Shift+X            hotkey-overlay-title="Explore: Toggle Floating nnn"        { spawn "@toggleScratchpad@" "ghostty.scratchpad" "@ghostty@" "--class=ghostty.scratchpad" "-e" "@nnn@" "-e" "-C"; }
-  Mod+Ctrl+X             hotkey-overlay-title="Explore: Force New Tiled nnn"        { spawn "@ghostty@" "-e" "@nnn@" "-e" "-C"; }
+  Mod+X                  hotkey-overlay-title="Explore: nnn Helix Dashboard (Tiled)"{ spawn "@ghostty@" "--class=ghostty.nnn" "-e" "@nnn@" "-e" "-C"; }
+  Mod+Shift+X            hotkey-overlay-title="Explore: 16:9 Floating nnn"          { spawn "@ghostty@" "--class=ghostty.scratchpad" "-e" "@nnn@" "-e" "-C"; }
 
   Mod+C                  hotkey-overlay-title="Universal Copy (Ctrl+Insert)"        { spawn "@wtype@" "-M" "ctrl" "-k" "Insert" "-m" "ctrl"; }
   Mod+Shift+C            hotkey-overlay-title="Universal Cut (Shift+Delete)"        { spawn "@wtype@" "-M" "shift" "-k" "Delete" "-m" "shift"; }
@@ -259,7 +257,7 @@ binds {
   Mod+Shift+V            hotkey-overlay-title="Clipboard: Noctalia History Panel"   { spawn "@noctalia@" "msg" "panel-toggle" "clipboard"; }
 
   Mod+B                  hotkey-overlay-title="Bluetooth: Noctalia Panel"           { spawn "@noctalia@" "msg" "panel-toggle" "bluetooth"; }
-  Mod+Shift+B            hotkey-overlay-title="Security: Bitwarden Desktop"         { spawn "@runOrRaise@" "bitwarden" "bitwarden"; }
+  Mod+Shift+B            hotkey-overlay-title="Security: Bitwarden Desktop"         { spawn "bitwarden"; }
 
   Mod+Q                  hotkey-overlay-title="Close Focused Window"                { close-window; }
   Mod+W                  hotkey-overlay-title="Wallpaper: Noctalia Panel"           { spawn "@noctalia@" "msg" "panel-toggle" "wallpaper"; }
