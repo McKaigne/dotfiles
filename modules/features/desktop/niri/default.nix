@@ -21,6 +21,7 @@ let
               pkgs.wireplumber
               pkgs.fuzzel
               pkgs.jq
+              pkgs.gawk
             ]
           }"
       '';
@@ -37,6 +38,36 @@ let
       outputConfig ? "",
     }:
     let
+      toggleScratchpad = pkgs.writeShellScriptBin "niri-scratchpad-toggle" ''
+        set -euo pipefail
+        app_pattern="$1"
+        shift
+        launch_cmd="$*"
+
+        windows_json=$(${pkgs.niri}/bin/niri msg -j windows 2>/dev/null || echo "[]")
+
+        # Find matching floating window
+        match=$(echo "$windows_json" | ${pkgs.jq}/bin/jq -r \
+          ".[] | select((.app_id // \"\" | test(\"$app_pattern\"; \"i\")) or (.title // \"\" | test(\"$app_pattern\"; \"i\"))) | select(.is_floating == true) | \"\(.id) \(.is_focused)\"" | head -n1 || true)
+
+        if [ -z "$match" ] || [ "$match" = "null" ]; then
+          exec ''${launch_cmd}
+        fi
+
+        win_id=$(echo "$match" | awk '{print $1}')
+        is_focused=$(echo "$match" | awk '{print $2}')
+
+        if [ "$is_focused" = "true" ]; then
+          # Focused: push off-screen without destroying process
+          ${pkgs.niri}/bin/niri msg action move-floating-window --id "$win_id" -x 10000 -y 10000
+          ${pkgs.niri}/bin/niri msg action switch-focus-between-floating-and-tiling
+        else
+          # Off-screen or unfocused: re-center and focus
+          ${pkgs.niri}/bin/niri msg action center-floating-window --id "$win_id"
+          ${pkgs.niri}/bin/niri msg action focus-window --id "$win_id"
+        fi
+      '';
+
       tmuxSessionizer = pkgs.writeShellScriptBin "tmux-sessionizer" ''
         set -euo pipefail
         target=$( (
@@ -75,20 +106,20 @@ Mod + A             Launcher: Noctalia App Runner
 Mod + Shift + A     Overview: Niri Workspace View
 Mod + Ctrl + A      Control Center: Noctalia Panel
 Mod + S             Search: LibreWolf (Tiled)
-Mod + Shift + S     Popup: Floating 16:9 LibreWolf
+Mod + Shift + S     Popup: Toggle Floating LibreWolf
 Mod + Ctrl + S      Private: LibreWolf Incognito
 Mod + D             Dev: Ghostty Terminal (Tiled)
-Mod + Shift + D     Popup: Floating 16:9 Scratchpad
+Mod + Shift + D     Popup: Toggle Floating Scratchpad
 Mod + Ctrl + D      Sessionizer: Fuzzy Project Tmux
 Mod + F             Files: PCManFM File Manager (Tiled)
-Mod + Shift + F     Popup: Floating 16:9 PCManFM
+Mod + Shift + F     Popup: Toggle Floating PCManFM
 Mod + G             Notices: Noctalia Notification Center
 Mod + Shift + G     Notices: Dismiss Active Notification
 Mod + Ctrl + G      Bar: Toggle Noctalia Top Bar
 Mod + Z             Notes: ZenNotes (Tiled)
-Mod + Shift + Z     Popup: Floating 16:9 ZenNotes
+Mod + Shift + Z     Popup: Toggle Floating ZenNotes
 Mod + X             Explore: nnn Helix Dashboard (Tiled)
-Mod + Shift + X     Popup: Floating 16:9 nnn Dashboard
+Mod + Shift + X     Popup: Toggle Floating nnn Dashboard
 Mod + C             Universal Copy (Ctrl+Insert)
 Mod + Shift + C     Universal Cut (Shift+Delete)
 Mod + V             Universal Paste (Shift+Insert)
@@ -173,6 +204,7 @@ SHEET_EOF
         "@nnn@"
         "@wpctl@"
         "@playerctl@"
+        "@toggleScratchpad@"
         "@tmuxSessionizer@"
         "@fuzzelCheatsheet@"
         "@easyeffects@"
@@ -195,6 +227,7 @@ SHEET_EOF
         "${pkgs.nnn}/bin/nnn"
         "${pkgs.wireplumber}/bin/wpctl"
         "${pkgs.playerctl}/bin/playerctl"
+        "${toggleScratchpad}/bin/niri-scratchpad-toggle"
         "${tmuxSessionizer}/bin/tmux-sessionizer"
         "${fuzzelCheatsheet}/bin/fuzzel-cheatsheet"
         "${pkgs.easyeffects}/bin/easyeffects"

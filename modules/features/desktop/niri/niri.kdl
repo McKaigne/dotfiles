@@ -147,7 +147,7 @@ window-rule {
   }
 }
 
-// 16:9 Floating Popups and Scratchpads
+// 16:9 Floating Popups and Scratchpads (Proportion 0.65 yields 1248x702)
 window-rule {
   match app-id=r#"^.*\.scratchpad.*$"#
   match app-id=r#"^.*\.popup.*$"#
@@ -158,15 +158,11 @@ window-rule {
   default-window-height { proportion 0.65; }
 }
 
-// Automatic Floating for Auth, Pickers, Extension Menus, Portals
+// Automatic Floating for Auth, Bitwarden, Sidebery, Portals, and Dialogs
 window-rule {
-  match title=r#"^Sign in.*"#
-  match title=r#"^Sign In.*"#
-  match title=r#"^Authentication.*"#
-  match title=r#"^Confirm.*"#
-  match title=r#"^Extension: \(Bitwarden.*\)"#
-  match title=r#"^Bitwarden.*"#
-  match title=r#"^Sidebery.*"#
+  match title=r#"(?i)(sign in|sign up|log in|login|oauth|auth|verify|google accounts)"#
+  match title=r#"(?i)bitwarden"#
+  match title=r#"(?i)sidebery"#
   match title=r#"^Open File.*$"#
   match title=r#"^Save File.*$"#
   match title=r#"^Save As.*$"#
@@ -181,6 +177,8 @@ window-rule {
   match app-id="^xarchiver$"
   match app-id="^blueman-manager$"
   open-floating true
+  default-column-width { proportion 0.50; }
+  default-window-height { proportion 0.65; }
 }
 
 layer-rule {
@@ -230,15 +228,15 @@ binds {
   Mod+Ctrl+A             hotkey-overlay-title="Control Center: Noctalia Panel"      { spawn "@noctalia@" "msg" "panel-toggle" "control-center"; }
 
   Mod+S                  hotkey-overlay-title="Search: LibreWolf (Tiled)"           { spawn "@librewolf@"; }
-  Mod+Shift+S            hotkey-overlay-title="Search: 16:9 Floating LibreWolf"     { spawn "@librewolf@" "--class=librewolf.popup"; }
+  Mod+Shift+S            hotkey-overlay-title="Search: Toggle Floating LibreWolf"   { spawn "@toggleScratchpad@" "librewolf.popup" "@librewolf@" "--class=librewolf.popup"; }
   Mod+Ctrl+S             hotkey-overlay-title="Search: LibreWolf Private Window"    { spawn "@librewolf@" "--private-window"; }
 
   Mod+D                  hotkey-overlay-title="Dev: Ghostty Terminal (Tiled)"       { spawn "@ghostty@"; }
-  Mod+Shift+D            hotkey-overlay-title="Dev: 16:9 Floating Scratchpad"       { spawn "@ghostty@" "--class=ghostty.scratchpad"; }
+  Mod+Shift+D            hotkey-overlay-title="Dev: Toggle Floating Scratchpad"     { spawn "@toggleScratchpad@" "ghostty.scratchpad" "@ghostty@" "--class=ghostty.scratchpad"; }
   Mod+Ctrl+D             hotkey-overlay-title="Dev: Fuzzy Project Tmux Sessionizer" { spawn "@ghostty@" "--class=ghostty.scratchpad" "-e" "@tmuxSessionizer@"; }
 
   Mod+F                  hotkey-overlay-title="Files: PCManFM File Manager (Tiled)" { spawn "@pcmanfm@"; }
-  Mod+Shift+F            hotkey-overlay-title="Files: 16:9 Floating PCManFM"        { spawn "@pcmanfm@" "--role=floating"; }
+  Mod+Shift+F            hotkey-overlay-title="Files: Toggle Floating PCManFM"      { spawn "@toggleScratchpad@" "pcmanfm.floating" "@pcmanfm@" "--role=floating"; }
 
   Mod+G                  hotkey-overlay-title="Glance: Notification Center"         { spawn "@noctalia@" "msg" "panel-toggle" "notifications"; }
   Mod+Shift+G            hotkey-overlay-title="Glance: Dismiss Active Notice"       { spawn "@noctalia@" "msg" "notification-clear-active"; }
@@ -246,10 +244,10 @@ binds {
 
   // === LEFT HAND: NEIGHBORS (Z X C V B & Q W E R T) ===
   Mod+Z                  hotkey-overlay-title="Notes: ZenNotes (Tiled)"             { spawn "@zennotes@"; }
-  Mod+Shift+Z            hotkey-overlay-title="Notes: 16:9 Floating ZenNotes"       { spawn "@zennotes@"; }
+  Mod+Shift+Z            hotkey-overlay-title="Notes: Toggle Floating ZenNotes"     { spawn "@toggleScratchpad@" "zennotes-desktop" "@zennotes@"; }
 
   Mod+X                  hotkey-overlay-title="Explore: nnn Helix Dashboard (Tiled)"{ spawn "@ghostty@" "--class=ghostty.nnn" "-e" "@nnn@" "-e" "-C"; }
-  Mod+Shift+X            hotkey-overlay-title="Explore: 16:9 Floating nnn"          { spawn "@ghostty@" "--class=ghostty.scratchpad" "-e" "@nnn@" "-e" "-C"; }
+  Mod+Shift+X            hotkey-overlay-title="Explore: Toggle Floating nnn"        { spawn "@toggleScratchpad@" "ghostty.scratchpad" "@ghostty@" "--class=ghostty.scratchpad" "-e" "@nnn@" "-e" "-C"; }
 
   Mod+C                  hotkey-overlay-title="Universal Copy (Ctrl+Insert)"        { spawn "@wtype@" "-M" "ctrl" "-k" "Insert" "-m" "ctrl"; }
   Mod+Shift+C            hotkey-overlay-title="Universal Cut (Shift+Delete)"        { spawn "@wtype@" "-M" "shift" "-k" "Delete" "-m" "shift"; }
