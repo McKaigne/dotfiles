@@ -38,33 +38,62 @@ let
       outputConfig ? "",
     }:
     let
-      toggleScratchpad = pkgs.writeShellScriptBin "niri-scratchpad-toggle" ''
+      # Official gvolpe/niri-scratchpad community architecture
+      niriScratchpad = pkgs.writeShellScriptBin "niri-scratchpad" ''
         set -euo pipefail
-        app_pattern="$1"
-        shift
-        launch_cmd="$*"
 
-        windows_json=$(${pkgs.niri}/bin/niri msg -j windows 2>/dev/null || echo "[]")
+        SCRATCH_WORKSPACE="scratch"
+        APP_PATTERN=""
+        SPAWN_CMD=""
 
-        # Find matching floating window
-        match=$(echo "$windows_json" | ${pkgs.jq}/bin/jq -r \
-          ".[] | select((.app_id // \"\" | test(\"$app_pattern\"; \"i\")) or (.title // \"\" | test(\"$app_pattern\"; \"i\"))) | select(.is_floating == true) | \"\(.id) \(.is_focused)\"" | head -n1 || true)
+        while [[ $# -gt 0 ]]; do
+          case "$1" in
+            --app-id|-a)
+              APP_PATTERN="$2"
+              shift 2
+              ;;
+            --spawn|-s)
+              SPAWN_CMD="$2"
+              shift 2
+              ;;
+            *)
+              if [ -z "$APP_PATTERN" ]; then
+                APP_PATTERN="$1"
+              else
+                SPAWN_CMD="$*"
+                break
+              fi
+              shift
+              ;;
+          esac
+        done
 
-        if [ -z "$match" ] || [ "$match" = "null" ]; then
-          exec ''${launch_cmd}
+        if [ -z "$APP_PATTERN" ]; then
+          echo "Usage: niri-scratchpad --app-id <pattern> [--spawn <command>]" >&2
+          exit 1
         fi
 
-        win_id=$(echo "$match" | awk '{print $1}')
-        is_focused=$(echo "$match" | awk '{print $2}')
+        WINDOWS_JSON=$(${pkgs.niri}/bin/niri msg -j windows 2>/dev/null || echo "[]")
+        CURRENT_WS=$(${pkgs.niri}/bin/niri msg -j workspaces 2>/dev/null | ${pkgs.jq}/bin/jq -r '.[] | select(.is_active == true) | .id' || echo "1")
 
-        if [ "$is_focused" = "true" ]; then
-          # Focused: push off-screen without destroying process
-          ${pkgs.niri}/bin/niri msg action move-floating-window --id "$win_id" -x 10000 -y 10000
-          ${pkgs.niri}/bin/niri msg action switch-focus-between-floating-and-tiling
+        MATCH=$(echo "$WINDOWS_JSON" | ${pkgs.jq}/bin/jq -r \
+          ".[] | select((.app_id // \"\" | test(\"$APP_PATTERN\"; \"i\")) or (.title // \"\" | test(\"$APP_PATTERN\"; \"i\"))) | \"\(.id) \(.workspace_id) \(.is_focused)\"" | head -n1 || true)
+
+        if [ -z "$MATCH" ] || [ "$MATCH" = "null" ]; then
+          if [ -n "$SPAWN_CMD" ]; then
+            exec ''${SPAWN_CMD}
+          fi
+          exit 0
+        fi
+
+        WIN_ID=$(echo "$MATCH" | awk '{print $1}')
+        IS_FOCUSED=$(echo "$MATCH" | awk '{print $3}')
+
+        if [ "$IS_FOCUSED" = "true" ]; then
+          ${pkgs.niri}/bin/niri msg action move-window-to-workspace --window-id "$WIN_ID" "$SCRATCH_WORKSPACE" --focus=false
         else
-          # Off-screen or unfocused: re-center and focus
-          ${pkgs.niri}/bin/niri msg action center-floating-window --id "$win_id"
-          ${pkgs.niri}/bin/niri msg action focus-window --id "$win_id"
+          ${pkgs.niri}/bin/niri msg action move-window-to-workspace --window-id "$WIN_ID" "$CURRENT_WS"
+          ${pkgs.niri}/bin/niri msg action focus-window --id "$WIN_ID"
         fi
       '';
 
@@ -106,20 +135,20 @@ Mod + A             Launcher: Noctalia App Runner
 Mod + Shift + A     Overview: Niri Workspace View
 Mod + Ctrl + A      Control Center: Noctalia Panel
 Mod + S             Search: LibreWolf (Tiled)
-Mod + Shift + S     Popup: Toggle Floating LibreWolf
+Mod + Shift + S     Popup: Toggle Scratchpad LibreWolf
 Mod + Ctrl + S      Private: LibreWolf Incognito
 Mod + D             Dev: Ghostty Terminal (Tiled)
-Mod + Shift + D     Popup: Toggle Floating Scratchpad
+Mod + Shift + D     Popup: Toggle Scratchpad Terminal
 Mod + Ctrl + D      Sessionizer: Fuzzy Project Tmux
 Mod + F             Files: PCManFM File Manager (Tiled)
-Mod + Shift + F     Popup: Toggle Floating PCManFM
+Mod + Shift + F     Popup: Toggle Scratchpad PCManFM
 Mod + G             Notices: Noctalia Notification Center
 Mod + Shift + G     Notices: Dismiss Active Notification
 Mod + Ctrl + G      Bar: Toggle Noctalia Top Bar
 Mod + Z             Notes: ZenNotes (Tiled)
-Mod + Shift + Z     Popup: Toggle Floating ZenNotes
+Mod + Shift + Z     Popup: Toggle Scratchpad ZenNotes
 Mod + X             Explore: nnn Helix Dashboard (Tiled)
-Mod + Shift + X     Popup: Toggle Floating nnn Dashboard
+Mod + Shift + X     Popup: Toggle Scratchpad nnn
 Mod + C             Universal Copy (Ctrl+Insert)
 Mod + Shift + C     Universal Cut (Shift+Delete)
 Mod + V             Universal Paste (Shift+Insert)
@@ -204,7 +233,7 @@ SHEET_EOF
         "@nnn@"
         "@wpctl@"
         "@playerctl@"
-        "@toggleScratchpad@"
+        "@niriScratchpad@"
         "@tmuxSessionizer@"
         "@fuzzelCheatsheet@"
         "@easyeffects@"
@@ -227,7 +256,7 @@ SHEET_EOF
         "${pkgs.nnn}/bin/nnn"
         "${pkgs.wireplumber}/bin/wpctl"
         "${pkgs.playerctl}/bin/playerctl"
-        "${toggleScratchpad}/bin/niri-scratchpad-toggle"
+        "${niriScratchpad}/bin/niri-scratchpad"
         "${tmuxSessionizer}/bin/tmux-sessionizer"
         "${fuzzelCheatsheet}/bin/fuzzel-cheatsheet"
         "${pkgs.easyeffects}/bin/easyeffects"
