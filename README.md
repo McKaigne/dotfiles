@@ -43,6 +43,17 @@ When an automated agent or LLM reasons over this configuration (via `cfb` snapsh
 
 ---
 
+## Shell Architecture & Ergonomics (Fish)
+
+| Component | Implementation | Key Operational Notes |
+| :--- | :--- | :--- |
+| **Shell** | [fish](https://fishshell.com/) | Native autosuggestions, Catppuccin Mocha syntax highlight, zero-latency built-in abbreviations |
+| **File Generation** | `writefile <path> [delim]` | Delimiter-based raw stream writer (`awk`). Writes files with unclosed `'`, `"`, and code blocks without shell parse errors |
+| **Prompt** | [starship](https://starship.rs/) | Bound directly via `/etc/starship.toml` with zero configuration divergence |
+| **Pipelining** | `fzf`, `zoxide`, `direnv` | Pre-hooked into interactive sessions with Catppuccin Mocha color tokens |
+
+---
+
 ## Keybinding Taxonomy (Spatial Hemispheric Split)
 
 ### Left Hand: Core Engines & Applications

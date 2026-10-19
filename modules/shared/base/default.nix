@@ -19,7 +19,7 @@
 
       self.nixosModules.ghostty
       self.nixosModules.tmux
-      self.nixosModules.zsh
+      self.nixosModules.fish
       self.nixosModules.starship
       self.nixosModules.fetch
 
