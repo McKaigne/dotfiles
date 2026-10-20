@@ -21,7 +21,6 @@ let
               pkgs.wireplumber
               pkgs.fuzzel
               pkgs.jq
-              pkgs.gawk
             ]
           }"
       '';
@@ -38,105 +37,6 @@ let
       outputConfig ? "",
     }:
     let
-      # Mutual-Exclusion (Singleton) Scratchpad Engine
-      niriScratchpad = pkgs.writeShellScriptBin "niri-scratchpad" ''
-        set -euo pipefail
-
-        SCRATCH_WORKSPACE_NAME="scratch"
-        SCRATCH_PATTERNS="Ghostty Scratchpad|nnn Scratchpad|pcmanfm|zennotes|librewolf"
-        SEARCH_METHOD="--app-id"
-        TARGET_NAME=""
-        SPAWN_CMD=""
-
-        while [[ $# -gt 0 ]]; do
-          case "$1" in
-            --app-id|-a)
-              SEARCH_METHOD="--app-id"
-              TARGET_NAME="$2"
-              shift 2
-              ;;
-            --title|-t)
-              SEARCH_METHOD="--title"
-              TARGET_NAME="$2"
-              shift 2
-              ;;
-            --spawn|-s)
-              SPAWN_CMD="$2"
-              shift 2
-              ;;
-            *)
-              if [ -z "$TARGET_NAME" ]; then
-                TARGET_NAME="$1"
-              else
-                SPAWN_CMD="$*"
-                break
-              fi
-              shift
-              ;;
-          esac
-        done
-
-        if [ -z "$TARGET_NAME" ]; then
-          echo "Usage: niri-scratchpad --app-id <pattern> [--spawn <command>]" >&2
-          exit 1
-        fi
-
-        WINDOWS_JSON=$(${pkgs.niri}/bin/niri msg -j windows 2>/dev/null || echo "[]")
-        CURRENT_WS=$(${pkgs.niri}/bin/niri msg -j workspaces 2>/dev/null | ${pkgs.jq}/bin/jq -r '.[] | select(.is_active == true) | .id' || echo "1")
-
-        # Function to stash any other open scratchpads currently on the screen
-        stash_other_scratchpads() {
-          local exclude_id="''${1:-0}"
-          local active_scratchpads
-          active_scratchpads=$(echo "$WINDOWS_JSON" | ${pkgs.jq}/bin/jq -r \
-            ".[] | select(.workspace_id == $CURRENT_WS and .id != $exclude_id and .is_floating == true) | select((.app_id // \"\" | test(\"$SCRATCH_PATTERNS\"; \"i\")) or (.title // \"\" | test(\"$SCRATCH_PATTERNS\"; \"i\"))) | .id" 2>/dev/null || true)
-
-          for sid in $active_scratchpads; do
-            ${pkgs.niri}/bin/niri msg action move-window-to-workspace --window-id "$sid" "$SCRATCH_WORKSPACE_NAME" --focus=false 2>/dev/null || true
-          done
-        }
-
-        if [ "$SEARCH_METHOD" = "--title" ]; then
-          app_window=$(echo "$WINDOWS_JSON" | ${pkgs.jq}/bin/jq -c ".[] | select(.title != null) | select(.title | test(\"$TARGET_NAME\"; \"i\"))" | head -n1)
-        else
-          app_window=$(echo "$WINDOWS_JSON" | ${pkgs.jq}/bin/jq -c ".[] | select((.app_id != null and (.app_id | test(\"$TARGET_NAME\"; \"i\"))) or (.title != null and (.title | test(\"$TARGET_NAME\"; \"i\")))" | head -n1)
-        fi
-
-        win_id=$(echo "$app_window" | ${pkgs.jq} -r '.id // empty')
-
-        if [ -z "$win_id" ]; then
-          # Target not running: stash any open scratchpad and spawn it
-          stash_other_scratchpads 0
-          if [ -n "$SPAWN_CMD" ]; then
-            exec ''${SPAWN_CMD}
-          fi
-          exit 0
-        fi
-
-        is_focused=$(echo "$app_window" | ${pkgs.jq} -r '.is_focused')
-
-        if [ "$is_focused" = "true" ]; then
-          # Target is currently active & focused: stash it away
-          ${pkgs.niri}/bin/niri msg action move-window-to-workspace --window-id "$win_id" "$SCRATCH_WORKSPACE_NAME" --focus=false
-        else
-          # Target is elsewhere: stash all other scratchpads, summon target to current workspace, and focus
-          stash_other_scratchpads "$win_id"
-
-          focused_ws=$(${pkgs.niri}/bin/niri msg -j workspaces 2>/dev/null | ${pkgs.jq} -c '.[] | select(.is_focused == true)' | head -n1)
-          output_id=$(echo "$focused_ws" | ${pkgs.jq} -r '.output // empty')
-          work_idx=$(echo "$focused_ws" | ${pkgs.jq} -r '.idx // empty')
-
-          if [ -n "$output_id" ]; then
-            ${pkgs.niri}/bin/niri msg action move-window-to-monitor --id "$win_id" "$output_id" 2>/dev/null || true
-          fi
-          if [ -n "$work_idx" ]; then
-            ${pkgs.niri}/bin/niri msg action move-window-to-workspace --window-id "$win_id" "$work_idx"
-          fi
-          ${pkgs.niri}/bin/niri msg action move-window-to-floating --id "$win_id" 2>/dev/null || true
-          ${pkgs.niri}/bin/niri msg action focus-window --id "$win_id"
-        fi
-      '';
-
       tmuxSessionizer = pkgs.writeShellScriptBin "tmux-sessionizer" ''
         set -euo pipefail
         target=$( (
@@ -167,55 +67,59 @@ let
       fuzzelCheatsheet = pkgs.writeShellScriptBin "fuzzel-cheatsheet" ''
         set -euo pipefail
         cat << 'SHEET_EOF' | ${pkgs.fuzzel}/bin/fuzzel --dmenu --prompt "⌨ Keybinds ➜ " --lines 18 --width 54
-Mod + Return        Maximize column width
-Mod + Shift + Ret   Fullscreen window
-Mod + Space         Switch focus floating/tiling
-Mod + Shift + Space Toggle focused window floating
-Mod + A             Launcher: Noctalia App Runner
+Mod + Space         Fill Screen (Maximize Column Width)
+Mod + Shift + Space Fullscreen Window
+Mod + Ctrl + Space  Toggle Window Floating
+Mod + Alt + Space   Switch Focus Floating/Tiling
+Mod + F             Terminal: Foot Client (Fast Daemon)
+Mod + Shift + F     Terminal: Ghostty Standalone
+Mod + Ctrl + F      Terminal: Tmux Project Sessionizer
+Mod + D             Browser: LibreWolf
+Mod + Shift + D     Browser: Brave Origin
+Mod + Ctrl + D      Browser: LibreWolf Private
+Mod + S             Files: PCManFM File Manager
+Mod + Shift + S     Files: Floating PCManFM Dialog
+Mod + Ctrl + S      Terminal in Current Directory
+Mod + A             Chat: Ferdium Messaging Client
 Mod + Shift + A     Overview: Niri Workspace View
-Mod + Ctrl + A      Control Center: Noctalia Panel
-Mod + S             Search: LibreWolf (Tiled)
-Mod + Shift + S     Popup: Toggle Scratchpad LibreWolf
-Mod + Ctrl + S      Private: LibreWolf Incognito
-Mod + D             Dev: Ghostty Terminal (Tiled)
-Mod + Shift + D     Popup: Toggle Scratchpad Terminal
-Mod + Ctrl + D      Sessionizer: Fuzzy Project Tmux
-Mod + F             Files: PCManFM File Manager (Tiled)
-Mod + Shift + F     Popup: Toggle Scratchpad PCManFM
-Mod + G             Notices: Noctalia Notification Center
-Mod + Shift + G     Notices: Dismiss Active Notification
-Mod + Ctrl + G      Bar: Toggle Noctalia Top Bar
-Mod + Z             Notes: ZenNotes (Tiled)
-Mod + Shift + Z     Popup: Toggle Scratchpad ZenNotes
-Mod + X             Explore: nnn Helix Dashboard (Tiled)
-Mod + Shift + X     Popup: Toggle Scratchpad nnn Dashboard
-Mod + C             Universal Copy (Ctrl+Insert)
-Mod + Shift + C     Universal Cut (Shift+Delete)
-Mod + V             Universal Paste (Shift+Insert)
-Mod + Shift + V     Clipboard History Panel
-Mod + B             Bluetooth: Noctalia Panel
-Mod + Shift + B     Bitwarden Desktop Client
+Mod + Ctrl + A      Chat: Floating Ferdium
+Mod + G             Notes: Obsidian Knowledge Vault
+Mod + Shift + G     Notes: Floating Obsidian Quick Note
+Mod + Ctrl + G      Notes: Obsidian Daily Note
+Mod + T             Snip: Area Screenshot to Clipboard
+Mod + Shift + T     Snip: Fullscreen to Clipboard
+Mod + Ctrl + T      Screen Recording / OCR
+Mod + E             Notices: Notification Center Panel
+Mod + Shift + E     Notices: Clear All Notice History
+Mod + X             Notices: Dismiss Active Notification
+Mod + Shift + X     Notices: Dismiss All Popups
+Mod + V             Settings: Noctalia Settings GUI
+Mod + Shift + V     Clipboard: Noctalia History Panel
+Mod + C             Control: Noctalia Control Center Panel
+Mod + Shift + C     Audio: Pavucontrol Volume Mixer
+Mod + B             Bluetooth: Noctalia Bluetooth Panel
+Mod + Shift + B     Security: Bitwarden Desktop Client
+Mod + W             Network: Wi-Fi / Network Panel
+Mod + Shift + W     Wallpaper: Noctalia Wallpaper Selector
+Mod + Ctrl + W      Bar: Toggle Noctalia Top Bar
+Mod + R             Launcher: Noctalia App Runner
+Mod + Shift + R     Interactive Fuzzel Hotkey Search
+Mod + Esc           Session: Noctalia Power Menu
+Mod + Shift + Esc   Session: Lock Screen
+Mod + Ctrl + Esc    Monitors: Turn Off Displays
 Mod + Q             Close Focused Window
-Mod + W             Wallpaper: Noctalia Panel
-Mod + E             Audio: Pavucontrol Volume Mixer
-Mod + Shift + E     Audio: EasyEffects DSP Effects
-Mod + R             Snip: Area Screenshot to Clipboard
-Mod + Shift + R     Snip: Fullscreen to Clipboard
-Mod + T             Settings: Noctalia Settings GUI
-Mod + P             Power: Noctalia Session Menu
-Mod + Shift + P     Lock: Lock Screen
-Mod + Ctrl + P      Monitors: Turn Off Displays
+Mod + Shift + Q     Kill / Force Close Window
 Mod + H / L         Navigate: Focus Column Left / Right
+Mod + J / K         Stack: Focus Window Down / Up (Column)
 Mod + Shift + H / L Move: Move Column Left / Right
-Mod + J / K         Workspace: Focus Workspace Down / Up
-Mod + Shift + J / K Workspace: Move Column Down / Up
-Mod + N / M         Stack: Focus Window Down / Up (Column)
-Mod + Shift + N / M Stack: Move Window Down / Up (Column)
-Mod + U / I         Stack: Consume / Expel Left / Right
-Mod + Y / O         Width: Shrink / Expand Column Width
-Mod + Shift + Y / O Height: Shrink / Expand Window Height
-Mod + , / .         Monitor: Focus Monitor Left / Right
-Mod + Shift + , / . Monitor: Move Column to Monitor L / R
+Mod + Shift + J / K Move: Move Window Down / Up (Column)
+Mod + Ctrl + H / L  Resize: Shrink / Expand Column Width
+Mod + Ctrl + J / K  Resize: Shrink / Expand Window Height
+Mod + U / I         Workspace: Focus Workspace Down / Up
+Mod + Shift + U / I Workspace: Move Column Down / Up
+Mod + M             Stack: Consume Window Left
+Mod + , (Comma)     Stack: Consume Window Right
+Mod + . (Period)    Stack: Expel Window from Column
 Mod + 1..9          Workspace: Focus Named "one".."nine"
 Mod + 0             Workspace: Focus Dynamic 10th
 SHEET_EOF
@@ -265,15 +169,15 @@ SHEET_EOF
         "@outputConfig@"
         "@noctalia@"
         "@systemctl@"
+        "@footclient@"
         "@ghostty@"
         "@brave@"
         "@librewolf@"
-        "@zennotes@"
+        "@obsidian@"
         "@pcmanfm@"
-        "@nnn@"
+        "@ferdium@"
         "@wpctl@"
         "@playerctl@"
-        "@niriScratchpad@"
         "@tmuxSessionizer@"
         "@fuzzelCheatsheet@"
         "@easyeffects@"
@@ -282,21 +186,20 @@ SHEET_EOF
         "@screenshotFull@"
         "@brightnessUp@"
         "@brightnessDown@"
-        "@wtype@"
       ]
       [
         outputConfig
         "${noctaliaPkg}/bin/noctalia"
         "${pkgs.systemd}/bin/systemctl"
+        "${pkgs.foot}/bin/footclient"
         "${pkgs.ghostty}/bin/ghostty"
         "${lib.getExe pkgs.brave-origin}"
         "${pkgs.librewolf}/bin/librewolf"
-        "${pkgs.zennotes-desktop}/bin/zennotes-desktop"
+        "${pkgs.obsidian}/bin/obsidian"
         "${pkgs.pcmanfm}/bin/pcmanfm"
-        "${pkgs.nnn}/bin/nnn"
+        "${pkgs.ferdium}/bin/ferdium"
         "${pkgs.wireplumber}/bin/wpctl"
         "${pkgs.playerctl}/bin/playerctl"
-        "${niriScratchpad}/bin/niri-scratchpad"
         "${tmuxSessionizer}/bin/tmux-sessionizer"
         "${fuzzelCheatsheet}/bin/fuzzel-cheatsheet"
         "${pkgs.easyeffects}/bin/easyeffects"
@@ -305,7 +208,6 @@ SHEET_EOF
         "${screenshotFull}/bin/screenshot-full"
         "${brightnessUp}/bin/brightness-up"
         "${brightnessDown}/bin/brightness-down"
-        "${pkgs.wtype}/bin/wtype"
       ]
       (builtins.readFile ./niri.kdl);
 in
@@ -393,7 +295,6 @@ in
           pkgs.xwayland-satellite
           pkgs.ddcutil
           pkgs.wtype
-          pkgs.nnn
         ];
       };
     };

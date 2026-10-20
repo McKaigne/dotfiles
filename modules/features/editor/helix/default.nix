@@ -51,6 +51,7 @@
             theme = "catppuccin_transparent"
 
             [editor]
+            default-yank-register = "+"
             line-number = "relative"
             mouse = false
             cursorline = true

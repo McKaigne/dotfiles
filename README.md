@@ -27,61 +27,50 @@ Checkout path expected at `/etc/nixos`.
 
 ---
 
-## Agent & LLM Operational Guardrails (Do Not Violate)
+## Typography & Subpixel DPI Engineering
 
-When an automated agent or LLM reasons over this configuration (via `cfb` snapshots), the following invariants must be strictly respected:
-
-1. **Starship Configuration Authority**:
-   * Starship is managed strictly at `/etc/starship.toml` via `environment.etc` and `environment.sessionVariables.STARSHIP_CONFIG = "/etc/starship.toml"`.
-2. **Niri Layer-Shell & Wallpaper Invariant**:
-   * Desktop wallpapers are rendered directly by Noctalia on the standard Wayland background layer (`Layer::Background`).
-   * Noctalia's backdrop is mapped exclusively via `layer-rule { match namespace="^noctalia-backdrop$" place-within-backdrop true; }`.
-3. **Compute & Binary Cache Invariants**:
-   * Host `hyde` uses `pkgs.pkgsRocm.blender` and `hardware.amdgpu.opencl.enable`. Do not add un-cached ROCm derivations.
-4. **Pure ZRAM Invariant**:
-   * Never set `vm.swappiness = 10` on pure ZRAM (`swapDevices = [ ]`). Enforce `180`.
+| Target | Display Font | Terminal / Monospace Font | Target DPI (`XFT_DPI`) | True Pixel Metrics |
+| :--- | :--- | :--- | :--- | :--- |
+| **hyde (24" 1080p)** | Atkinson Hyperlegible | AtkynsonMono Nerd Font | `96` | 14px Foot (`size=14px`), 12pt Ghostty (16px grid) |
+| **castor (15.6" 1080p)** | Atkinson Hyperlegible | AtkynsonMono Nerd Font | `141` | 14px Foot (`size=14px`), native density scaling |
 
 ---
 
-## Shell Architecture & Ergonomics (Fish)
+## Keybinding Taxonomy
 
-| Component | Implementation | Key Operational Notes |
-| :--- | :--- | :--- |
-| **Shell** | [fish](https://fishshell.com/) | Native autosuggestions, Catppuccin Mocha syntax highlight, zero-latency built-in abbreviations |
-| **File Generation** | `writefile <path> [delim]` | Delimiter-based raw stream writer (`awk`). Writes files with unclosed `'`, `"`, and code blocks without shell parse errors |
-| **Prompt** | [starship](https://starship.rs/) | Bound directly via `/etc/starship.toml` with zero configuration divergence |
-| **Pipelining** | `fzf`, `zoxide`, `direnv` | Pre-hooked into interactive sessions with Catppuccin Mocha color tokens |
+### Space Tree (Viewport Fill & Floating Layer)
+* **`Mod + Space`**: Fill Screen (Maximize Column Width)
+* **`Mod + Shift + Space`**: Fullscreen Window
+* **`Mod + Ctrl + Space`**: Toggle Window Floating
+* **`Mod + Alt + Space`**: Switch Focus Floating/Tiling
 
----
+### Left Hand: Core Engines & Noctalia Panels
+* **`Mod + F`**: Terminal: Foot Client (Fast Daemon) • **`Shift`**: Ghostty • **`Ctrl`**: Tmux Project Sessionizer
+* **`Mod + D`**: Browser: LibreWolf • **`Shift`**: Brave Origin • **`Ctrl`**: Private Window
+* **`Mod + S`**: Files: PCManFM • **`Shift`**: Floating PCManFM Dialog
+* **`Mod + A`**: Chat: Ferdium • **`Shift`**: Niri Workspace Overview • **`Ctrl`**: Floating Ferdium
+* **`Mod + G`**: Notes: Obsidian • **`Shift`**: Floating Obsidian Quick Note
+* **`Mod + T`**: Snip: Area Screenshot to Clipboard • **`Shift`**: Fullscreen Screenshot
+* **`Mod + E`**: Notices: Notification Center • **`Shift`**: Clear History
+* **`Mod + X`**: Notices: Dismiss Active Notice
+* **`Mod + V`**: Settings: Noctalia Settings GUI • **`Shift`**: Clipboard History Panel
+* **`Mod + C`**: Control Center • **`Shift`**: Pavucontrol Mixer
+* **`Mod + B`**: Bluetooth Panel • **`Shift`**: Bitwarden Desktop Client
+* **`Mod + W`**: Wi-Fi Panel • **`Shift`**: Wallpaper Panel • **`Ctrl`**: Toggle Top Bar
+* **`Mod + R`**: Launcher: Noctalia App Runner • **`Shift`**: Interactive Fuzzel Cheat Sheet
+* **`Mod + Esc`**: Session Menu • **`Shift`**: Lock Screen • **`Ctrl`**: Turn Off Displays
+* **`Mod + Q`**: Close Window • **`Shift`**: Kill Window
 
-## Keybinding Taxonomy (Spatial Hemispheric Split)
-
-### Left Hand: Core Engines & Applications
-* **`Mod + Space`**: Switch focus between floating and tiling layers
-* **`Mod + Shift + Space`**: Toggle current window between floating and tiled
-* **`Mod + A`**: Launch Noctalia App Runner • **`Shift`**: Niri Workspace Overview • **`Ctrl`**: Noctalia Control Center
-* **`Mod + S`**: Focus/Raise LibreWolf • **`Shift`**: Toggle Floating LibreWolf • **`Ctrl`**: Force New Tiled LibreWolf • **`Alt`**: Private Window
-* **`Mod + D`**: Focus/Raise Ghostty • **`Shift`**: Toggle Floating Scratchpad • **`Ctrl`**: Force New Tiled Ghostty • **`Alt`**: Tmux Project Sessionizer
-* **`Mod + F`**: Focus/Raise PCManFM • **`Shift`**: Toggle Floating PCManFM • **`Ctrl`**: Force New Tiled PCManFM
-* **`Mod + G`**: Notification Center • **`Shift`**: Dismiss Notice • **`Ctrl`**: Toggle Top Bar
-* **`Mod + Z`**: Focus/Raise ZenNotes • **`Shift`**: Toggle Floating ZenNotes • **`Ctrl`**: Force New Tiled ZenNotes
-* **`Mod + X`**: Focus/Raise `nnn` Helix Dashboard • **`Shift`**: Toggle Floating `nnn` • **`Ctrl`**: Force New Tiled `nnn`
-* **`Mod + C`**: Universal Copy (`Ctrl+Insert`) • **`Shift`**: Universal Cut (`Shift+Delete`)
-* **`Mod + V`**: Universal Paste (`Shift+Insert`) • **`Shift`**: Noctalia Clipboard History Panel
-* **`Mod + B`**: Bluetooth Manager • **`Shift`**: Bitwarden Desktop
-* **`Mod + Q`**: Close Window • **`Mod + W`**: Wallpaper Panel • **`Mod + E`**: Audio Pavucontrol • **`Mod + Shift + E`**: EasyEffects DSP
-* **`Mod + R`**: Area Snip to Clipboard • **`Mod + Shift + R`**: Fullscreen Screenshot • **`Mod + T`**: Noctalia Settings GUI
-
-### Right Hand: Navigation & Ribbon Geometry
-* **`Mod + H / L`**: Focus Column Left / Right • **`Shift`**: Move Column Left / Right
-* **`Mod + J / K`**: Focus Workspace Down / Up • **`Shift`**: Move Column Down / Up
-* **`Mod + N / M`**: Focus Window Down / Up (inside column) • **`Shift`**: Move Window Down / Up
-* **`Mod + U / I`**: Column Ingestion: Consume / Expel Left / Right
-* **`Mod + Y / O`**: Column Width: Shrink / Expand Width (`-5%` / `+5%`)
-* **`Mod + Shift + Y / O`**: Window Height: Shrink / Expand Height (`-5%` / `+5%`)
-* **`Mod + P`**: Power/Session Menu • **`Shift`**: Lock Screen • **`Ctrl`**: Turn Off Displays
-* **`Mod + , / .`**: Focus Monitor Left / Right • **`Shift`**: Move Column to Monitor L / R
-* **`Mod + Return`**: Maximize Column Width • **`Shift`**: Fullscreen Window
-* **`Mod + /`**: Catppuccin Mocha Fuzzel Interactive Keybind Cheat Sheet
+### Right Hand: Coalesced HJKL Navigation, Movement & Resizing
+* **`Mod + H / L`**: Focus Column Left / Right
+* **`Mod + J / K`**: Focus Window Down / Up (inside column stack)
+* **`Mod + Shift + H / L`**: Move Column Left / Right
+* **`Mod + Shift + J / K`**: Move Window Down / Up (inside column stack)
+* **`Mod + Ctrl + H / L`**: Shrink / Expand Column Width (`-5%` / `+5%`)
+* **`Mod + Ctrl + J / K`**: Shrink / Expand Window Height (`-5%` / `+5%`)
+* **`Mod + U / I`**: Focus Workspace Down / Up • **`Shift`**: Move Column to Workspace Down / Up
+* **`Mod + M`**: Consume Window into Column from Left
+* **`Mod + ,` (Comma)**: Consume Window into Column from Right
+* **`Mod + .` (Period)**: Expel Window from Column
 * **`Mod + 1..9`**: Focus Named Workspaces `"one"` through `"nine"`
 * **`Mod + 0`**: Focus 10th Dynamic Workspace

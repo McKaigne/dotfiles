@@ -9,6 +9,7 @@
       ({ pkgs, ... }: {
         networking.hostName = "castor";
         mainUser = "pollux";
+        environment.sessionVariables.XFT_DPI = "141";
         time.timeZone = "Asia/Manila";
 
         workstation.display = {

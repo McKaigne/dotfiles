@@ -28,7 +28,7 @@ order = [ "top" ]
         "clock",
         "session"
     ]
-    font_family = "IBM Plex Sans"
+    font_family = "Atkinson Hyperlegible"
     font_scale = 1.1
     margin_edge = 8
     margin_ends = 350
@@ -102,7 +102,7 @@ app_icon_color = "on_surface_variant"
 button_borders = false
 card_borders = false
 corner_radius_scale = 0.4
-font_family = "IBM Plex Sans"
+font_family = "Atkinson Hyperlegible"
 input_borders = false
 popup_borders = false
 popup_shadows = false

@@ -116,6 +116,8 @@ window-rule {
 
 window-rule {
   match app-id=r#"^(com\.mitchellh\.)?ghostty(\..+)?$"#
+  match app-id="^foot$"
+  match app-id="^footclient$"
   background-effect {
     blur true
     xray false
@@ -147,18 +149,7 @@ window-rule {
   }
 }
 
-// 16:9 Floating Scratchpads (1248x702)
-window-rule {
-  match app-id=r#"^.*\.scratchpad.*$"#
-  match app-id=r#"^.*\.popup.*$"#
-  match app-id=r#"^.*\.floating.*$"#
-  match title=r#"^.*\(Floating\)$"#
-  open-floating true
-  default-column-width { proportion 0.65; }
-  default-window-height { proportion 0.65; }
-}
-
-// System Portals, Dialogs, and Utilities
+// System Portals, Dialogs, and Media Players
 window-rule {
   match app-id=r#"^org\.freedesktop\.impl\.portal\.desktop.*$"#
   match app-id=r#"^xdg-desktop-portal.*$"#
@@ -211,89 +202,99 @@ spawn-at-startup "@systemctl@" "--user" "import-environment" "PATH" "XDG_DATA_DI
 spawn-at-startup "@noctalia@"
 
 binds {
-  Mod+Space              hotkey-overlay-title="Switch Focus Floating/Tiling"        { switch-focus-between-floating-and-tiling; }
-  Mod+Shift+Space        hotkey-overlay-title="Toggle Window Floating"              { toggle-window-floating; }
-  Mod+Return             hotkey-overlay-title="Maximize Column Width"               { maximize-column; }
-  Mod+Shift+Return       hotkey-overlay-title="Fullscreen Window"                   { fullscreen-window; }
-  Mod+Slash              hotkey-overlay-title="Interactive Hotkey Search"           { spawn "@fuzzelCheatsheet@"; }
+  // === SPACE TREE: VIEWPORT FILL & FLOATING LAYER ===
+  Mod+Space              hotkey-overlay-title="Fill Screen (Maximize Column Width)" { maximize-column; }
+  Mod+Shift+Space        hotkey-overlay-title="Fullscreen Window"                   { fullscreen-window; }
+  Mod+Ctrl+Space         hotkey-overlay-title="Toggle Window Floating"              { toggle-window-floating; }
+  Mod+Alt+Space          hotkey-overlay-title="Switch Focus Floating/Tiling"        { switch-focus-between-floating-and-tiling; }
 
-  // === LEFT HAND: CORE ENGINES (A S D F G) ===
-  Mod+A                  hotkey-overlay-title="Launcher: Noctalia App Runner"       { spawn "@noctalia@" "msg" "panel-toggle" "launcher"; }
+  // === LEFT HAND: APPS & SYSTEM PANELS ===
+  // F: Terminal
+  Mod+F                  hotkey-overlay-title="Terminal: Foot Client (Daemon)"      { spawn "@footclient@"; }
+  Mod+Shift+F            hotkey-overlay-title="Terminal: Ghostty Standalone"        { spawn "@ghostty@"; }
+  Mod+Ctrl+F             hotkey-overlay-title="Terminal: Tmux Project Sessionizer"  { spawn "@footclient@" "-e" "@tmuxSessionizer@"; }
+
+  // D: Browser
+  Mod+D                  hotkey-overlay-title="Browser: LibreWolf"                  { spawn "@librewolf@"; }
+  Mod+Shift+D            hotkey-overlay-title="Browser: Brave Origin"               { spawn "@brave@"; }
+  Mod+Ctrl+D             hotkey-overlay-title="Browser: LibreWolf Private"          { spawn "@librewolf@" "--private-window"; }
+
+  // S: Files
+  Mod+S                  hotkey-overlay-title="Files: PCManFM File Manager"         { spawn "@pcmanfm@"; }
+  Mod+Shift+S            hotkey-overlay-title="Files: Floating PCManFM Dialog"      { spawn "@pcmanfm@"; }
+  Mod+Ctrl+S             hotkey-overlay-title="Files: Terminal in Current Folder"   { spawn "@footclient@"; }
+
+  // A: Ferdium & Overview
+  Mod+A                  hotkey-overlay-title="Chat: Ferdium Messaging Client"      { spawn "@ferdium@"; }
   Mod+Shift+A            hotkey-overlay-title="Overview: Niri Workspace View"       { toggle-overview; }
-  Mod+Ctrl+A             hotkey-overlay-title="Control Center: Noctalia Panel"      { spawn "@noctalia@" "msg" "panel-toggle" "control-center"; }
+  Mod+Ctrl+A             hotkey-overlay-title="Chat: Floating Ferdium"              { spawn "@ferdium@"; }
 
-  Mod+S                  hotkey-overlay-title="Search: LibreWolf (Tiled)"           { spawn "@librewolf@"; }
-  Mod+Shift+S            hotkey-overlay-title="Search: Toggle Scratchpad LibreWolf" { spawn "@niriScratchpad@" "--app-id" "librewolf.popup" "--spawn" "@librewolf@ --class=librewolf.popup"; }
-  Mod+Ctrl+S             hotkey-overlay-title="Search: LibreWolf Private Window"    { spawn "@librewolf@" "--private-window"; }
+  // G: Obsidian
+  Mod+G                  hotkey-overlay-title="Notes: Obsidian Knowledge Vault"     { spawn "@obsidian@"; }
+  Mod+Shift+G            hotkey-overlay-title="Notes: Floating Obsidian"            { spawn "@obsidian@"; }
+  Mod+Ctrl+G             hotkey-overlay-title="Notes: Obsidian Quick Note"          { spawn "@obsidian@"; }
 
-  Mod+D                  hotkey-overlay-title="Dev: Ghostty Terminal (Tiled)"       { spawn "@ghostty@"; }
-  Mod+Shift+D            hotkey-overlay-title="Dev: Toggle Scratchpad Terminal"     { spawn "@niriScratchpad@" "--app-id" "ghostty.scratchpad" "--spawn" "@ghostty@ --class=ghostty.scratchpad"; }
-  Mod+Ctrl+D             hotkey-overlay-title="Dev: Fuzzy Project Tmux Sessionizer" { spawn "@ghostty@" "--class=ghostty.scratchpad" "-e" "@tmuxSessionizer@"; }
+  // T: Screenshot
+  Mod+T                  hotkey-overlay-title="Snip: Area Screenshot to Clipboard"  { spawn "@screenshotArea@"; }
+  Mod+Shift+T            hotkey-overlay-title="Snip: Fullscreen Screenshot"         { spawn "@screenshotFull@"; }
 
-  Mod+F                  hotkey-overlay-title="Files: PCManFM File Manager (Tiled)" { spawn "@pcmanfm@"; }
-  Mod+Shift+F            hotkey-overlay-title="Files: Toggle Scratchpad PCManFM"    { spawn "@niriScratchpad@" "--app-id" "pcmanfm.floating" "--spawn" "@pcmanfm@ --role=floating"; }
+  // E & X: Notifications
+  Mod+E                  hotkey-overlay-title="Notices: Notification Center Panel"  { spawn "@noctalia@" "msg" "panel-toggle" "notifications"; }
+  Mod+Shift+E            hotkey-overlay-title="Notices: Clear Notice History"       { spawn "@noctalia@" "msg" "notification-clear-all"; }
+  Mod+X                  hotkey-overlay-title="Notices: Dismiss Active Notice"      { spawn "@noctalia@" "msg" "notification-clear-active"; }
 
-  Mod+G                  hotkey-overlay-title="Glance: Notification Center"         { spawn "@noctalia@" "msg" "panel-toggle" "notifications"; }
-  Mod+Shift+G            hotkey-overlay-title="Glance: Dismiss Active Notice"       { spawn "@noctalia@" "msg" "notification-clear-active"; }
-  Mod+Ctrl+G             hotkey-overlay-title="Bar: Toggle Noctalia Top Bar"        { spawn "@noctalia@" "msg" "bar-toggle"; }
+  // V & C: Settings & Control Center
+  Mod+V                  hotkey-overlay-title="Settings: Noctalia Settings GUI"     { spawn "@noctalia@" "msg" "settings-toggle"; }
+  Mod+Shift+V            hotkey-overlay-title="Clipboard: History Panel"            { spawn "@noctalia@" "msg" "panel-toggle" "clipboard"; }
+  Mod+C                  hotkey-overlay-title="Control: Noctalia Control Center"    { spawn "@noctalia@" "msg" "panel-toggle" "control-center"; }
+  Mod+Shift+C            hotkey-overlay-title="Audio: Pavucontrol Mixer"            { spawn "@pavucontrol@"; }
 
-  // === LEFT HAND: NEIGHBORS (Z X C V B & Q W E R T) ===
-  Mod+Z                  hotkey-overlay-title="Notes: ZenNotes (Tiled)"             { spawn "@zennotes@"; }
-  Mod+Shift+Z            hotkey-overlay-title="Notes: Toggle Scratchpad ZenNotes"   { spawn "@niriScratchpad@" "--app-id" "zennotes-desktop" "--spawn" "@zennotes@"; }
-
-  Mod+X                  hotkey-overlay-title="Explore: nnn Helix Dashboard (Tiled)"{ spawn "@ghostty@" "--class=ghostty.nnn" "-e" "@nnn@" "-e" "-C"; }
-  Mod+Shift+X            hotkey-overlay-title="Explore: Toggle Scratchpad nnn"      { spawn "@niriScratchpad@" "--app-id" "ghostty.nnn" "--spawn" "@ghostty@ --class=ghostty.nnn -e @nnn@ -e -C"; }
-
-  Mod+C                  hotkey-overlay-title="Universal Copy (Ctrl+Insert)"        { spawn "@wtype@" "-M" "ctrl" "-k" "Insert" "-m" "ctrl"; }
-  Mod+Shift+C            hotkey-overlay-title="Universal Cut (Shift+Delete)"        { spawn "@wtype@" "-M" "shift" "-k" "Delete" "-m" "shift"; }
-  Mod+V                  hotkey-overlay-title="Universal Paste (Shift+Insert)"      { spawn "@wtype@" "-M" "shift" "-k" "Insert" "-m" "shift"; }
-  Mod+Shift+V            hotkey-overlay-title="Clipboard: Noctalia History Panel"   { spawn "@noctalia@" "msg" "panel-toggle" "clipboard"; }
-
+  // B & W: Bluetooth & Wi-Fi
   Mod+B                  hotkey-overlay-title="Bluetooth: Noctalia Panel"           { spawn "@noctalia@" "msg" "panel-toggle" "bluetooth"; }
   Mod+Shift+B            hotkey-overlay-title="Security: Bitwarden Desktop"         { spawn "bitwarden"; }
+  Mod+W                  hotkey-overlay-title="Network: Wi-Fi / Network Panel"      { spawn "@noctalia@" "msg" "panel-toggle" "network"; }
+  Mod+Shift+W            hotkey-overlay-title="Wallpaper: Noctalia Panel"           { spawn "@noctalia@" "msg" "panel-toggle" "wallpaper"; }
+  Mod+Ctrl+W             hotkey-overlay-title="Bar: Toggle Noctalia Top Bar"        { spawn "@noctalia@" "msg" "bar-toggle"; }
 
+  // R: App Launcher
+  Mod+R                  hotkey-overlay-title="Launcher: Noctalia App Runner"       { spawn "@noctalia@" "msg" "panel-toggle" "launcher"; }
+  Mod+Shift+R            hotkey-overlay-title="Interactive Hotkey Search"           { spawn "@fuzzelCheatsheet@"; }
+
+  // Esc & Q: Session & Window Actions
+  Mod+Escape             hotkey-overlay-title="Session: Noctalia Power Menu"        { spawn "@noctalia@" "msg" "panel-toggle" "session"; }
+  Mod+Shift+Escape       hotkey-overlay-title="Session: Lock Screen"                { spawn "@noctalia@" "msg" "session" "lock"; }
+  Mod+Ctrl+Escape        hotkey-overlay-title="Monitors: Turn Off Displays"         { power-off-monitors; }
   Mod+Q                  hotkey-overlay-title="Close Focused Window"                { close-window; }
-  Mod+W                  hotkey-overlay-title="Wallpaper: Noctalia Panel"           { spawn "@noctalia@" "msg" "panel-toggle" "wallpaper"; }
-  Mod+E                  hotkey-overlay-title="Audio: Pavucontrol Mixer"            { spawn "@pavucontrol@"; }
-  Mod+Shift+E            hotkey-overlay-title="Audio: EasyEffects DSP Effects"      { spawn "@easyeffects@"; }
-  Mod+R                  hotkey-overlay-title="Snip: Area Screenshot to Clipboard"  { spawn "@screenshotArea@"; }
-  Mod+Shift+R            hotkey-overlay-title="Snip: Fullscreen to Clipboard"       { spawn "@screenshotFull@"; }
-  Mod+T                  hotkey-overlay-title="Settings: Noctalia Settings GUI"     { spawn "@noctalia@" "msg" "settings-toggle"; }
+  Mod+Shift+Q            hotkey-overlay-title="Kill / Close Window"                 { close-window; }
 
-  // === RIGHT HAND: NAVIGATION, GEOMETRY & STACKING ===
-  Mod+H                  hotkey-overlay-title="Navigate: Focus Column Left"         { focus-column-left; }
-  Mod+L                  hotkey-overlay-title="Navigate: Focus Column Right"        { focus-column-right; }
-  Mod+J                  hotkey-overlay-title="Workspace: Focus Workspace Down"     { focus-workspace-down; }
-  Mod+K                  hotkey-overlay-title="Workspace: Focus Workspace Up"       { focus-workspace-up; }
+  // === RIGHT HAND: COALESCED HJKL NAVIGATION, MOVEMENT & RESIZING ===
+  Mod+H                  hotkey-overlay-title="Focus Column Left"                   { focus-column-left; }
+  Mod+L                  hotkey-overlay-title="Focus Column Right"                  { focus-column-right; }
+  Mod+J                  hotkey-overlay-title="Focus Window Down in Column"         { focus-window-down; }
+  Mod+K                  hotkey-overlay-title="Focus Window Up in Column"           { focus-window-up; }
 
-  Mod+Shift+H            hotkey-overlay-title="Move: Move Column Left"              { move-column-left; }
-  Mod+Shift+L            hotkey-overlay-title="Move: Move Column Right"             { move-column-right; }
-  Mod+Shift+J            hotkey-overlay-title="Workspace: Move Column Down"         { move-column-to-workspace-down; }
-  Mod+Shift+K            hotkey-overlay-title="Workspace: Move Column Up"           { move-column-to-workspace-up; }
+  Mod+Shift+H            hotkey-overlay-title="Move Column Left"                    { move-column-left; }
+  Mod+Shift+L            hotkey-overlay-title="Move Column Right"                   { move-column-right; }
+  Mod+Shift+J            hotkey-overlay-title="Move Window Down in Column"          { move-window-down; }
+  Mod+Shift+K            hotkey-overlay-title="Move Window Up in Column"            { move-window-up; }
 
-  Mod+N                  hotkey-overlay-title="Stack: Focus Window Down"            { focus-window-down; }
-  Mod+Shift+N            hotkey-overlay-title="Stack: Move Window Down"             { move-window-down; }
-  Mod+M                  hotkey-overlay-title="Stack: Focus Window Up"              { focus-window-up; }
-  Mod+Shift+M            hotkey-overlay-title="Stack: Move Window Up"               { move-window-up; }
+  Mod+Ctrl+H             hotkey-overlay-title="Shrink Column Width (-5%)"           { set-column-width "-5%"; }
+  Mod+Ctrl+L             hotkey-overlay-title="Expand Column Width (+5%)"           { set-column-width "+5%"; }
+  Mod+Ctrl+J             hotkey-overlay-title="Shrink Window Height (-5%)"          { set-window-height "-5%"; }
+  Mod+Ctrl+K             hotkey-overlay-title="Expand Window Height (+5%)"          { set-window-height "+5%"; }
 
-  Mod+U                  hotkey-overlay-title="Stack: Consume/Expel Window Left"    { consume-or-expel-window-left; }
-  Mod+I                  hotkey-overlay-title="Stack: Consume/Expel Window Right"   { consume-or-expel-window-right; }
+  // === WORKSPACES (U / I) ===
+  Mod+U                  hotkey-overlay-title="Focus Workspace Down"                { focus-workspace-down; }
+  Mod+I                  hotkey-overlay-title="Focus Workspace Up"                  { focus-workspace-up; }
+  Mod+Shift+U            hotkey-overlay-title="Move Column to Workspace Down"       { move-column-to-workspace-down; }
+  Mod+Shift+I            hotkey-overlay-title="Move Column to Workspace Up"         { move-column-to-workspace-up; }
 
-  Mod+Y                  hotkey-overlay-title="Width: Shrink Column Width (-5%)"    { set-column-width "-5%"; }
-  Mod+O                  hotkey-overlay-title="Width: Expand Column Width (+5%)"    { set-column-width "+5%"; }
-  Mod+Shift+Y            hotkey-overlay-title="Height: Shrink Window Height (-5%)"  { set-window-height "-5%"; }
-  Mod+Shift+O            hotkey-overlay-title="Height: Expand Window Height (+5%)"  { set-window-height "+5%"; }
+  // === COLUMN STACK INGESTION & EXPULSION (M , .) ===
+  Mod+M                  hotkey-overlay-title="Consume Window from Left"            { consume-or-expel-window-left; }
+  Mod+Comma              hotkey-overlay-title="Consume Window from Right"           { consume-or-expel-window-right; }
+  Mod+Period             hotkey-overlay-title="Expel Window from Column"            { expel-window-from-column; }
 
-  Mod+P                  hotkey-overlay-title="Power: Noctalia Session Menu"        { spawn "@noctalia@" "msg" "panel-toggle" "session"; }
-  Mod+Shift+P            hotkey-overlay-title="Lock: Lock Screen"                   { spawn "@noctalia@" "msg" "session" "lock"; }
-  Mod+Ctrl+P             hotkey-overlay-title="Monitors: Turn Off Displays"         { power-off-monitors; }
-
-  Mod+Comma              hotkey-overlay-title="Monitor: Focus Monitor Left"         { focus-monitor-left; }
-  Mod+Shift+Comma        hotkey-overlay-title="Monitor: Move Column to Monitor L"   { move-column-to-monitor-left; }
-  Mod+Period             hotkey-overlay-title="Monitor: Focus Monitor Right"        { focus-monitor-right; }
-  Mod+Shift+Period       hotkey-overlay-title="Monitor: Move Column to Monitor R"   { move-column-to-monitor-right; }
-
-  // === WORKSPACES (1..9 NAMED + 10 DYNAMIC) ===
+  // === ORDERED WORKSPACES (1..9 NAMED + 10 DYNAMIC) ===
   Mod+1                  { focus-workspace "one"; }
   Mod+2                  { focus-workspace "two"; }
   Mod+3                  { focus-workspace "three"; }

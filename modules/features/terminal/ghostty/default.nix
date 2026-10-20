@@ -39,8 +39,8 @@
 
         xdg.configFile."ghostty/config" = {
           text = ''
-            font-family = Lilex Nerd Font
-            font-size = 14
+            font-family = AtkynsonMono Nerd Font
+            font-size = 12
             font-feature = cv01
             font-feature = cv02
             font-feature = cv09

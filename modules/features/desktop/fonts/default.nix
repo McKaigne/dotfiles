@@ -4,8 +4,8 @@
     {
       fonts = {
         packages = with pkgs; [
-          nerd-fonts.lilex
-          ibm-plex
+          nerd-fonts.atkynson-mono
+          atkinson-hyperlegible
           noto-fonts
           noto-fonts-cjk-sans
           noto-fonts-color-emoji
@@ -23,15 +23,13 @@
           };
           defaultFonts = {
             monospace = [
-              "Lilex Nerd Font"
-              "IBM Plex Mono"
+              "AtkynsonMono Nerd Font"
             ];
             sansSerif = [
-              "IBM Plex Sans"
+              "Atkinson Hyperlegible"
               "Noto Sans"
             ];
             serif = [
-              "IBM Plex Serif"
               "Noto Serif"
             ];
             emoji = [ "Noto Color Emoji" ];

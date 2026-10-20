@@ -17,6 +17,7 @@
       self.nixosModules.xdg
       self.nixosModules.catppuccinTheme
 
+      self.nixosModules.foot
       self.nixosModules.ghostty
       self.nixosModules.tmux
       self.nixosModules.fish
@@ -30,7 +31,7 @@
 
       # Mobile-friendly sketching & documents
       self.nixosModules.krita
-      self.nixosModules.zennotes
+      self.nixosModules.obsidian
       self.nixosModules.onlyoffice
       self.nixosModules.zathura
 
@@ -43,6 +44,7 @@
 
       # Network & security
       self.nixosModules.localsend
+      self.nixosModules.ferdium
       self.nixosModules.bitwarden
     ];
   };

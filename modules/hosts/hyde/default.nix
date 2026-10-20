@@ -17,6 +17,7 @@
       ({ pkgs, ... }: {
         networking.hostName = "hyde";
         mainUser = "jekyll";
+        environment.sessionVariables.XFT_DPI = "96";
         time.timeZone = "Asia/Manila";
 
         workstation.display = {
