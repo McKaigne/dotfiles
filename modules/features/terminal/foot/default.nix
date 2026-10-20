@@ -16,11 +16,11 @@
             main = {
               term = "foot";
               shell = "${pkgs.fish}/bin/fish";
-              font = "AtkynsonMono Nerd Font:size=14px";
+              font = "AtkynsonMono Nerd Font:pixelsize=14";
               dpi-aware = "no";
               pad = "12x12";
             };
-            colors = {
+            "colors-dark" = {
               alpha = 0.85;
               background = p.hex.base;
               foreground = p.hex.text;
