@@ -38,18 +38,26 @@ let
       outputConfig ? "",
     }:
     let
-      # Official gvolpe/niri-scratchpad community architecture
+      # Mutual-Exclusion (Singleton) Scratchpad Engine
       niriScratchpad = pkgs.writeShellScriptBin "niri-scratchpad" ''
         set -euo pipefail
 
-        SCRATCH_WORKSPACE="scratch"
-        APP_PATTERN=""
+        SCRATCH_WORKSPACE_NAME="scratch"
+        SCRATCH_PATTERNS="Ghostty Scratchpad|nnn Scratchpad|pcmanfm|zennotes|librewolf"
+        SEARCH_METHOD="--app-id"
+        TARGET_NAME=""
         SPAWN_CMD=""
 
         while [[ $# -gt 0 ]]; do
           case "$1" in
             --app-id|-a)
-              APP_PATTERN="$2"
+              SEARCH_METHOD="--app-id"
+              TARGET_NAME="$2"
+              shift 2
+              ;;
+            --title|-t)
+              SEARCH_METHOD="--title"
+              TARGET_NAME="$2"
               shift 2
               ;;
             --spawn|-s)
@@ -57,8 +65,8 @@ let
               shift 2
               ;;
             *)
-              if [ -z "$APP_PATTERN" ]; then
-                APP_PATTERN="$1"
+              if [ -z "$TARGET_NAME" ]; then
+                TARGET_NAME="$1"
               else
                 SPAWN_CMD="$*"
                 break
@@ -68,7 +76,7 @@ let
           esac
         done
 
-        if [ -z "$APP_PATTERN" ]; then
+        if [ -z "$TARGET_NAME" ]; then
           echo "Usage: niri-scratchpad --app-id <pattern> [--spawn <command>]" >&2
           exit 1
         fi
@@ -76,24 +84,56 @@ let
         WINDOWS_JSON=$(${pkgs.niri}/bin/niri msg -j windows 2>/dev/null || echo "[]")
         CURRENT_WS=$(${pkgs.niri}/bin/niri msg -j workspaces 2>/dev/null | ${pkgs.jq}/bin/jq -r '.[] | select(.is_active == true) | .id' || echo "1")
 
-        MATCH=$(echo "$WINDOWS_JSON" | ${pkgs.jq}/bin/jq -r \
-          ".[] | select((.app_id // \"\" | test(\"$APP_PATTERN\"; \"i\")) or (.title // \"\" | test(\"$APP_PATTERN\"; \"i\"))) | \"\(.id) \(.workspace_id) \(.is_focused)\"" | head -n1 || true)
+        # Function to stash any other open scratchpads currently on the screen
+        stash_other_scratchpads() {
+          local exclude_id="''${1:-0}"
+          local active_scratchpads
+          active_scratchpads=$(echo "$WINDOWS_JSON" | ${pkgs.jq}/bin/jq -r \
+            ".[] | select(.workspace_id == $CURRENT_WS and .id != $exclude_id and .is_floating == true) | select((.app_id // \"\" | test(\"$SCRATCH_PATTERNS\"; \"i\")) or (.title // \"\" | test(\"$SCRATCH_PATTERNS\"; \"i\"))) | .id" 2>/dev/null || true)
 
-        if [ -z "$MATCH" ] || [ "$MATCH" = "null" ]; then
+          for sid in $active_scratchpads; do
+            ${pkgs.niri}/bin/niri msg action move-window-to-workspace --window-id "$sid" "$SCRATCH_WORKSPACE_NAME" --focus=false 2>/dev/null || true
+          done
+        }
+
+        if [ "$SEARCH_METHOD" = "--title" ]; then
+          app_window=$(echo "$WINDOWS_JSON" | ${pkgs.jq}/bin/jq -c ".[] | select(.title != null) | select(.title | test(\"$TARGET_NAME\"; \"i\"))" | head -n1)
+        else
+          app_window=$(echo "$WINDOWS_JSON" | ${pkgs.jq}/bin/jq -c ".[] | select((.app_id != null and (.app_id | test(\"$TARGET_NAME\"; \"i\"))) or (.title != null and (.title | test(\"$TARGET_NAME\"; \"i\")))" | head -n1)
+        fi
+
+        win_id=$(echo "$app_window" | ${pkgs.jq} -r '.id // empty')
+
+        if [ -z "$win_id" ]; then
+          # Target not running: stash any open scratchpad and spawn it
+          stash_other_scratchpads 0
           if [ -n "$SPAWN_CMD" ]; then
             exec ''${SPAWN_CMD}
           fi
           exit 0
         fi
 
-        WIN_ID=$(echo "$MATCH" | awk '{print $1}')
-        IS_FOCUSED=$(echo "$MATCH" | awk '{print $3}')
+        is_focused=$(echo "$app_window" | ${pkgs.jq} -r '.is_focused')
 
-        if [ "$IS_FOCUSED" = "true" ]; then
-          ${pkgs.niri}/bin/niri msg action move-window-to-workspace --window-id "$WIN_ID" "$SCRATCH_WORKSPACE" --focus=false
+        if [ "$is_focused" = "true" ]; then
+          # Target is currently active & focused: stash it away
+          ${pkgs.niri}/bin/niri msg action move-window-to-workspace --window-id "$win_id" "$SCRATCH_WORKSPACE_NAME" --focus=false
         else
-          ${pkgs.niri}/bin/niri msg action move-window-to-workspace --window-id "$WIN_ID" "$CURRENT_WS"
-          ${pkgs.niri}/bin/niri msg action focus-window --id "$WIN_ID"
+          # Target is elsewhere: stash all other scratchpads, summon target to current workspace, and focus
+          stash_other_scratchpads "$win_id"
+
+          focused_ws=$(${pkgs.niri}/bin/niri msg -j workspaces 2>/dev/null | ${pkgs.jq} -c '.[] | select(.is_focused == true)' | head -n1)
+          output_id=$(echo "$focused_ws" | ${pkgs.jq} -r '.output // empty')
+          work_idx=$(echo "$focused_ws" | ${pkgs.jq} -r '.idx // empty')
+
+          if [ -n "$output_id" ]; then
+            ${pkgs.niri}/bin/niri msg action move-window-to-monitor --id "$win_id" "$output_id" 2>/dev/null || true
+          fi
+          if [ -n "$work_idx" ]; then
+            ${pkgs.niri}/bin/niri msg action move-window-to-workspace --window-id "$win_id" "$work_idx"
+          fi
+          ${pkgs.niri}/bin/niri msg action move-window-to-floating --id "$win_id" 2>/dev/null || true
+          ${pkgs.niri}/bin/niri msg action focus-window --id "$win_id"
         fi
       '';
 
@@ -148,7 +188,7 @@ Mod + Ctrl + G      Bar: Toggle Noctalia Top Bar
 Mod + Z             Notes: ZenNotes (Tiled)
 Mod + Shift + Z     Popup: Toggle Scratchpad ZenNotes
 Mod + X             Explore: nnn Helix Dashboard (Tiled)
-Mod + Shift + X     Popup: Toggle Scratchpad nnn
+Mod + Shift + X     Popup: Toggle Scratchpad nnn Dashboard
 Mod + C             Universal Copy (Ctrl+Insert)
 Mod + Shift + C     Universal Cut (Shift+Delete)
 Mod + V             Universal Paste (Shift+Insert)
