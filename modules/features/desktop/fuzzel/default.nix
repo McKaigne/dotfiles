@@ -12,7 +12,7 @@
         xdg.configFile."fuzzel/fuzzel.ini" = {
           text = ''
             [main]
-            font=AtkynsonMono Nerd Font:size=12
+            font=Atkinson Hyperlegible:size=13
             prompt="➜ "
             lines=12
             width=35

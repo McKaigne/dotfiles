@@ -33,9 +33,9 @@
             package = pkgs.papirus-icon-theme;
           };
           font = {
-            name = "IBM Plex Sans";
+            name = "Atkinson Hyperlegible";
             size = 11;
-            package = pkgs.ibm-plex;
+            package = pkgs.atkinson-hyperlegible;
           };
           gtk4.theme = null;
         };
@@ -44,7 +44,9 @@
           color-scheme = "prefer-dark";
           gtk-theme = "adw-gtk3-dark";
           icon-theme = "Papirus-Dark";
-          font-name = "IBM Plex Sans 11";
+          font-name = "Atkinson Hyperlegible 11";
+          document-font-name = "Atkinson Hyperlegible 11";
+          monospace-font-name = "AtkynsonMono Nerd Font 12";
         };
 
         xdg.configFile."gtk-3.0/gtk.css" = {
@@ -160,8 +162,8 @@
             style=Adwaita-Dark
 
             [Fonts]
-            fixed="Lilex Nerd Font,11,-1,5,50,0,0,0,0,0"
-            general="IBM Plex Sans,11,-1,5,50,0,0,0,0,0"
+            fixed="AtkynsonMono Nerd Font,12,-1,5,50,0,0,0,0,0"
+            general="Atkinson Hyperlegible,11,-1,5,50,0,0,0,0,0"
           '';
           force = true;
         };
@@ -176,8 +178,8 @@
             style=Adwaita-Dark
 
             [Fonts]
-            fixed="Lilex Nerd Font,11,-1,5,50,0,0,0,0,0"
-            general="IBM Plex Sans,11,-1,5,50,0,0,0,0,0"
+            fixed="AtkynsonMono Nerd Font,12,-1,5,50,0,0,0,0,0"
+            general="Atkinson Hyperlegible,11,-1,5,50,0,0,0,0,0"
           '';
           force = true;
         };
@@ -222,7 +224,7 @@
         adw-gtk3
         papirus-icon-theme
         bibataCursorsFixed
-        ibm-plex
+        atkinson-hyperlegible
         kdePackages.qt6ct
       ];
     };

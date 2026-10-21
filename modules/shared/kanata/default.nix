@@ -39,17 +39,15 @@
           (right 6 7 8 9 0 - = y u i o p [ ] \ h j k l scln ' n m , . /)
         )
 
-        (defvirtualkeys relf24 (release-key f24))
-
         (defalias
-          ha  (multi f24 (tap-hold-opposite-hand-release 220 a lalt (timeout hold) (unknown-hand hold) (neutral-keys spc ret bspc tab esc) (tap-repress-timeout 150) (require-prior-idle 150)) (macro 5 (on-press tap-vkey relf24)))
-          hs  (multi f24 (tap-hold-opposite-hand-release 220 s lctl (timeout hold) (unknown-hand hold) (neutral-keys spc ret bspc tab esc) (tap-repress-timeout 150) (require-prior-idle 150)) (macro 5 (on-press tap-vkey relf24)))
-          hd  (multi f24 (tap-hold-opposite-hand-release 220 d lmet (timeout hold) (unknown-hand hold) (neutral-keys spc ret bspc tab esc) (tap-repress-timeout 150) (require-prior-idle 150)) (macro 5 (on-press tap-vkey relf24)))
-          hf  (multi f24 (tap-hold-opposite-hand-release 220 f lsft (timeout hold) (unknown-hand hold) (neutral-keys spc ret bspc tab esc) (tap-repress-timeout 150) (require-prior-idle 150)) (macro 5 (on-press tap-vkey relf24)))
-          hj  (multi f24 (tap-hold-opposite-hand-release 220 j rsft (timeout hold) (unknown-hand hold) (neutral-keys spc ret bspc tab esc) (tap-repress-timeout 150) (require-prior-idle 150)) (macro 5 (on-press tap-vkey relf24)))
-          hk  (multi f24 (tap-hold-opposite-hand-release 220 k rmet (timeout hold) (unknown-hand hold) (neutral-keys spc ret bspc tab esc) (tap-repress-timeout 150) (require-prior-idle 150)) (macro 5 (on-press tap-vkey relf24)))
-          hl  (multi f24 (tap-hold-opposite-hand-release 220 l rctl (timeout hold) (unknown-hand hold) (neutral-keys spc ret bspc tab esc) (tap-repress-timeout 150) (require-prior-idle 150)) (macro 5 (on-press tap-vkey relf24)))
-          hsc (multi f24 (tap-hold-opposite-hand-release 220 scln ralt (timeout hold) (unknown-hand hold) (neutral-keys spc ret bspc tab esc) (tap-repress-timeout 150) (require-prior-idle 150)) (macro 5 (on-press tap-vkey relf24)))
+          ha  (tap-hold-opposite-hand-release 200 a lalt (timeout hold) (unknown-hand hold) (neutral-keys spc ret bspc tab esc) (tap-repress-timeout 100) (require-prior-idle 90))
+          hs  (tap-hold-opposite-hand-release 200 s lctl (timeout hold) (unknown-hand hold) (neutral-keys spc ret bspc tab esc) (tap-repress-timeout 100) (require-prior-idle 90))
+          hd  (tap-hold-opposite-hand-release 200 d lmet (timeout hold) (unknown-hand hold) (neutral-keys spc ret bspc tab esc) (tap-repress-timeout 100) (require-prior-idle 90))
+          hf  (tap-hold-opposite-hand-release 200 f lsft (timeout hold) (unknown-hand hold) (neutral-keys spc ret bspc tab esc) (tap-repress-timeout 100) (require-prior-idle 90))
+          hj  (tap-hold-opposite-hand-release 200 j rsft (timeout hold) (unknown-hand hold) (neutral-keys spc ret bspc tab esc) (tap-repress-timeout 100) (require-prior-idle 90))
+          hk  (tap-hold-opposite-hand-release 200 k rmet (timeout hold) (unknown-hand hold) (neutral-keys spc ret bspc tab esc) (tap-repress-timeout 100) (require-prior-idle 90))
+          hl  (tap-hold-opposite-hand-release 200 l rctl (timeout hold) (unknown-hand hold) (neutral-keys spc ret bspc tab esc) (tap-repress-timeout 100) (require-prior-idle 90))
+          hsc (tap-hold-opposite-hand-release 200 scln ralt (timeout hold) (unknown-hand hold) (neutral-keys spc ret bspc tab esc) (tap-repress-timeout 100) (require-prior-idle 90))
         )
 
         (deflayer base
@@ -71,7 +69,7 @@
           extraDefCfg = ''
             process-unmapped-keys yes
             concurrent-tap-hold yes
-            tap-hold-require-prior-idle 150
+            tap-hold-require-prior-idle 90
             linux-device-detect-mode keyboard-only
             linux-dev-names-exclude (
               "Corne"
