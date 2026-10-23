@@ -210,9 +210,9 @@ binds {
 
   // === LEFT HAND: APPS & SYSTEM PANELS ===
   // F: Terminal
-  Mod+F                  hotkey-overlay-title="Terminal: Foot Client (Daemon)"      { spawn "@footclient@"; }
-  Mod+Shift+F            hotkey-overlay-title="Terminal: Ghostty Standalone"        { spawn "@ghostty@"; }
-  Mod+Ctrl+F             hotkey-overlay-title="Terminal: Tmux Project Sessionizer"  { spawn "@footclient@" "-e" "@tmuxSessionizer@"; }
+  Mod+F                  hotkey-overlay-title="Terminal: Foot Client"               { spawn "@footclient@"; }
+  Mod+Shift+F            hotkey-overlay-title="Terminal: Tmux Project Sessionizer"  { spawn "@footclient@" "-e" "@tmuxSessionizer@"; }
+  Mod+Ctrl+F             hotkey-overlay-title="Terminal: Ghostty Standalone"        { spawn "@ghostty@"; }
 
   // D: Browser
   Mod+D                  hotkey-overlay-title="Browser: LibreWolf"                  { spawn "@librewolf@"; }
@@ -267,29 +267,30 @@ binds {
   Mod+Q                  hotkey-overlay-title="Close Focused Window"                { close-window; }
   Mod+Shift+Q            hotkey-overlay-title="Kill / Close Window"                 { close-window; }
 
-  // === RIGHT HAND: COALESCED HJKL NAVIGATION, MOVEMENT & RESIZING ===
+  // === RIGHT HAND: COLUMNS (H / L), WORKSPACES (J / K), AND STACKS (U / I) ===
+  // Columns (Horizontal Ribbon: H / L)
   Mod+H                  hotkey-overlay-title="Focus Column Left"                   { focus-column-left; }
   Mod+L                  hotkey-overlay-title="Focus Column Right"                  { focus-column-right; }
-  Mod+J                  hotkey-overlay-title="Focus Window Down in Column"         { focus-window-down; }
-  Mod+K                  hotkey-overlay-title="Focus Window Up in Column"           { focus-window-up; }
-
   Mod+Shift+H            hotkey-overlay-title="Move Column Left"                    { move-column-left; }
   Mod+Shift+L            hotkey-overlay-title="Move Column Right"                   { move-column-right; }
-  Mod+Shift+J            hotkey-overlay-title="Move Window Down in Column"          { move-window-down; }
-  Mod+Shift+K            hotkey-overlay-title="Move Window Up in Column"            { move-window-up; }
-
   Mod+Ctrl+H             hotkey-overlay-title="Shrink Column Width (-5%)"           { set-column-width "-5%"; }
   Mod+Ctrl+L             hotkey-overlay-title="Expand Column Width (+5%)"           { set-column-width "+5%"; }
-  Mod+Ctrl+J             hotkey-overlay-title="Shrink Window Height (-5%)"          { set-window-height "-5%"; }
-  Mod+Ctrl+K             hotkey-overlay-title="Expand Window Height (+5%)"          { set-window-height "+5%"; }
 
-  // === WORKSPACES (U / I) ===
-  Mod+U                  hotkey-overlay-title="Focus Workspace Down"                { focus-workspace-down; }
-  Mod+I                  hotkey-overlay-title="Focus Workspace Up"                  { focus-workspace-up; }
-  Mod+Shift+U            hotkey-overlay-title="Move Column to Workspace Down"       { move-column-to-workspace-down; }
-  Mod+Shift+I            hotkey-overlay-title="Move Column to Workspace Up"         { move-column-to-workspace-up; }
+  // Workspaces (Vertical Stack: J / K)
+  Mod+J                  hotkey-overlay-title="Focus Workspace Down"                { focus-workspace-down; }
+  Mod+K                  hotkey-overlay-title="Focus Workspace Up"                  { focus-workspace-up; }
+  Mod+Shift+J            hotkey-overlay-title="Move Column to Workspace Down"       { move-column-to-workspace-down; }
+  Mod+Shift+K            hotkey-overlay-title="Move Column to Workspace Up"         { move-column-to-workspace-up; }
 
-  // === COLUMN STACK INGESTION & EXPULSION (M , .) ===
+  // Intra-Column Window Stack & Height Sizing (U / I)
+  Mod+U                  hotkey-overlay-title="Focus Window Down in Column"         { focus-window-down; }
+  Mod+I                  hotkey-overlay-title="Focus Window Up in Column"           { focus-window-up; }
+  Mod+Shift+U            hotkey-overlay-title="Move Window Down in Column"          { move-window-down; }
+  Mod+Shift+I            hotkey-overlay-title="Move Window Up in Column"            { move-window-up; }
+  Mod+Ctrl+U             hotkey-overlay-title="Shrink Window Height (-5%)"          { set-window-height "-5%"; }
+  Mod+Ctrl+I             hotkey-overlay-title="Expand Window Height (+5%)"          { set-window-height "+5%"; }
+
+  // Column Ingestion & Expulsion (M , .)
   Mod+M                  hotkey-overlay-title="Consume Window from Left"            { consume-or-expel-window-left; }
   Mod+Comma              hotkey-overlay-title="Consume Window from Right"           { consume-or-expel-window-right; }
   Mod+Period             hotkey-overlay-title="Expel Window from Column"            { expel-window-from-column; }

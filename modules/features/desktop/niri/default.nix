@@ -71,9 +71,9 @@ Mod + Space         Fill Screen (Maximize Column Width)
 Mod + Shift + Space Fullscreen Window
 Mod + Ctrl + Space  Toggle Window Floating
 Mod + Alt + Space   Switch Focus Floating/Tiling
-Mod + F             Terminal: Foot Client (Fast Daemon)
-Mod + Shift + F     Terminal: Ghostty Standalone
-Mod + Ctrl + F      Terminal: Tmux Project Sessionizer
+Mod + F             Terminal: Foot Client (Daemon)
+Mod + Shift + F     Terminal: Tmux Project Sessionizer
+Mod + Ctrl + F      Terminal: Ghostty Standalone
 Mod + D             Browser: LibreWolf
 Mod + Shift + D     Browser: Brave Origin
 Mod + Ctrl + D      Browser: LibreWolf Private
@@ -88,11 +88,9 @@ Mod + Shift + G     Notes: Floating Obsidian Quick Note
 Mod + Ctrl + G      Notes: Obsidian Daily Note
 Mod + T             Snip: Area Screenshot to Clipboard
 Mod + Shift + T     Snip: Fullscreen to Clipboard
-Mod + Ctrl + T      Screen Recording / OCR
 Mod + E             Notices: Notification Center Panel
 Mod + Shift + E     Notices: Clear All Notice History
 Mod + X             Notices: Dismiss Active Notification
-Mod + Shift + X     Notices: Dismiss All Popups
 Mod + V             Settings: Noctalia Settings GUI
 Mod + Shift + V     Clipboard: Noctalia History Panel
 Mod + C             Control: Noctalia Control Center Panel
@@ -110,13 +108,13 @@ Mod + Ctrl + Esc    Monitors: Turn Off Displays
 Mod + Q             Close Focused Window
 Mod + Shift + Q     Kill / Force Close Window
 Mod + H / L         Navigate: Focus Column Left / Right
-Mod + J / K         Stack: Focus Window Down / Up (Column)
+Mod + J / K         Workspace: Focus Workspace Down / Up
 Mod + Shift + H / L Move: Move Column Left / Right
-Mod + Shift + J / K Move: Move Window Down / Up (Column)
+Mod + Shift + J / K Workspace: Move Column Down / Up
 Mod + Ctrl + H / L  Resize: Shrink / Expand Column Width
-Mod + Ctrl + J / K  Resize: Shrink / Expand Window Height
-Mod + U / I         Workspace: Focus Workspace Down / Up
-Mod + Shift + U / I Workspace: Move Column Down / Up
+Mod + U / I         Stack: Focus Window Down / Up (Column)
+Mod + Shift + U / I Stack: Move Window Down / Up (Column)
+Mod + Ctrl + U / I  Resize: Shrink / Expand Window Height
 Mod + M             Stack: Consume Window Left
 Mod + , (Comma)     Stack: Consume Window Right
 Mod + . (Period)    Stack: Expel Window from Column

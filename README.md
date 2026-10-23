@@ -27,12 +27,31 @@ Checkout path expected at `/etc/nixos`.
 
 ---
 
+## Editor Ergonomics & Productivity (Helix)
+
+| Feature | Keymap | Operational Behavior |
+| :--- | :--- | :--- |
+| **Quick Save + Format** | `Ctrl + S` | Automatically formats and writes buffer to disk (Normal and Insert modes) |
+| **Quick Format Only** | `=` | Formats entire buffer on demand via LSP without saving |
+| **Quick Save & Exit** | `Z Z` | Writes changes, auto-formats, and exits Helix cleanly in 50ms |
+| **Force Quit** | `Z Q` | Quits immediately without saving (`:q!`) |
+| **Close Buffer (Tab)** | `<Space> c` | Closes active buffer (`:bc`), preserving `Ctrl + W` split navigation |
+| **Copy File Path** | `<Space> Y` | Copies relative path of active buffer to the system clipboard |
+| **Subword Navigation** | `Alt + w/b/e` | Navigates inside `camelCase` and `snake_case` identifiers |
+| **Leap Navigation** | `Enter` | Triggers `goto_word` using home-row prioritized target labels |
+| **Symmetrical Lines**| `x` / `X` | `x` selects line downwards; `X` selects line upwards |
+| **AST Code Jumping** | `Tab` / `S-Tab` | Navigates to the end / start of the enclosing Tree-sitter block |
+| **Embedded LazyGit** | `<Space> g` | Fullscreen LazyGit overlay; auto-reloads changed buffers on exit |
+| **System Clipboard** | `y`, `d`, `p`, `P` | Synchronizes with the Wayland system clipboard via `default-yank-register = "+"` |
+
+---
+
 ## Typography & Subpixel DPI Engineering
 
 | Target | Display Font | Terminal / Monospace Font | Target DPI (`XFT_DPI`) | True Pixel Metrics |
 | :--- | :--- | :--- | :--- | :--- |
-| **hyde (24" 1080p)** | Atkinson Hyperlegible | AtkynsonMono Nerd Font | `96` | 14px Foot (`size=14px`), 12pt Ghostty (16px grid) |
-| **castor (15.6" 1080p)** | Atkinson Hyperlegible | AtkynsonMono Nerd Font | `141` | 14px Foot (`size=14px`), native density scaling |
+| **hyde (24" 1080p)** | Atkinson Hyperlegible | AtkynsonMono Nerd Font | `96` | 16px Foot (`size=16px`), 12pt Ghostty |
+| **castor (15.6" 1080p)** | Atkinson Hyperlegible | AtkynsonMono Nerd Font | `141` | 16px Foot (`size=16px`), native density scaling |
 
 ---
 
@@ -45,7 +64,7 @@ Checkout path expected at `/etc/nixos`.
 * **`Mod + Alt + Space`**: Switch Focus Floating/Tiling
 
 ### Left Hand: Core Engines & Noctalia Panels
-* **`Mod + F`**: Terminal: Foot Client (Fast Daemon) • **`Shift`**: Ghostty • **`Ctrl`**: Tmux Project Sessionizer
+* **`Mod + F`**: Terminal: Foot Client (Fast Daemon) • **`Shift`**: Tmux Sessionizer • **`Ctrl`**: Ghostty
 * **`Mod + D`**: Browser: LibreWolf • **`Shift`**: Brave Origin • **`Ctrl`**: Private Window
 * **`Mod + S`**: Files: PCManFM • **`Shift`**: Floating PCManFM Dialog
 * **`Mod + A`**: Chat: Ferdium • **`Shift`**: Niri Workspace Overview • **`Ctrl`**: Floating Ferdium
@@ -63,12 +82,13 @@ Checkout path expected at `/etc/nixos`.
 
 ### Right Hand: Coalesced HJKL Navigation, Movement & Resizing
 * **`Mod + H / L`**: Focus Column Left / Right
-* **`Mod + J / K`**: Focus Window Down / Up (inside column stack)
 * **`Mod + Shift + H / L`**: Move Column Left / Right
-* **`Mod + Shift + J / K`**: Move Window Down / Up (inside column stack)
 * **`Mod + Ctrl + H / L`**: Shrink / Expand Column Width (`-5%` / `+5%`)
-* **`Mod + Ctrl + J / K`**: Shrink / Expand Window Height (`-5%` / `+5%`)
-* **`Mod + U / I`**: Focus Workspace Down / Up • **`Shift`**: Move Column to Workspace Down / Up
+* **`Mod + J / K`**: Focus Workspace Down / Up
+* **`Mod + Shift + J / K`**: Move Column to Workspace Down / Up
+* **`Mod + U / I`**: Focus Window Down / Up (inside column stack)
+* **`Mod + Shift + U / I`**: Move Window Down / Up (inside column stack)
+* **`Mod + Ctrl + U / I`**: Shrink / Expand Window Height (`-5%` / `+5%`)
 * **`Mod + M`**: Consume Window into Column from Left
 * **`Mod + ,` (Comma)**: Consume Window into Column from Right
 * **`Mod + .` (Period)**: Expel Window from Column

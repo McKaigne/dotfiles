@@ -17,6 +17,7 @@
         pkgs.shfmt
         pkgs.taplo
         pkgs.yaml-language-server
+        pkgs.lazygit
       ];
 
       wrappedHelix = pkgs.symlinkJoin {
@@ -51,18 +52,30 @@
             theme = "catppuccin_transparent"
 
             [editor]
-            default-yank-register = "+"
-            line-number = "relative"
-            mouse = false
-            cursorline = true
-            color-modes = true
-            scrolloff = 5
-            auto-save = true
-            auto-format = true
-            idle-timeout = 50
-            completion-timeout = 5
-            bufferline = "never"
+            default-yank-register = "+"       # Native Wayland system clipboard sync
+            line-number = "relative"          # Relative line numbers for vertical navigation
+            mouse = false                     # Pure keyboard-driven modal editing
+            cursorline = true                 # Highlight active cursor line
+            color-modes = true                # Dynamic color mode badges
+            scrolloff = 5                     # Keep 5 lines visible above/below cursor
+            auto-save = true                  # Auto-save buffers on focus loss / buffer switch
+            auto-format = true                # Format buffers automatically on save
+            idle-timeout = 50                 # 50ms delay before triggering diagnostics
+            completion-timeout = 5            # 5ms instant completion popup delay
+            bufferline = "never"              # Clean minimalist canvas
             gutters = ["diagnostics", "line-numbers", "spacer", "diff"]
+            jump-label-alphabet = "jfkdls;aurieowpqnvmcxz" # Home-row prioritized leap labels
+            undercurl = true                  # Wavy squiggles for errors/warnings
+            rulers = [80, 120]                # Vertical line length guides
+            completion-replace = true         # Overwrite text on completion
+            popup-border = "all"              # Borders around hover and completion popups
+            end-of-line-diagnostics = "hint"  # Show subtle hints at end of line
+
+            [editor.inline-diagnostics]
+            cursor-line = "warning"          # Expand full error/warning text inline below cursorline
+
+            [editor.smart-tab]
+            supersede-menu = true             # Tab through snippet placeholders without popup interference
 
             [editor.statusline]
             left = ["mode", "file-name", "file-modification-indicator", "read-only-indicator"]
@@ -82,8 +95,49 @@
             render = false
 
             [editor.lsp]
-            display-inlay-hints = false
+            display-inlay-hints = true        # Inline compiler type annotations
             display-messages = true
+            display-progress-messages = true
+
+            [keys.normal]
+            # Quick Save & Format
+            C-s = ":w"                        # Save + auto-format
+            "=" = ":format"                   # Format whole buffer on demand without saving
+
+            # Quick Exit (Preserves Ctrl+W window splits)
+            "Z" = { "Z" = ":wq", "Q" = ":q!" } # ZZ saves and exits; ZQ discards and quits
+
+            # Navigation & Selections
+            ret = "goto_word"                 # Flash/Leap navigation across visible text
+            esc = ["collapse_selection", "keep_primary_selection"] # Clean single cursor
+            C-a = "select_all"                # Universal Select All
+            x = "select_line_below"           # Symmetrical line selection downwards
+            X = "select_line_above"           # Symmetrical line selection upwards
+            tab = "move_parent_node_end"      # Tree-sitter: jump to end of enclosing block/function
+            S-tab = "move_parent_node_start"  # Tree-sitter: jump to start of enclosing block/function
+
+            # Subword Navigation (camelCase & snake_case)
+            "A-w" = "move_next_subword_start"
+            "A-b" = "move_prev_subword_start"
+            "A-e" = "move_next_subword_end"
+
+            [keys.normal.space]
+            g = [":write-all", ":insert-output lazygit >/dev/tty", ":redraw", ":reload-all"] # Embedded LazyGit
+            c = ":bc"                         # Close active buffer cleanly
+            Y = ":yank-filepath"              # Copy relative file path to system clipboard
+
+            [keys.insert]
+            C-s = [":w", "normal_mode"]       # Save, auto-format, and drop to Normal mode
+
+            [keys.select]
+            ret = "extend_to_word"
+            x = "extend_line_below"
+            X = "extend_line_above"
+            tab = "extend_parent_node_end"
+            S-tab = "extend_parent_node_start"
+            "A-w" = "extend_next_subword_start"
+            "A-b" = "extend_prev_subword_start"
+            "A-e" = "extend_next_subword_end"
           '';
           force = true;
         };
@@ -92,7 +146,7 @@
           text = ''
             inherits = "catppuccin_mocha"
 
-            # Transparent Canvas & Cursorlines
+            # Transparent Canvas & Cursorlines (Blends with Niri GPU Blur)
             "ui.background" = {}
             "ui.cursorline" = {}
             "ui.cursorline.primary" = {}
