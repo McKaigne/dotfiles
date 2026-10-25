@@ -17,11 +17,15 @@
       self.nixosModules.xdg
       self.nixosModules.catppuccinTheme
 
+      # Shell & Multiplexer Parity Layer
       self.nixosModules.foot
       self.nixosModules.ghostty
       self.nixosModules.tmux
-      self.nixosModules.fish
+      self.nixosModules.bash
       self.nixosModules.zsh
+      self.nixosModules.fish
+      self.nixosModules.nushell
+      self.nixosModules.xonsh
       self.nixosModules.starship
       self.nixosModules.fetch
 

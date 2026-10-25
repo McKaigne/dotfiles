@@ -4,6 +4,7 @@ let
     { pkgs }:
     pkgs.writeShellScriptBin "cfb" ''
       set -euo pipefail
+
       targetPath="."
       if [ $# -ge 1 ]; then
         case "$1" in
@@ -13,19 +14,23 @@ let
         esac
       fi
 
-      targetPath=$(realpath "$targetPath" 2>/dev/null || echo "$targetPath")
+      targetPath="$(realpath "$targetPath" 2>/dev/null || echo "$targetPath")"
       if [ ! -d "$targetPath" ]; then
         echo "Error: Target directory '$targetPath' does not exist." >&2
         exit 1
       fi
 
-      echo "Generating structured LLM context snapshot for: $targetPath..."
+      echo "Generating structured LLM context snapshot for: $targetPath..." >&2
 
-      hostName=$(hostname 2>/dev/null || echo "workstation")
-      userName=$(whoami 2>/dev/null || echo "user")
-      dateString=$(date '+%Y-%m-%d %H:%M:%S')
+      hostName="$(hostname 2>/dev/null || echo workstation)"
+      userName="$(whoami 2>/dev/null || echo user)"
+      dateString="$(date '+%Y-%m-%d %H:%M:%S')"
 
-      outputStr="================================================================================
+      tmpfile="$(mktemp)"
+      trap 'rm -f "$tmpfile"' EXIT
+
+      cat << SNAP_HEADER > "$tmpfile"
+================================================================================
 SYSTEM CONTEXT SNAPSHOT
 Host: $hostName | User: $userName | Target: $targetPath | Date: $dateString
 ================================================================================
@@ -33,43 +38,48 @@ Host: $hostName | User: $userName | Target: $targetPath | Date: $dateString
 --------------------------------------------------------------------------------
 DIRECTORY TOPOLOGY (including empty directories)
 --------------------------------------------------------------------------------
-"
-
-      extensions=(-e nix -e kdl -e toml -e conf -e ini -e el -e json -e fish -e zsh -e sh -e py -e css -e lua -e md)
+SNAP_HEADER
 
       if [[ "$targetPath" == *".config"* ]]; then
         treeIgnores='.git|flake.lock|result|node_modules|target|*cache*|*Cache*|*.log|*.sqlite*|*.db*|*.bin|*.dat|*asar*|*BraveSoftware*|*brave*|*chromium*|*floorp*|*librewolf*|*mozilla*|*google-chrome*|*obsidian*|*zennotes*|*Ferdium*'
-        outputStr+="$(${pkgs.tree}/bin/tree "$targetPath" -a -I "$treeIgnores" --noreport 2>/dev/null || ${pkgs.tree}/bin/tree "$targetPath" -a -I '.git|result' --noreport)"
+        ${pkgs.tree}/bin/tree "$targetPath" -a -I "$treeIgnores" --noreport 2>/dev/null >> "$tmpfile" || ${pkgs.tree}/bin/tree "$targetPath" -a -I '.git|result' --noreport >> "$tmpfile"
         fdExcludes=(-E .git -E flake.lock -E node_modules -E target -E result -E "*cache*" -E "*Cache*" -E "*.log" -E "*.sqlite*" -E "*.db*" -E "*asar" -E "*BraveSoftware*" -E "*brave*" -E "*chromium*" -E "*floorp*" -E "*librewolf*" -E "*mozilla*" -E "*google-chrome*" -E "*obsidian*" -E "*zennotes*" -E "*Ferdium*")
       else
-        outputStr+="$(${pkgs.tree}/bin/tree "$targetPath" -a -I '.git|flake.lock|result|node_modules|target|*cache*|*Cache*|*.log|*.sqlite*|*.db*' --noreport 2>/dev/null || ${pkgs.tree}/bin/tree "$targetPath" --noreport)"
+        ${pkgs.tree}/bin/tree "$targetPath" -a -I '.git|flake.lock|result|node_modules|target|*cache*|*Cache*|*.log|*.sqlite*|*.db*' --noreport 2>/dev/null >> "$tmpfile" || ${pkgs.tree}/bin/tree "$targetPath" --noreport >> "$tmpfile"
         fdExcludes=(-E .git -E flake.lock -E node_modules -E target -E result -E "*cache*" -E "*Cache*" -E "*.log" -E "*.sqlite*" -E "*.db*")
       fi
 
-      outputStr+=$'\n\n--------------------------------------------------------------------------------\nFILE CONTENTS\n--------------------------------------------------------------------------------\n'
+      cat << 'CONTENTS_HEADER' >> "$tmpfile"
 
-      files=()
+--------------------------------------------------------------------------------
+FILE CONTENTS
+--------------------------------------------------------------------------------
+CONTENTS_HEADER
+
+      extensions=(-e nix -e kdl -e toml -e conf -e ini -e el -e json -e fish -e zsh -e sh -e py -e css -e lua -e md -e nu -e xsh)
+
+      count=0
       while IFS= read -r -d $'\0' file; do
-        files+=("$file")
+        relPath="''${file#$targetPath/}"
+        printf '\n--- START OF FILE: %s ---\n' "$relPath" >> "$tmpfile"
+        cat "$file" >> "$tmpfile" 2>/dev/null || true
+        printf '\n--- END OF FILE: %s ---\n' "$relPath" >> "$tmpfile"
+        count=$((count + 1))
       done < <(${pkgs.fd}/bin/fd . "$targetPath" -t f -L -H -S -250k "''${extensions[@]}" "''${fdExcludes[@]}" -0 2>/dev/null)
 
-      fileCount="''${#files[@]}"
-
-      if [ "$fileCount" -eq 0 ]; then
-        outputStr+=$'\n[No configuration files found matching extension filters.]\n'
-      else
-        for file in "''${files[@]}"; do
-          relPath="''${file#$targetPath/}"
-          outputStr+=$'\n--- START OF FILE: '"$relPath"$' ---\n'
-          outputStr+="$(cat "$file" 2>/dev/null)"$'\n'
-          outputStr+='--- END OF FILE: '"$relPath"$' ---\n'
-        done
+      if [ "$count" -eq 0 ]; then
+        printf '\n[No configuration files found matching extension filters.]\n' >> "$tmpfile"
       fi
 
-      printf "%s" "$outputStr" | ${pkgs.wl-clipboard}/bin/wl-copy
-      byteSize=$(printf "%s" "$outputStr" | wc -c)
-      kilobyteSize=$(( byteSize / 1024 ))
-      echo "[Copied context: Tree + $fileCount files (''${kilobyteSize} KB) from $targetPath to clipboard]"
+      if command -v ${pkgs.wl-clipboard}/bin/wl-copy >/dev/null 2>&1 && [ -n "''${WAYLAND_DISPLAY:-}" ]; then
+        ${pkgs.wl-clipboard}/bin/wl-copy < "$tmpfile"
+        byteSize=$(wc -c < "$tmpfile")
+        kilobyteSize=$(( byteSize / 1024 ))
+        echo "[Copied context: Tree + $count files ($kilobyteSize KB) from $targetPath to clipboard]" >&2
+      else
+        cat "$tmpfile"
+        echo "[Wayland session not detected: output dumped to stdout]" >&2
+      fi
     '';
 in
 {
@@ -85,107 +95,298 @@ in
       cfbPkg = cfb { inherit pkgs; };
     in
     {
-      nixpkgs.config.allowUnfree = true;
-      i18n.defaultLocale = "en_US.UTF-8";
+      options.workstation.shellAliases = lib.mkOption {
+        type = lib.types.attrsOf lib.types.str;
+        description = "Single source of truth for aliases across bash, zsh, fish, nushell, and xonsh";
+        default = {
+          # POSIX Modern Replacements
+          grep = "rg";
+          find = "fd";
+          sed = "sd";
+          du = "dust";
+          cat = "bat";
 
-      nix.settings = {
-        experimental-features = [
-          "nix-command"
-          "flakes"
-        ];
-        warn-dirty = false;
-        auto-optimise-store = true;
-        max-jobs = "auto";
-        cores = 0;
-        substituters = [
-          "https://cache.nixos.org"
-          "https://devenv.cachix.org"
-          "https://noctalia.cachix.org"
-        ];
-        trusted-public-keys = [
-          "cache.nixos.org-1:6NCHdD59X431o0gWypbMrAURkbJ16ZPMQFGspcDShjY="
-          "devenv.cachix.org-1:w1cLUi8dv3hnoSPGAuibQv+f9TZLr6cv/Hm9XgU50cw="
-          "noctalia.cachix.org-1:pCOR47nnMEo5thcxNDtzWpOxNFQsBRglJzxWPp3dkU4="
-        ];
+          # Television (Fuzzy Finder TUI) Abbreviated to 'f'
+          f = "tv";
+          tv = "television";
+
+          # NixOS Atomic Rebuild Pipelines
+          rebuild = "git -C /etc/nixos add -A && sudo nixos-rebuild switch --flake /etc/nixos";
+          rebuildc = "git -C /etc/nixos add -A && sudo nixos-rebuild switch --flake /etc/nixos#castor";
+          rebuildh = "git -C /etc/nixos add -A && sudo nixos-rebuild switch --flake /etc/nixos#hyde";
+          nr = "git -C /etc/nixos add -A && sudo nixos-rebuild switch --flake /etc/nixos";
+          nboot = "git -C /etc/nixos add -A && sudo nixos-rebuild boot --flake /etc/nixos";
+          ntest = "git -C /etc/nixos add -A && sudo nixos-rebuild test --flake /etc/nixos";
+          ncd = "cd /etc/nixos";
+          nupdate = "nix flake update --flake /etc/nixos";
+          nclean = "nix-collect-garbage -d";
+          ntry = "nix run nixpkgs#";
+          nshell = "nix shell nixpkgs#";
+
+          # Git Operations
+          ga = "git add -A";
+          gstage = "git add -A";
+          gpatch = "git add -p";
+          gundo = "git reset --soft HEAD~1";
+          gunstage = "git restore --staged .";
+          gwipe = "git reset --hard HEAD";
+          gamend = "git commit --amend --no-edit";
+          gst = "git status";
+          gc = "git commit -m";
+          gdiff = "git diff";
+          gdiffs = "git diff --staged";
+          gp = "git push";
+          gpushf = "git push --force-with-lease";
+          gpl = "git pull";
+          glg = "git log --oneline --graph -n 20";
+          gbranch = "git switch";
+          gnew = "git switch -c";
+
+          # Noctalia IPC Control
+          nlaunch = "noctalia msg panel-toggle launcher";
+          ncontrol = "noctalia msg panel-toggle control-center";
+          nsession = "noctalia msg panel-toggle session";
+          nclip = "noctalia msg panel-toggle clipboard";
+          nsettings = "noctalia msg settings-toggle";
+          nbar = "noctalia msg bar-toggle";
+          nlock = "noctalia msg session lock";
+          nclosemsg = "noctalia msg notification-clear-active";
+
+          # Niri IPC Control
+          nreload = "niri msg action load-config-file";
+          nclose = "niri msg action close-window";
+          nquit = "niri msg action quit";
+          nfocus = "niri msg action focus-window --id";
+          nwins = "niri msg -j windows";
+          nwork = "niri msg -j workspaces";
+          nmon = "niri msg -j outputs";
+
+          # Multiplexer & Directory Navigation
+          t = "tmux";
+          ta = "tmux attach -t";
+          tls = "tmux ls";
+          tkill = "tmux kill-session -t";
+          tkilla = "tmux kill-server";
+
+          l = "ls";
+          ll = "ls -l";
+          la = "ls -a";
+          zq = "zoxide query";
+          zql = "zoxide query -l";
+          za = "zoxide add";
+          zr = "zoxide remove";
+
+          # Editor & Tools
+          v = "hx";
+          vi = "hx";
+          vim = "hx";
+          bottom = "btop";
+          btm = "btop";
+          n = "nnn";
+          g = "git";
+          lg = "lazygit";
+          fetch = "fetch";
+          lh = "learnharness";
+          learnharness = "learnharness";
+
+          # Quick Config Navigation
+          hxf = "hx /etc/nixos/flake.nix";
+          hxh = "hx /etc/nixos/modules/hosts/hyde/default.nix";
+          hxc = "hx /etc/nixos/modules/shared/core/default.nix";
+          hxfish = "hx /etc/nixos/modules/features/terminal/fish/default.nix";
+          hxi = "hx /etc/nixos/modules/features/desktop/niri/niri.kdl";
+          hxt = "hx /etc/nixos/modules/features/terminal/tmux/default.nix";
+        };
       };
 
-      systemd.tmpfiles.rules = [
-        "d /etc/nixos 0775 ${user} wheel -"
-        "z /etc/nixos 0775 ${user} wheel -"
-      ];
-
-      boot.kernel.sysctl = {
-        "fs.inotify.max_user_watches" = 1048576;
-        "fs.inotify.max_user_instances" = 1024;
+      options.workstation.shellAbbrs = lib.mkOption {
+        type = lib.types.attrsOf lib.types.str;
+        description = "Unified abbreviation mapping for Fish and Zsh-abbr";
+        default = config.workstation.shellAliases;
       };
 
-      security.sudo.extraConfig = ''
-        Defaults passwd_timeout=0
-        Defaults timestamp_timeout=30
-      '';
+      config = {
+        nixpkgs.config.allowUnfree = true;
+        i18n.defaultLocale = "en_US.UTF-8";
 
-      environment.localBinInPath = true;
+        nix.settings = {
+          experimental-features = [
+            "nix-command"
+            "flakes"
+          ];
+          warn-dirty = false;
+          auto-optimise-store = true;
+          max-jobs = "auto";
+          cores = 0;
+          substituters = [
+            "https://cache.nixos.org"
+            "https://devenv.cachix.org"
+            "https://noctalia.cachix.org"
+          ];
+          trusted-public-keys = [
+            "cache.nixos.org-1:6NCHdD59X431o0gWypbMrAURkbJ16ZPMQFGspcDShjY="
+            "devenv.cachix.org-1:w1cLUi8dv3hnoSPGAuibQv+f9TZLr6cv/Hm9XgU50cw="
+            "noctalia.cachix.org-1:pCOR47nnMEo5thcxNDtzWpOxNFQsBRglJzxWPp3dkU4="
+          ];
+        };
 
-      programs.nix-ld = {
-        enable = true;
-        libraries = with pkgs; [
-          stdenv.cc.cc.lib
-          zlib
-          openssl
+        systemd.tmpfiles.rules = [
+          "d /etc/nixos 0775 ${user} wheel -"
+          "z /etc/nixos 0775 ${user} wheel -"
+        ];
+
+        boot.kernel.sysctl = {
+          "fs.inotify.max_user_watches" = 1048576;
+          "fs.inotify.max_user_instances" = 1024;
+        };
+
+        security.sudo.extraConfig = ''
+          Defaults passwd_timeout=0
+          Defaults timestamp_timeout=30
+        '';
+
+        environment.localBinInPath = true;
+
+        programs.nix-ld = {
+          enable = true;
+          libraries = with pkgs; [
+            stdenv.cc.cc.lib
+            zlib
+            openssl
+            curl
+            glibc
+          ];
+        };
+
+        hardware.keyboard.qmk.enable = true;
+
+        services.udev.extraRules = ''
+          KERNEL=="hidraw*", SUBSYSTEM=="hidraw", ATTRS{idVendor}=="369b", ATTRS{idProduct}=="0051", MODE="0660", GROUP="users", TAG+="uaccess"
+          KERNEL=="hidraw*", SUBSYSTEM=="hidraw", ATTRS{idVendor}=="369b", MODE="0660", GROUP="users", TAG+="uaccess"
+        '';
+
+        environment.sessionVariables = {
+          EDITOR = "hx";
+          VISUAL = "hx";
+          BAT_THEME = "Catppuccin Mocha";
+          GLOW_STYLE = "catppuccin-mocha";
+          STARSHIP_CONFIG = "/etc/starship.toml";
+
+          # Supercharged FZF with Catppuccin Mocha Transparency & Dynamic Previews
+          FZF_DEFAULT_OPTS = "--color=bg+:#313244,bg:-1,spinner:#f5e0dc,hl:#f38ba8 --color=fg:#cdd6f4,header:#f38ba8,info:#cba6f7,pointer:#f5e0dc --color=marker:#b4befe,fg+:#cdd6f4,prompt:#cba6f7,hl+:#f38ba8 --height=50% --layout=reverse --border=none --info=inline --prompt='➜ ' --pointer='▶ ' --marker='✓ '";
+          FZF_DEFAULT_COMMAND = "${pkgs.fd}/bin/fd --type f --strip-cwd-prefix --hidden --follow --exclude .git";
+          FZF_CTRL_T_COMMAND = "${pkgs.fd}/bin/fd --type f --strip-cwd-prefix --hidden --follow --exclude .git";
+          FZF_CTRL_T_OPTS = "--preview '${pkgs.bat}/bin/bat -n --color=always --line-range :500 {}' --preview-window=right:60%:wrap";
+          FZF_ALT_C_COMMAND = "${pkgs.fd}/bin/fd --type d --strip-cwd-prefix --hidden --follow --exclude .git";
+          FZF_ALT_C_OPTS = "--preview '${pkgs.eza}/bin/eza --tree --level=2 --color=always {} | head -200' --preview-window=right:60%:wrap";
+
+          # nnn Catppuccin Mocha Palette
+          NNN_COLORS = "2134";
+          NNN_FCOLORS = "c1e2272e006033f7c6d6abc4";
+        };
+
+        home-manager.users.${user} = {
+          programs.zoxide = {
+            enable = true;
+            enableBashIntegration = true;
+            enableZshIntegration = true;
+            enableFishIntegration = true;
+            enableNushellIntegration = true;
+          };
+
+          programs.direnv = {
+            enable = true;
+            nix-direnv.enable = true;
+            enableBashIntegration = true;
+            enableZshIntegration = true;
+            enableFishIntegration = true;
+            enableNushellIntegration = true;
+          };
+
+          programs.starship = {
+            enable = true;
+            enableBashIntegration = true;
+            enableZshIntegration = true;
+            enableFishIntegration = true;
+            enableNushellIntegration = true;
+          };
+
+          # Native Supercharged FZF Integration
+          programs.fzf = {
+            enable = true;
+            enableBashIntegration = true;
+            enableZshIntegration = true;
+            enableFishIntegration = true;
+            defaultCommand = "${pkgs.fd}/bin/fd --type f --strip-cwd-prefix --hidden --follow --exclude .git";
+            fileWidget.command = "${pkgs.fd}/bin/fd --type f --strip-cwd-prefix --hidden --follow --exclude .git";
+            changeDirWidget.command = "${pkgs.fd}/bin/fd --type d --strip-cwd-prefix --hidden --follow --exclude .git";
+            historyWidget.command = "";
+          };
+
+          # Mise Integration for Dev Environments
+          programs.mise = {
+            enable = true;
+            enableBashIntegration = true;
+            enableZshIntegration = true;
+            enableFishIntegration = true;
+          };
+
+          # Atuin Shell History Sync & TUI
+          programs.atuin = {
+            enable = true;
+            enableBashIntegration = true;
+            enableZshIntegration = true;
+            enableFishIntegration = true;
+            enableNushellIntegration = true;
+            settings = {
+              style = "compact";
+              inline_height = 20;
+              show_preview = true;
+            };
+          };
+        };
+
+        environment.systemPackages = with pkgs; [
+          git
+          delta
+          lazygit
+          gh
+          tree
+          btop
+          bat
+          eza
+          dust
+          gdu
+          procs
+          ripgrep
+          fd
+          findutils
+          jq
+          jnv
+          sd
+          xh
           curl
-          glibc
+          nnn
+          wtype
+          gawk
+          fzf
+          television
+          mise
+          atuin
+          vivid
+          cfbPkg
+          aria2
+          p7zip
+          unrar
+          rsync
+          devenv
+          nvd
+          nix-output-monitor
+          wl-clipboard
+          nodejs_22
+          uv
+          python3
         ];
       };
-
-      hardware.keyboard.qmk.enable = true;
-
-      services.udev.extraRules = ''
-        KERNEL=="hidraw*", SUBSYSTEM=="hidraw", ATTRS{idVendor}=="369b", ATTRS{idProduct}=="0051", MODE="0660", GROUP="users", TAG+="uaccess"
-        KERNEL=="hidraw*", SUBSYSTEM=="hidraw", ATTRS{idVendor}=="369b", MODE="0660", GROUP="users", TAG+="uaccess"
-      '';
-
-      environment.sessionVariables = {
-        EDITOR = "hx";
-        VISUAL = "hx";
-        BAT_THEME = "Catppuccin Mocha";
-      };
-
-      environment.systemPackages = with pkgs; [
-        git
-        delta
-        lazygit
-        gh
-        tree
-        btop
-        bat
-        eza
-        dust
-        gdu
-        procs
-        ripgrep
-        fd
-        findutils
-        jq
-        jnv
-        sd
-        xh
-        curl
-        yazi
-        nnn
-        wtype
-        gawk
-        fzf
-        zoxide
-        direnv
-        cfbPkg
-        aria2
-        p7zip
-        unrar
-        rsync
-        devenv
-        nvd
-        nix-output-monitor
-        wl-clipboard
-      ];
     };
 }

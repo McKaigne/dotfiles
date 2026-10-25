@@ -21,6 +21,23 @@
 
       home-manager.users.${user} = {
         services.easyeffects.enable = true;
+
+        # Declaratively lock EasyEffects to Catppuccin Mocha
+        xdg.configFile."easyeffectsrc" = {
+          text = ''
+            [General]
+            ColorScheme=CatppuccinMocha
+          '';
+          force = true;
+        };
+
+        xdg.configFile."easyeffects/db/easyeffectsrc" = {
+          text = ''
+            [General]
+            ColorScheme=CatppuccinMocha
+          '';
+          force = true;
+        };
       };
 
       environment.systemPackages = with pkgs; [

@@ -40,6 +40,17 @@
           ];
         };
 
+        xdg.desktopEntries.learnharness = {
+          name = "LearnHarness";
+          genericName = "AI Learning Agent Harness";
+          comment = "Agent harness for learning difficult domains with Socratic guidance and knowledge graphs";
+          exec = "learnharness %U";
+          icon = "system-help";
+          terminal = false;
+          categories = [ "Education" "Development" "Utility" ];
+          mimeType = [ "text/markdown" "application/x-markdown" ];
+        };
+
         xdg.mimeApps = {
           enable = true;
           defaultApplications = {

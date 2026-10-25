@@ -1,6 +1,6 @@
 # Dendritic NixOS Workstations: Castor & Hyde
 
-An atomic, dendritic NixOS configuration managing two specialized workstations (`castor` and `hyde`), scrollable tiling with Niri, Noctalia dynamic theme authority, layerless Programmer QWERTY hardware input interception, and an editor-multiplexer workflow.
+An atomic, dendritic NixOS configuration managing two specialized workstations (`castor` and `hyde`), scrollable tiling with Niri, Noctalia dynamic theme authority, layerless Programmer QWERTY hardware input interception, an editor-multiplexer workflow, and a 5-shell parity layer.
 
 ---
 
@@ -27,22 +27,60 @@ Checkout path expected at `/etc/nixos`.
 
 ---
 
-## Editor Ergonomics & Productivity (Helix)
+## Five-Shell Parity Layer (Bash, Zsh, Fish, Nushell, Xonsh)
 
-| Feature | Keymap | Operational Behavior |
+A unified single-source-of-truth declared at `modules/shared/core/default.nix` compiles aliases and tool hooks into all 5 shells identically:
+
+| Canonical Alias | Command Target | Description |
 | :--- | :--- | :--- |
-| **Quick Save + Format** | `Ctrl + S` | Automatically formats and writes buffer to disk (Normal and Insert modes) |
-| **Quick Format Only** | `=` | Formats entire buffer on demand via LSP without saving |
-| **Quick Save & Exit** | `Z Z` | Writes changes, auto-formats, and exits Helix cleanly in 50ms |
-| **Force Quit** | `Z Q` | Quits immediately without saving (`:q!`) |
-| **Close Buffer (Tab)** | `<Space> c` | Closes active buffer (`:bc`), preserving `Ctrl + W` split navigation |
-| **Copy File Path** | `<Space> Y` | Copies relative path of active buffer to the system clipboard |
-| **Subword Navigation** | `Alt + w/b/e` | Navigates inside `camelCase` and `snake_case` identifiers |
-| **Leap Navigation** | `Enter` | Triggers `goto_word` using home-row prioritized target labels |
-| **Symmetrical Lines**| `x` / `X` | `x` selects line downwards; `X` selects line upwards |
-| **AST Code Jumping** | `Tab` / `S-Tab` | Navigates to the end / start of the enclosing Tree-sitter block |
-| **Embedded LazyGit** | `<Space> g` | Fullscreen LazyGit overlay; auto-reloads changed buffers on exit |
-| **System Clipboard** | `y`, `d`, `p`, `P` | Synchronizes with the Wayland system clipboard via `default-yank-register = "+"` |
+| `grep` | `rg` | Ripgrep fast AST-aware pattern search |
+| `find` | `fd` | Fast, colorized directory hierarchy traversal |
+| `sed` | `sd` | Intuitive, fast regex find & replace |
+| `du` | `dust` | Visual terminal disk usage analyzer |
+| `cat` | `bat` | Syntax-highlighted pager with git integration |
+| `f` / `tv` | `television` | Fast fuzzy matcher and channel inspector TUI |
+| `rebuild` | `git -C /etc/nixos add -A && sudo nixos-rebuild switch ...` | Stage changes and rebuild active workstation |
+| `rebuildh` | `git -C /etc/nixos add -A && sudo nixos-rebuild switch --flake /etc/nixos#hyde` | Explicit build for compute host `hyde` |
+| `rebuildc` | `git -C /etc/nixos add -A && sudo nixos-rebuild switch --flake /etc/nixos#castor` | Explicit build for mobile host `castor` |
+| `cfb nix` | `cfb /etc/nixos` | Copies tree topology + config contents to Wayland clipboard |
+| `cfb cfg` | `cfb ~/.config` | Copies clean `~/.config` snapshot to Wayland clipboard |
+| `v` / `vi` / `vim` | `hx` | Opens modal editor (Helix) with transparent canvas |
+| `bottom` / `btm` | `btop` | System activity monitor with Catppuccin transparent background |
+| `lh` | `learnharness` | Socratic agent harness for mastering complex technical domains |
+| `y` | `yazi` | Fast asynchronous terminal file manager |
+| `lg` | `lazygit` | Terminal Git staging and branch manager |
+
+Prompt initialization across all shells points strictly to `/etc/starship.toml` with native `zoxide`, `direnv`, and `mise` evaluations. Shell history resolution via `Ctrl-R` is exclusively yielded to **Atuin** with transparent Catppuccin Mocha theming, while **FZF** retains fast file and directory navigation widgets.
+
+---
+
+## Developer Tooling & AI Coding Agent Harnesses
+
+| Tool | Category | Runtime / Engine | Execution Purpose |
+| :--- | :--- | :--- | :--- |
+| `learnharness` | Learning Agent | TypeScript / Electron / Pi Subagents | Active conceptual learning with Socratic probing, dependency DAGs, and knowledge graphs |
+| `herdr` | Agent Multiplexer | Native Rust / Ghostty VT | Multi-agent terminal runtime and session orchestrator |
+| `agy` | Google Antigravity | Antigravity Core Engine | Terminal surface for Antigravity code reasoning and edit passes |
+| `codex` | OpenAI Codex CLI | Node.js 22 LTS Isolated | Terminal-first coding agent loop, diff reviews, and MCP servers |
+| `pi` | Agent Harness | Node.js 22 LTS Isolated | Minimal, extensible agent harness with branchable DAG sessions |
+| `upmd` | Workflow Runner | Rust / Ratatui TUI | Executes Markdown codeblocks as dependency-aware pipelines |
+| `endcord` | Discord TUI | Python 3 / Curses | Ultra-low-resource terminal Discord client |
+| `quien` | Network Intelligence | Go / Ratatui TUI | Modern interactive WHOIS and domain intelligence visualizer |
+| `lazyrsync` | Data Transfer | Rust / Rsync TUI | Interactive Rsync profile manager with live diff preview |
+| `lazyssh` | Remote Access | Go / SSH TUI | Terminal fleet manager and configuration browser |
+| `usbtree` | Hardware Diagnostics | Rust / Nusb | Live USB device tree and endpoint activity visualizer |
+| `linecast` | Environment TUI | Python / Minitel UI | Terminal ephemeris: weather, radar, moon phases, and tides |
+| `devenv` / `direnv` | Shell Isolation | Nix Flakes Native | Per-directory declarative toolchain loading |
+
+---
+
+## Editor Ergonomics (Helix)
+
+Helix runs with upstream standard modal keybindings, maximizing stability while inheriting full system visual parity:
+* **Transparent Canvas**: Custom `catppuccin_transparent` theme inheriting `catppuccin_mocha` with `ui.background = {}` and transparent cursorlines, blending directly with Niri's dual-pass GPU blur.
+* **Vertical Indentation Guides**: Enabled via `[editor.indent-guides] render = true`, drawing `│` vertical lines at each indentation/tab depth to visualize block nesting levels.
+* **Relative Line Numbers**: Enabled via `line-number = "relative"` for rapid vertical navigation.
+* **LSP Environment Integration**: Automatically wrapped with `nixd`, `nixfmt`, `marksman`, `bash-language-server`, `taplo`, `yaml-language-server`, `shellcheck`, and `shfmt`.
 
 ---
 
