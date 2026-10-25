@@ -62,11 +62,22 @@
             "x-scheme-handler/http" = "librewolf.desktop";
             "x-scheme-handler/https" = "librewolf.desktop";
 
+            "application/pdf" = "org.pwmt.zathura.desktop";
+
             "image/png" = "imv.desktop";
             "image/jpeg" = "imv.desktop";
             "image/webp" = "imv.desktop";
             "image/gif" = "imv.desktop";
             "image/svg+xml" = "imv.desktop";
+
+            "video/mp4" = "mpv.desktop";
+            "video/x-matroska" = "mpv.desktop";
+            "video/webm" = "mpv.desktop";
+            "video/quicktime" = "mpv.desktop";
+
+            "audio/mpeg" = "mpv.desktop";
+            "audio/flac" = "mpv.desktop";
+            "audio/ogg" = "mpv.desktop";
 
             "text/plain" = "Helix.desktop";
             "text/markdown" = "Helix.desktop";

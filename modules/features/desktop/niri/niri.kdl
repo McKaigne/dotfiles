@@ -222,18 +222,13 @@ binds {
 
   // S: Files
   Mod+S                  hotkey-overlay-title="Files: PCManFM File Manager"         { spawn "@pcmanfm@"; }
-  Mod+Shift+S            hotkey-overlay-title="Files: Floating PCManFM Dialog"      { spawn "@pcmanfm@"; }
-  Mod+Ctrl+S             hotkey-overlay-title="Files: Terminal in Current Folder"   { spawn "@footclient@"; }
 
   // A: Ferdium & Overview
   Mod+A                  hotkey-overlay-title="Chat: Ferdium Messaging Client"      { spawn "@ferdium@"; }
   Mod+Shift+A            hotkey-overlay-title="Overview: Niri Workspace View"       { toggle-overview; }
-  Mod+Ctrl+A             hotkey-overlay-title="Chat: Floating Ferdium"              { spawn "@ferdium@"; }
 
   // G: Obsidian
   Mod+G                  hotkey-overlay-title="Notes: Obsidian Knowledge Vault"     { spawn "@obsidian@"; }
-  Mod+Shift+G            hotkey-overlay-title="Notes: Floating Obsidian"            { spawn "@obsidian@"; }
-  Mod+Ctrl+G             hotkey-overlay-title="Notes: Obsidian Quick Note"          { spawn "@obsidian@"; }
 
   // T: Screenshot
   Mod+T                  hotkey-overlay-title="Snip: Area Screenshot to Clipboard"  { spawn "@screenshotArea@"; }
@@ -252,7 +247,7 @@ binds {
 
   // B & W: Bluetooth & Wi-Fi
   Mod+B                  hotkey-overlay-title="Bluetooth: Noctalia Panel"           { spawn "@noctalia@" "msg" "panel-toggle" "bluetooth"; }
-  Mod+Shift+B            hotkey-overlay-title="Security: Bitwarden Desktop"         { spawn "bitwarden"; }
+  Mod+Shift+B            hotkey-overlay-title="Security: Bitwarden Desktop"         { spawn "@bitwarden@"; }
   Mod+W                  hotkey-overlay-title="Network: Wi-Fi / Network Panel"      { spawn "@noctalia@" "msg" "panel-toggle" "network"; }
   Mod+Shift+W            hotkey-overlay-title="Wallpaper: Noctalia Panel"           { spawn "@noctalia@" "msg" "panel-toggle" "wallpaper"; }
   Mod+Ctrl+W             hotkey-overlay-title="Bar: Toggle Noctalia Top Bar"        { spawn "@noctalia@" "msg" "bar-toggle"; }
@@ -266,7 +261,6 @@ binds {
   Mod+Shift+Escape       hotkey-overlay-title="Session: Lock Screen"                { spawn "@noctalia@" "msg" "session" "lock"; }
   Mod+Ctrl+Escape        hotkey-overlay-title="Monitors: Turn Off Displays"         { power-off-monitors; }
   Mod+Q                  hotkey-overlay-title="Close Focused Window"                { close-window; }
-  Mod+Shift+Q            hotkey-overlay-title="Kill / Close Window"                 { close-window; }
 
   // === RIGHT HAND: COLUMNS (H / L), WORKSPACES (J / K), AND STACKS (U / I) ===
   // Columns (Horizontal Ribbon: H / L)

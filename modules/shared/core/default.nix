@@ -41,9 +41,9 @@ DIRECTORY TOPOLOGY (including empty directories)
 SNAP_HEADER
 
       if [[ "$targetPath" == *".config"* ]]; then
-        treeIgnores='.git|flake.lock|result|node_modules|target|*cache*|*Cache*|*.log|*.sqlite*|*.db*|*.bin|*.dat|*asar*|*BraveSoftware*|*brave*|*chromium*|*floorp*|*librewolf*|*mozilla*|*google-chrome*|*obsidian*|*zennotes*|*Ferdium*'
+        treeIgnores='.git|flake.lock|result|node_modules|target|*cache*|*Cache*|*.log|*.sqlite*|*.db*|*.bin|*.dat|*asar*|*BraveSoftware*|*brave*|*chromium*|*floorp*|*librewolf*|*mozilla*|*google-chrome*|*obsidian*|*zennotes*|*Ferdium*|*OpenRGB*'
         ${pkgs.tree}/bin/tree "$targetPath" -a -I "$treeIgnores" --noreport 2>/dev/null >> "$tmpfile" || ${pkgs.tree}/bin/tree "$targetPath" -a -I '.git|result' --noreport >> "$tmpfile"
-        fdExcludes=(-E .git -E flake.lock -E node_modules -E target -E result -E "*cache*" -E "*Cache*" -E "*.log" -E "*.sqlite*" -E "*.db*" -E "*asar" -E "*BraveSoftware*" -E "*brave*" -E "*chromium*" -E "*floorp*" -E "*librewolf*" -E "*mozilla*" -E "*google-chrome*" -E "*obsidian*" -E "*zennotes*" -E "*Ferdium*")
+        fdExcludes=(-E .git -E flake.lock -E node_modules -E target -E result -E "*cache*" -E "*Cache*" -E "*.log" -E "*.sqlite*" -E "*.db*" -E "*asar" -E "*BraveSoftware*" -E "*brave*" -E "*chromium*" -E "*floorp*" -E "*librewolf*" -E "*mozilla*" -E "*google-chrome*" -E "*obsidian*" -E "*zennotes*" -E "*Ferdium*" -E "*OpenRGB*")
       else
         ${pkgs.tree}/bin/tree "$targetPath" -a -I '.git|flake.lock|result|node_modules|target|*cache*|*Cache*|*.log|*.sqlite*|*.db*' --noreport 2>/dev/null >> "$tmpfile" || ${pkgs.tree}/bin/tree "$targetPath" --noreport >> "$tmpfile"
         fdExcludes=(-E .git -E flake.lock -E node_modules -E target -E result -E "*cache*" -E "*Cache*" -E "*.log" -E "*.sqlite*" -E "*.db*")
@@ -93,6 +93,54 @@ in
     let
       user = config.mainUser;
       cfbPkg = cfb { inherit pkgs; };
+
+      # Universal Rebuild & Nix Tools across all 5 shells
+      rebuildScript = pkgs.writeShellScriptBin "rebuild" ''
+        set -euo pipefail
+        git -C /etc/nixos add -A && sudo nixos-rebuild switch --flake /etc/nixos "$@"
+      '';
+      rebuildhScript = pkgs.writeShellScriptBin "rebuildh" ''
+        set -euo pipefail
+        git -C /etc/nixos add -A && sudo nixos-rebuild switch --flake /etc/nixos#hyde "$@"
+      '';
+      rebuildcScript = pkgs.writeShellScriptBin "rebuildc" ''
+        set -euo pipefail
+        git -C /etc/nixos add -A && sudo nixos-rebuild switch --flake /etc/nixos#castor "$@"
+      '';
+      nrScript = pkgs.writeShellScriptBin "nr" ''
+        set -euo pipefail
+        git -C /etc/nixos add -A && sudo nixos-rebuild switch --flake /etc/nixos "$@"
+      '';
+      nbootScript = pkgs.writeShellScriptBin "nboot" ''
+        set -euo pipefail
+        git -C /etc/nixos add -A && sudo nixos-rebuild boot --flake /etc/nixos "$@"
+      '';
+      ntestScript = pkgs.writeShellScriptBin "ntest" ''
+        set -euo pipefail
+        git -C /etc/nixos add -A && sudo nixos-rebuild test --flake /etc/nixos "$@"
+      '';
+      ntryScript = pkgs.writeShellScriptBin "ntry" ''
+        set -euo pipefail
+        if [ $# -lt 1 ]; then
+          echo "Usage: ntry <package> [args...]" >&2
+          exit 1
+        fi
+        pkg="$1"
+        shift
+        exec nix run "nixpkgs#$pkg" -- "$@"
+      '';
+      nshellScript = pkgs.writeShellScriptBin "nshell" ''
+        set -euo pipefail
+        if [ $# -lt 1 ]; then
+          echo "Usage: nshell <packages...>" >&2
+          exit 1
+        fi
+        args=()
+        for p in "$@"; do
+          args+=("nixpkgs#$p")
+        done
+        exec nix shell "''${args[@]}"
+      '';
     in
     {
       options.workstation.shellAliases = lib.mkOption {
@@ -110,18 +158,10 @@ in
           f = "tv";
           tv = "television";
 
-          # NixOS Atomic Rebuild Pipelines
-          rebuild = "git -C /etc/nixos add -A && sudo nixos-rebuild switch --flake /etc/nixos";
-          rebuildc = "git -C /etc/nixos add -A && sudo nixos-rebuild switch --flake /etc/nixos#castor";
-          rebuildh = "git -C /etc/nixos add -A && sudo nixos-rebuild switch --flake /etc/nixos#hyde";
-          nr = "git -C /etc/nixos add -A && sudo nixos-rebuild switch --flake /etc/nixos";
-          nboot = "git -C /etc/nixos add -A && sudo nixos-rebuild boot --flake /etc/nixos";
-          ntest = "git -C /etc/nixos add -A && sudo nixos-rebuild test --flake /etc/nixos";
+          # Nix Operations
           ncd = "cd /etc/nixos";
           nupdate = "nix flake update --flake /etc/nixos";
-          nclean = "nix-collect-garbage -d";
-          ntry = "nix run nixpkgs#";
-          nshell = "nix shell nixpkgs#";
+          nclean = "sudo nix-collect-garbage -d && nix-collect-garbage -d";
 
           # Git Operations
           ga = "git add -A";
@@ -185,9 +225,7 @@ in
           n = "nnn";
           g = "git";
           lg = "lazygit";
-          fetch = "fetch";
           lh = "learnharness";
-          learnharness = "learnharness";
 
           # Quick Config Navigation
           hxf = "hx /etc/nixos/flake.nix";
@@ -206,6 +244,15 @@ in
       };
 
       config = {
+        # System Maintenance & Disk Protection
+        boot.loader.systemd-boot.configurationLimit = 10;
+        services.fstrim.enable = true;
+        nix.gc = {
+          automatic = true;
+          dates = "weekly";
+          options = "--delete-older-than 14d";
+        };
+
         nixpkgs.config.allowUnfree = true;
         i18n.defaultLocale = "en_US.UTF-8";
 
@@ -272,7 +319,6 @@ in
           GLOW_STYLE = "catppuccin-mocha";
           STARSHIP_CONFIG = "/etc/starship.toml";
 
-          # Supercharged FZF with Catppuccin Mocha Transparency & Dynamic Previews
           FZF_DEFAULT_OPTS = "--color=bg+:#313244,bg:-1,spinner:#f5e0dc,hl:#f38ba8 --color=fg:#cdd6f4,header:#f38ba8,info:#cba6f7,pointer:#f5e0dc --color=marker:#b4befe,fg+:#cdd6f4,prompt:#cba6f7,hl+:#f38ba8 --height=50% --layout=reverse --border=none --info=inline --prompt='➜ ' --pointer='▶ ' --marker='✓ '";
           FZF_DEFAULT_COMMAND = "${pkgs.fd}/bin/fd --type f --strip-cwd-prefix --hidden --follow --exclude .git";
           FZF_CTRL_T_COMMAND = "${pkgs.fd}/bin/fd --type f --strip-cwd-prefix --hidden --follow --exclude .git";
@@ -280,7 +326,6 @@ in
           FZF_ALT_C_COMMAND = "${pkgs.fd}/bin/fd --type d --strip-cwd-prefix --hidden --follow --exclude .git";
           FZF_ALT_C_OPTS = "--preview '${pkgs.eza}/bin/eza --tree --level=2 --color=always {} | head -200' --preview-window=right:60%:wrap";
 
-          # nnn Catppuccin Mocha Palette
           NNN_COLORS = "2134";
           NNN_FCOLORS = "c1e2272e006033f7c6d6abc4";
         };
@@ -311,7 +356,6 @@ in
             enableNushellIntegration = true;
           };
 
-          # Native Supercharged FZF Integration
           programs.fzf = {
             enable = true;
             enableBashIntegration = true;
@@ -323,7 +367,6 @@ in
             historyWidget.command = "";
           };
 
-          # Mise Integration for Dev Environments
           programs.mise = {
             enable = true;
             enableBashIntegration = true;
@@ -331,7 +374,6 @@ in
             enableFishIntegration = true;
           };
 
-          # Atuin Shell History Sync & TUI
           programs.atuin = {
             enable = true;
             enableBashIntegration = true;
@@ -342,11 +384,20 @@ in
               style = "compact";
               inline_height = 20;
               show_preview = true;
+              update_check = false;
             };
           };
         };
 
         environment.systemPackages = with pkgs; [
+          rebuildScript
+          rebuildhScript
+          rebuildcScript
+          nrScript
+          nbootScript
+          ntestScript
+          ntryScript
+          nshellScript
           git
           delta
           lazygit

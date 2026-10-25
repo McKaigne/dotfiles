@@ -7,7 +7,10 @@
       url = "github:nix-community/home-manager";
       inputs.nixpkgs.follows = "nixpkgs";
     };
-    flake-parts.url = "github:hercules-ci/flake-parts";
+    flake-parts = {
+      url = "github:hercules-ci/flake-parts";
+      inputs.nixpkgs-lib.follows = "nixpkgs";
+    };
     import-tree.url = "github:vic/import-tree";
     noctalia.url = "github:noctalia-dev/noctalia";
     fetch = {
@@ -16,7 +19,10 @@
     };
     ghgrab = {
       url = "github:abhixdd/ghgrab";
-      inputs.nixpkgs.follows = "nixpkgs";
+      inputs = {
+        nixpkgs.follows = "nixpkgs";
+        rust-overlay.inputs.nixpkgs.follows = "nixpkgs";
+      };
     };
   };
 

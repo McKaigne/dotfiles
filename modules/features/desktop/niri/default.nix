@@ -1,34 +1,5 @@
 { self, inputs, ... }:
 let
-  makeNiriWrapper =
-    { pkgs, lib }:
-    pkgs.symlinkJoin {
-      name = "niri-wrapped";
-      paths = [ pkgs.niri ];
-      nativeBuildInputs = [ pkgs.makeWrapper ];
-      postBuild = ''
-        wrapProgram $out/bin/niri \
-          --prefix PATH : "${
-            lib.makeBinPath [
-              pkgs.xwayland-satellite
-              pkgs.grim
-              pkgs.slurp
-              pkgs.wl-clipboard
-              pkgs.wtype
-              pkgs.brightnessctl
-              pkgs.ddcutil
-              pkgs.playerctl
-              pkgs.wireplumber
-              pkgs.fuzzel
-              pkgs.jq
-            ]
-          }"
-      '';
-      passthru = (pkgs.niri.passthru or { }) // {
-        providedSessions = [ "niri" ];
-      };
-    };
-
   makeNiriConfig =
     {
       pkgs,
@@ -78,14 +49,9 @@ Mod + D             Browser: LibreWolf
 Mod + Shift + D     Browser: Brave Origin
 Mod + Ctrl + D      Browser: LibreWolf Private
 Mod + S             Files: PCManFM File Manager
-Mod + Shift + S     Files: Floating PCManFM Dialog
-Mod + Ctrl + S      Terminal in Current Directory
 Mod + A             Chat: Ferdium Messaging Client
 Mod + Shift + A     Overview: Niri Workspace View
-Mod + Ctrl + A      Chat: Floating Ferdium
 Mod + G             Notes: Obsidian Knowledge Vault
-Mod + Shift + G     Notes: Floating Obsidian Quick Note
-Mod + Ctrl + G      Notes: Obsidian Daily Note
 Mod + T             Snip: Area Screenshot to Clipboard
 Mod + Shift + T     Snip: Fullscreen to Clipboard
 Mod + E             Notices: Notification Center Panel
@@ -106,7 +72,6 @@ Mod + Esc           Session: Noctalia Power Menu
 Mod + Shift + Esc   Session: Lock Screen
 Mod + Ctrl + Esc    Monitors: Turn Off Displays
 Mod + Q             Close Focused Window
-Mod + Shift + Q     Kill / Force Close Window
 Mod + H / L         Navigate: Focus Column Left / Right
 Mod + J / K         Workspace: Focus Workspace Down / Up
 Mod + Shift + H / L Move: Move Column Left / Right
@@ -180,6 +145,7 @@ SHEET_EOF
         "@fuzzelCheatsheet@"
         "@easyeffects@"
         "@pavucontrol@"
+        "@bitwarden@"
         "@screenshotArea@"
         "@screenshotFull@"
         "@brightnessUp@"
@@ -202,6 +168,7 @@ SHEET_EOF
         "${fuzzelCheatsheet}/bin/fuzzel-cheatsheet"
         "${pkgs.easyeffects}/bin/easyeffects"
         "${pkgs.pavucontrol}/bin/pavucontrol"
+        "${pkgs.bitwarden-desktop}/bin/bitwarden"
         "${screenshotArea}/bin/screenshot-area"
         "${screenshotFull}/bin/screenshot-full"
         "${brightnessUp}/bin/brightness-up"
@@ -210,16 +177,6 @@ SHEET_EOF
       (builtins.readFile ./niri.kdl);
 in
 {
-  perSystem =
-    {
-      pkgs,
-      lib,
-      ...
-    }:
-    {
-      packages.myNiri = makeNiriWrapper { inherit pkgs lib; };
-    };
-
   flake.nixosModules.niri =
     {
       config,
@@ -230,7 +187,6 @@ in
     let
       user = config.mainUser;
       system = pkgs.stdenv.hostPlatform.system;
-      myNiri = makeNiriWrapper { inherit pkgs lib; };
       noctaliaPkg = inputs.noctalia.packages.${system}.default;
       displayCfg = config.workstation.display;
       modeLine = lib.optionalString (displayCfg.mode != null) "  mode \"${displayCfg.mode}\"\n";
@@ -269,14 +225,13 @@ in
 
       config = {
         programs.niri.enable = true;
-        programs.niri.package = myNiri;
         programs.niri.useNautilus = false;
 
         services.greetd = {
           enable = true;
           settings = {
             default_session = {
-              command = "${myNiri}/bin/niri-session";
+              command = "${pkgs.niri}/bin/niri-session";
               user = user;
             };
           };

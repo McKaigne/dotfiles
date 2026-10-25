@@ -41,13 +41,6 @@
           text = ''
             font-family = AtkynsonMono Nerd Font
             font-size = 12
-            font-feature = cv01
-            font-feature = cv02
-            font-feature = cv09
-            font-feature = cv11
-            font-feature = cv13
-            font-feature = cv15
-            font-feature = ss01
 
             command = fish
 

@@ -23,7 +23,6 @@ order = [ "top" ]
         "volume",
         "input_volume",
         "brightness",
-        "weather",
         "battery",
         "clock",
         "session"
@@ -49,7 +48,7 @@ background_opacity = 0.85
 shadow = false
 
 [location]
-auto_locate = true
+auto_locate = false
 
 [lockscreen_widgets]
 enabled = false
@@ -86,7 +85,7 @@ widget_order = [ "lockscreen-login-box" ]
         show_media = true
         show_session_buttons = true
         show_unlock_hint = true
-        show_weather = true
+        show_weather = false
 
 [notification]
 background_opacity = 0.85
@@ -140,7 +139,7 @@ transition_duration = 1500
     path = "/etc/wallpapers/isekaiJoucho.jpg"
 
 [weather]
-enabled = true
+enabled = false
 
 [widget.bluetooth]
 hide_when_no_connected_device = true

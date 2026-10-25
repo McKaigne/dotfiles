@@ -17,10 +17,6 @@
       programs.fish.enable = true;
       users.users.${user}.shell = pkgs.fish;
 
-      environment.sessionVariables = {
-        SHELL = "${pkgs.fish}/bin/fish";
-      };
-
       environment.systemPackages = with pkgs; [
         fish
         fzf
@@ -59,7 +55,6 @@
             set -g fish_color_escape ${p.hex.pink}
             set -g fish_color_autosuggestion ${p.hex.surface2}
 
-            # Terminate flag evaluation cleanly
             abbr --add ntrace -- --show-trace
           '';
 
@@ -111,26 +106,30 @@
                 set -l targetHost (hostname 2>/dev/null; or echo "hyde")
                 set -l targetFile "/etc/nixos/modules/features/desktop/noctalia/noctalia.toml"
                 set -l stateFile "$HOME/.local/state/noctalia/settings.toml"
+                set -l tmpFile (mktemp)
 
                 echo "==> [1/5] Exporting Noctalia merged configuration via IPC..."
-                noctalia config export > "$targetFile"; or begin
+                if not noctalia config export > "$tmpFile"
                     echo "Error: Failed to export config via noctalia IPC." >&2
+                    rm -f "$tmpFile"
                     return 1
                 end
 
                 echo "==> [2/5] Normalizing wallpaper paths and enforcing template suppression..."
-                sed -i -E 's|directory = "[^"]*wallpapers"|directory = "/etc/wallpapers"|g' "$targetFile"
-                sed -i -E 's|path = "[^"]*/wallpapers/([^"]+)"|path = "/etc/wallpapers/\1"|g' "$targetFile"
+                ${pkgs.gnused}/bin/sed -i -E 's|directory = "[^"]*wallpapers"|directory = "/etc/wallpapers"|g' "$tmpFile"
+                ${pkgs.gnused}/bin/sed -i -E 's|path = "[^"]*/wallpapers/([^"]+)"|path = "/etc/wallpapers/\\1"|g' "$tmpFile"
 
-                if grep -q "\[theme\.templates\]" "$targetFile"
-                    sed -i -E 's/enable_builtin_templates = true/enable_builtin_templates = false/g' "$targetFile"
-                    sed -i -E 's/enable_community_templates = true/enable_community_templates = false/g' "$targetFile"
+                if ${pkgs.gnugrep}/bin/grep -q "\[theme\.templates\]" "$tmpFile"
+                    ${pkgs.gnused}/bin/sed -i -E 's/enable_builtin_templates = true/enable_builtin_templates = false/g' "$tmpFile"
+                    ${pkgs.gnused}/bin/sed -i -E 's/enable_community_templates = true/enable_community_templates = false/g' "$tmpFile"
                 else
-                    printf '\n[theme.templates]\nenable_builtin_templates = false\nenable_community_templates = false\n' >> "$targetFile"
+                    printf '\n[theme.templates]\nenable_builtin_templates = false\nenable_community_templates = false\n' >> "$tmpFile"
                 end
 
+                mv -f "$tmpFile" "$targetFile"
+
                 echo "==> [3/5] Staging changes in git..."
-                git -C /etc/nixos add -A; or begin
+                if not git -C /etc/nixos add -A
                     echo "Error: Git staging failed." >&2
                     return 1
                 end

@@ -112,7 +112,6 @@
               Status = "locked";
             };
 
-            # System & Content Dark Mode
             "ui.systemUsesDarkTheme" = {
               Value = 1;
               Status = "locked";
@@ -126,7 +125,6 @@
               Status = "locked";
             };
 
-            # Automatic Session Restore (No Crash Prompt)
             "browser.startup.page" = {
               Value = 3;
               Status = "locked";
@@ -151,12 +149,6 @@
         config.environment.etc."librewolf/policies/policies.json".source;
 
       home-manager.users.${user} = {
-        xdg.configFile."librewolf/sidebery-sidebar.css" = {
-          source = ./sidebery-sidebar.css;
-          force = true;
-        };
-
-        # Tridactyl Dark Mode Authority
         xdg.configFile."tridactyl/tridactylrc" = {
           text = ''
             colours dark
