@@ -5,7 +5,93 @@
       system = pkgs.stdenv.hostPlatform.system;
       ghgrabPkg = inputs.ghgrab.packages.${system}.default;
 
-      # LearnHarness JIT AppImage Runtime
+      mkStaticBinary =
+        {
+          pname,
+          version,
+          url,
+          hash,
+          binaryName ? pname,
+        }:
+        pkgs.stdenv.mkDerivation {
+          inherit pname version;
+          src = pkgs.fetchurl {
+            inherit url hash;
+          };
+          sourceRoot = ".";
+          dontBuild = true;
+          dontConfigure = true;
+          nativeBuildInputs = [
+            pkgs.autoPatchelfHook
+            pkgs.unzip
+          ];
+          buildInputs = [
+            pkgs.stdenv.cc.cc.lib
+          ];
+          installPhase = ''
+            runHook preInstall
+            mkdir -p $out/bin
+            install -Dm755 "${binaryName}" "$out/bin/${pname}" 2>/dev/null || find . -type f -name "${binaryName}" -exec install -Dm755 {} "$out/bin/${pname}" \;
+            runHook postInstall
+          '';
+        };
+
+      upmdPkg = mkStaticBinary {
+        pname = "upmd";
+        version = "0.2.7";
+        url = "https://github.com/rezigned/upmd/releases/download/v0.2.7/upmd-x86_64-unknown-linux-gnu.tar.xz";
+        hash = "sha256-EBM216j0ZIo7+JTVY2h18d89IZcZ1HAJbFYuDPTWuao=";
+      };
+
+      lazyrsyncPkg = mkStaticBinary {
+        pname = "lazyrsync";
+        version = "0.4.0";
+        url = "https://github.com/westpoint-io/lazyrsync/releases/download/v0.4.0/lazyrsync-x86_64-unknown-linux-musl.tar.gz";
+        hash = "sha256-G/j96R5q5SNNGsitr36rRWUa8uYTynwOLIS1O/16nns=";
+      };
+
+      lazysshPkg = mkStaticBinary {
+        pname = "lazyssh";
+        version = "0.3.0";
+        url = "https://github.com/Adembc/lazyssh/releases/download/v0.3.0/lazyssh_Linux_x86_64.tar.gz";
+        hash = "sha256-PocZb690iQX5gGIEDVoOBW3g4OsCR0E7cML8A8OSitk=";
+      };
+
+      usbtreePkg = mkStaticBinary {
+        pname = "usbtree";
+        version = "0.1.1";
+        url = "https://github.com/gnomeria/usbtree/releases/download/v0.1.1/usbtree_0.1.1_linux-amd64.tar.gz";
+        hash = "sha256-AA/LZKO1qnOsRhgzppNGGM9b0DlHEXdS1hFzvz0rjvo=";
+      };
+
+      quienPkg = mkStaticBinary {
+        pname = "quien";
+        version = "0.12.0";
+        url = "https://github.com/retlehs/quien/releases/download/v0.12.0/quien_linux_amd64.tar.gz";
+        hash = "sha256-Kq5C6GEDdO5X5Hk5vmW/fhbxRhRaQCcI5/G12yaP7YM=";
+      };
+
+      linecastPkg = pkgs.stdenv.mkDerivation {
+        pname = "linecast";
+        version = "2.11.0";
+        src = pkgs.fetchurl {
+          url = "https://github.com/ashuttl/linecast/releases/download/v2.11.0/linecast.pyz";
+          hash = "sha256-FbbEsBhjdGxkIOphxxE9i1YbE/sKsFKAKAvFylp+RAE=";
+        };
+        dontUnpack = true;
+        dontBuild = true;
+        nativeBuildInputs = [ pkgs.makeWrapper ];
+        installPhase = ''
+          runHook preInstall
+          mkdir -p $out/bin $out/share/linecast
+          cp $src $out/share/linecast/linecast.pyz
+          makeWrapper ${pkgs.python3}/bin/python3 $out/bin/linecast \
+            --add-flags "$out/share/linecast/linecast.pyz"
+          runHook postInstall
+        '';
+      };
+
+      # LearnHarness JIT AppImage Runtime Bridge (Active Development)
       learnharnessPkg = pkgs.writeShellScriptBin "learnharness" ''
         APP_DIR="$HOME/.local/share/learnharness"
         APP_BIN="$APP_DIR/learnharness.AppImage"
@@ -27,7 +113,7 @@
         exec ${pkgs.appimage-run}/bin/appimage-run "$APP_BIN" --ozone-platform-hint=auto --enable-features=WaylandWindowDecorations "$@"
       '';
 
-      # Google Antigravity CLI
+      # Google Antigravity CLI Runtime Bridge
       agyPkg = pkgs.writeShellScriptBin "agy" ''
         if [ -x "$HOME/.local/bin/agy" ]; then
           exec "$HOME/.local/bin/agy" "$@"
@@ -43,83 +129,6 @@
       # Pi Coding Agent Harness
       piPkg = pkgs.writeShellScriptBin "pi" ''
         exec ${pkgs.nodejs_22}/bin/npx --yes @earendil-works/pi-coding-agent "$@"
-      '';
-
-      # upmd: Markdown task runner (pre-built static MUSL binary)
-      upmdPkg = pkgs.writeShellScriptBin "upmd" ''
-        DIR="$HOME/.local/share/upmd"
-        BIN="$DIR/upmd"
-        mkdir -p "$DIR"
-        if [ ! -x "$BIN" ]; then
-          echo "==> Fetching upmd static release..." >&2
-          ${pkgs.curl}/bin/curl -fsSL https://github.com/rezigned/upmd/releases/latest/download/upmd-x86_64-unknown-linux-musl.tar.gz | ${pkgs.gnutar}/bin/tar -xz -C "$DIR"
-          chmod +x "$BIN"
-        fi
-        exec "$BIN" "$@"
-      '';
-
-      # lazyrsync: Friendly TUI for rsync (pre-built static MUSL binary)
-      lazyrsyncPkg = pkgs.writeShellScriptBin "lazyrsync" ''
-        DIR="$HOME/.local/share/lazyrsync"
-        BIN="$DIR/lazyrsync"
-        mkdir -p "$DIR"
-        if [ ! -x "$BIN" ]; then
-          echo "==> Fetching lazyrsync static release..." >&2
-          ${pkgs.curl}/bin/curl -fsSL https://github.com/westpoint-io/lazyrsync/releases/latest/download/lazyrsync-x86_64-unknown-linux-musl.tar.gz | ${pkgs.gnutar}/bin/tar -xz -C "$DIR"
-          chmod +x "$BIN"
-        fi
-        exec "$BIN" "$@"
-      '';
-
-      # lazyssh: Terminal SSH Manager in Go (pre-built static binary)
-      lazysshPkg = pkgs.writeShellScriptBin "lazyssh" ''
-        DIR="$HOME/.local/share/lazyssh"
-        BIN="$DIR/lazyssh"
-        mkdir -p "$DIR"
-        if [ ! -x "$BIN" ]; then
-          echo "==> Fetching lazyssh static release..." >&2
-          ${pkgs.curl}/bin/curl -fsSL https://github.com/Adembc/lazyssh/releases/latest/download/lazyssh_Linux_x86_64.tar.gz | ${pkgs.gnutar}/bin/tar -xz -C "$DIR"
-          chmod +x "$BIN"
-        fi
-        exec "$BIN" "$@"
-      '';
-
-      # usbtree: Live USB device tree TUI in Rust (pre-built static binary)
-      usbtreePkg = pkgs.writeShellScriptBin "usbtree" ''
-        DIR="$HOME/.local/share/usbtree"
-        BIN="$DIR/usbtree"
-        mkdir -p "$DIR"
-        if [ ! -x "$BIN" ]; then
-          echo "==> Fetching usbtree static release..." >&2
-          ${pkgs.curl}/bin/curl -fsSL https://github.com/gnomeria/usbtree/releases/latest/download/usbtree_x86_64-unknown-linux-musl.tar.gz | ${pkgs.gnutar}/bin/tar -xz -C "$DIR"
-          chmod +x "$BIN"
-        fi
-        exec "$BIN" "$@"
-      '';
-
-      # quien: Modern interactive whois/domain intelligence TUI (pre-built binary)
-      quienPkg = pkgs.writeShellScriptBin "quien" ''
-        DIR="$HOME/.local/share/quien"
-        BIN="$DIR/quien"
-        mkdir -p "$DIR"
-        if [ ! -x "$BIN" ]; then
-          echo "==> Fetching quien static release..." >&2
-          ${pkgs.curl}/bin/curl -fsSL https://github.com/retlehs/quien/releases/latest/download/quien_Linux_x86_64.tar.gz | ${pkgs.gnutar}/bin/tar -xz -C "$DIR"
-          chmod +x "$BIN"
-        fi
-        exec "$BIN" "$@"
-      '';
-
-      # linecast: Ambient weather, sun, moon, and tides TUI
-      linecastPkg = pkgs.writeShellScriptBin "linecast" ''
-        DIR="$HOME/.local/share/linecast"
-        PYZ="$DIR/linecast.pyz"
-        mkdir -p "$DIR"
-        if [ ! -f "$PYZ" ]; then
-          echo "==> Fetching linecast executable..." >&2
-          ${pkgs.curl}/bin/curl -fsSL https://github.com/ashuttl/linecast/releases/latest/download/linecast.pyz -o "$PYZ"
-        fi
-        exec ${pkgs.python3}/bin/python3 "$PYZ" "$@"
       '';
 
       # endcord: Terminal Discord Client
