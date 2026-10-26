@@ -173,6 +173,8 @@ in
           f = "tv";
           television = "tv";
           z = "zellij";
+          zsesh = "zsesh";
+          sesh = "zsesh";
 
           ncd = "cd /etc/nixos";
           nupdate = "nix flake update --flake /etc/nixos";
@@ -210,6 +212,9 @@ in
           nquit = "niri msg action quit";
           nfocus = "niri msg action focus-window --id";
           nwins = "niri msg -j windows";
+          wm = "workmux";
+          wmd = "workmux dashboard";
+          wms = "workmux sidebar";
           nwork = "niri msg -j workspaces";
           nmon = "niri msg -j outputs";
 

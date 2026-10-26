@@ -10,6 +10,74 @@
       user = config.mainUser;
       p = config.palette;
 
+      workmuxPkg = pkgs.stdenv.mkDerivation {
+        pname = "workmux";
+        version = "0.1.277";
+        src = pkgs.fetchurl {
+          url = "https://github.com/raine/workmux/releases/download/v0.1.277/workmux-linux-amd64.tar.gz";
+          sha256 = "55c0144c79b55881d7210cbcc6278ce6b64b7a66317959d251140309aef73064";
+        };
+        sourceRoot = ".";
+        dontBuild = true;
+        dontConfigure = true;
+        nativeBuildInputs = [ pkgs.autoPatchelfHook ];
+        buildInputs = [ pkgs.stdenv.cc.cc.lib ];
+        installPhase = ''
+          runHook preInstall
+          mkdir -p $out/bin
+          install -Dm755 workmux $out/bin/workmux
+          runHook postInstall
+        '';
+      };
+
+      wmAddBranch = pkgs.writeShellScript "workmux-add-branch" ''
+        set -euo pipefail
+        printf 'branch: '
+        read -r branch
+        [ -z "$branch" ] && exit 0
+        ${workmuxPkg}/bin/workmux add "$branch" || { echo; echo "workmux add failed. Press any key to close."; read -n 1 -s; }
+      '';
+
+      wmAddFromBranch = pkgs.writeShellScript "workmux-add-from-branch" ''
+        set -euo pipefail
+        if ! ${pkgs.git}/bin/git rev-parse --git-dir >/dev/null 2>&1; then
+          echo "Not a git repository"
+          echo "Press any key to close."
+          read -n 1 -s
+          exit 1
+        fi
+
+        selection=$(${pkgs.git}/bin/git branch --format='%(refname:short)' | ${pkgs.fzf}/bin/fzf --reverse)
+        [ -z "$selection" ] && exit 0
+
+        ${workmuxPkg}/bin/workmux add "$selection" || { echo; echo "workmux add failed. Press any key to close."; read -n 1 -s; }
+      '';
+
+      wmAddPrompt = pkgs.writeShellScript "workmux-add-prompt" ''
+        set -euo pipefail
+        printf 'prompt: '
+        read -r prompt
+        [ -z "$prompt" ] && exit 0
+        ${workmuxPkg}/bin/workmux add --prompt "$prompt" || { echo; echo "workmux add failed. Press any key to close."; read -n 1 -s; }
+      '';
+
+      wmFzf = pkgs.writeShellScript "workmux-fzf" ''
+        set -euo pipefail
+        cmd="''${1:-}"
+        if [ -z "$cmd" ]; then
+          echo "Usage: workmux-fzf <open|remove|close>" >&2
+          exit 1
+        fi
+
+        selection=$(${workmuxPkg}/bin/workmux list 2>/dev/null | tail -n +2 | ${pkgs.fzf}/bin/fzf --reverse || true)
+        [ -z "$selection" ] && exit 0
+
+        branch=$(echo "$selection" | ${pkgs.gawk}/bin/awk '{print $1}')
+        [ -z "$branch" ] && exit 0
+
+        ${workmuxPkg}/bin/workmux "$cmd" "$branch" || { echo; echo "workmux $cmd failed. Press any key to close."; read -n 1 -s; }
+      '';
+
       tmuxConf = ''
         set -g prefix C-Space
         unbind C-b
@@ -110,6 +178,18 @@
         bind-key C-j display-popup -E "${pkgs.tmux}/bin/tmux list-sessions -F '#{session_name}' | ${pkgs.fzf}/bin/fzf --reverse | xargs -r ${pkgs.tmux}/bin/tmux switch-client -t"
         bind-key C-k display-popup -E "${pkgs.tmux}/bin/tmux list-windows -a -F '#{session_name}:#{window_index} - #{window_name}' | ${pkgs.fzf}/bin/fzf --reverse | cut -d' ' -f1 | xargs -r ${pkgs.tmux}/bin/tmux switch-client -t"
         bind-key C-v display-popup -E "${pkgs.tmux}/bin/tmux list-panes -a -F '#{session_name}:#{window_index}.#{pane_index} #{pane_current_command} #{pane_title}' | grep -E 'hx|helix|nvim|vim' | ${pkgs.fzf}/bin/fzf --reverse | awk '{print $1}' | xargs -r -I{} ${pkgs.tmux}/bin/tmux switch-client -t {}"
+
+        # === WORKMUX INTEGRATION ===
+        bind-key w display-menu -x C -y C -T " workmux " \
+          "add" a "display-popup -d '#{pane_current_path}' -w 80% -h 20% -x C -y C -E ${wmAddBranch}" \
+          "add w/branch" b "display-popup -d '#{pane_current_path}' -w 80% -h 25% -x C -y C -E ${wmAddFromBranch}" \
+          "add w/prompt" p "display-popup -d '#{pane_current_path}' -w 80% -h 25% -x C -y C -E ${wmAddPrompt}" \
+          "open" o "display-popup -d '#{pane_current_path}' -w 85% -h 25% -x C -y C -E '${wmFzf} open'" \
+          "remove" r "display-popup -d '#{pane_current_path}' -w 85% -h 25% -x C -y C -E '${wmFzf} remove'" \
+          "close" c "display-popup -d '#{pane_current_path}' -w 85% -h 25% -x C -y C -E '${wmFzf} close'" \
+          "dashboard" d "display-popup -d '#{pane_current_path}' -w 90% -h 90% -x C -y C -E '${workmuxPkg}/bin/workmux dashboard'" \
+          "sidebar" s "run-shell '${workmuxPkg}/bin/workmux sidebar'" \
+          "quit" q ""
       '';
     in
     {
@@ -119,11 +199,21 @@
         btop
         wl-clipboard
         tmuxPlugins.dotbar
+        workmuxPkg
       ];
 
       home-manager.users.${user} = {
         xdg.configFile."tmux/tmux.conf" = {
           text = tmuxConf;
+          force = true;
+        };
+
+        xdg.configFile."workmux/config.yaml" = {
+          text = ''
+            multiplexer: tmux
+            auto_update_check: false
+            editor: hx
+          '';
           force = true;
         };
       };

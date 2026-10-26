@@ -20,7 +20,6 @@
       self.nixosModules.foot
       self.nixosModules.ghostty
       self.nixosModules.tmux
-      self.nixosModules.zellij
       self.nixosModules.bash
       self.nixosModules.zsh
       self.nixosModules.fish
