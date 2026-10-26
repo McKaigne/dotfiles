@@ -94,7 +94,6 @@ in
       user = config.mainUser;
       cfbPkg = cfb { inherit pkgs; };
 
-      # Universal Rebuild & Nix Tools across all 5 shells
       rebuildScript = pkgs.writeShellScriptBin "rebuild" ''
         set -euo pipefail
         git -C /etc/nixos add -A && sudo nixos-rebuild switch --flake /etc/nixos "$@"
@@ -141,29 +140,36 @@ in
         done
         exec nix shell "''${args[@]}"
       '';
+
+      # Symlink television -> tv so both invocations work
+      televisionWrapped = pkgs.symlinkJoin {
+        name = "television-alias";
+        paths = [ pkgs.television ];
+        postBuild = ''
+          ln -sf $out/bin/tv $out/bin/television
+        '';
+      };
     in
     {
       options.workstation.shellAliases = lib.mkOption {
         type = lib.types.attrsOf lib.types.str;
         description = "Single source of truth for aliases across bash, zsh, fish, nushell, and xonsh";
         default = {
-          # POSIX Modern Replacements
           grep = "rg";
           find = "fd";
           sed = "sd";
           du = "dust";
           cat = "bat";
+          ls = "eza";
+          exa = "eza";
 
-          # Television (Fuzzy Finder TUI) Abbreviated to 'f'
           f = "tv";
-          tv = "television";
+          television = "tv";
 
-          # Nix Operations
           ncd = "cd /etc/nixos";
           nupdate = "nix flake update --flake /etc/nixos";
           nclean = "sudo nix-collect-garbage -d && nix-collect-garbage -d";
 
-          # Git Operations
           ga = "git add -A";
           gstage = "git add -A";
           gpatch = "git add -p";
@@ -182,7 +188,6 @@ in
           gbranch = "git switch";
           gnew = "git switch -c";
 
-          # Noctalia IPC Control
           nlaunch = "noctalia msg panel-toggle launcher";
           ncontrol = "noctalia msg panel-toggle control-center";
           nsession = "noctalia msg panel-toggle session";
@@ -192,7 +197,6 @@ in
           nlock = "noctalia msg session lock";
           nclosemsg = "noctalia msg notification-clear-active";
 
-          # Niri IPC Control
           nreload = "niri msg action load-config-file";
           nclose = "niri msg action close-window";
           nquit = "niri msg action quit";
@@ -201,22 +205,20 @@ in
           nwork = "niri msg -j workspaces";
           nmon = "niri msg -j outputs";
 
-          # Multiplexer & Directory Navigation
           t = "tmux";
           ta = "tmux attach -t";
           tls = "tmux ls";
           tkill = "tmux kill-session -t";
           tkilla = "tmux kill-server";
 
-          l = "ls";
-          ll = "ls -l";
-          la = "ls -a";
+          l = "eza";
+          ll = "eza -l";
+          la = "eza -la";
           zq = "zoxide query";
           zql = "zoxide query -l";
           za = "zoxide add";
           zr = "zoxide remove";
 
-          # Editor & Tools
           v = "hx";
           vi = "hx";
           vim = "hx";
@@ -227,7 +229,6 @@ in
           lg = "lazygit";
           lh = "learnharness";
 
-          # Quick Config Navigation
           hxf = "hx /etc/nixos/flake.nix";
           hxh = "hx /etc/nixos/modules/hosts/hyde/default.nix";
           hxc = "hx /etc/nixos/modules/shared/core/default.nix";
@@ -244,7 +245,6 @@ in
       };
 
       config = {
-        # System Maintenance & Disk Protection
         boot.loader.systemd-boot.configurationLimit = 10;
         services.fstrim.enable = true;
         nix.gc = {
@@ -398,6 +398,7 @@ in
           ntestScript
           ntryScript
           nshellScript
+          televisionWrapped
           git
           delta
           lazygit
@@ -421,7 +422,6 @@ in
           wtype
           gawk
           fzf
-          television
           mise
           atuin
           vivid
