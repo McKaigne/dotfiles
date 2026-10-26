@@ -413,7 +413,7 @@ in
           bat
           eza
           dysk
-          carbon-now-cli
+          silicon
           tealdeer
           dust
           gdu
