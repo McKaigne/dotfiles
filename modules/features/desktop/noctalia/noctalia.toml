@@ -1,16 +1,16 @@
 [backdrop]
-blur_intensity = 0.6
+blur_intensity = 0.59999999999999998
 enabled = true
-tint_intensity = 0.35
+tint_intensity = 0.34999999999999998
 
 [bar]
 order = [ "top" ]
 
     [bar.top]
-    background_opacity = 0.85
+    background_opacity = 0.84999998100101948
     border = "primary"
     border_width = 2.0
-    capsule_opacity = 0.85
+    capsule_opacity = 0.84999999999999998
     capsule_radius = 4
     center = [ "workspaces" ]
     concave_edge_corners = false
@@ -28,14 +28,14 @@ order = [ "top" ]
         "session"
     ]
     font_family = "Atkinson Hyperlegible"
-    font_scale = 1.1
+    font_scale = 1.1000000000000001
     margin_edge = 8
     margin_ends = 350
     margin_opposite_edge = 0
     position = "top"
     radius = 4
     shadow = false
-    start = [ "cpu", "temp", "ram" ]
+    start = [ "cpu", "ram", "temp", "network_rx", "network_tx" ]
     thickness = 28
     widget_spacing = 8
 
@@ -43,8 +43,8 @@ order = [ "top" ]
 enable_ddcutil = true
 
 [dock]
-active_opacity = 0.85
-background_opacity = 0.85
+active_opacity = 0.84999999999999998
+background_opacity = 0.84999999999999998
 shadow = false
 
 [location]
@@ -53,7 +53,7 @@ auto_locate = false
 [lockscreen_widgets]
 enabled = false
 schema_version = 2
-widget_order = [ "lockscreen-login-box" ]
+widget_order = [ "lockscreen-login-box@DP-1" ]
 
     [lockscreen_widgets.grid]
     cell_size = 16
@@ -87,20 +87,48 @@ widget_order = [ "lockscreen-login-box" ]
         show_unlock_hint = true
         show_weather = false
 
+    [lockscreen_widgets.widget."lockscreen-login-box@DP-1"]
+    box_height = 196.0
+    box_width = 810.0
+    cx = 960.0
+    cy = 898.0
+    output = "DP-1"
+    placement_height = 1080.0
+    placement_width = 1920.0
+    rotation = 0.0
+    type = "login_box"
+
+        [lockscreen_widgets.widget."lockscreen-login-box@DP-1".settings]
+        background_color = "surface_variant"
+        background_opacity = 0.88
+        background_radius = 12.0
+        center_password_text = false
+        input_opacity = 1.0
+        input_radius = 6.0
+        layout = "regular"
+        show_caps_lock = true
+        show_keyboard_layout = true
+        show_login_button = true
+        show_media = true
+        show_session_buttons = true
+        show_unlock_hint = true
+        show_weather = true
+
 [notification]
-background_opacity = 0.85
+background_opacity = 0.84999999999999998
 
 [osd]
-background_opacity = 0.85
+background_opacity = 0.84999999999999998
 
     [osd.kinds]
     media = false
 
 [shell]
 app_icon_color = "on_surface_variant"
+avatar_path = "/etc/nixos/avatar.jpg"
 button_borders = false
 card_borders = false
-corner_radius_scale = 0.4
+corner_radius_scale = 0.40000000000000002
 font_family = "Atkinson Hyperlegible"
 input_borders = false
 popup_borders = false
@@ -108,9 +136,9 @@ popup_shadows = false
 settings_window_translucent = true
 
     [shell.panel]
-    borders = true
     border_color = "primary"
     border_width = 2.0
+    borders = true
     control_center_placement = "floating"
     session_placement = "floating"
     shadow = false
@@ -123,9 +151,9 @@ mode = "dark"
 source = "builtin"
 wallpaper_scheme = "m3-content"
 
-[theme.templates]
-enable_builtin_templates = false
-enable_community_templates = false
+    [theme.templates]
+    enable_builtin_templates = false
+    enable_community_templates = false
 
 [wallpaper]
 directory = "/etc/wallpapers"
@@ -136,6 +164,9 @@ transition_duration = 1500
     path = "/etc/wallpapers/isekaiJoucho.jpg"
 
     [wallpaper.last]
+    path = "/etc/wallpapers/isekaiJoucho.jpg"
+
+    [wallpaper.monitors.DP-1]
     path = "/etc/wallpapers/isekaiJoucho.jpg"
 
 [weather]
@@ -152,7 +183,7 @@ show_glyph = true
 visualization = "none"
 
 [widget.input_volume]
-enabled = false
+enabled = true
 
 [widget.media]
 hide_album_art = true
@@ -163,11 +194,23 @@ title_scroll = "on_hover"
 show_label = false
 vpn_status = "replace"
 
+[widget.network_rx]
+network_speed_compact = true
+visualization = "none"
+
+[widget.network_tx]
+network_speed_compact = true
+visualization = "none"
+
 [widget.notifications]
 hide_when_no_unread = true
 
 [widget.ram]
 show_glyph = true
+visualization = "none"
+
+[widget.sysmon]
+stat = "disk_used"
 visualization = "none"
 
 [widget.temp]
@@ -178,7 +221,7 @@ visualization = "none"
 drawer = true
 
 [widget.volume]
-enabled = false
+enabled = true
 
 [widget.weather]
 enabled = false
