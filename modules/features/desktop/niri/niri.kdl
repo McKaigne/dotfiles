@@ -263,6 +263,11 @@ binds {
   Mod+Q                  hotkey-overlay-title="Close Focused Window"                { close-window; }
 
   // === RIGHT HAND: COLUMNS (H / L), WORKSPACES (J / K), AND STACKS (U / I) ===
+  // Monitors (Cross-Display: Alt + H / L)
+  Mod+Alt+H              hotkey-overlay-title="Focus Monitor Left"                  { focus-monitor-left; }
+  Mod+Alt+L              hotkey-overlay-title="Focus Monitor Right"                 { focus-monitor-right; }
+  Mod+Alt+Shift+H        hotkey-overlay-title="Move Column to Monitor Left"         { move-column-to-monitor-left; }
+  Mod+Alt+Shift+L        hotkey-overlay-title="Move Column to Monitor Right"        { move-column-to-monitor-right; }
   // Columns (Horizontal Ribbon: H / L)
   Mod+H                  hotkey-overlay-title="Focus Column Left"                   { focus-column-left; }
   Mod+L                  hotkey-overlay-title="Focus Column Right"                  { focus-column-right; }

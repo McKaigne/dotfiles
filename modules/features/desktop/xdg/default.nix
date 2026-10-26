@@ -129,6 +129,7 @@
         cliphist
         satty
         wl-clipboard
+        wl-mirror
       ];
     };
 }

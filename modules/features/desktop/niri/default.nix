@@ -72,6 +72,8 @@ Mod + Esc           Session: Noctalia Power Menu
 Mod + Shift + Esc   Session: Lock Screen
 Mod + Ctrl + Esc    Monitors: Turn Off Displays
 Mod + Q             Close Focused Window
+Mod + Alt + H / L   Monitor: Focus Monitor Left / Right
+Mod + Alt + Shift + H / L Monitor: Move Column to Monitor Left / Right
 Mod + H / L         Navigate: Focus Column Left / Right
 Mod + J / K         Workspace: Focus Workspace Down / Up
 Mod + Shift + H / L Move: Move Column Left / Right
