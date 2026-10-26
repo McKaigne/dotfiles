@@ -13,8 +13,8 @@
     };
     import-tree.url = "github:vic/import-tree";
     noctalia.url = "github:noctalia-dev/noctalia";
-    fetch = {
-      url = "github:areofyl/fetch";
+    nixvim = {
+      url = "github:nix-community/nixvim";
       inputs.nixpkgs.follows = "nixpkgs";
     };
     ghgrab = {

@@ -3,12 +3,6 @@
     { config, pkgs, lib, ... }:
     let
       user = config.mainUser;
-      # Simple aliases for Xonsh
-      isCompound = cmd: lib.hasInfix "&&" cmd || lib.hasInfix ";" cmd || lib.hasPrefix "-" cmd;
-      simpleAliases = lib.filterAttrs (_: cmd: !isCompound cmd) config.workstation.shellAliases;
-      aliasLines = lib.concatStringsSep "\n" (
-        lib.mapAttrsToList (k: v: "aliases['${k}'] = '${v}'") simpleAliases
-      );
     in
     {
       environment.systemPackages = [ pkgs.xonsh ];
@@ -27,9 +21,6 @@
 
             $PATH.insert(0, os.path.expanduser("~/.local/bin"))
             $PATH.insert(0, os.path.expanduser("~/.cargo/bin"))
-
-            # Simple Aliases
-            ${aliasLines}
 
             # Starship Prompt Integration (Official Xonsh syntax)
             execx($(${pkgs.starship}/bin/starship init xonsh))

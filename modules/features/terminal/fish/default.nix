@@ -10,7 +10,6 @@
       user = config.mainUser;
       p = config.palette;
       isFlag = cmd: lib.hasPrefix "-" cmd;
-      safeAliases = lib.filterAttrs (_: cmd: !isFlag cmd) config.workstation.shellAliases;
       safeAbbrs = lib.filterAttrs (_: cmd: !isFlag cmd) config.workstation.shellAbbrs;
     in
     {
@@ -28,7 +27,7 @@
       home-manager.users.${user} = {
         programs.fish = {
           enable = true;
-          shellAliases = safeAliases;
+          shellAliases = { };
           shellAbbrs = safeAbbrs;
 
           shellInit = ''
@@ -36,10 +35,8 @@
 
             fish_add_path -g $HOME/.local/bin $HOME/.cargo/bin
 
-            # Catppuccin Mocha LS_COLORS
             set -gx LS_COLORS (${pkgs.vivid}/bin/vivid generate catppuccin-mocha)
 
-            # Catppuccin Mocha Syntax Palette
             set -g fish_color_normal ${p.hex.text}
             set -g fish_color_command ${p.hex.mauve} --bold
             set -g fish_color_keyword ${p.hex.red}

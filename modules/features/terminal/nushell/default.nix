@@ -3,8 +3,6 @@
     { config, pkgs, lib, ... }:
     let
       user = config.mainUser;
-      isCompound = cmd: lib.hasInfix "&&" cmd || lib.hasInfix ";" cmd || lib.hasPrefix "-" cmd;
-      simpleAliases = lib.filterAttrs (_: cmd: !isCompound cmd) config.workstation.shellAliases;
     in
     {
       environment.systemPackages = [ pkgs.nushell ];
@@ -12,7 +10,7 @@
       home-manager.users.${user} = {
         programs.nushell = {
           enable = true;
-          shellAliases = simpleAliases;
+          shellAliases = { };
 
           extraEnv = ''
             $env.STARSHIP_CONFIG = "/etc/starship.toml"

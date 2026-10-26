@@ -141,7 +141,6 @@ in
         exec nix shell "''${args[@]}"
       '';
 
-      # Symlink television -> tv so both invocations work
       televisionWrapped = pkgs.symlinkJoin {
         name = "television-alias";
         paths = [ pkgs.television ];
@@ -153,7 +152,13 @@ in
     {
       options.workstation.shellAliases = lib.mkOption {
         type = lib.types.attrsOf lib.types.str;
-        description = "Single source of truth for aliases across bash, zsh, fish, nushell, and xonsh";
+        default = { };
+        description = "Deprecated in favor of workstation.shellAbbrs";
+      };
+
+      options.workstation.shellAbbrs = lib.mkOption {
+        type = lib.types.attrsOf lib.types.str;
+        description = "Unified single-source abbreviation mappings across Fish and Zsh";
         default = {
           grep = "rg";
           find = "fd";
@@ -162,9 +167,12 @@ in
           cat = "bat";
           ls = "eza";
           exa = "eza";
+          tldr = "tldr";
+          fetch = "fastfetch";
 
           f = "tv";
           television = "tv";
+          z = "zellij";
 
           ncd = "cd /etc/nixos";
           nupdate = "nix flake update --flake /etc/nixos";
@@ -222,6 +230,7 @@ in
           v = "hx";
           vi = "hx";
           vim = "hx";
+          nv = "nvim";
           bottom = "btop";
           btm = "btop";
           n = "nnn";
@@ -236,12 +245,6 @@ in
           hxi = "hx /etc/nixos/modules/features/desktop/niri/niri.kdl";
           hxt = "hx /etc/nixos/modules/features/terminal/tmux/default.nix";
         };
-      };
-
-      options.workstation.shellAbbrs = lib.mkOption {
-        type = lib.types.attrsOf lib.types.str;
-        description = "Unified abbreviation mapping for Fish and Zsh-abbr";
-        default = config.workstation.shellAliases;
       };
 
       config = {
@@ -269,11 +272,13 @@ in
             "https://cache.nixos.org"
             "https://devenv.cachix.org"
             "https://noctalia.cachix.org"
+            "https://nix-community.cachix.org"
           ];
           trusted-public-keys = [
             "cache.nixos.org-1:6NCHdD59X431o0gWypbMrAURkbJ16ZPMQFGspcDShjY="
             "devenv.cachix.org-1:w1cLUi8dv3hnoSPGAuibQv+f9TZLr6cv/Hm9XgU50cw="
             "noctalia.cachix.org-1:pCOR47nnMEo5thcxNDtzWpOxNFQsBRglJzxWPp3dkU4="
+            "nix-community.cachix.org-1:mB9FSh9qf2dCimDSUo8Zy7bkq5CX+/rkCWyvRCYg3Fs="
           ];
         };
 
@@ -407,6 +412,9 @@ in
           btop
           bat
           eza
+          dysk
+          carbon-now-cli
+          tealdeer
           dust
           gdu
           procs

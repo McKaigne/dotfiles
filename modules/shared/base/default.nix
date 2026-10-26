@@ -1,4 +1,3 @@
-# Shared: Base Workstation Profile (Universal Baseline for all Hosts)
 { self, inputs, ... }: {
   flake.nixosModules.baseWorkstation = { ... }: {
     imports = [
@@ -21,15 +20,20 @@
       self.nixosModules.foot
       self.nixosModules.ghostty
       self.nixosModules.tmux
+      self.nixosModules.zellij
       self.nixosModules.bash
       self.nixosModules.zsh
       self.nixosModules.fish
       self.nixosModules.nushell
       self.nixosModules.xonsh
       self.nixosModules.starship
-      self.nixosModules.fetch
+      self.nixosModules.fastfetch
 
+      # Editors
       self.nixosModules.helix
+      self.nixosModules.nixvim
+
+      # Browsers
       self.nixosModules.librewolf
       self.nixosModules.brave
 

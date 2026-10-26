@@ -22,7 +22,7 @@
           enableCompletion = false;
           autosuggestion.enable = true;
           syntaxHighlighting.enable = true;
-          shellAliases = config.workstation.shellAliases;
+          shellAliases = { };
 
           history = {
             size = 50000;
