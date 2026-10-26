@@ -2,9 +2,6 @@
   flake.nixosModules.devTools =
     { pkgs, lib, ... }:
     let
-      system = pkgs.stdenv.hostPlatform.system;
-      ghgrabPkg = inputs.ghgrab.packages.${system}.default;
-
       mkStaticBinary =
         {
           pname,
@@ -91,7 +88,7 @@
         '';
       };
 
-      # LearnHarness JIT AppImage Runtime Bridge (Active Development)
+      # LearnHarness JIT AppImage Runtime Bridge
       learnharnessPkg = pkgs.writeShellScriptBin "learnharness" ''
         APP_DIR="$HOME/.local/share/learnharness"
         APP_BIN="$APP_DIR/learnharness.AppImage"
@@ -149,7 +146,6 @@
         glow
         lazydocker
         ast-grep
-        ghgrabPkg
         lazyrsyncPkg
         lazysshPkg
         usbtreePkg
