@@ -14,8 +14,8 @@
 
           extraEnv = ''
             $env.STARSHIP_CONFIG = "/etc/starship.toml"
-            $env.EDITOR = "hx"
-            $env.VISUAL = "hx"
+            $env.EDITOR = "nvim"
+            $env.VISUAL = "nvim"
             $env.BAT_THEME = "Catppuccin Mocha"
             $env.PATH = ($env.PATH | split row (char esep) | prepend [
               $"($env.HOME)/.local/bin"

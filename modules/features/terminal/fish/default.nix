@@ -16,14 +16,6 @@
       programs.fish.enable = true;
       users.users.${user}.shell = pkgs.fish;
 
-      environment.systemPackages = with pkgs; [
-        fish
-        fzf
-        gawk
-        tree
-        fd
-      ];
-
       home-manager.users.${user} = {
         programs.fish = {
           enable = true;
@@ -34,6 +26,8 @@
             set -g fish_greeting ""
 
             fish_add_path -g $HOME/.local/bin $HOME/.cargo/bin
+
+            set -gx STARSHIP_CONFIG "/etc/starship.toml"
 
             set -gx LS_COLORS (${pkgs.vivid}/bin/vivid generate catppuccin-mocha)
 
@@ -53,6 +47,12 @@
             set -g fish_color_autosuggestion ${p.hex.surface2}
 
             abbr --add ntrace -- --show-trace
+          '';
+
+          interactiveShellInit = ''
+            if test "$TERM" != dumb
+                ${pkgs.starship}/bin/starship init fish | source
+            end
           '';
 
           functions = {

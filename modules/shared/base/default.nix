@@ -29,7 +29,6 @@
       self.nixosModules.fastfetch
 
       # Editors
-      self.nixosModules.helix
       self.nixosModules.nixvim
 
       # Browsers

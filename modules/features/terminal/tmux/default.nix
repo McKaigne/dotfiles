@@ -177,7 +177,7 @@
 
         bind-key C-j display-popup -E "${pkgs.tmux}/bin/tmux list-sessions -F '#{session_name}' | ${pkgs.fzf}/bin/fzf --reverse | xargs -r ${pkgs.tmux}/bin/tmux switch-client -t"
         bind-key C-k display-popup -E "${pkgs.tmux}/bin/tmux list-windows -a -F '#{session_name}:#{window_index} - #{window_name}' | ${pkgs.fzf}/bin/fzf --reverse | cut -d' ' -f1 | xargs -r ${pkgs.tmux}/bin/tmux switch-client -t"
-        bind-key C-v display-popup -E "${pkgs.tmux}/bin/tmux list-panes -a -F '#{session_name}:#{window_index}.#{pane_index} #{pane_current_command} #{pane_title}' | grep -E 'hx|helix|nvim|vim' | ${pkgs.fzf}/bin/fzf --reverse | awk '{print $1}' | xargs -r -I{} ${pkgs.tmux}/bin/tmux switch-client -t {}"
+        bind-key C-v display-popup -E "${pkgs.tmux}/bin/tmux list-panes -a -F '#{session_name}:#{window_index}.#{pane_index} #{pane_current_command} #{pane_title}' | grep -E 'nvim|vim' | ${pkgs.fzf}/bin/fzf --reverse | awk '{print $1}' | xargs -r -I{} ${pkgs.tmux}/bin/tmux switch-client -t {}"
 
         # === WORKMUX INTEGRATION ===
         bind-key w display-menu -x C -y C -T " workmux " \
@@ -193,12 +193,8 @@
       '';
     in
     {
-      environment.systemPackages = with pkgs; [
-        tmux
-        fzf
-        btop
-        wl-clipboard
-        tmuxPlugins.dotbar
+      environment.systemPackages = [
+        pkgs.tmux
         workmuxPkg
       ];
 
@@ -212,7 +208,7 @@
           text = ''
             multiplexer: tmux
             auto_update_check: false
-            editor: hx
+            editor: nvim
           '';
           force = true;
         };

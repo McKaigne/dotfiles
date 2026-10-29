@@ -10,10 +10,8 @@
         enableCompletion = true;
       };
 
-      environment.systemPackages = with pkgs; [
-        zsh
-        zsh-abbr
-        fzf
+      environment.systemPackages = [
+        pkgs.zsh-abbr
       ];
 
       home-manager.users.${user} = {
@@ -50,6 +48,7 @@
 
           initContent = ''
             export PATH="$HOME/.local/bin:$HOME/.cargo/bin:$PATH"
+            export STARSHIP_CONFIG="/etc/starship.toml"
             export LS_COLORS="$(${pkgs.vivid}/bin/vivid generate catppuccin-mocha)"
             export ZSH_AUTOSUGGEST_USE_ASYNC=1
             export ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE='fg=244'
@@ -74,6 +73,8 @@
             ZSH_HIGHLIGHT_STYLES[unknown-token]='fg=#f38ba8,bold'
 
             bindkey -e
+
+            eval "$(${pkgs.starship}/bin/starship init zsh)"
           '';
         };
       };

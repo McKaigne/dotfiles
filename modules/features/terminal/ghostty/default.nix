@@ -42,7 +42,7 @@
             font-family = AtkynsonMono Nerd Font
             font-size = 12
 
-            command = fish
+            command = ${pkgs.fish}/bin/fish
 
             theme = "Catppuccin Mocha"
             background = ${p.base}

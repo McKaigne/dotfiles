@@ -44,7 +44,7 @@ A unified single-source-of-truth declared at `modules/shared/core/default.nix` c
 | `rebuildc` | `git -C /etc/nixos add -A && sudo nixos-rebuild switch --flake /etc/nixos#castor` | Explicit build for mobile host `castor` |
 | `cfb nix` | `cfb /etc/nixos` | Copies tree topology + config contents to Wayland clipboard |
 | `cfb cfg` | `cfb ~/.config` | Copies clean `~/.config` snapshot to Wayland clipboard |
-| `v` / `vi` / `vim` | `hx` | Opens modal editor (Helix) with transparent canvas |
+| `v` / `vi` / `vim` | `nvim` | Opens modal editor (Neovim via Nixvim) |
 | `bottom` / `btm` | `btop` | System activity monitor with Catppuccin transparent background |
 | `lh` | `learnharness` | Socratic agent harness for mastering complex technical domains |
 | `y` | `yazi` | Fast asynchronous terminal file manager |
@@ -74,13 +74,13 @@ Prompt initialization across all shells points strictly to `/etc/starship.toml` 
 
 ---
 
-## Editor Ergonomics (Helix)
+## Primary Editor (Neovim / Nixvim)
 
-Helix runs with upstream standard modal keybindings, maximizing stability while inheriting full system visual parity:
-* **Transparent Canvas**: Custom `catppuccin_transparent` theme inheriting `catppuccin_mocha` with `ui.background = {}` and transparent cursorlines, blending directly with Niri's dual-pass GPU blur.
-* **Vertical Indentation Guides**: Enabled via `[editor.indent-guides] render = true`, drawing `│` vertical lines at each indentation/tab depth to visualize block nesting levels.
-* **Relative Line Numbers**: Enabled via `line-number = "relative"` for rapid vertical navigation.
-* **LSP Environment Integration**: Automatically wrapped with `nixd`, `nixfmt`, `marksman`, `bash-language-server`, `taplo`, `yaml-language-server`, `shellcheck`, and `shfmt`.
+Neovim is declaratively baked via `nixvim`:
+* **Transparent Canvas**: Catppuccin Mocha theme with `transparent_background = true` matching Niri's dual-pass GPU blur.
+* **Devenv & Direnv Integration**: Automatic in-editor environment sync via `direnv-vim`.
+* **Code Formatting**: Format-on-save powered by `conform-nvim` with dedicated formatters (`nixfmt`, `shfmt`, `prettier`, `jq`) bundled into the wrapper and accessible on demand via `<Space> c f`.
+* **Intelligence**: Native LSP (`nixd`, `bashls`, `marksman`, `taplo`, `yamlls`, `jsonls`, `gopls`, `rust-analyzer`), autocompletion (`cmp`), fuzzy pickers (`telescope`), diagnostics triage (`trouble`), and file tree (`neo-tree`).
 
 ---
 

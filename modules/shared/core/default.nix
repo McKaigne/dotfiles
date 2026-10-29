@@ -153,28 +153,15 @@ in
       options.workstation.shellAliases = lib.mkOption {
         type = lib.types.attrsOf lib.types.str;
         default = { };
-        description = "Deprecated in favor of workstation.shellAbbrs";
+        description = "Disabled. All shell aliases removed to prevent command misfires; use abbreviations only.";
       };
 
       options.workstation.shellAbbrs = lib.mkOption {
         type = lib.types.attrsOf lib.types.str;
-        description = "Unified single-source abbreviation mappings across Fish and Zsh";
+        description = "Unified single-source abbreviation mappings across Fish and Zsh (Space-expanded only)";
         default = {
-          grep = "rg";
-          find = "fd";
-          sed = "sd";
-          du = "dust";
-          cat = "bat";
-          ls = "eza";
-          exa = "eza";
-          tldr = "tldr";
-          fetch = "fastfetch";
-
           f = "tv";
           television = "tv";
-          z = "zellij";
-          zsesh = "zsesh";
-          sesh = "zsesh";
 
           ncd = "cd /etc/nixos";
           nupdate = "nix flake update --flake /etc/nixos";
@@ -224,17 +211,14 @@ in
           tkill = "tmux kill-session -t";
           tkilla = "tmux kill-server";
 
-          l = "eza";
-          ll = "eza -l";
-          la = "eza -la";
           zq = "zoxide query";
           zql = "zoxide query -l";
           za = "zoxide add";
           zr = "zoxide remove";
 
-          v = "hx";
-          vi = "hx";
-          vim = "hx";
+          v = "nvim";
+          vi = "nvim";
+          vim = "nvim";
           nv = "nvim";
           bottom = "btop";
           btm = "btop";
@@ -243,12 +227,12 @@ in
           lg = "lazygit";
           lh = "learnharness";
 
-          hxf = "hx /etc/nixos/flake.nix";
-          hxh = "hx /etc/nixos/modules/hosts/hyde/default.nix";
-          hxc = "hx /etc/nixos/modules/shared/core/default.nix";
-          hxfish = "hx /etc/nixos/modules/features/terminal/fish/default.nix";
-          hxi = "hx /etc/nixos/modules/features/desktop/niri/niri.kdl";
-          hxt = "hx /etc/nixos/modules/features/terminal/tmux/default.nix";
+          nvf = "nvim /etc/nixos/flake.nix";
+          nvh = "nvim /etc/nixos/modules/hosts/hyde/default.nix";
+          nvc = "nvim /etc/nixos/modules/shared/core/default.nix";
+          nvfish = "nvim /etc/nixos/modules/features/terminal/fish/default.nix";
+          nvi = "nvim /etc/nixos/modules/features/desktop/niri/niri.kdl";
+          nvt = "nvim /etc/nixos/modules/features/terminal/tmux/default.nix";
         };
       };
 
@@ -323,8 +307,8 @@ in
         '';
 
         environment.sessionVariables = {
-          EDITOR = "hx";
-          VISUAL = "hx";
+          EDITOR = "nvim";
+          VISUAL = "nvim";
           BAT_THEME = "Catppuccin Mocha";
           GLOW_STYLE = "catppuccin-mocha";
           STARSHIP_CONFIG = "/etc/starship.toml";
@@ -352,14 +336,6 @@ in
           programs.direnv = {
             enable = true;
             nix-direnv.enable = true;
-            enableBashIntegration = true;
-            enableZshIntegration = true;
-            enableFishIntegration = true;
-            enableNushellIntegration = true;
-          };
-
-          programs.starship = {
-            enable = true;
             enableBashIntegration = true;
             enableZshIntegration = true;
             enableFishIntegration = true;
@@ -432,7 +408,6 @@ in
           xh
           curl
           nnn
-          wtype
           gawk
           fzf
           mise

@@ -6,8 +6,34 @@
 
       programs.nixvim = {
         enable = true;
-        defaultEditor = false;
+        defaultEditor = true;
+        viAlias = true;
+        vimAlias = true;
         nixpkgs.source = inputs.nixpkgs;
+
+        extraPackages = with pkgs; [
+          # Formatters & Linters
+          nixfmt
+          shfmt
+          prettier
+          jq
+          ruff
+          clang-tools
+          rustfmt
+          dart
+
+          # Language Servers
+          marksman
+          nixd
+          taplo
+          yaml-language-server
+          bash-language-server
+          shellcheck
+          pyright
+          rust-analyzer
+          vscode-langservers-extracted # Provides vscode-html-language-server & vscode-json-languageserver
+          lazygit
+        ];
 
         colorschemes.catppuccin = {
           enable = true;
@@ -93,6 +119,14 @@
           # Clear Search Highlight
           { mode = "n"; key = "<Esc>"; action = "<cmd>nohlsearch<CR>"; options.desc = "Clear search highlight"; }
 
+          # Code Formatting
+          {
+            mode = [ "n" "v" ];
+            key = "<leader>cf";
+            action = "<cmd>lua require('conform').format({ async = true, lsp_fallback = true })<CR>";
+            options.desc = "Format buffer or selection";
+          }
+
           # File Explorer & History
           { mode = "n"; key = "<leader>e"; action = "<cmd>Neotree toggle<CR>"; options.desc = "Toggle NeoTree explorer"; }
           { mode = "n"; key = "<leader>u"; action = "<cmd>UndotreeToggle<CR>"; options.desc = "Toggle UndoTree"; }
@@ -122,9 +156,29 @@
               '';
             };
           }
+          {
+            event = [ "User" ];
+            pattern = [ "DirenvLoaded" ];
+            callback = {
+              __raw = ''
+                function()
+                  -- When devenv/direnv exports new paths inside Neovim, restart LSP servers to bind project toolchains
+                  vim.schedule(function()
+                    local bufnr = vim.api.nvim_get_current_buf()
+                    if vim.api.nvim_buf_is_valid(bufnr) and vim.bo[bufnr].buftype == "" then
+                      vim.cmd("silent! LspRestart")
+                    end
+                  end)
+                end
+              '';
+            };
+          }
         ];
 
         plugins = {
+          # Native Direnv Integration
+          direnv.enable = true;
+
           # Completion & Snippets
           cmp = {
             enable = true;
@@ -251,7 +305,7 @@
           };
           trouble.enable = true;
 
-          # LSP Configuration
+          # LSP Configuration: Polyglot Support
           lsp = {
             enable = true;
             keymaps = {
@@ -277,12 +331,23 @@
               taplo.enable = true;
               yamlls.enable = true;
               jsonls.enable = true;
+              html.enable = true;
               gopls.enable = true;
               rust_analyzer = {
                 enable = true;
                 installCargo = false;
                 installRustc = false;
               };
+
+              # Flutter / Dart
+              dartls.enable = true;
+
+              # Python
+              pyright.enable = true;
+              ruff.enable = true;
+
+              # C / C++
+              clangd.enable = true;
             };
           };
 
@@ -291,7 +356,7 @@
             enable = true;
             settings = {
               format_on_save = {
-                timeout_ms = 500;
+                timeout_ms = 1000;
                 lsp_fallback = true;
               };
               formatters_by_ft = {
@@ -301,6 +366,12 @@
                 markdown = [ "prettier" ];
                 yaml = [ "prettier" ];
                 json = [ "jq" ];
+                html = [ "prettier" ];
+                python = [ "ruff_format" "ruff_fix" ];
+                c = [ "clang-format" ];
+                cpp = [ "clang-format" ];
+                rust = [ "rustfmt" ];
+                dart = [ "dart_format" ];
               };
             };
           };

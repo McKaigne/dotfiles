@@ -31,11 +31,11 @@
 
     checks = {
       castor-eval = pkgs.runCommand "check-castor-eval" { } ''
-        echo "${self.nixosConfigurations.castor.config.system.build.toplevel.drvPath}" > $out
+        echo "${builtins.unsafeDiscardStringContext self.nixosConfigurations.castor.config.system.build.toplevel.drvPath}" > $out
       '';
 
       hyde-eval = pkgs.runCommand "check-hyde-eval" { } ''
-        echo "${self.nixosConfigurations.hyde.config.system.build.toplevel.drvPath}" > $out
+        echo "${builtins.unsafeDiscardStringContext self.nixosConfigurations.hyde.config.system.build.toplevel.drvPath}" > $out
       '';
     };
   };

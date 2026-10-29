@@ -69,9 +69,6 @@
         hardware.amdgpu.opencl.enable = true;
         hardware.i2c.enable = true;
 
-        environment.systemPackages = with pkgs; [
-          ddcutil
-        ];
 
         system.stateVersion = "25.05";
       })

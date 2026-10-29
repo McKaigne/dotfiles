@@ -11,19 +11,15 @@
       xdg.portal = {
         enable = true;
         extraPortals = [ pkgs.xdg-desktop-portal-gtk ];
-        config.niri = {
-          default = [ "gnome" "gtk" ];
-          "org.freedesktop.impl.portal.FileChooser" = [ "gtk" ];
-        };
       };
 
       home-manager.users.${user} = {
-        xdg.desktopEntries.Helix = {
-          name = "Helix";
+        xdg.desktopEntries.nvim = {
+          name = "Neovim";
           genericName = "Text Editor";
-          comment = "Modal terminal text editor";
-          exec = "ghostty -e hx %F";
-          icon = "helix";
+          comment = "Extensible modal text editor";
+          exec = "ghostty -e nvim %F";
+          icon = "nvim";
           terminal = false;
           categories = [ "Utility" "TextEditor" "Development" ];
           mimeType = [
@@ -79,16 +75,16 @@
             "audio/flac" = "mpv.desktop";
             "audio/ogg" = "mpv.desktop";
 
-            "text/plain" = "Helix.desktop";
-            "text/markdown" = "Helix.desktop";
-            "text/x-nix" = "Helix.desktop";
-            "text/x-c" = "Helix.desktop";
-            "text/x-c++" = "Helix.desktop";
-            "text/x-python" = "Helix.desktop";
-            "text/x-shellscript" = "Helix.desktop";
-            "application/json" = "Helix.desktop";
-            "application/toml" = "Helix.desktop";
-            "application/yaml" = "Helix.desktop";
+            "text/plain" = "nvim.desktop";
+            "text/markdown" = "nvim.desktop";
+            "text/x-nix" = "nvim.desktop";
+            "text/x-c" = "nvim.desktop";
+            "text/x-c++" = "nvim.desktop";
+            "text/x-python" = "nvim.desktop";
+            "text/x-shellscript" = "nvim.desktop";
+            "application/json" = "nvim.desktop";
+            "application/toml" = "nvim.desktop";
+            "application/yaml" = "nvim.desktop";
           };
         };
 
@@ -128,7 +124,6 @@
         shared-mime-info
         cliphist
         satty
-        wl-clipboard
         wl-mirror
       ];
     };
