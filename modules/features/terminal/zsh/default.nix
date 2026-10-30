@@ -47,7 +47,6 @@
           };
 
           initContent = ''
-            export PATH="$HOME/.local/bin:$HOME/.cargo/bin:$PATH"
             export STARSHIP_CONFIG="/etc/starship.toml"
             export LS_COLORS="$(${pkgs.vivid}/bin/vivid generate catppuccin-mocha)"
             export ZSH_AUTOSUGGEST_USE_ASYNC=1

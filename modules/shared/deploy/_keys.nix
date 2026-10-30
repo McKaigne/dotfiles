@@ -1,0 +1,10 @@
+{
+  hostKeys = {
+    hyde = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIP+4Q6NpQ37oQmPbjjPYC6vCOaB/0k4x2LCT3GkZ9Flg";
+    castor = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIIGCW3MAqXQsVOKRVqlLngO8R4VTsLttGYZG+wk1k+cf";
+  };
+  deployKeys = {
+    hyde = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIJcwEW0AMOF5pc0FJXYijMJdqbxgHzlS1545QCiSrSJw";
+    castor = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAINX0LseUHOz0Oi47UQAyIlWnMFFbmGY7oh7wtBNCrN/f";
+  };
+}

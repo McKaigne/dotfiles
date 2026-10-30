@@ -15,7 +15,6 @@
           enableCompletion = true;
           shellAliases = { };
           initExtra = ''
-            export PATH="$HOME/.local/bin:$HOME/.cargo/bin:$PATH"
             export STARSHIP_CONFIG="/etc/starship.toml"
             eval "$(${pkgs.starship}/bin/starship init bash)"
           '';

@@ -199,9 +199,6 @@ in
           nquit = "niri msg action quit";
           nfocus = "niri msg action focus-window --id";
           nwins = "niri msg -j windows";
-          wm = "workmux";
-          wmd = "workmux dashboard";
-          wms = "workmux sidebar";
           nwork = "niri msg -j workspaces";
           nmon = "niri msg -j outputs";
 
@@ -225,7 +222,6 @@ in
           n = "nnn";
           g = "git";
           lg = "lazygit";
-          lh = "learnharness";
 
           nvf = "nvim /etc/nixos/flake.nix";
           nvh = "nvim /etc/nixos/modules/hosts/hyde/default.nix";
@@ -288,16 +284,6 @@ in
 
         environment.localBinInPath = true;
 
-        programs.nix-ld = {
-          enable = true;
-          libraries = with pkgs; [
-            stdenv.cc.cc.lib
-            zlib
-            openssl
-            curl
-            glibc
-          ];
-        };
 
         hardware.keyboard.qmk.enable = true;
 
@@ -353,12 +339,6 @@ in
             historyWidget.command = "";
           };
 
-          programs.mise = {
-            enable = true;
-            enableBashIntegration = true;
-            enableZshIntegration = true;
-            enableFishIntegration = true;
-          };
 
           programs.atuin = {
             enable = true;
@@ -410,7 +390,6 @@ in
           nnn
           gawk
           fzf
-          mise
           atuin
           vivid
           cfbPkg
@@ -423,7 +402,6 @@ in
           nix-output-monitor
           wl-clipboard
           nodejs_22
-          uv
           python3
         ];
       };

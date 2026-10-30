@@ -25,7 +25,6 @@
           shellInit = ''
             set -g fish_greeting ""
 
-            fish_add_path -g $HOME/.local/bin $HOME/.cargo/bin
 
             set -gx STARSHIP_CONFIG "/etc/starship.toml"
 
@@ -56,35 +55,6 @@
           '';
 
           functions = {
-            writefile = {
-              description = "Write raw stdin to file until delimiter without parsing errors";
-              argumentNames = [ "file" "delim" ];
-              body = ''
-                if test -z "$file"
-                    echo "Usage: writefile <target_file> [delimiter=EOF]" >&2
-                    return 1
-                end
-                if test -z "$delim"
-                    set delim "EOF"
-                end
-                ${pkgs.gawk}/bin/awk -v d="$delim" '$0 == d { exit } { print }' > "$file"
-              '';
-            };
-
-            appendfile = {
-              description = "Append raw stdin to file until delimiter without parsing errors";
-              argumentNames = [ "file" "delim" ];
-              body = ''
-                if test -z "$file"
-                    echo "Usage: appendfile <target_file> [delimiter=EOF]" >&2
-                    return 1
-                end
-                if test -z "$delim"
-                    set delim "EOF"
-                end
-                ${pkgs.gawk}/bin/awk -v d="$delim" '$0 == d { exit } { print }' >> "$file"
-              '';
-            };
 
             fkill = {
               description = "Interactively select and kill a process";
