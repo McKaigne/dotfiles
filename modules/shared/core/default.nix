@@ -56,7 +56,7 @@ FILE CONTENTS
 --------------------------------------------------------------------------------
 CONTENTS_HEADER
 
-      extensions=(-e nix -e kdl -e toml -e conf -e ini -e el -e json -e fish -e zsh -e sh -e py -e css -e lua -e md -e nu -e xsh)
+      extensions=(-e nix -e kdl -e toml -e conf -e ini -e el -e json -e fish -e zsh -e sh -e py -e css -e lua -e md)
 
       count=0
       while IFS= read -r -d $'\0' file; do
@@ -94,29 +94,17 @@ in
       user = config.mainUser;
       cfbPkg = cfb { inherit pkgs; };
 
-      rebuildScript = pkgs.writeShellScriptBin "rebuild" ''
-        set -euo pipefail
-        git -C /etc/nixos add -A && sudo nixos-rebuild switch --flake /etc/nixos "$@"
-      '';
-      rebuildhScript = pkgs.writeShellScriptBin "rebuildh" ''
-        set -euo pipefail
-        git -C /etc/nixos add -A && sudo nixos-rebuild switch --flake /etc/nixos#hyde "$@"
-      '';
-      rebuildcScript = pkgs.writeShellScriptBin "rebuildc" ''
-        set -euo pipefail
-        git -C /etc/nixos add -A && sudo nixos-rebuild switch --flake /etc/nixos#castor "$@"
-      '';
       nrScript = pkgs.writeShellScriptBin "nr" ''
         set -euo pipefail
-        git -C /etc/nixos add -A && sudo nixos-rebuild switch --flake /etc/nixos "$@"
+        git -C /etc/nixos add -A && nh os switch "$@"
       '';
       nbootScript = pkgs.writeShellScriptBin "nboot" ''
         set -euo pipefail
-        git -C /etc/nixos add -A && sudo nixos-rebuild boot --flake /etc/nixos "$@"
+        git -C /etc/nixos add -A && nh os boot "$@"
       '';
       ntestScript = pkgs.writeShellScriptBin "ntest" ''
         set -euo pipefail
-        git -C /etc/nixos add -A && sudo nixos-rebuild test --flake /etc/nixos "$@"
+        git -C /etc/nixos add -A && nh os test "$@"
       '';
       ntryScript = pkgs.writeShellScriptBin "ntry" ''
         set -euo pipefail
@@ -150,11 +138,6 @@ in
       };
     in
     {
-      options.workstation.shellAliases = lib.mkOption {
-        type = lib.types.attrsOf lib.types.str;
-        default = { };
-        description = "Disabled. All shell aliases removed to prevent command misfires; use abbreviations only.";
-      };
 
       options.workstation.shellAbbrs = lib.mkOption {
         type = lib.types.attrsOf lib.types.str;
@@ -235,10 +218,14 @@ in
       config = {
         boot.loader.systemd-boot.configurationLimit = 10;
         services.fstrim.enable = true;
-        nix.gc = {
-          automatic = true;
-          dates = "weekly";
-          options = "--delete-older-than 14d";
+        programs.nh = {
+          enable = true;
+          flake = "/etc/nixos";
+          clean = {
+            enable = true;
+            dates = "weekly";
+            extraArgs = "--keep-since 14d";
+          };
         };
 
         nixpkgs.config.allowUnfree = true;
@@ -316,7 +303,6 @@ in
             enableBashIntegration = true;
             enableZshIntegration = true;
             enableFishIntegration = true;
-            enableNushellIntegration = true;
           };
 
           programs.direnv = {
@@ -325,7 +311,6 @@ in
             enableBashIntegration = true;
             enableZshIntegration = true;
             enableFishIntegration = true;
-            enableNushellIntegration = true;
           };
 
           programs.fzf = {
@@ -345,7 +330,6 @@ in
             enableBashIntegration = true;
             enableZshIntegration = true;
             enableFishIntegration = true;
-            enableNushellIntegration = true;
             settings = {
               style = "compact";
               inline_height = 20;
@@ -356,16 +340,12 @@ in
         };
 
         environment.systemPackages = with pkgs; [
-          rebuildScript
-          rebuildhScript
-          rebuildcScript
           nrScript
           nbootScript
           ntestScript
           ntryScript
           nshellScript
           televisionWrapped
-          git
           delta
           lazygit
           gh
@@ -389,8 +369,6 @@ in
           curl
           nnn
           gawk
-          fzf
-          atuin
           vivid
           cfbPkg
           aria2
@@ -398,8 +376,6 @@ in
           unrar
           rsync
           devenv
-          nvd
-          nix-output-monitor
           wl-clipboard
           nodejs_22
           python3

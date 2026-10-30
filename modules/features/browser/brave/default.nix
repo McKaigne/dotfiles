@@ -28,7 +28,6 @@
         DnsOverHttpsMode = "secure";
         DnsOverHttpsTemplates = "https://dns.quad9.net/dns-query";
 
-        ExtensionInstallAllowlist = [ "*" ];
         ExtensionInstallForcelist = [
           "hfjbmagddngcpeloejdejnfgbamkjaeg;https://clients2.google.com/service/update2/crx"
           "kkeakohpadmbldjaiggikmnldlfkdfog;https://clients2.google.com/service/update2/crx"

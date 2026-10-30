@@ -1,9 +1,6 @@
 { self, inputs, ... }: {
   flake.nixosModules.starship =
-    { config, pkgs, ... }:
-    let
-      user = config.mainUser;
-    in
+    { pkgs, ... }:
     {
       programs.starship = {
         enable = true;
@@ -15,13 +12,6 @@
       };
 
       environment.etc."environment.d/10-starship.conf".text = "STARSHIP_CONFIG=/etc/starship.toml\n";
-      environment.etc."starship.toml".source = "${pkgs.starship}/share/starship/presets/jetpack.toml";
-
-      home-manager.users.${user} = {
-        xdg.configFile."starship.toml" = {
-          source = "${pkgs.starship}/share/starship/presets/jetpack.toml";
-          force = true;
-        };
-      };
+      environment.etc."starship.toml".source = ./starship.toml;
     };
 }

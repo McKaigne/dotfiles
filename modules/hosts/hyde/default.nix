@@ -32,7 +32,7 @@
 
         # Kingston NV2 APST fix + AMD KMS + DDC/CI I2C driver
         boot.initrd.kernelModules = [ "amdgpu" ];
-        boot.kernelModules = [ "i2c-dev" ];
+        boot.kernelModules = [ ];
         boot.kernelParams = [
           "nvme_core.default_ps_max_latency_us=0"
           "pcie_aspm=off"

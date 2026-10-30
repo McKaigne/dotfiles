@@ -23,8 +23,6 @@
       self.nixosModules.bash
       self.nixosModules.zsh
       self.nixosModules.fish
-      self.nixosModules.nushell
-      self.nixosModules.xonsh
       self.nixosModules.starship
       self.nixosModules.fastfetch
 

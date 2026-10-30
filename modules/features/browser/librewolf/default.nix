@@ -20,10 +20,7 @@
         })
       ];
 
-      environment.systemPackages = [
-        pkgs.librewolf
-        pkgs.tridactyl-native
-      ];
+      environment.systemPackages = [ pkgs.tridactyl-native ];
 
       environment.etc."librewolf/policies/policies.json".text = builtins.toJSON {
         policies = {
@@ -170,20 +167,7 @@
             isDefault = true;
             userChrome = builtins.readFile ./userChrome.css;
             userContent = builtins.readFile ./userContent.css;
-            settings = {
-              "toolkit.legacyUserProfileCustomizations.stylesheets" = true;
-              "privacy.clearOnShutdown.cookies" = false;
-              "privacy.clearOnShutdown_v2.cookiesAndStorage" = false;
-              "privacy.clearOnShutdown.history" = false;
-              "network.cookie.lifetimePolicy" = 0;
-              "ui.systemUsesDarkTheme" = 1;
-              "layout.css.prefers-color-scheme.content-override" = 0;
-              "browser.in-content.dark-mode" = true;
-              "browser.startup.page" = 3;
-              "browser.sessionstore.resume_from_crash" = true;
-              "browser.sessionstore.max_resumed_crashes" = -1;
-              "browser.sessionstore.resuming_after_os_restart" = true;
-            };
+
           };
         };
       };
