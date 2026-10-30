@@ -46,29 +46,29 @@ _: {
           sans = {
             name = lib.mkOption {
               type = lib.types.str;
-              default = "Cozette";
+              default = "scientifica";
             };
             package = lib.mkOption {
               type = lib.types.package;
-              default = pkgs.cozette;
+              default = pkgs.scientifica;
             };
             size = lib.mkOption {
               type = lib.types.int;
-              default = 13;
+              default = 11;
             };
           };
           mono = {
             name = lib.mkOption {
               type = lib.types.str;
-              default = "Cozette";
+              default = "scientifica";
             };
             package = lib.mkOption {
               type = lib.types.package;
-              default = pkgs.cozette;
+              default = pkgs.scientifica;
             };
             size = lib.mkOption {
               type = lib.types.int;
-              default = 13;
+              default = 11;
             };
           };
         };

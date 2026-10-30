@@ -33,6 +33,7 @@
           gtk.icon.enable = false;
           helix.enable = false;
           zellij.enable = false;
+          foot.enable = false;
         };
 
         gtk = {

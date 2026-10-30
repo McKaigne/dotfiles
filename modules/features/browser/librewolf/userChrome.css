@@ -35,3 +35,14 @@
 #sidebar {
   border-radius: 0px !important;
 }
+
+* {
+  font-family: "scientifica", monospace !important;
+  font-size: 13px !important;
+}
+
+#sidebar-box, #sidebar, #sidebar-box browser {
+  font-family: "scientifica", monospace !important;
+  font-size: 14px !important;
+  --sidebar-font-size: 14px !important;
+}

@@ -13,7 +13,7 @@ _: {
           enable = true;
           settings = {
             main = {
-              font = "${theme.fonts.sans.name}:size=13";
+              font = "${theme.fonts.sans.name}:size=11";
               prompt = "\"➜ \"";
               lines = 12;
               width = 35;

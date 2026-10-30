@@ -114,6 +114,22 @@
               Value = 0;
               Status = "locked";
             };
+            "font.name.monospace.x-western" = {
+              Value = "scientifica";
+              Status = "locked";
+            };
+            "font.name.sans-serif.x-western" = {
+              Value = "scientifica";
+              Status = "locked";
+            };
+            "font.size.monospace.x-western" = {
+              Value = 13;
+              Status = "locked";
+            };
+            "font.size.variable.x-western" = {
+              Value = 14;
+              Status = "locked";
+            };
             "ui.systemUsesDarkTheme" = {
               Value = 1;
               Status = "locked";

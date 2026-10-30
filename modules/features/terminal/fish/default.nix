@@ -10,6 +10,7 @@ _: {
       user = config.mainUser;
       isFlag = cmd: lib.hasPrefix "-" cmd;
       safeAbbrs = lib.filterAttrs (_: cmd: !isFlag cmd) config.workstation.shellAbbrs;
+      lsColors = pkgs.runCommand "vivid-ls-colors" { } "${pkgs.vivid}/bin/vivid generate catppuccin-mocha > $out";
     in
     {
       programs.fish.enable = true;
@@ -29,15 +30,19 @@ _: {
 
           interactiveShellInit = ''
             fish_vi_key_bindings
-            bind -M insert \cx\ce edit_command_buffer
-            bind -M default \cx\ce edit_command_buffer
             set fish_cursor_default block
             set fish_cursor_insert line
             set fish_cursor_replace_one underscore
             set fish_cursor_visual block
 
+            # Alt-e and Ctrl-x Ctrl-e open current buffer in Helix
+            bind -M insert e edit_command_buffer
+            bind -M default e edit_command_buffer
+            bind -M insert \cx\ce edit_command_buffer
+            bind -M default \cx\ce edit_command_buffer
+
             if test "$TERM" != dumb
-                set -gx LS_COLORS (builtins.readFile "${pkgs.runCommand "vivid-ls-colors" { } "${pkgs.vivid}/bin/vivid generate catppuccin-mocha > $out"}")
+                set -gx LS_COLORS (cat ${lsColors})
                 ${pkgs.starship}/bin/starship init fish | source
             end
           '';

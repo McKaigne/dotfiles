@@ -40,3 +40,15 @@
 		--table-row-background-color:		var(--background-color-canvas) !important;
 	}
 }
+
+* {
+  font-family: "scientifica", monospace !important;
+  font-size: 13px !important;
+}
+
+@-moz-document url-prefix("moz-extension://") {
+  body, * {
+    font-family: "scientifica", monospace !important;
+    font-size: 14px !important;
+  }
+}

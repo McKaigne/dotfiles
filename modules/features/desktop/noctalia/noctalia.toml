@@ -1,128 +1,37 @@
 [backdrop]
-blur_intensity = 0.59999999999999998
+blur_intensity = 0.6
 enabled = true
-tint_intensity = 0.34999999999999998
+tint_intensity = 0.35
 
 [bar]
 order = [ "top" ]
 
     [bar.top]
-    background_opacity = 0.84999998100101948
+    background_opacity = 0.85
     border = "primary"
     border_width = 3.0
-    capsule_opacity = 0.84999999999999998
+    capsule_opacity = 0.85
     capsule_radius = 0
     center = [ "workspaces" ]
     concave_edge_corners = false
     enabled = true
-    end = [
-        "tray",
-        "notifications",
-        "8bury/lid-guard:lid-guard",
-        "network",
-        "bluetooth",
-        "volume",
-        "input_volume",
-        "brightness",
-        "battery",
-        "clock",
-        "session"
-    ]
-    font_family = "Cozette"
-    font_scale = 1.25
-    margin_edge = 16
+    start = [ "cpu", "ram", "temp" ]
+    end = [ "weather", "battery", "clock" ]
+    font_family = "scientifica"
+    font_scale = 1.0
+    margin_edge = 20
     margin_ends = 350
     margin_opposite_edge = 0
     position = "top"
     radius = 0
     shadow = false
-    start = [ "cpu", "ram", "temp", "network_rx", "network_tx" ]
-    thickness = 28
-    widget_spacing = 8
-
-[brightness]
-enable_ddcutil = true
-
-[dock]
-active_opacity = 0.84999999999999998
-background_opacity = 0.84999999999999998
-shadow = false
+    thickness = 32
+    widget_spacing = 14
 
 [location]
 auto_locate = false
-
-[lockscreen_widgets]
-enabled = false
-schema_version = 2
-widget_order = [ "lockscreen-login-box@DP-1" ]
-
-    [lockscreen_widgets.grid]
-    cell_size = 16
-    major_interval = 4
-    visible = true
-
-    [lockscreen_widgets.widget.lockscreen-login-box]
-    box_height = 196.0
-    box_width = 810.0
-    cx = 960.0
-    cy = 898.0
-    output = ""
-    placement_height = 1080.0
-    placement_width = 1920.0
-    rotation = 0.0
-    type = "login_box"
-
-        [lockscreen_widgets.widget.lockscreen-login-box.settings]
-        background_color = "surface_variant"
-        background_opacity = 0.88
-        background_radius = 0.0
-        center_password_text = false
-        input_opacity = 1.0
-        input_radius = 0.0
-        layout = "regular"
-        show_caps_lock = true
-        show_keyboard_layout = true
-        show_login_button = true
-        show_media = true
-        show_session_buttons = true
-        show_unlock_hint = true
-        show_weather = false
-
-    [lockscreen_widgets.widget."lockscreen-login-box@DP-1"]
-    box_height = 196.0
-    box_width = 810.0
-    cx = 960.0
-    cy = 898.0
-    output = "DP-1"
-    placement_height = 1080.0
-    placement_width = 1920.0
-    rotation = 0.0
-    type = "login_box"
-
-        [lockscreen_widgets.widget."lockscreen-login-box@DP-1".settings]
-        background_color = "surface_variant"
-        background_opacity = 0.88
-        background_radius = 0.0
-        center_password_text = false
-        input_opacity = 1.0
-        input_radius = 0.0
-        layout = "regular"
-        show_caps_lock = true
-        show_keyboard_layout = true
-        show_login_button = true
-        show_media = true
-        show_session_buttons = true
-        show_unlock_hint = true
-        show_weather = true
-
-[notification]
-background_opacity = 0.84999999999999998
-
-[osd]
-background_opacity = 0.84999999999999998
-
-    [osd.kinds]
-    media = false
+latitude = 14.5995
+longitude = 120.9842
 
 [shell]
 app_icon_color = "on_surface_variant"
@@ -130,7 +39,7 @@ avatar_path = "/etc/nixos/avatar.jpg"
 button_borders = false
 card_borders = false
 corner_radius_scale = 0.0
-font_family = "Cozette"
+font_family = "scientifica"
 input_borders = false
 popup_borders = false
 popup_shadows = false
@@ -171,62 +80,30 @@ transition_duration = 200
     path = "/etc/wallpapers/isekaiJoucho.jpg"
 
 [weather]
-enabled = false
-
-[widget.bluetooth]
-hide_when_no_connected_device = true
-
-[widget.brightness]
 enabled = true
 
 [widget.cpu]
-show_glyph = true
+show_glyph = false
 visualization = "none"
-
-[widget.input_volume]
-enabled = true
-
-[widget.media]
-hide_album_art = true
-hide_when_no_media = true
-title_scroll = "on_hover"
-
-[widget.network]
-show_label = false
-vpn_status = "replace"
-
-[widget.network_rx]
-network_speed_compact = true
-visualization = "none"
-
-[widget.network_tx]
-network_speed_compact = true
-visualization = "none"
-
-[widget.notifications]
-hide_when_no_unread = true
 
 [widget.ram]
-show_glyph = true
-visualization = "none"
-
-[widget.sysmon]
-stat = "disk_used"
+show_glyph = false
 visualization = "none"
 
 [widget.temp]
-show_glyph = true
+show_glyph = false
 visualization = "none"
 
-[widget.tray]
-drawer = true
-
-[widget.volume]
-enabled = true
-
 [widget.weather]
-enabled = false
+enabled = true
 show_condition = false
+
+[widget.battery]
+enabled = true
+show_glyph = false
+
+[widget.clock]
+format = "{:%a %b %d  %H:%M}"
 
 [widget.workspaces]
 empty_color = "primary"
@@ -236,7 +113,6 @@ label_source = "id"
 occupied_color = "primary"
 scroll_repeat = "steps"
 style = "minimal"
-
 
 [plugins]
 enabled = [

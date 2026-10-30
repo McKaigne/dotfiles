@@ -41,7 +41,7 @@ _: {
         xdg.configFile."ghostty/config" = {
           text = ''
             font-family = ${theme.fonts.mono.name}
-            font-size = 19.5
+            font-size = 11
             adjust-cell-height = 0
 
             command = ${pkgs.fish}/bin/fish
