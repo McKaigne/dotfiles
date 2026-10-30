@@ -286,7 +286,7 @@ in
           GLOW_STYLE = "catppuccin-mocha";
           STARSHIP_CONFIG = "/etc/starship.toml";
 
-          FZF_DEFAULT_OPTS = "--color=bg+:#313244,bg:-1,spinner:#f5e0dc,hl:#f38ba8 --color=fg:#cdd6f4,header:#f38ba8,info:#cba6f7,pointer:#f5e0dc --color=marker:#b4befe,fg+:#cdd6f4,prompt:#cba6f7,hl+:#f38ba8 --height=50% --layout=reverse --border=none --info=inline --prompt='➜ ' --pointer='▶ ' --marker='✓ '";
+          FZF_DEFAULT_OPTS = "--color=bg+:${config.palette.surface0},bg:-1,spinner:${config.palette.rosewater},hl:${config.palette.red} --color=fg:${config.palette.text},header:${config.palette.red},info:${config.palette.mauve},pointer:${config.palette.rosewater} --color=marker:${config.palette.lavender},fg+:${config.palette.text},prompt:${config.palette.mauve},hl+:${config.palette.red} --height=50% --layout=reverse --border=none --info=inline --prompt='➜ ' --pointer='▶ ' --marker='✓ '";
           FZF_DEFAULT_COMMAND = "${pkgs.fd}/bin/fd --type f --strip-cwd-prefix --hidden --follow --exclude .git";
           FZF_CTRL_T_COMMAND = "${pkgs.fd}/bin/fd --type f --strip-cwd-prefix --hidden --follow --exclude .git";
           FZF_CTRL_T_OPTS = "--preview '${pkgs.bat}/bin/bat -n --color=always --line-range :500 {}' --preview-window=right:60%:wrap";

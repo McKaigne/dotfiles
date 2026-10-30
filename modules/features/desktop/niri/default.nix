@@ -5,6 +5,8 @@ let
       pkgs,
       lib,
       noctaliaPkg,
+      theme,
+      palette,
       outputConfig ? "",
     }:
     let
@@ -152,6 +154,15 @@ SHEET_EOF
         "@screenshotFull@"
         "@brightnessUp@"
         "@brightnessDown@"
+        "@cursorName@"
+        "@cursorSize@"
+        "@gaps@"
+        "@borderWidth@"
+        "@activeBorderColor@"
+        "@inactiveBorderColor@"
+        "@urgentBorderColor@"
+        "@cornerRadius@"
+        "@windowOpacity@"
       ]
       [
         outputConfig
@@ -175,6 +186,15 @@ SHEET_EOF
         "${screenshotFull}/bin/screenshot-full"
         "${brightnessUp}/bin/brightness-up"
         "${brightnessDown}/bin/brightness-down"
+        theme.cursor.name
+        (toString theme.cursor.size)
+        (toString theme.gap)
+        (toString theme.borderWidth)
+        palette.mauve
+        palette.base
+        palette.red
+        (toString theme.radius)
+        theme.opacity
       ]
       (builtins.readFile ./niri.kdl);
 in
@@ -203,6 +223,8 @@ in
           lib
           noctaliaPkg
           ;
+        theme = config.theme;
+        palette = config.palette;
         outputConfig = renderedOutputConfig;
       };
     in

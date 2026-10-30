@@ -9,9 +9,9 @@ order = [ "top" ]
     [bar.top]
     background_opacity = 0.84999998100101948
     border = "primary"
-    border_width = 2.0
+    border_width = 3.0
     capsule_opacity = 0.84999999999999998
-    capsule_radius = 4
+    capsule_radius = 0
     center = [ "workspaces" ]
     concave_edge_corners = false
     enabled = true
@@ -27,13 +27,13 @@ order = [ "top" ]
         "clock",
         "session"
     ]
-    font_family = "Atkinson Hyperlegible"
-    font_scale = 1.1000000000000001
-    margin_edge = 8
+    font_family = "Cozette"
+    font_scale = 1.25
+    margin_edge = 16
     margin_ends = 350
     margin_opposite_edge = 0
     position = "top"
-    radius = 4
+    radius = 0
     shadow = false
     start = [ "cpu", "ram", "temp", "network_rx", "network_tx" ]
     thickness = 28
@@ -74,10 +74,10 @@ widget_order = [ "lockscreen-login-box@DP-1" ]
         [lockscreen_widgets.widget.lockscreen-login-box.settings]
         background_color = "surface_variant"
         background_opacity = 0.88
-        background_radius = 12.0
+        background_radius = 0.0
         center_password_text = false
         input_opacity = 1.0
-        input_radius = 6.0
+        input_radius = 0.0
         layout = "regular"
         show_caps_lock = true
         show_keyboard_layout = true
@@ -101,10 +101,10 @@ widget_order = [ "lockscreen-login-box@DP-1" ]
         [lockscreen_widgets.widget."lockscreen-login-box@DP-1".settings]
         background_color = "surface_variant"
         background_opacity = 0.88
-        background_radius = 12.0
+        background_radius = 0.0
         center_password_text = false
         input_opacity = 1.0
-        input_radius = 6.0
+        input_radius = 0.0
         layout = "regular"
         show_caps_lock = true
         show_keyboard_layout = true
@@ -128,8 +128,8 @@ app_icon_color = "on_surface_variant"
 avatar_path = "/etc/nixos/avatar.jpg"
 button_borders = false
 card_borders = false
-corner_radius_scale = 0.40000000000000002
-font_family = "Atkinson Hyperlegible"
+corner_radius_scale = 0.0
+font_family = "Cozette"
 input_borders = false
 popup_borders = false
 popup_shadows = false
@@ -137,7 +137,7 @@ settings_window_translucent = true
 
     [shell.panel]
     border_color = "primary"
-    border_width = 2.0
+    border_width = 3.0
     borders = true
     control_center_placement = "floating"
     session_placement = "floating"

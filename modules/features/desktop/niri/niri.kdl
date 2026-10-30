@@ -27,14 +27,14 @@ input {
 }
 
 cursor {
-  xcursor-theme "Bibata-Modern-Classic"
-  xcursor-size 16
+  xcursor-theme "@cursorName@"
+  xcursor-size @cursorSize@
   hide-when-typing
 }
 
 environment {
-  XCURSOR_THEME "Bibata-Modern-Classic"
-  XCURSOR_SIZE "16"
+  XCURSOR_THEME "@cursorName@"
+  XCURSOR_SIZE "@cursorSize@"
   ELECTRON_OZONE_PLATFORM_HINT "auto"
   QT_QPA_PLATFORM "wayland"
   QT_QPA_PLATFORMTHEME "qt5ct"
@@ -44,7 +44,7 @@ environment {
 }
 
 layout {
-  gaps 8
+  gaps @gaps@
   center-focused-column "on-overflow"
   default-column-width { proportion 0.5; }
 
@@ -53,10 +53,10 @@ layout {
   }
 
   border {
-    width 2
-    active-color "#cba6f7"
-    inactive-color "#1e1e2e"
-    urgent-color "#f38ba8"
+    width @borderWidth@
+    active-color "@activeBorderColor@"
+    inactive-color "@inactiveBorderColor@"
+    urgent-color "@urgentBorderColor@"
   }
 
   preset-column-widths {
@@ -109,7 +109,7 @@ blur {
 }
 
 window-rule {
-  geometry-corner-radius 4
+  geometry-corner-radius @cornerRadius@
   clip-to-geometry true
   draw-border-with-background false
 }
@@ -133,7 +133,7 @@ window-rule {
   match app-id="^com.gabm.satty$"
   match app-id="^xarchiver$"
   match app-id="^blueman-manager$"
-  opacity 0.85
+  opacity @windowOpacity@
   background-effect {
     blur true
     xray false

@@ -13,6 +13,10 @@
     };
     import-tree.url = "github:vic/import-tree";
     noctalia.url = "github:noctalia-dev/noctalia";
+    catppuccin = {
+      url = "github:catppuccin/nix";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
     nixvim = {
       url = "github:nix-community/nixvim";
       inputs.nixpkgs.follows = "nixpkgs";

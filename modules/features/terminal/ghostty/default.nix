@@ -3,6 +3,7 @@
     { config, pkgs, ... }:
     let
       user = config.mainUser;
+      theme = config.theme;
       p = config.palette;
     in
     {
@@ -39,8 +40,9 @@
 
         xdg.configFile."ghostty/config" = {
           text = ''
-            font-family = AtkynsonMono Nerd Font
-            font-size = 12
+            font-family = ${theme.fonts.mono.name}
+            font-size = 19.5
+            adjust-cell-height = 0
 
             command = ${pkgs.fish}/bin/fish
 
@@ -48,7 +50,7 @@
             background = ${p.base}
             foreground = ${p.text}
 
-            background-opacity = 0.85
+            background-opacity = ${theme.opacity}
             background-blur = true
             window-decoration = false
             cursor-style = block

@@ -56,20 +56,20 @@
             typeset -ga ZSH_HIGHLIGHT_HIGHLIGHTERS=(main)
 
             typeset -A ZSH_HIGHLIGHT_STYLES
-            ZSH_HIGHLIGHT_STYLES[command]='fg=#cba6f7,bold'
-            ZSH_HIGHLIGHT_STYLES[alias]='fg=#b4befe'
-            ZSH_HIGHLIGHT_STYLES[builtin]='fg=#89b4fa,bold'
-            ZSH_HIGHLIGHT_STYLES[function]='fg=#89b4fa'
-            ZSH_HIGHLIGHT_STYLES[single-quoted-argument]='fg=#a6e3a1'
-            ZSH_HIGHLIGHT_STYLES[double-quoted-argument]='fg=#a6e3a1'
-            ZSH_HIGHLIGHT_STYLES[dollar-quoted-argument]='fg=#a6e3a1'
-            ZSH_HIGHLIGHT_STYLES[path]='fg=#cdd6f4,underline'
-            ZSH_HIGHLIGHT_STYLES[path_prefix]='fg=#6c7086,underline'
-            ZSH_HIGHLIGHT_STYLES[globbing]='fg=#f9e2af'
-            ZSH_HIGHLIGHT_STYLES[history-expansion]='fg=#89b4fa'
-            ZSH_HIGHLIGHT_STYLES[command-separator]='fg=#6c7086'
-            ZSH_HIGHLIGHT_STYLES[redirection]='fg=#6c7086'
-            ZSH_HIGHLIGHT_STYLES[unknown-token]='fg=#f38ba8,bold'
+            ZSH_HIGHLIGHT_STYLES[command]='fg=${config.palette.mauve},bold'
+            ZSH_HIGHLIGHT_STYLES[alias]='fg=${config.palette.lavender}'
+            ZSH_HIGHLIGHT_STYLES[builtin]='fg=${config.palette.blue},bold'
+            ZSH_HIGHLIGHT_STYLES[function]='fg=${config.palette.blue}'
+            ZSH_HIGHLIGHT_STYLES[single-quoted-argument]='fg=${config.palette.green}'
+            ZSH_HIGHLIGHT_STYLES[double-quoted-argument]='fg=${config.palette.green}'
+            ZSH_HIGHLIGHT_STYLES[dollar-quoted-argument]='fg=${config.palette.green}'
+            ZSH_HIGHLIGHT_STYLES[path]='fg=${config.palette.text},underline'
+            ZSH_HIGHLIGHT_STYLES[path_prefix]='fg=${config.palette.overlay0},underline'
+            ZSH_HIGHLIGHT_STYLES[globbing]='fg=${config.palette.yellow}'
+            ZSH_HIGHLIGHT_STYLES[history-expansion]='fg=${config.palette.blue}'
+            ZSH_HIGHLIGHT_STYLES[command-separator]='fg=${config.palette.overlay0}'
+            ZSH_HIGHLIGHT_STYLES[redirection]='fg=${config.palette.overlay0}'
+            ZSH_HIGHLIGHT_STYLES[unknown-token]='fg=${config.palette.red},bold'
 
             bindkey -e
 

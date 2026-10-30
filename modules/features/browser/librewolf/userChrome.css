@@ -14,16 +14,16 @@
 
 /* Eliminate Firefox Proton circular bubbles and stadium pills */
 :root {
-  --toolbarbutton-border-radius: 4px !important;
-  --urlbar-icon-border-radius: 4px !important;
-  --urlbar-border-radius: 4px !important;
-  --arrowpanel-border-radius: 4px !important;
-  --arrowpanel-menuitem-border-radius: 4px !important;
+  --toolbarbutton-border-radius: 0px !important;
+  --urlbar-icon-border-radius: 0px !important;
+  --urlbar-border-radius: 0px !important;
+  --arrowpanel-border-radius: 0px !important;
+  --arrowpanel-menuitem-border-radius: 0px !important;
 }
 
-/* System Geometry Parity: Crisp squares with subtle 4px corners */
+/* System Geometry Parity: Crisp squares with sharp 0px corners */
 * {
-  border-radius: 4px !important;
+  border-radius: 0px !important;
 }
 
 /* Structural containers docked to window edges remain flush (0px) */

@@ -165,6 +165,7 @@
             id = 0;
             name = "default";
             isDefault = true;
+            extensions.force = true;
             userChrome = builtins.readFile ./userChrome.css;
             userContent = builtins.readFile ./userContent.css;
 
