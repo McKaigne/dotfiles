@@ -17,8 +17,7 @@ _: {
             main = {
               term = "foot";
               shell = "${pkgs.fish}/bin/fish";
-              font = "${theme.fonts.mono.name}:pixelsize=13";
-              line-height = "13px";
+              font = "${theme.fonts.mono.name}:size=${toString theme.fonts.mono.size}";
               dpi-aware = "no";
               pad = "14x14";
             };

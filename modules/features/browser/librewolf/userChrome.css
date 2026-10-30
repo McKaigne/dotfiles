@@ -13,21 +13,21 @@
 }
 
 :root {
-  --toolbarbutton-border-radius: 0px !important;
-  --urlbar-icon-border-radius: 0px !important;
-  --urlbar-border-radius: 0px !important;
-  --arrowpanel-border-radius: 0px !important;
-  --arrowpanel-menuitem-border-radius: 0px !important;
+  --toolbarbutton-border-radius: 4px !important;
+  --urlbar-icon-border-radius: 4px !important;
+  --urlbar-border-radius: 4px !important;
+  --arrowpanel-border-radius: 4px !important;
+  --arrowpanel-menuitem-border-radius: 4px !important;
 }
 
 * {
-  border-radius: 0px !important;
-  font-family: "Cozette", monospace !important;
-  font-size: 13px !important;
+  border-radius: 4px !important;
+  font-family: "Victor Mono", monospace !important;
+  font-size: 14px !important;
 }
 
 #sidebar-box, #sidebar, #sidebar-box browser {
-  font-family: "Cozette", monospace !important;
+  font-family: "Victor Mono", monospace !important;
   font-size: 16px !important;
   --sidebar-font-size: 16px !important;
 }

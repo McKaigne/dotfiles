@@ -84,24 +84,20 @@
           };
 
           Preferences = {
-            "gfx.font_rendering.fontconfig.font_visibility" = {
-              Value = 3;
-              Status = "locked";
-            };
             "font.name.monospace.x-western" = {
-              Value = "Cozette";
+              Value = "Victor Mono";
               Status = "locked";
             };
             "font.name.sans-serif.x-western" = {
-              Value = "Cozette";
+              Value = "Victor Mono";
               Status = "locked";
             };
             "font.size.monospace.x-western" = {
-              Value = 13;
+              Value = 15;
               Status = "locked";
             };
             "font.size.variable.x-western" = {
-              Value = 13;
+              Value = 16;
               Status = "locked";
             };
             "network.trr.mode" = {

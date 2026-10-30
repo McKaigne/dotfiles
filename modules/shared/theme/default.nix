@@ -46,29 +46,29 @@ _: {
           sans = {
             name = lib.mkOption {
               type = lib.types.str;
-              default = "Cozette";
+              default = "Victor Mono";
             };
             package = lib.mkOption {
               type = lib.types.package;
-              default = pkgs.cozette;
+              default = pkgs.victor-mono;
             };
             size = lib.mkOption {
               type = lib.types.int;
-              default = 13;
+              default = 14;
             };
           };
           mono = {
             name = lib.mkOption {
               type = lib.types.str;
-              default = "Cozette";
+              default = "Victor Mono";
             };
             package = lib.mkOption {
               type = lib.types.package;
-              default = pkgs.cozette;
+              default = pkgs.victor-mono;
             };
             size = lib.mkOption {
               type = lib.types.int;
-              default = 13;
+              default = 14;
             };
           };
         };
@@ -79,7 +79,7 @@ _: {
           };
           size = lib.mkOption {
             type = lib.types.int;
-            default = 16;
+            default = 8;
           };
         };
         opacity = lib.mkOption {
@@ -88,15 +88,15 @@ _: {
         };
         radius = lib.mkOption {
           type = lib.types.int;
-          default = 0;
+          default = 4;
         };
         borderWidth = lib.mkOption {
           type = lib.types.int;
-          default = 3;
+          default = 2;
         };
         gap = lib.mkOption {
           type = lib.types.int;
-          default = 16;
+          default = 8;
         };
       };
     };
