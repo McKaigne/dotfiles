@@ -15,8 +15,17 @@ _: {
         xdg.configFile."zellij/config.kdl" = {
           text = ''
             theme "catppuccin-mocha"
-            default_layout "compact"
-            pane_frames false
+            keybinds preset="unlock-first" {
+              shared_except "locked" {
+                bind "Alt h" "Alt Left" { MoveFocus "Left"; }
+                bind "Alt l" "Alt Right" { MoveFocus "Right"; }
+                bind "Alt j" "Alt Down" { MoveFocus "Down"; }
+                bind "Alt k" "Alt Up" { MoveFocus "Up"; }
+              }
+            }
+            default_mode "locked"
+            pane_frames true
+            simplified_ui true
             default_shell "fish"
             copy_on_select true
             copy_command "${pkgs.wl-clipboard}/bin/wl-copy"
@@ -28,7 +37,7 @@ _: {
 
             themes {
               catppuccin-mocha {
-                bg "#585b70"
+                bg "#181825"
                 fg "#cdd6f4"
                 red "#f38ba8"
                 green "#a6e3a1"
@@ -37,7 +46,7 @@ _: {
                 magenta "#cba6f7"
                 orange "#fab387"
                 cyan "#89dceb"
-                black "#181825"
+                black "#1e1e2e"
                 white "#cdd6f4"
               }
             }
