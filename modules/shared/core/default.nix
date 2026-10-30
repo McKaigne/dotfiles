@@ -185,21 +185,22 @@ in
           nwork = "niri msg -j workspaces";
           nmon = "niri msg -j outputs";
 
-          t = "tmux";
-          ta = "tmux attach -t";
-          tls = "tmux ls";
-          tkill = "tmux kill-session -t";
-          tkilla = "tmux kill-server";
+          zj = "zellij";
+          zja = "zellij attach";
+          zjls = "zellij list-sessions";
+          zjkill = "zellij kill-session";
+          zjkilla = "zellij kill-all-sessions";
 
           zq = "zoxide query";
           zql = "zoxide query -l";
           za = "zoxide add";
           zr = "zoxide remove";
 
-          v = "nvim";
-          vi = "nvim";
-          vim = "nvim";
-          nv = "nvim";
+          h = "hx";
+          v = "hx";
+          vi = "hx";
+          vim = "hx";
+          nv = "hx";
           bottom = "btop";
           btm = "btop";
           n = "nnn";
@@ -280,8 +281,8 @@ in
         '';
 
         environment.sessionVariables = {
-          EDITOR = "nvim";
-          VISUAL = "nvim";
+          EDITOR = "hx";
+          VISUAL = "hx";
           BAT_THEME = "Catppuccin Mocha";
           GLOW_STYLE = "catppuccin-mocha";
           STARSHIP_CONFIG = "/etc/starship.toml";

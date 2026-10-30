@@ -10,7 +10,7 @@ let
       outputConfig ? "",
     }:
     let
-      tmuxSessionizer = pkgs.writeShellScriptBin "tmux-sessionizer" ''
+      zellijSessionizer = pkgs.writeShellScriptBin "zellij-sessionizer" ''
         set -euo pipefail
         target=$( (
           echo "$HOME/.config"
@@ -26,14 +26,10 @@ let
 
         session_name=$(basename "$target" | tr '.' '_')
 
-        if ! ${pkgs.tmux}/bin/tmux has-session -t "$session_name" 2>/dev/null; then
-          ${pkgs.tmux}/bin/tmux new-session -d -s "$session_name" -c "$target"
-        fi
-
-        if [ -n "''${TMUX:-}" ]; then
-          ${pkgs.tmux}/bin/tmux switch-client -t "$session_name"
+        if ${pkgs.zellij}/bin/zellij list-sessions 2>/dev/null | grep -q "^$session_name "; then
+          exec ${pkgs.zellij}/bin/zellij attach "$session_name"
         else
-          exec ${pkgs.tmux}/bin/tmux attach-session -t "$session_name"
+          cd "$target" && exec ${pkgs.zellij}/bin/zellij attach -c "$session_name"
         fi
       '';
 
@@ -145,7 +141,7 @@ SHEET_EOF
         "@ferdium@"
         "@wpctl@"
         "@playerctl@"
-        "@tmuxSessionizer@"
+        "@zellijSessionizer@"
         "@fuzzelCheatsheet@"
         "@easyeffects@"
         "@pavucontrol@"
@@ -177,7 +173,7 @@ SHEET_EOF
         "${pkgs.ferdium}/bin/ferdium"
         "${pkgs.wireplumber}/bin/wpctl"
         "${pkgs.playerctl}/bin/playerctl"
-        "${tmuxSessionizer}/bin/tmux-sessionizer"
+        "${zellijSessionizer}/bin/zellij-sessionizer"
         "${fuzzelCheatsheet}/bin/fuzzel-cheatsheet"
         "${pkgs.easyeffects}/bin/easyeffects"
         "${pkgs.pavucontrol}/bin/pavucontrol"

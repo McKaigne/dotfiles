@@ -14,12 +14,12 @@
       };
 
       home-manager.users.${user} = {
-        xdg.desktopEntries.nvim = {
-          name = "Neovim";
+        xdg.desktopEntries.helix = {
+          name = "Helix";
           genericName = "Text Editor";
-          comment = "Extensible modal text editor";
-          exec = "ghostty -e nvim %F";
-          icon = "nvim";
+          comment = "Modal text editor";
+          exec = "ghostty -e hx %F";
+          icon = "helix";
           terminal = false;
           categories = [ "Utility" "TextEditor" "Development" ];
           mimeType = [
@@ -65,16 +65,16 @@
             "audio/flac" = "mpv.desktop";
             "audio/ogg" = "mpv.desktop";
 
-            "text/plain" = "nvim.desktop";
-            "text/markdown" = "nvim.desktop";
-            "text/x-nix" = "nvim.desktop";
-            "text/x-c" = "nvim.desktop";
-            "text/x-c++" = "nvim.desktop";
-            "text/x-python" = "nvim.desktop";
-            "text/x-shellscript" = "nvim.desktop";
-            "application/json" = "nvim.desktop";
-            "application/toml" = "nvim.desktop";
-            "application/yaml" = "nvim.desktop";
+            "text/plain" = "helix.desktop";
+            "text/markdown" = "helix.desktop";
+            "text/x-nix" = "helix.desktop";
+            "text/x-c" = "helix.desktop";
+            "text/x-c++" = "helix.desktop";
+            "text/x-python" = "helix.desktop";
+            "text/x-shellscript" = "helix.desktop";
+            "application/json" = "helix.desktop";
+            "application/toml" = "helix.desktop";
+            "application/yaml" = "helix.desktop";
           };
         };
 

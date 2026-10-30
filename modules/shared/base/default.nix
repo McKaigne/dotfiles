@@ -19,7 +19,7 @@
       # Shell & Multiplexer Parity Layer
       self.nixosModules.foot
       self.nixosModules.ghostty
-      self.nixosModules.tmux
+      self.nixosModules.zellij
       self.nixosModules.bash
       self.nixosModules.zsh
       self.nixosModules.fish
@@ -27,7 +27,7 @@
       self.nixosModules.fastfetch
 
       # Editors
-      self.nixosModules.nixvim
+      self.nixosModules.helix
 
       # Browsers
       self.nixosModules.librewolf

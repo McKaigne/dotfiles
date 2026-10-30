@@ -31,6 +31,8 @@
           accent = "mauve";
           librewolf.enable = false;
           gtk.icon.enable = false;
+          helix.enable = false;
+          zellij.enable = false;
         };
 
         gtk = {
