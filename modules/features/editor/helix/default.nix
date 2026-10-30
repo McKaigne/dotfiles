@@ -33,7 +33,7 @@ _: {
               mouse = true;
               true-color = true;
               color-modes = true;
-              bufferline = "always";
+              bufferline = "multiple";
               auto-format = true;
               auto-save = false;
               middle-click-paste = true;

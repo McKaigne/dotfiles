@@ -94,17 +94,60 @@ in
       user = config.mainUser;
       cfbPkg = cfb { inherit pkgs; };
 
-      nrScript = pkgs.writeShellScriptBin "nr" ''
+      ndeployScript = pkgs.writeShellScriptBin "ndeploy" ''
         set -euo pipefail
-        git -C /etc/nixos add -A && nh os switch "$@"
+
+        if [ $# -lt 1 ]; then
+          echo "Usage: ndeploy <switch|test|boot> [host]" >&2
+          exit 1
+        fi
+
+        verb="$1"
+        if [ "$verb" != "switch" ] && [ "$verb" != "test" ] && [ "$verb" != "boot" ]; then
+          echo "Error: Unknown verb '$verb'. Must be switch, test, or boot." >&2
+          exit 1
+        fi
+
+        cur="$(hostname)"
+        target="''${2:-$cur}"
+
+        if [ "$target" = "$cur" ]; then
+          echo "==> Deploying locally to $cur ($verb)..."
+          git -C /etc/nixos add -A && nh os "$verb"
+          exit 0
+        fi
+
+        echo "==> Preflight: Checking reachability of root@$target via Tailscale..."
+        if ! ssh -o BatchMode=yes -o ConnectTimeout=5 "root@$target" true 2>/dev/null; then
+          echo "Error: Cannot connect to root@$target via deploy key." >&2
+          echo "Ensure Tailscale is connected and ~/.ssh/deploy_ed25519 is loaded." >&2
+          exit 1
+        fi
+
+        if [ -n "$(git -C /etc/nixos status --porcelain 2>/dev/null)" ]; then
+          echo "Warning: /etc/nixos has uncommitted changes." >&2
+        fi
+
+        if [ "$cur" = "hyde" ]; then
+          echo "==> Deploying from hyde to $target (building on hyde, activating on $target)..."
+          git -C /etc/nixos add -A && nh os "$verb" --hostname "$target" --target-host "root@$target"
+        elif [ "$target" = "hyde" ]; then
+          echo "==> Deploying from $cur to hyde (building and activating on hyde)..."
+          git -C /etc/nixos add -A && nh os "$verb" --hostname hyde --build-host "root@hyde" --target-host "root@hyde"
+        else
+          echo "Error: Unsupported target host $target from $cur. Hyde is the build host." >&2
+          exit 1
+        fi
+      '';
+
+      nrScript = pkgs.writeShellScriptBin "nr" ''
+        exec ${ndeployScript}/bin/ndeploy switch "$@"
       '';
       nbootScript = pkgs.writeShellScriptBin "nboot" ''
-        set -euo pipefail
-        git -C /etc/nixos add -A && nh os boot "$@"
+        exec ${ndeployScript}/bin/ndeploy boot "$@"
       '';
       ntestScript = pkgs.writeShellScriptBin "ntest" ''
-        set -euo pipefail
-        git -C /etc/nixos add -A && nh os test "$@"
+        exec ${ndeployScript}/bin/ndeploy test "$@"
       '';
       ntryScript = pkgs.writeShellScriptBin "ntry" ''
         set -euo pipefail
@@ -341,6 +384,7 @@ in
         };
 
         environment.systemPackages = with pkgs; [
+          ndeployScript
           nrScript
           nbootScript
           ntestScript

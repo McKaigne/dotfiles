@@ -32,6 +32,7 @@
       self.nixosModules.core
       self.nixosModules.users
       self.nixosModules.security
+      self.nixosModules.deploy
       self.nixosModules.audio
       self.nixosModules.bluetooth
       self.nixosModules.kanata

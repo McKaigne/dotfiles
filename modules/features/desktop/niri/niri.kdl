@@ -244,9 +244,10 @@ binds {
   Mod+C                  hotkey-overlay-title="Control: Noctalia Control Center"    { spawn "@noctalia@" "msg" "panel-toggle" "control-center"; }
   Mod+Shift+C            hotkey-overlay-title="Audio: Pavucontrol Mixer"            { spawn "@pavucontrol@"; }
 
-  // B & W: Bluetooth, Bitwarden, Wi-Fi & Wallpaper
-  Mod+B                  hotkey-overlay-title="Bluetooth: Noctalia Panel"           { spawn "@noctalia@" "msg" "panel-toggle" "bluetooth"; }
-  Mod+Shift+B            hotkey-overlay-title="Security: Bitwarden Desktop"         { spawn "@bitwarden@"; }
+  // B & W: Bitwarden, Bluetooth, Wi-Fi & Wallpaper
+  Mod+B                  hotkey-overlay-title="Security: Bitwarden Desktop"         { spawn "@bitwarden@"; }
+  Mod+Shift+B            hotkey-overlay-title="Security: Bitwarden Noctalia Panel"  { spawn "@noctalia@" "msg" "panel-toggle" "noctalia/bitwarden:vault"; }
+  Mod+Ctrl+B             hotkey-overlay-title="Bluetooth: Noctalia Panel"           { spawn "@noctalia@" "msg" "panel-toggle" "bluetooth"; }
   Mod+W                  hotkey-overlay-title="Wallpaper: Noctalia Selector"        { spawn "@noctalia@" "msg" "panel-toggle" "wallpaper"; }
   Mod+Shift+W            hotkey-overlay-title="Network: Wi-Fi / Network Panel"      { spawn "@noctalia@" "msg" "panel-toggle" "network"; }
   Mod+Ctrl+W             hotkey-overlay-title="Bar: Toggle Noctalia Top Bar"        { spawn "@noctalia@" "msg" "bar-toggle"; }
