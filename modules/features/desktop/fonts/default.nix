@@ -4,7 +4,7 @@ _: {
     {
       fonts = {
         packages = with pkgs; [
-          scientifica
+          cozette
           noto-fonts
           noto-fonts-cjk-sans
           noto-fonts-color-emoji
@@ -19,8 +19,8 @@ _: {
             style = "slight";
           };
           defaultFonts = {
-            monospace = [ "scientifica" ];
-            sansSerif = [ "scientifica" "Noto Sans" ];
+            monospace = [ "Cozette" ];
+            sansSerif = [ "Cozette" "Noto Sans" ];
             serif = [ "Noto Serif" ];
             emoji = [ "Noto Color Emoji" ];
           };
@@ -30,7 +30,7 @@ _: {
             <fontconfig>
               <match target="font">
                 <test name="family" qual="any">
-                  <string>scientifica</string>
+                  <string>Cozette</string>
                 </test>
                 <edit name="antialias" mode="assign">
                   <bool>false</bool>

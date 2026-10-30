@@ -115,11 +115,11 @@
               Status = "locked";
             };
             "font.name.monospace.x-western" = {
-              Value = "scientifica";
+              Value = "Cozette";
               Status = "locked";
             };
             "font.name.sans-serif.x-western" = {
-              Value = "scientifica";
+              Value = "Cozette";
               Status = "locked";
             };
             "font.size.monospace.x-western" = {

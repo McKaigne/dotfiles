@@ -1,54 +1,51 @@
 @-moz-document url-prefix("about:") {
-	body {
-		background-color: #1e1e2e !important;
-		color: #cdd6f4 !important;
-	}
-
-	* {
-		border-radius: 0px !important;
-	}
-
-	button:hover, .button:hover {
-		background-color: #cba6f7 !important;
-		color: #11111b !important;
-	}
-
-	* {
-		--text-color:							#cdd6f4 !important;
-		--color-accent-primary:					#cba6f7 !important;
-		--color-accent-secondary:				#b4befe !important;
-	}
-
-	* {
-		--background-color-box:					#181825 !important;
-		--background-color-box-info:			#181825 !important;
-		--background-color-information:		    #313244 !important;
-		--background-color-canvas:				#1e1e2e !important;
-		--border-color:							#313244 !important;
-		--border-color-deemphasized:			#313244 !important;
-		--button-background-color-muted:		#313244 !important;
-		--button-text-color-ghost-disabled:		#6c7086 !important;
-		--button-border:						1px solid var(--border-color) !important;
-		--table-row-background-color-alternate:	#181825 !important;
-		--text-color-accent-primary-selected:	var(--text-color) !important;
-	}
-
-	* {
-		--table-background-color:			var(--background-color-box) !important;
-		--table-border-color:				var(--border-color) !important;
-		--table-header-background-color:	var(--color-accent-primary) !important;
-		--table-row-background-color:		var(--background-color-canvas) !important;
-	}
+body {
+background-color: #1e1e2e !important;
+color: #cdd6f4 !important;
 }
 
 * {
-  font-family: "scientifica", monospace !important;
-  font-size: 13px !important;
+border-radius: 0px !important;
+font-family: "Cozette", "CozetteVector", monospace !important;
+font-size: 13px !important;
+}
+
+button:hover, .button:hover {
+background-color: #cba6f7 !important;
+color: #11111b !important;
+}
+
+* {
+--text-color:#cdd6f4 !important;
+--color-accent-primary:#cba6f7 !important;
+--color-accent-secondary:#b4befe !important;
+}
+
+* {
+--background-color-box:#181825 !important;
+--background-color-box-info:#181825 !important;
+--background-color-information:    #313244 !important;
+--background-color-canvas:#1e1e2e !important;
+--border-color:#313244 !important;
+--border-color-deemphasized:#313244 !important;
+--button-background-color-muted:#313244 !important;
+--button-text-color-ghost-disabled:#6c7086 !important;
+--button-border:1px solid var(--border-color) !important;
+--table-row-background-color-alternate:#181825 !important;
+--text-color-accent-primary-selected:var(--text-color) !important;
+}
+
+* {
+--table-background-color:var(--background-color-box) !important;
+--table-border-color:var(--border-color) !important;
+--table-header-background-color:var(--color-accent-primary) !important;
+--table-row-background-color:var(--background-color-canvas) !important;
+}
 }
 
 @-moz-document url-prefix("moz-extension://") {
-  body, * {
-    font-family: "scientifica", monospace !important;
-    font-size: 14px !important;
-  }
+body, * {
+font-family: "Cozette", "CozetteVector", monospace !important;
+font-size: 16px !important;
+}
 }

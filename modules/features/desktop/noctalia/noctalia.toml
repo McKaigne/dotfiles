@@ -17,7 +17,7 @@ order = [ "top" ]
     enabled = true
     start = [ "cpu", "ram", "temp" ]
     end = [ "weather", "battery", "clock" ]
-    font_family = "scientifica"
+    font_family = "Cozette"
     font_scale = 1.0
     margin_edge = 20
     margin_ends = 350
@@ -26,7 +26,7 @@ order = [ "top" ]
     radius = 0
     shadow = false
     thickness = 32
-    widget_spacing = 14
+    widget_spacing = 16
 
 [location]
 auto_locate = false
@@ -39,7 +39,7 @@ avatar_path = "/etc/nixos/avatar.jpg"
 button_borders = false
 card_borders = false
 corner_radius_scale = 0.0
-font_family = "scientifica"
+font_family = "Cozette"
 input_borders = false
 popup_borders = false
 popup_shadows = false

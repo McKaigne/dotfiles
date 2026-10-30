@@ -10,6 +10,7 @@
     in
     {
       environment.systemPackages = [
+        inputs.noctalia.packages.${pkgs.stdenv.hostPlatform.system}.default
         pkgs.glib
         pkgs.dconf
         pkgs.gsettings-desktop-schemas
