@@ -73,6 +73,10 @@ _: {
 
             bindkey -v
             export KEYTIMEOUT=1
+            autoload -z edit-command-line
+            zle -N edit-command-line
+            bindkey '^X^E' edit-command-line
+            bindkey '^[e' edit-command-line
             bindkey '^?' backward-delete-char
             bindkey '^h' backward-delete-char
             bindkey '^w' backward-kill-word

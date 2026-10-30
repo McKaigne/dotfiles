@@ -13,6 +13,10 @@
     };
     import-tree.url = "github:vic/import-tree";
     noctalia.url = "github:noctalia-dev/noctalia";
+    firefox-addons = {
+      url = "gitlab:rycee/nur-expressions?dir=pkgs/firefox-addons";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
     catppuccin = {
       url = "github:catppuccin/nix";
       inputs.nixpkgs.follows = "nixpkgs";
