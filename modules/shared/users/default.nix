@@ -20,7 +20,6 @@
             "networkmanager"
             "video"
             "audio"
-            "input"
             "uinput"
             "render"
           ] ++ lib.optional (config.hardware.i2c.enable or false) "i2c";

@@ -27,6 +27,7 @@
         };
 
         boot.loader.systemd-boot.enable = true;
+        boot.loader.systemd-boot.editor = false;
         boot.loader.efi.canTouchEfiVariables = true;
 
         # Kingston NV2 APST fix + AMD KMS + DDC/CI I2C driver
