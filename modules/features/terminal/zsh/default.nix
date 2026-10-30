@@ -3,6 +3,7 @@ _: {
     { config, pkgs, ... }:
     let
       user = config.mainUser;
+      lsColors = pkgs.runCommand "vivid-ls-colors" { } "${pkgs.vivid}/bin/vivid generate catppuccin-mocha > $out";
     in
     {
       programs.zsh = {
