@@ -22,7 +22,7 @@ _: {
               pad = "14x14";
             };
             cursor = {
-              style = "beam";
+              style = "block";
               color = "${p.hex.crust} ${p.hex.rosewater}";
             };
             "colors-dark" = {

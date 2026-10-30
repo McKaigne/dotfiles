@@ -369,6 +369,13 @@ in
           };
 
 
+          programs.carapace = {
+            enable = true;
+            enableFishIntegration = true;
+            enableZshIntegration = true;
+            enableBashIntegration = true;
+          };
+
           programs.atuin = {
             enable = true;
             enableBashIntegration = true;

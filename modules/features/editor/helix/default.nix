@@ -65,7 +65,11 @@ _: {
                 mode.select = "SELECT";
               };
             };
+            keys.insert = {
+              esc = [ "normal_mode" "move_char_left" ];
+            };
             keys.normal = {
+              esc = [ "collapse_selection" "keep_primary_selection" ];
               y = [ ":clipboard-yank" "yank" ];
               p = ":clipboard-paste-after";
               P = ":clipboard-paste-before";
@@ -73,6 +77,7 @@ _: {
               R = ":clipboard-paste-replace";
             };
             keys.select = {
+              esc = [ "collapse_selection" "keep_primary_selection" "normal_mode" ];
               y = [ ":clipboard-yank" "yank" ];
               p = ":clipboard-paste-after";
               P = ":clipboard-paste-before";
@@ -85,7 +90,13 @@ _: {
               inherits = "catppuccin_mocha";
               "ui.background" = { };
               "ui.cursor" = { fg = "crust"; bg = "rosewater"; };
+              "ui.cursor.normal" = { fg = "crust"; bg = "rosewater"; };
+              "ui.cursor.insert" = { fg = "crust"; bg = "rosewater"; };
+              "ui.cursor.select" = { fg = "crust"; bg = "rosewater"; };
               "ui.cursor.primary" = { fg = "crust"; bg = "rosewater"; };
+              "ui.cursor.primary.normal" = { fg = "crust"; bg = "rosewater"; };
+              "ui.cursor.primary.insert" = { fg = "crust"; bg = "rosewater"; };
+              "ui.cursor.primary.select" = { fg = "crust"; bg = "rosewater"; };
               "ui.cursor.match" = { fg = "crust"; bg = "peach"; };
               "ui.cursorline.primary" = { };
               "ui.cursorline.secondary" = { };

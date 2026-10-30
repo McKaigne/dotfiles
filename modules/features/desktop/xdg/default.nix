@@ -18,7 +18,7 @@ _: {
           name = "Helix";
           genericName = "Text Editor";
           comment = "Modal text editor";
-          exec = "ghostty -e hx %F";
+          exec = "footclient -e hx %F";
           icon = "helix";
           terminal = false;
           categories = [ "Utility" "TextEditor" "Development" ];
@@ -82,7 +82,7 @@ _: {
           text = ''
             [config]
             bm_open_method=0
-            terminal=ghostty
+            terminal=footclient
 
             [volume]
             mount_on_removable=1
