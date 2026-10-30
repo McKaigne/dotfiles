@@ -11,19 +11,34 @@ _: {
           defaultEditor = true;
           extraPackages = with pkgs; [
             wl-clipboard
+            # Nix
             nixd
             nixfmt
+            # Config & Markup
             marksman
             taplo
             yaml-language-server
+            # Shell scripting
             bash-language-server
+            shellcheck
             shfmt
-            pyright
-            ruff
-            rust-analyzer
-            rustfmt
-            clang-tools
+            # Containers
+            dockerfile-language-server-nodejs
+            docker-compose-language-service
           ];
+          languages = {
+            language = [
+              {
+                name = "nix";
+                auto-format = true;
+                formatter = { command = "nixfmt"; };
+              }
+              {
+                name = "julia";
+                auto-format = true;
+              }
+            ];
+          };
           settings = {
             theme = "catppuccin_mocha_transparent";
             editor = {
