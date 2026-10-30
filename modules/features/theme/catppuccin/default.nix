@@ -1,4 +1,4 @@
-{ inputs, ... }: {
+_: {
   flake.nixosModules.catppuccinTheme =
     {
       config,
@@ -22,20 +22,6 @@
     in
     {
       home-manager.users.${user} = {
-        imports = [ inputs.catppuccin.homeModules.catppuccin ];
-
-        catppuccin = {
-          enable = true;
-          autoEnable = true;
-          flavor = "mocha";
-          accent = "mauve";
-          librewolf.enable = false;
-          gtk.icon.enable = false;
-          helix.enable = false;
-          zellij.enable = false;
-          foot.enable = false;
-        };
-
         gtk = {
           enable = true;
           theme = {
@@ -63,15 +49,22 @@
           monospace-font-name = "${theme.fonts.mono.name} ${toString theme.fonts.mono.size}";
         };
 
-        # Btop with transparency & sharp corners
         programs.btop = {
           enable = true;
           settings = {
+            color_theme = "catppuccin_mocha";
             theme_background = false;
             truecolor = true;
             vim_keys = true;
             rounded_corners = false;
             graph_symbol = "braille";
+          };
+        };
+
+        programs.bat = {
+          enable = true;
+          config = {
+            theme = "Catppuccin Mocha";
           };
         };
 

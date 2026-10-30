@@ -28,6 +28,20 @@ _: {
             <?xml version="1.0"?>
             <!DOCTYPE fontconfig SYSTEM "urn:fontconfig:fonts.dtd">
             <fontconfig>
+              <!-- Reject vector fallback so applications never load blurry TTF -->
+              <selectfont>
+                <acceptfont>
+                  <pattern>
+                    <patelt name="family"><string>Cozette</string></patelt>
+                  </pattern>
+                </acceptfont>
+                <rejectfont>
+                  <pattern>
+                    <patelt name="family"><string>CozetteVector</string></patelt>
+                  </pattern>
+                </rejectfont>
+              </selectfont>
+
               <match target="font">
                 <test name="family" qual="any">
                   <string>Cozette</string>
@@ -40,6 +54,12 @@ _: {
                 </edit>
                 <edit name="autohint" mode="assign">
                   <bool>false</bool>
+                </edit>
+                <edit name="embeddedbitmap" mode="assign">
+                  <bool>true</bool>
+                </edit>
+                <edit name="rgba" mode="assign">
+                  <const>none</const>
                 </edit>
               </match>
             </fontconfig>

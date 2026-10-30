@@ -36,7 +36,6 @@
           OverridePostUpdatePage = "";
 
           ExtensionSettings = {
-            # Pinned reproducibly via rycee/firefox-addons
             "uBlock0@raymondhill.net" = {
               installation_mode = "force_installed";
               install_url = xpiPath ff.ublock-origin;
@@ -70,7 +69,6 @@
               install_url = xpiPath ff.stylus;
             };
 
-            # Preserved on AMO release URLs (unfree or not packaged upstream)
             "enhancerforyoutube@maximerf.addons.mozilla.org" = {
               installation_mode = "force_installed";
               install_url = "https://addons.mozilla.org/firefox/downloads/latest/enhancer-for-youtube/latest.xpi";
@@ -86,6 +84,26 @@
           };
 
           Preferences = {
+            "gfx.font_rendering.fontconfig.font_visibility" = {
+              Value = 3;
+              Status = "locked";
+            };
+            "font.name.monospace.x-western" = {
+              Value = "Cozette";
+              Status = "locked";
+            };
+            "font.name.sans-serif.x-western" = {
+              Value = "Cozette";
+              Status = "locked";
+            };
+            "font.size.monospace.x-western" = {
+              Value = 13;
+              Status = "locked";
+            };
+            "font.size.variable.x-western" = {
+              Value = 13;
+              Status = "locked";
+            };
             "network.trr.mode" = {
               Value = 3;
               Status = "locked";
@@ -112,22 +130,6 @@
             };
             "network.cookie.lifetimePolicy" = {
               Value = 0;
-              Status = "locked";
-            };
-            "font.name.monospace.x-western" = {
-              Value = "Cozette";
-              Status = "locked";
-            };
-            "font.name.sans-serif.x-western" = {
-              Value = "Cozette";
-              Status = "locked";
-            };
-            "font.size.monospace.x-western" = {
-              Value = 13;
-              Status = "locked";
-            };
-            "font.size.variable.x-western" = {
-              Value = 14;
               Status = "locked";
             };
             "ui.systemUsesDarkTheme" = {
@@ -176,6 +178,15 @@
           text = ''
             colours dark
           '';
+          force = true;
+        };
+
+        xdg.configFile."librewolf/default/chrome/userChrome.css" = {
+          source = ./userChrome.css;
+          force = true;
+        };
+        xdg.configFile."librewolf/default/chrome/userContent.css" = {
+          source = ./userContent.css;
           force = true;
         };
 

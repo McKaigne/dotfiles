@@ -8,6 +8,7 @@ _: {
     }:
     let
       user = config.mainUser;
+      p = config.palette;
       isFlag = cmd: lib.hasPrefix "-" cmd;
       safeAbbrs = lib.filterAttrs (_: cmd: !isFlag cmd) config.workstation.shellAbbrs;
       lsColors = pkgs.runCommand "vivid-ls-colors" { } "${pkgs.vivid}/bin/vivid generate catppuccin-mocha > $out";
@@ -25,6 +26,22 @@ _: {
           shellInit = ''
             set -g fish_greeting ""
             set -gx STARSHIP_CONFIG "/etc/starship.toml"
+
+            set -g fish_color_normal ${p.hex.text}
+            set -g fish_color_command ${p.hex.mauve} --bold
+            set -g fish_color_keyword ${p.hex.red}
+            set -g fish_color_quote ${p.hex.green}
+            set -g fish_color_redirection ${p.hex.surface2}
+            set -g fish_color_end ${p.hex.peach}
+            set -g fish_color_error ${p.hex.red} --bold
+            set -g fish_color_param ${p.hex.text}
+            set -g fish_color_comment ${p.hex.surface2}
+            set -g fish_color_selection --background=${p.hex.surface0}
+            set -g fish_color_search_match --background=${p.hex.surface1}
+            set -g fish_color_operator ${p.hex.mauve}
+            set -g fish_color_escape ${p.hex.pink}
+            set -g fish_color_autosuggestion ${p.hex.surface2}
+
             abbr --add ntrace -- --show-trace
           '';
 
@@ -44,6 +61,7 @@ _: {
             if test "$TERM" != dumb
                 set -gx LS_COLORS (cat ${lsColors})
                 ${pkgs.starship}/bin/starship init fish | source
+                ${pkgs.carapace}/bin/carapace _carapace fish | source
             end
           '';
 

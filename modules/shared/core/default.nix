@@ -391,6 +391,7 @@ in
           ntryScript
           nshellScript
           televisionWrapped
+          carapace
           psmisc
           delta
           lazygit

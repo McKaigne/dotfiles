@@ -97,6 +97,8 @@ visualization = "none"
 [widget.weather]
 enabled = true
 show_condition = false
+show_glyph = false
+show_temperature = true
 
 [widget.battery]
 enabled = true

@@ -22,7 +22,7 @@ _: {
               dpi-aware = "no";
               pad = "14x14";
             };
-            colors = {
+            "colors-dark" = {
               alpha = theme.opacity;
               background = p.hex.base;
               foreground = p.hex.text;
