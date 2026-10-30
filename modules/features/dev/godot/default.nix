@@ -1,4 +1,4 @@
-{ self, inputs, ... }: {
+_: {
   flake.nixosModules.godot = { pkgs, ... }: {
     environment.systemPackages = [ pkgs.godot_4 ];
   };

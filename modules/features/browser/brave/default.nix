@@ -1,9 +1,8 @@
-{ self, inputs, ... }: {
+_: {
   flake.nixosModules.brave =
     {
       config,
       pkgs,
-      lib,
       ...
     }:
     {

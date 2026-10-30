@@ -1,4 +1,4 @@
-{ self, inputs, ... }: {
+_: {
   flake.nixosModules.krita = { pkgs, ... }: {
     environment.systemPackages = [ pkgs.krita ];
   };

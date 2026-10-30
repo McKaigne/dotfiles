@@ -1,4 +1,4 @@
-{ self, inputs, ... }: {
+_: {
   flake.nixosModules.parabolic = { pkgs, ... }: {
     environment.systemPackages = [ pkgs.parabolic ];
   };

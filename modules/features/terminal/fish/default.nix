@@ -1,4 +1,4 @@
-{ self, inputs, ... }: {
+_: {
   flake.nixosModules.fish =
     {
       config,
@@ -8,7 +8,6 @@
     }:
     let
       user = config.mainUser;
-      p = config.palette;
       isFlag = cmd: lib.hasPrefix "-" cmd;
       safeAbbrs = lib.filterAttrs (_: cmd: !isFlag cmd) config.workstation.shellAbbrs;
     in
@@ -24,25 +23,24 @@
 
           shellInit = ''
             set -g fish_greeting ""
-
-
             set -gx STARSHIP_CONFIG "/etc/starship.toml"
-
-            set -gx LS_COLORS (${pkgs.vivid}/bin/vivid generate catppuccin-mocha)
-
-
-
             abbr --add ntrace -- --show-trace
           '';
 
           interactiveShellInit = ''
+            fish_vi_key_bindings
+            set fish_cursor_default block
+            set fish_cursor_insert line
+            set fish_cursor_replace_one underscore
+            set fish_cursor_visual block
+
             if test "$TERM" != dumb
+                set -gx LS_COLORS (builtins.readFile "${pkgs.runCommand "vivid-ls-colors" { } "${pkgs.vivid}/bin/vivid generate catppuccin-mocha > $out"}")
                 ${pkgs.starship}/bin/starship init fish | source
             end
           '';
 
           functions = {
-
             fkill = {
               description = "Interactively select and kill a process";
               body = ''
@@ -50,6 +48,28 @@
                 if test -n "$selected"
                     set -l targetPid (echo "$selected" | ${pkgs.gawk}/bin/awk '{print $1}')
                     kill -9 "$targetPid"; and echo "Killed process $targetPid"
+                end
+              '';
+            };
+
+            clast = {
+              description = "Re-run last command and copy its output to clipboard";
+              body = ''
+                set -l cmd (history --max 1)
+                if test -n "$cmd"
+                    eval "$cmd" | ${pkgs.wl-clipboard}/bin/wl-copy
+                    and echo "Copied output of '$cmd' to clipboard."
+                end
+              '';
+            };
+
+            chist = {
+              description = "Interactively select a historical command and copy its output";
+              body = ''
+                set -l cmd (history | ${pkgs.fzf}/bin/fzf --reverse --header="Select command to copy output to clipboard:")
+                if test -n "$cmd"
+                    eval "$cmd" | ${pkgs.wl-clipboard}/bin/wl-copy
+                    and echo "Copied output of '$cmd' to clipboard."
                 end
               '';
             };
@@ -71,13 +91,17 @@
 
                 echo "==> [2/5] Normalizing wallpaper paths and enforcing template suppression..."
                 ${pkgs.gnused}/bin/sed -i -E 's|directory = "[^"]*wallpapers"|directory = "/etc/wallpapers"|g' "$tmpFile"
-                ${pkgs.gnused}/bin/sed -i -E 's|path = "[^"]*/wallpapers/([^"]+)"|path = "/etc/wallpapers/\\1"|g' "$tmpFile"
+                ${pkgs.gnused}/bin/sed -i -E 's|path = "[^"]*/wallpapers/([^"]+)"|path = "/etc/wallpapers/\1"|g' "$tmpFile"
 
                 if ${pkgs.gnugrep}/bin/grep -q "\[theme\.templates\]" "$tmpFile"
                     ${pkgs.gnused}/bin/sed -i -E 's/enable_builtin_templates = true/enable_builtin_templates = false/g' "$tmpFile"
                     ${pkgs.gnused}/bin/sed -i -E 's/enable_community_templates = true/enable_community_templates = false/g' "$tmpFile"
                 else
-                    printf '\n[theme.templates]\nenable_builtin_templates = false\nenable_community_templates = false\n' >> "$tmpFile"
+                    printf "
+[theme.templates]
+enable_builtin_templates = false
+enable_community_templates = false
+" >> "$tmpFile"
                 end
 
                 mv -f "$tmpFile" "$targetFile"
@@ -89,12 +113,12 @@
                 end
 
                 echo "==> [4/5] Rebuilding NixOS generation for host: $targetHost..."
-                if sudo nixos-rebuild switch --flake "/etc/nixos#$targetHost"
+                if nh os switch --flake "/etc/nixos#$targetHost"
                     echo "==> [5/5] Purging mutable runtime state override..."
                     rm -f "$stateFile"
                     echo "==> Noctalia declarative state synchronized and baked into system generation."
                 else
-                    echo "Error: nixos-rebuild failed. Runtime state preserved for recovery." >&2
+                    echo "Error: nh os switch failed. Runtime state preserved for recovery." >&2
                     return 1
                 end
               '';

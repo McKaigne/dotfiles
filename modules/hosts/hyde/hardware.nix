@@ -1,9 +1,8 @@
-{ self, inputs, ... }: {
+_: {
   flake.nixosModules.hydeHardware =
     {
       config,
       lib,
-      pkgs,
       modulesPath,
       ...
     }:
@@ -29,7 +28,6 @@
         fsType = "ext4";
         options = [
           "noatime"
-          "commit=60"
         ];
       };
 

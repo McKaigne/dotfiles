@@ -1,4 +1,4 @@
-{ self, inputs, ... }: {
+_: {
   flake.nixosModules.localsend = { pkgs, ... }: {
     environment.systemPackages = [ pkgs.localsend ];
     networking.firewall = {

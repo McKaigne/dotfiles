@@ -1,11 +1,5 @@
-{ self, inputs, ... }: {
-  flake.nixosModules.kanata =
-    {
-      config,
-      lib,
-      pkgs,
-      ...
-    }:
+_: {
+  flake.nixosModules.kanata = _:
     let
       kanataConfig = ''
         (defsrc

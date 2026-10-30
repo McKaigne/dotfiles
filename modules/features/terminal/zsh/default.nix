@@ -1,4 +1,4 @@
-{ self, inputs, ... }: {
+_: {
   flake.nixosModules.zsh =
     { config, pkgs, ... }:
     let
@@ -71,7 +71,11 @@
             ZSH_HIGHLIGHT_STYLES[redirection]='fg=${config.palette.overlay0}'
             ZSH_HIGHLIGHT_STYLES[unknown-token]='fg=${config.palette.red},bold'
 
-            bindkey -e
+            bindkey -v
+            export KEYTIMEOUT=1
+            bindkey '^?' backward-delete-char
+            bindkey '^h' backward-delete-char
+            bindkey '^w' backward-kill-word
 
             eval "$(${pkgs.starship}/bin/starship init zsh)"
           '';

@@ -1,9 +1,8 @@
-{ self, inputs, ... }: {
+_: {
   flake.nixosModules.castorHardware =
     {
       config,
       lib,
-      pkgs,
       modulesPath,
       ...
     }:

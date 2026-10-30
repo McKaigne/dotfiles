@@ -1,4 +1,4 @@
-{ self, inputs, ... }: {
+_: {
   flake.nixosModules.obsidian = { pkgs, ... }: {
     environment.systemPackages = [ pkgs.obsidian ];
   };

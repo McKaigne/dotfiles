@@ -1,9 +1,9 @@
-{ self, inputs, ... }: {
+_: {
   flake.nixosModules.ghostty =
     { config, pkgs, ... }:
     let
       user = config.mainUser;
-      theme = config.theme;
+      inherit (config) theme;
       p = config.palette;
     in
     {

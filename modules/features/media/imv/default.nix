@@ -1,4 +1,4 @@
-{ self, inputs, ... }: {
+_: {
   flake.nixosModules.imv = { pkgs, ... }: {
     environment.systemPackages = [ pkgs.imv ];
   };

@@ -1,5 +1,5 @@
-{ self, inputs, ... }: {
-  flake.nixosModules.git = { pkgs, ... }: {
+_: {
+  flake.nixosModules.git = _: {
     programs.git = {
       enable = true;
       config = {

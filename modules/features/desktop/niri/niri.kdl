@@ -80,24 +80,24 @@ overview {
 
 animations {
   workspace-switch {
-    spring damping-ratio=0.85 stiffness=1000 epsilon=0.0001
+    spring damping-ratio=1.0 stiffness=1500 epsilon=0.0001
   }
   horizontal-view-movement {
-    spring damping-ratio=0.85 stiffness=1000 epsilon=0.0001
+    spring damping-ratio=1.0 stiffness=1400 epsilon=0.0001
   }
   window-open {
-    duration-ms 200
-    curve "ease-out-cubic"
+    duration-ms 120
+    curve "ease-out-expo"
   }
   window-close {
-    duration-ms 150
-    curve "ease-out-cubic"
+    duration-ms 100
+    curve "ease-out-quad"
   }
   window-movement {
-    spring damping-ratio=0.85 stiffness=1000 epsilon=0.0001
+    spring damping-ratio=1.0 stiffness=1400 epsilon=0.0001
   }
   window-resize {
-    spring damping-ratio=0.85 stiffness=1000 epsilon=0.0001
+    spring damping-ratio=1.0 stiffness=1400 epsilon=0.0001
   }
 }
 
@@ -244,16 +244,22 @@ binds {
   Mod+C                  hotkey-overlay-title="Control: Noctalia Control Center"    { spawn "@noctalia@" "msg" "panel-toggle" "control-center"; }
   Mod+Shift+C            hotkey-overlay-title="Audio: Pavucontrol Mixer"            { spawn "@pavucontrol@"; }
 
-  // B & W: Bluetooth & Wi-Fi
+  // B & W: Bluetooth, Bitwarden, Wi-Fi & Wallpaper
   Mod+B                  hotkey-overlay-title="Bluetooth: Noctalia Panel"           { spawn "@noctalia@" "msg" "panel-toggle" "bluetooth"; }
   Mod+Shift+B            hotkey-overlay-title="Security: Bitwarden Desktop"         { spawn "@bitwarden@"; }
-  Mod+W                  hotkey-overlay-title="Network: Wi-Fi / Network Panel"      { spawn "@noctalia@" "msg" "panel-toggle" "network"; }
-  Mod+Shift+W            hotkey-overlay-title="Wallpaper: Noctalia Panel"           { spawn "@noctalia@" "msg" "panel-toggle" "wallpaper"; }
+  Mod+W                  hotkey-overlay-title="Wallpaper: Noctalia Selector"        { spawn "@noctalia@" "msg" "panel-toggle" "wallpaper"; }
+  Mod+Shift+W            hotkey-overlay-title="Network: Wi-Fi / Network Panel"      { spawn "@noctalia@" "msg" "panel-toggle" "network"; }
   Mod+Ctrl+W             hotkey-overlay-title="Bar: Toggle Noctalia Top Bar"        { spawn "@noctalia@" "msg" "bar-toggle"; }
 
-  // R: App Launcher
-  Mod+R                  hotkey-overlay-title="Launcher: Noctalia App Runner"       { spawn "@noctalia@" "msg" "panel-toggle" "launcher"; }
-  Mod+Shift+R            hotkey-overlay-title="Interactive Hotkey Search"           { spawn "@fuzzelCheatsheet@"; }
+  // R: OBS Studio & OBS Control Plugin
+  Mod+R                  hotkey-overlay-title="Capture: OBS Studio"                 { spawn "obs"; }
+  Mod+Shift+R            hotkey-overlay-title="Capture: OBS Control Panel"          { spawn "@noctalia@" "msg" "panel-toggle" "ayagmar/obs-control:panel"; }
+
+  // Launcher: Mod + Semicolon
+  Mod+Semicolon          hotkey-overlay-title="Launcher: Noctalia App Runner"       { spawn "@noctalia@" "msg" "panel-toggle" "launcher"; }
+
+  // Cheatsheet: Mod + Slash (Noctalia Plugin)
+  Mod+Slash              hotkey-overlay-title="Cheatsheet: Keybind Cheatsheet"      { spawn "@noctalia@" "msg" "panel-toggle" "kenn/keybind-cheatsheet:cheatsheet"; }
 
   // Esc & Q: Session & Window Actions
   Mod+Escape             hotkey-overlay-title="Session: Noctalia Power Menu"        { spawn "@noctalia@" "msg" "panel-toggle" "session"; }

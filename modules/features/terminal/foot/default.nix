@@ -1,9 +1,9 @@
-{ self, inputs, ... }: {
+_: {
   flake.nixosModules.foot =
     { config, pkgs, ... }:
     let
       user = config.mainUser;
-      theme = config.theme;
+      inherit (config) theme;
     in
     {
       environment.systemPackages = [ pkgs.foot ];

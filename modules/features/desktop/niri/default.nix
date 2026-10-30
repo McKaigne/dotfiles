@@ -1,4 +1,4 @@
-{ self, inputs, ... }:
+{ inputs, ... }:
 let
   makeNiriConfig =
     {
@@ -33,60 +33,7 @@ let
         fi
       '';
 
-      fuzzelCheatsheet = pkgs.writeShellScriptBin "fuzzel-cheatsheet" ''
-        set -euo pipefail
-        cat << 'SHEET_EOF' | ${pkgs.fuzzel}/bin/fuzzel --dmenu --prompt "⌨ Keybinds ➜ " --lines 18 --width 54
-Mod + Space         Fill Screen (Maximize Column Width)
-Mod + Shift + Space Fullscreen Window
-Mod + Ctrl + Space  Toggle Window Floating
-Mod + Alt + Space   Switch Focus Floating/Tiling
-Mod + F             Terminal: Foot Client (Daemon)
-Mod + Shift + F     Terminal: Tmux Project Sessionizer
-Mod + Ctrl + F      Terminal: Ghostty Standalone
-Mod + D             Browser: LibreWolf
-Mod + Shift + D     Browser: Brave Origin
-Mod + Ctrl + D      Browser: LibreWolf Private
-Mod + S             Files: PCManFM File Manager
-Mod + A             Chat: Ferdium Messaging Client
-Mod + Shift + A     Overview: Niri Workspace View
-Mod + G             Notes: Obsidian Knowledge Vault
-Mod + T             Snip: Area Screenshot to Clipboard
-Mod + Shift + T     Snip: Fullscreen to Clipboard
-Mod + E             Notices: Notification Center Panel
-Mod + Shift + E     Notices: Clear All Notice History
-Mod + X             Notices: Dismiss Active Notification
-Mod + V             Settings: Noctalia Settings GUI
-Mod + Shift + V     Clipboard: Noctalia History Panel
-Mod + C             Control: Noctalia Control Center Panel
-Mod + Shift + C     Audio: Pavucontrol Volume Mixer
-Mod + B             Bluetooth: Noctalia Bluetooth Panel
-Mod + Shift + B     Security: Bitwarden Desktop Client
-Mod + W             Network: Wi-Fi / Network Panel
-Mod + Shift + W     Wallpaper: Noctalia Wallpaper Selector
-Mod + Ctrl + W      Bar: Toggle Noctalia Top Bar
-Mod + R             Launcher: Noctalia App Runner
-Mod + Shift + R     Interactive Fuzzel Hotkey Search
-Mod + Esc           Session: Noctalia Power Menu
-Mod + Shift + Esc   Session: Lock Screen
-Mod + Ctrl + Esc    Monitors: Turn Off Displays
-Mod + Q             Close Focused Window
-Mod + Alt + H / L   Monitor: Focus Monitor Left / Right
-Mod + Alt + Shift + H / L Monitor: Move Column to Monitor Left / Right
-Mod + H / L         Navigate: Focus Column Left / Right
-Mod + J / K         Workspace: Focus Workspace Down / Up
-Mod + Shift + H / L Move: Move Column Left / Right
-Mod + Shift + J / K Workspace: Move Column Down / Up
-Mod + Ctrl + H / L  Resize: Shrink / Expand Column Width
-Mod + U / I         Stack: Focus Window Down / Up (Column)
-Mod + Shift + U / I Stack: Move Window Down / Up (Column)
-Mod + Ctrl + U / I  Resize: Shrink / Expand Window Height
-Mod + M             Stack: Consume Window Left
-Mod + , (Comma)     Stack: Consume Window Right
-Mod + . (Period)    Stack: Expel Window from Column
-Mod + 1..9          Workspace: Focus Named "one".."nine"
-Mod + 0             Workspace: Focus Dynamic 10th
-SHEET_EOF
-      '';
+
 
       screenshotArea = pkgs.writeShellScriptBin "screenshot-area" ''
         set -euo pipefail
@@ -142,7 +89,6 @@ SHEET_EOF
         "@wpctl@"
         "@playerctl@"
         "@zellijSessionizer@"
-        "@fuzzelCheatsheet@"
         "@easyeffects@"
         "@pavucontrol@"
         "@bitwarden@"
@@ -174,7 +120,6 @@ SHEET_EOF
         "${pkgs.wireplumber}/bin/wpctl"
         "${pkgs.playerctl}/bin/playerctl"
         "${zellijSessionizer}/bin/zellij-sessionizer"
-        "${fuzzelCheatsheet}/bin/fuzzel-cheatsheet"
         "${pkgs.easyeffects}/bin/easyeffects"
         "${pkgs.pavucontrol}/bin/pavucontrol"
         "${pkgs.bitwarden-desktop}/bin/bitwarden"
@@ -219,8 +164,8 @@ in
           lib
           noctaliaPkg
           ;
-        theme = config.theme;
-        palette = config.palette;
+        inherit (config) theme;
+        inherit (config) palette;
         outputConfig = renderedOutputConfig;
       };
     in
@@ -252,7 +197,7 @@ in
           settings = {
             default_session = {
               command = "${pkgs.niri}/bin/niri-session";
-              user = user;
+              inherit user;
             };
           };
         };

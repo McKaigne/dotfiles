@@ -1,9 +1,8 @@
-{ self, inputs, ... }: {
+_: {
   flake.nixosModules.librewolf =
     {
       config,
       pkgs,
-      lib,
       ...
     }:
     let
@@ -11,7 +10,7 @@
     in
     {
       nixpkgs.overlays = [
-        (final: prev: {
+        (_final: prev: {
           librewolf = prev.librewolf.override {
             nativeMessagingHosts = [
               prev.tridactyl-native

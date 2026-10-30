@@ -1,4 +1,4 @@
-{ self, inputs, ... }: {
+_: {
   flake.nixosModules.xdg =
     { config, pkgs, ... }:
     let

@@ -1,4 +1,4 @@
-{ self, inputs, ... }: {
+_: {
   flake.nixosModules.bash =
     { config, pkgs, ... }:
     let
@@ -15,6 +15,7 @@
           enableCompletion = true;
           shellAliases = { };
           initExtra = ''
+            set -o vi
             export STARSHIP_CONFIG="/etc/starship.toml"
             eval "$(${pkgs.starship}/bin/starship init bash)"
           '';

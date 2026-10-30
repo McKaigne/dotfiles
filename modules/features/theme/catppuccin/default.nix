@@ -1,15 +1,14 @@
-{ self, inputs, ... }: {
+{ inputs, ... }: {
   flake.nixosModules.catppuccinTheme =
     {
       config,
       pkgs,
-      lib,
       ...
     }:
     let
       user = config.mainUser;
       p = config.palette;
-      theme = config.theme;
+      inherit (config) theme;
 
       bibataCursorsFixed = pkgs.runCommand "bibata-modern-classic-fixed" { } ''
         mkdir -p $out/share/icons
@@ -27,6 +26,7 @@
 
         catppuccin = {
           enable = true;
+          autoEnable = true;
           flavor = "mocha";
           accent = "mauve";
           librewolf.enable = false;

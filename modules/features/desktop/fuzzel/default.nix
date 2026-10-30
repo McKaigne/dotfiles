@@ -1,9 +1,9 @@
-{ self, inputs, ... }: {
+_: {
   flake.nixosModules.fuzzel =
     { config, pkgs, ... }:
     let
       user = config.mainUser;
-      theme = config.theme;
+      inherit (config) theme;
     in
     {
       environment.systemPackages = [ pkgs.fuzzel ];
@@ -24,7 +24,7 @@
             };
             border = {
               width = theme.borderWidth;
-              radius = theme.radius;
+              inherit (theme) radius;
             };
           };
         };

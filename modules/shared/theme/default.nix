@@ -1,4 +1,4 @@
-{ self, inputs, ... }: {
+_: {
   flake.nixosModules.palette =
     { lib, pkgs, ... }:
     let

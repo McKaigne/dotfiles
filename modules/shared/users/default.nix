@@ -1,6 +1,6 @@
 { self, inputs, ... }: {
   flake.nixosModules.users =
-    { config, lib, pkgs, ... }:
+    { config, lib, ... }:
     let
       user = config.mainUser;
       avatarSrc = ../../../avatar.jpg;

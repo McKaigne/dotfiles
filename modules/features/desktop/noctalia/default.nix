@@ -1,9 +1,8 @@
-{ self, inputs, ... }: {
+{ inputs, ... }: {
   flake.nixosModules.noctalia =
     {
       config,
       pkgs,
-      lib,
       ...
     }:
     let

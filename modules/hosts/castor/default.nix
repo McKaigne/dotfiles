@@ -18,10 +18,6 @@
           scale = "1.0";
         };
 
-        boot.loader.systemd-boot.enable = true;
-        boot.loader.systemd-boot.editor = false;
-        boot.loader.efi.canTouchEfiVariables = true;
-
         boot.kernelParams = [
           "nowatchdog"
           "i915.enable_fbc=1"
@@ -31,33 +27,19 @@
           options snd_hda_intel power_save=1 power_save_controller=Y
         '';
 
-        boot.tmp.useTmpfs = true;
-        boot.tmp.tmpfsSize = "50%";
-
-        zramSwap = {
-          enable = true;
-          algorithm = "zstd";
-          memoryPercent = 50;
-        };
-
+        # Mobile dirty writeback tuning
         boot.kernel.sysctl = {
-          "vm.swappiness" = 180;
-          "vm.watermark_boost_factor" = 0;
-          "vm.watermark_scale_factor" = 125;
-          "vm.page-cluster" = 0;
           "vm.dirty_writeback_centisecs" = 6000;
           "vm.dirty_expire_centisecs" = 6000;
           "vm.dirty_ratio" = 20;
           "vm.dirty_background_ratio" = 5;
         };
 
-        networking.networkmanager.enable = true;
         networking.networkmanager.wifi.powersave = true;
 
         services.thermald.enable = true;
         services.power-profiles-daemon.enable = true;
         services.upower.enable = true;
-        services.openssh.enable = true;
 
         # Intel Iris Xe graphics
         hardware.graphics = {
