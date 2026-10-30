@@ -25,6 +25,7 @@ _: {
               }
             }
             default_mode "locked"
+            default_layout "compact"
             pane_frames true
             simplified_ui true
             default_shell "fish"
@@ -39,6 +40,7 @@ _: {
             ui {
               pane_frames {
                 rounded_corners true
+                hide_session_name true
               }
             }
           '';
