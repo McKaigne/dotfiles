@@ -211,8 +211,8 @@ binds {
   // === LEFT HAND: APPS & SYSTEM PANELS ===
   // F: Terminal
   Mod+F                  hotkey-overlay-title="Terminal: Foot Client"               { spawn "@footclient@"; }
-  Mod+Shift+F            hotkey-overlay-title="Terminal: Zellij Project Sessionizer"  { spawn "@footclient@" "-e" "@zellijSessionizer@"; }
-  Mod+Ctrl+F             hotkey-overlay-title="Terminal: Ghostty Standalone"        { spawn "@ghostty@"; }
+  Mod+Shift+F            hotkey-overlay-title="Terminal: Zellij Workspace (main)"   { spawn "@footclient@" "-e" "@zellij@" "attach" "-c" "main"; }
+  Mod+Ctrl+F             hotkey-overlay-title="Terminal: Zellij Session Picker"     { spawn "@footclient@" "-e" "@zellij@" "attach"; }
 
   // D: Browser
   Mod+D                  hotkey-overlay-title="Browser: LibreWolf"                  { spawn "@librewolf@"; }

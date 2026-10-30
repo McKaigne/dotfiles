@@ -32,7 +32,7 @@ Remote deployment runs over Tailscale with hyde as the build host.
 - `Mod + Shift + Space`: Fullscreen window
 - `Mod + Ctrl + Space`: Toggle window floating
 - `Mod + Alt + Space`: Toggle focus floating/tiling
-- `Mod + F`: Foot terminal (Shift: Zellij sessionizer, Ctrl: Ghostty)
+- `Mod + F`: Foot terminal (Shift: Zellij workspace main, Ctrl: Zellij session picker)
 - `Mod + D`: LibreWolf (Shift: Brave, Ctrl: Private)
 - `Mod + S`: PCManFM
 - `Mod + A`: Ferdium (Shift: Niri overview)

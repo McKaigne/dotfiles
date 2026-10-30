@@ -10,31 +10,6 @@ let
       outputConfig ? "",
     }:
     let
-      zellijSessionizer = pkgs.writeShellScriptBin "zellij-sessionizer" ''
-        set -euo pipefail
-        target=$( (
-          echo "$HOME/.config"
-          echo "/etc/nixos"
-          [ -d "$HOME/projects" ] && find "$HOME/projects" -mindepth 1 -maxdepth 2 -type d 2>/dev/null
-          [ -d "$HOME/dev" ] && find "$HOME/dev" -mindepth 1 -maxdepth 2 -type d 2>/dev/null
-          ${pkgs.zoxide}/bin/zoxide query -l 2>/dev/null
-        ) | grep -v -E '/\.git(/|$)' | awk '!seen[$0]++' | ${pkgs.fzf}/bin/fzf --reverse --header="Select project session:" )
-
-        if [ -z "$target" ]; then
-          exit 0
-        fi
-
-        session_name=$(basename "$target" | tr '.' '_')
-
-        if ${pkgs.zellij}/bin/zellij list-sessions 2>/dev/null | grep -q "^$session_name "; then
-          exec ${pkgs.zellij}/bin/zellij attach "$session_name"
-        else
-          cd "$target" && exec ${pkgs.zellij}/bin/zellij attach -c "$session_name"
-        fi
-      '';
-
-
-
       screenshotArea = pkgs.writeShellScriptBin "screenshot-area" ''
         set -euo pipefail
         ${pkgs.grim}/bin/grim -g "$(${pkgs.slurp}/bin/slurp)" - | ${pkgs.wl-clipboard}/bin/wl-copy
@@ -88,7 +63,7 @@ let
         "@ferdium@"
         "@wpctl@"
         "@playerctl@"
-        "@zellijSessionizer@"
+        "@zellij@"
         "@easyeffects@"
         "@pavucontrol@"
         "@bitwarden@"
@@ -119,7 +94,7 @@ let
         "${pkgs.ferdium}/bin/ferdium"
         "${pkgs.wireplumber}/bin/wpctl"
         "${pkgs.playerctl}/bin/playerctl"
-        "${zellijSessionizer}/bin/zellij-sessionizer"
+        "${pkgs.zellij}/bin/zellij"
         "${pkgs.easyeffects}/bin/easyeffects"
         "${pkgs.pavucontrol}/bin/pavucontrol"
         "${pkgs.bitwarden-desktop}/bin/bitwarden"
