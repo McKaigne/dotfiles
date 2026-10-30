@@ -21,6 +21,10 @@ _: {
               dpi-aware = "no";
               pad = "14x14";
             };
+            cursor = {
+              style = "beam";
+              color = "${p.hex.crust} ${p.hex.rosewater}";
+            };
             "colors-dark" = {
               alpha = theme.opacity;
               background = p.hex.base;

@@ -29,7 +29,7 @@ _: {
             editor = {
               scrolloff = 5;
               line-number = "relative";
-              cursorline = true;
+              cursorline = false;
               mouse = true;
               true-color = true;
               color-modes = true;
@@ -38,9 +38,9 @@ _: {
               auto-save = false;
               middle-click-paste = true;
               cursor-shape = {
-                insert = "bar";
                 normal = "block";
-                select = "underline";
+                insert = "bar";
+                select = "block";
               };
               file-picker = {
                 hidden = false;
@@ -84,8 +84,11 @@ _: {
             catppuccin_mocha_transparent = {
               inherits = "catppuccin_mocha";
               "ui.background" = { };
-              "ui.cursorline.primary" = { bg = "surface0"; };
-              "ui.cursorline.secondary" = { bg = "surface0"; };
+              "ui.cursor" = { fg = "crust"; bg = "rosewater"; };
+              "ui.cursor.primary" = { fg = "crust"; bg = "rosewater"; };
+              "ui.cursor.match" = { fg = "crust"; bg = "peach"; };
+              "ui.cursorline.primary" = { };
+              "ui.cursorline.secondary" = { };
               "ui.statusline" = { fg = "subtext1"; };
               "ui.statusline.inactive" = { fg = "overlay0"; };
               "ui.statusline.normal" = { fg = "base"; bg = "lavender"; modifiers = [ "bold" ]; };
