@@ -54,7 +54,7 @@ _: {
             };
             size = lib.mkOption {
               type = lib.types.int;
-              default = 14;
+              default = 11;
             };
           };
           mono = {
@@ -68,7 +68,7 @@ _: {
             };
             size = lib.mkOption {
               type = lib.types.int;
-              default = 14;
+              default = 11;
             };
           };
         };

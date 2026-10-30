@@ -56,8 +56,13 @@ _: {
                 display-inlay-hints = true;
               };
               statusline = {
-                left = [ "mode" "spinner" "version-control" "file-name" "read-only-indicator" "file-modification-indicator" ];
-                right = [ "diagnostics" "selections" "position" "file-encoding" "file-line-ending" "file-type" ];
+                left = [ "mode" "spinner" "file-name" "file-modification-indicator" ];
+                center = [ ];
+                right = [ "diagnostics" "selections" "position" "file-type" ];
+                separator = " │ ";
+                mode.normal = "NORMAL";
+                mode.insert = "INSERT";
+                mode.select = "SELECT";
               };
             };
             keys.normal = {
@@ -81,7 +86,13 @@ _: {
               "ui.background" = { };
               "ui.cursorline.primary" = { bg = "surface0"; };
               "ui.cursorline.secondary" = { bg = "surface0"; };
-              "ui.statusline" = { fg = "text"; bg = "mantle"; };
+              "ui.statusline" = { fg = "subtext1"; };
+              "ui.statusline.inactive" = { fg = "overlay0"; };
+              "ui.statusline.normal" = { fg = "base"; bg = "lavender"; modifiers = [ "bold" ]; };
+              "ui.statusline.insert" = { fg = "base"; bg = "green"; modifiers = [ "bold" ]; };
+              "ui.statusline.select" = { fg = "base"; bg = "peach"; modifiers = [ "bold" ]; };
+              "ui.bufferline" = { fg = "subtext0"; };
+              "ui.bufferline.active" = { fg = "mauve"; underline = { color = "mauve"; style = "line"; }; modifiers = [ "bold" ]; };
             };
           };
         };

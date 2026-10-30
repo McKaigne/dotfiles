@@ -6,8 +6,6 @@ color: #cdd6f4 !important;
 
 * {
 border-radius: 4px !important;
-font-family: "Victor Mono", monospace !important;
-font-size: 14px !important;
 }
 
 button:hover, .button:hover {
@@ -46,6 +44,6 @@ color: #11111b !important;
 @-moz-document url-prefix("moz-extension://") {
 body, * {
 font-family: "Victor Mono", monospace !important;
-font-size: 16px !important;
+font-size: 14px !important;
 }
 }

@@ -84,22 +84,6 @@
           };
 
           Preferences = {
-            "font.name.monospace.x-western" = {
-              Value = "Victor Mono";
-              Status = "locked";
-            };
-            "font.name.sans-serif.x-western" = {
-              Value = "Victor Mono";
-              Status = "locked";
-            };
-            "font.size.monospace.x-western" = {
-              Value = 15;
-              Status = "locked";
-            };
-            "font.size.variable.x-western" = {
-              Value = 16;
-              Status = "locked";
-            };
             "network.trr.mode" = {
               Value = 3;
               Status = "locked";
@@ -174,15 +158,6 @@
           text = ''
             colours dark
           '';
-          force = true;
-        };
-
-        xdg.configFile."librewolf/default/chrome/userChrome.css" = {
-          source = ./userChrome.css;
-          force = true;
-        };
-        xdg.configFile."librewolf/default/chrome/userContent.css" = {
-          source = ./userContent.css;
           force = true;
         };
 
