@@ -23,9 +23,9 @@ _: {
             };
             cursor = {
               style = "block";
-              color = "${p.hex.crust} ${p.hex.rosewater}";
             };
             "colors-dark" = {
+              cursor = "${p.hex.crust} ${p.hex.rosewater}";
               alpha = theme.opacity;
               background = p.hex.base;
               foreground = p.hex.text;

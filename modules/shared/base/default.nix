@@ -52,7 +52,8 @@
       self.nixosModules.zsh
       self.nixosModules.fish
       self.nixosModules.starship
-      self.nixosModules.fastfetch
+      self.nixosModules.nitch
+      self.nixosModules.nvchad
 
       # Editors
       self.nixosModules.helix
