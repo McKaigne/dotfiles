@@ -3,6 +3,7 @@ _: {
     { config, pkgs, ... }:
     let
       user = config.mainUser;
+      homeDir = config.home-manager.users.${user}.home.homeDirectory;
       zjstatusWasm = pkgs.fetchurl {
         url = "https://github.com/dj95/zjstatus/releases/download/v0.25.0/zjstatus.wasm";
         sha256 = "282ceab219e56e1908c9fac33907241fe6c3e1ef7d85faab3e5f438cef87b8fe";
@@ -63,7 +64,6 @@ WRAPPER
       environment.systemPackages = [
         zellijWrapped
         sesh
-        pkgs.yazi
       ];
 
       home-manager.users.${user} = {
@@ -104,7 +104,6 @@ WRAPPER
             pane_viewport_serialization true
             scrollback_lines_to_serialize 0
             serialization_interval 60
-            post_command_discovery_hook "echo "bash -c 'nnn'""
 
             plugins {
               zjstatus-bar location="file://${zjstatusWasm}" {
@@ -140,7 +139,7 @@ WRAPPER
                 tab_active_fullscreen  "#[fg=$mauve,bold,italic]{fullscreen_indicator}{name}  "
                 tab_active_sync        "#[fg=$green,bold,italic]{sync_indicator}#[fg=$mauve,bold,italic]{name}  "
 
-                command_usage_command    "bash -c "$HOME/.config/zellij/scripts/system_usage.sh""
+                command_usage_command    "${homeDir}/.config/zellij/scripts/system_usage.sh"
                 command_usage_format     "{stdout}"
                 command_usage_rendermode "dynamic"
                 command_usage_interval   "2"
@@ -166,13 +165,13 @@ WRAPPER
                 bind "Shift j" { MovePane "Down"; SwitchToMode "Normal"; }
 
                 bind "b" {
-                  Run "bash" "-c" "'nnn'" {
+                  Run "nnn" {
                     direction "Right"
                   };
                   SwitchToMode "Normal";
                 }
                 bind "v" {
-                  Run "bash" "-c" "'nnn'" {
+                  Run "nnn" {
                     direction "Down"
                   };
                   SwitchToMode "Normal";
@@ -335,7 +334,7 @@ WRAPPER
                     tab_active_fullscreen  "#[fg=$mauve,bold,italic]{fullscreen_indicator}{name}  "
                     tab_active_sync        "#[fg=$green,bold,italic]{sync_indicator}#[fg=$mauve,bold,italic]{name}  "
 
-                    command_usage_command    "bash -c "$HOME/.config/zellij/scripts/system_usage.sh""
+                    command_usage_command    "${homeDir}/.config/zellij/scripts/system_usage.sh"
                     command_usage_format     "{stdout}"
                     command_usage_rendermode "dynamic"
                     command_usage_interval   "2"
