@@ -46,6 +46,11 @@ if ! grep -Fq "${zjstatusWasm}" "$HOME/.cache/zellij/permissions.kdl" 2>/dev/nul
     ChangeApplicationState
     RunCommands
 }
+"https://github.com/dj95/zjstatus/releases/latest/download/zjstatus.wasm" {
+    ReadApplicationState
+    ChangeApplicationState
+    RunCommands
+}
 EOF
 fi
 exec ${pkgs.zellij}/bin/zellij "$@"
@@ -58,6 +63,7 @@ WRAPPER
       environment.systemPackages = [
         zellijWrapped
         sesh
+        pkgs.yazi
       ];
 
       home-manager.users.${user} = {
@@ -66,110 +72,224 @@ WRAPPER
           package = zellijWrapped;
         };
 
+        xdg.configFile."zellij/scripts/system_usage.sh" = {
+          text = ''
+            #!/usr/bin/env sh
+            load=$(awk '{print $1}' /proc/loadavg)
+            mem=$(free -m 2>/dev/null | awk '/Mem:/ { printf("%.0f%%", $3/$2*100) }')
+            printf '#[fg=#cba6f7] %s #[fg=#89b4fa] %s
+' "$load" "$mem"
+          '';
+          executable = true;
+        };
+
         xdg.configFile."zellij/config.kdl" = {
           text = ''
-            theme "catppuccin-mocha"
-            simplified_ui true
             default_shell "fish"
-            pane_frames false
-            mouse_mode true
-            copy_on_select true
+            scroll_buffer_size 10000
             copy_command "${pkgs.wl-clipboard}/bin/wl-copy"
-            copy_clipboard "system"
-            session_serialization true
+
+            ui {
+              pane_frames {
+                rounded_corners true
+              }
+            }
+
+            advanced_mouse_actions false
+            mouse_hover_effects false
+            copy_on_select true
             show_startup_tips false
             show_release_notes false
+            session_serialization true
+            pane_viewport_serialization true
+            scrollback_lines_to_serialize 0
+            serialization_interval 60
+            post_command_discovery_hook "echo "bash -c 'yazi'""
+
+            plugins {
+              zjstatus-bar location="file://${zjstatusWasm}" {
+                color_dark    "#181825"
+                color_red     "#f38ba8"
+                color_blue    "#89b4fa"
+                color_green   "#a6e3a1"
+                color_mauve   "#cba6f7"
+                color_default "#cdd6f4"
+
+                format_left   "{mode} #[fg=$default,bold]{session}   {tabs}"
+                format_center ""
+                format_right  "{command_usage}"
+                format_space  ""
+
+                mode_normal        "#[bg=$mauve] "
+                mode_tmux          "#[bg=$mauve] "
+                mode_tab           "#[fg=$dark,bg=$mauve,bold][TAB]"
+                mode_rename_pane   "#[fg=$dark,bg=$mauve,bold][RENAMEPANE]"
+                mode_rename_tab    "#[fg=$dark,bg=$mauve,bold][RENAMETAB]"
+                mode_resize        "#[fg=$dark,bg=$mauve,bold][RESIZE]"
+                mode_scroll        "#[fg=$dark,bg=$mauve,bold][SCROLL]"
+                mode_enter_search  "#[fg=$dark,bg=$mauve,bold][ENTERSEARCH]"
+                mode_search        "#[fg=$dark,bg=$mauve,bold][SEARCH]"
+
+                tab_sync_indicator       "S"
+                tab_fullscreen_indicator "󰊓"
+                tab_floating_indicator   "⬚"
+                tab_normal               "#[fg=$default]{name}  "
+                tab_normal_fullscreen  "#[fg=$default]{fullscreen_indicator}{name}  "
+                tab_normal_sync        "#[fg=$green,bold,italic]{sync_indicator}#[fg=$default]{name}  "
+                tab_active             "#[fg=$mauve,bold,italic]{name}  "
+                tab_active_fullscreen  "#[fg=$mauve,bold,italic]{fullscreen_indicator}{name}  "
+                tab_active_sync        "#[fg=$green,bold,italic]{sync_indicator}#[fg=$mauve,bold,italic]{name}  "
+
+                command_usage_command    "bash -c "$HOME/.config/zellij/scripts/system_usage.sh""
+                command_usage_format     "{stdout}"
+                command_usage_rendermode "dynamic"
+                command_usage_interval   "2"
+              }
+            }
 
             keybinds clear-defaults=true {
               normal {
-                bind "Ctrl Space" { SwitchToMode "Tmux"; }
-
-                bind "Alt h" "Alt Left" { MoveFocus "Left"; }
-                bind "Alt l" "Alt Right" { MoveFocus "Right"; }
-                bind "Alt j" "Alt Down" { MoveFocus "Down"; }
-                bind "Alt k" "Alt Up" { MoveFocus "Up"; }
-
-                bind "Alt 1" { GoToTab 1; }
-                bind "Alt 2" { GoToTab 2; }
-                bind "Alt 3" { GoToTab 3; }
-                bind "Alt 4" { GoToTab 4; }
-                bind "Alt 5" { GoToTab 5; }
-                bind "Alt 6" { GoToTab 6; }
-                bind "Alt 7" { GoToTab 7; }
-                bind "Alt 8" { GoToTab 8; }
-                bind "Alt 9" { GoToTab 9; }
-                bind "Alt [" { GoToPreviousTab; }
-                bind "Alt ]" { GoToNextTab; }
-
-                bind "Alt n" { NewPane; }
-                bind "Alt z" { ToggleFocusFullscreen; }
-                bind "Alt f" { ToggleFloatingPanes; }
+                bind "Ctrl a" { SwitchToMode "Tmux"; }
               }
 
               tmux {
-                bind "Esc" { SwitchToMode "Normal"; }
+                bind "Esc" "q" "Ctrl c" { SwitchToMode "Normal"; }
+                bind "Ctrl a" { Write 1; SwitchToMode "Normal"; }
 
-                bind "p" { SwitchToMode "Pane"; }
-                bind "t" { SwitchToMode "Tab"; }
-                bind "r" { SwitchToMode "Resize"; }
-                bind "s" { SwitchToMode "Scroll"; }
-                bind "o" { SwitchToMode "Session"; }
+                bind "h" { MoveFocus "Left"; SwitchToMode "Normal"; }
+                bind "Shift h" { MovePane "Left"; SwitchToMode "Normal"; }
+                bind "l" { MoveFocus "Right"; SwitchToMode "Normal"; }
+                bind "Shift l" { MovePane "Right"; SwitchToMode "Normal"; }
+                bind "k" { MoveFocus "Up"; SwitchToMode "Normal"; }
+                bind "Shift k" { MovePane "Up"; SwitchToMode "Normal"; }
+                bind "j" { MoveFocus "Down"; SwitchToMode "Normal"; }
+                bind "Shift j" { MovePane "Down"; SwitchToMode "Normal"; }
 
-                bind "n" { NewPane; SwitchToMode "Normal"; }
-                bind "d" { NewPane "Down"; SwitchToMode "Normal"; }
-                bind "v" { NewPane "Right"; SwitchToMode "Normal"; }
+                bind "b" {
+                  Run "bash" "-c" "'yazi'" {
+                    direction "Right"
+                  };
+                  SwitchToMode "Normal";
+                }
+                bind "v" {
+                  Run "bash" "-c" "'yazi'" {
+                    direction "Down"
+                  };
+                  SwitchToMode "Normal";
+                }
+
+                bind "n" { NewPane "stacked"; SwitchToMode "Normal"; }
                 bind "x" { CloseFocus; SwitchToMode "Normal"; }
                 bind "z" { ToggleFocusFullscreen; SwitchToMode "Normal"; }
-                bind "c" { NewTab; SwitchToMode "Normal"; }
-              }
+                bind "o" { NewPane; SwitchToMode "Normal"; }
+                bind "Shift r" { SwitchToMode "RenamePane"; PaneNameInput 0; }
+                bind "g" { NextSwapLayout; SwitchToMode "Normal"; }
+                bind "." { ToggleFloatingPanes; SwitchToMode "Normal"; }
+                bind ">" { TogglePaneEmbedOrFloating; SwitchToMode "Normal"; }
+                bind "Ctrl r" { SwitchToMode "Resize"; }
 
-              pane {
-                bind "Esc" "Enter" { SwitchToMode "Normal"; }
-                bind "h" "Left" { MoveFocus "Left"; }
-                bind "l" "Right" { MoveFocus "Right"; }
-                bind "j" "Down" { MoveFocus "Down"; }
-                bind "k" "Up" { MoveFocus "Up"; }
-                bind "n" { NewPane; }
-                bind "d" { NewPane "Down"; }
-                bind "r" { NewPane "Right"; }
-                bind "x" { CloseFocus; }
-                bind "f" { ToggleFocusFullscreen; SwitchToMode "Normal"; }
-                bind "w" { ToggleFloatingPanes; SwitchToMode "Normal"; }
-              }
-
-              tab {
-                bind "Esc" "Enter" { SwitchToMode "Normal"; }
-                bind "h" "Left" { GoToPreviousTab; }
-                bind "l" "Right" { GoToNextTab; }
-                bind "n" { NewTab; SwitchToMode "Normal"; }
-                bind "x" { CloseTab; SwitchToMode "Normal"; }
+                bind "a" { ToggleTab; SwitchToMode "Normal"; }
+                bind "t" { NewTab; SwitchToMode "Normal"; }
+                bind "Ctrl t" { SwitchToMode "Tab"; }
+                bind "1" { GoToTab 1; SwitchToMode "Normal"; }
+                bind "2" { GoToTab 2; SwitchToMode "Normal"; }
+                bind "3" { GoToTab 3; SwitchToMode "Normal"; }
+                bind "4" { GoToTab 4; SwitchToMode "Normal"; }
+                bind "5" { GoToTab 5; SwitchToMode "Normal"; }
+                bind "6" { GoToTab 6; SwitchToMode "Normal"; }
+                bind "7" { GoToTab 7; SwitchToMode "Normal"; }
+                bind "8" { GoToTab 8; SwitchToMode "Normal"; }
+                bind "9" { GoToTab 9; SwitchToMode "Normal"; }
                 bind "r" { SwitchToMode "RenameTab"; TabNameInput 0; }
+                bind "Shift x" { CloseTab; SwitchToMode "Normal"; }
+
+                bind "Ctrl l" { Clear; SwitchToMode "Normal"; }
+                bind "s" "f" { EditScrollback { ansi true; }; SwitchToMode "Normal"; }
+                bind "/" { SwitchToMode "EnterSearch"; SearchInput 0; }
+                bind "Ctrl d" "d" { SwitchToMode "Scroll"; }
+
+                bind "w" {
+                  LaunchOrFocusPlugin "session-manager" {
+                    floating true
+                    move_to_focused_tab true
+                  };
+                  SwitchToMode "Normal";
+                }
+                bind "p" {
+                  LaunchOrFocusPlugin "zellij:plugin-manager" {
+                    floating true
+                    move_to_focused_tab true
+                  };
+                  SwitchToMode "Normal";
+                }
+              }
+
+              renamepane {
+                bind "Enter" { SwitchToMode "Normal"; }
+                bind "Ctrl a" "Esc" "Ctrl c" { UndoRenamePane; SwitchToMode "Normal"; }
               }
 
               resize {
-                bind "Esc" "Enter" { SwitchToMode "Normal"; }
+                bind "Ctrl a" "q" "Esc" "Ctrl c" "Ctrl r" { SwitchToMode "Normal"; }
                 bind "h" "Left" { Resize "Increase Left"; }
-                bind "l" "Right" { Resize "Increase Right"; }
                 bind "j" "Down" { Resize "Increase Down"; }
                 bind "k" "Up" { Resize "Increase Up"; }
-                bind "H" { Resize "Decrease Left"; }
-                bind "L" { Resize "Decrease Right"; }
-                bind "J" { Resize "Decrease Down"; }
-                bind "K" { Resize "Decrease Up"; }
+                bind "l" "Right" { Resize "Increase Right"; }
+              }
+
+              tab {
+                bind "Ctrl a" "Enter" "Esc" "q" "Ctrl c" { SwitchToMode "Normal"; }
+                bind "h" "Left" "Up" "k" { GoToPreviousTab; }
+                bind "Shift h" { MoveTab "Left"; }
+                bind "l" "Right" "Down" "j" { GoToNextTab; }
+                bind "Shift l" { MoveTab "Right"; }
+                bind "x" { CloseTab; }
+                bind "r" { SwitchToMode "RenameTab"; TabNameInput 0; }
+                bind "s" { ToggleActiveSyncTab; SwitchToMode "Normal"; }
+              }
+
+              renametab {
+                bind "Enter" { SwitchToMode "Normal"; }
+                bind "Ctrl a" "Esc" "Ctrl c" { UndoRenameTab; SwitchToMode "Normal"; }
               }
 
               scroll {
-                bind "Esc" "Enter" { SwitchToMode "Normal"; }
-                bind "j" "Down" { ScrollDown; }
-                bind "k" "Up" { ScrollUp; }
-                bind "d" { HalfPageScrollDown; }
-                bind "u" { HalfPageScrollUp; }
+                bind "Ctrl a" "q" "Esc" "Ctrl c" { SwitchToMode "Normal"; }
                 bind "/" { SwitchToMode "EnterSearch"; SearchInput 0; }
+                bind "j" "Ctrl e" "Down" { ScrollDown; }
+                bind "k" "Ctrl y" "Up" { ScrollUp; }
+                bind "Ctrl d" { HalfPageScrollDown; }
+                bind "Ctrl u" { HalfPageScrollUp; }
+                bind "Ctrl f" { PageScrollDown; }
+                bind "Ctrl b" { PageScrollUp; }
+                bind "G" { ScrollToBottom; }
+                bind "g" { ScrollToTop; }
+                bind "s" "f" { EditScrollback { ansi true; }; SwitchToMode "Normal"; }
               }
 
-              session {
-                bind "Esc" "Enter" { SwitchToMode "Normal"; }
-                bind "d" { Detach; }
+              entersearch {
+                bind "Esc" "Ctrl c" { SwitchToMode "Scroll"; }
+                bind "Ctrl a" { SwitchToMode "Normal"; }
+                bind "Enter" { SwitchToMode "Search"; }
+              }
+
+              search {
+                bind "Ctrl a" "Ctrl c" "q" "Esc" { SwitchToMode "Normal"; }
+                bind "n" { Search "up"; }
+                bind "N" { Search "down"; }
+                bind "c" { SearchToggleOption "CaseSensitivity"; }
+                bind "w" { SearchToggleOption "Wrap"; }
+                bind "o" { SearchToggleOption "WholeWord"; }
+                bind "/" { SwitchToMode "EnterSearch"; SearchInput 0; }
+                bind "j" "Down" { ScrollDown; }
+                bind "k" "Up" { ScrollUp; }
+                bind "Ctrl d" { HalfPageScrollDown; }
+                bind "Ctrl u" { HalfPageScrollUp; }
+                bind "Ctrl f" { PageScrollDown; }
+                bind "Ctrl b" { PageScrollUp; }
+                bind "G" { ScrollToBottom; }
+                bind "g" { ScrollToTop; }
+                bind "s" "f" { EditScrollback { ansi true; }; SwitchToMode "Normal"; }
               }
             }
           '';
@@ -179,190 +299,48 @@ WRAPPER
         xdg.configFile."zellij/layouts/default.kdl" = {
           text = ''
             layout {
-              swap_tiled_layout name="vertical" {
-                tab max_panes=5 {
-                  pane split_direction="vertical" {
-                    pane
-                    pane { children; }
-                  }
-                }
-                tab max_panes=8 {
-                  pane split_direction="vertical" {
-                    pane { children; }
-                    pane { pane; pane; pane; pane; }
-                  }
-                }
-                tab max_panes=12 {
-                  pane split_direction="vertical" {
-                    pane { children; }
-                    pane { pane; pane; pane; pane; }
-                    pane { pane; pane; pane; pane; }
-                  }
-                }
-              }
-
-              swap_tiled_layout name="horizontal" {
-                tab max_panes=5 {
-                  pane
-                  pane
-                }
-                tab max_panes=8 {
-                  pane {
-                    pane split_direction="vertical" { children; }
-                    pane split_direction="vertical" { pane; pane; pane; pane; }
-                  }
-                }
-                tab max_panes=12 {
-                  pane {
-                    pane split_direction="vertical" { children; }
-                    pane split_direction="vertical" { pane; pane; pane; pane; }
-                    pane split_direction="vertical" { pane; pane; pane; pane; }
-                  }
-                }
-              }
-
-              swap_tiled_layout name="stacked" {
-                tab min_panes=5 {
-                  pane split_direction="vertical" {
-                    pane
-                    pane stacked=true { children; }
-                  }
-                }
-              }
-
-              swap_floating_layout name="staggered" {
-                floating_panes
-              }
-
-              swap_floating_layout name="enlarged" {
-                floating_panes max_panes=10 {
-                  pane { x "5%"; y 1; width "90%"; height "90%"; }
-                  pane { x "5%"; y 2; width "90%"; height "90%"; }
-                  pane { x "5%"; y 3; width "90%"; height "90%"; }
-                  pane { x "5%"; y 4; width "90%"; height "90%"; }
-                  pane { x "5%"; y 5; width "90%"; height "90%"; }
-                  pane { x "5%"; y 6; width "90%"; height "90%"; }
-                  pane { x "5%"; y 7; width "90%"; height "90%"; }
-                  pane { x "5%"; y 8; width "90%"; height "90%"; }
-                  pane { x "5%"; y 9; width "90%"; height "90%"; }
-                  pane focus=true { x 10; y 10; width "90%"; height "90%"; }
-                }
-              }
-
-              swap_floating_layout name="spread" {
-                floating_panes max_panes=1 {
-                  pane { y "50%"; x "50%"; }
-                }
-                floating_panes max_panes=2 {
-                  pane { x "1%"; y "25%"; width "45%"; }
-                  pane { x "50%"; y "25%"; width "45%"; }
-                }
-                floating_panes max_panes=3 {
-                  pane focus=true { y "55%"; width "45%"; height "45%"; }
-                  pane { x "1%"; y "1%"; width "45%"; }
-                  pane { x "50%"; y "1%"; width "45%"; }
-                }
-                floating_panes max_panes=4 {
-                  pane { x "1%"; y "55%"; width "45%"; height "45%"; }
-                  pane focus=true { x "50%"; y "55%"; width "45%"; height "45%"; }
-                  pane { x "1%"; y "1%"; width "45%"; height "45%"; }
-                  pane { x "50%"; y "1%"; width "45%"; height "45%"; }
-                }
-              }
-
               default_tab_template {
+                children
                 pane size=1 borderless=true {
                   plugin location="file://${zjstatusWasm}" {
-                    color_rosewater "#f5e0dc"
-                    color_flamingo  "#f2cdcd"
-                    color_pink      "#f5c2e7"
-                    color_mauve     "#cba6f7"
-                    color_red       "#f38ba8"
-                    color_maroon    "#eba0ac"
-                    color_peach     "#fab387"
-                    color_yellow    "#f9e2af"
-                    color_green     "#a6e3a1"
-                    color_teal      "#94e2d5"
-                    color_sky       "#89dceb"
-                    color_sapphire  "#74c7ec"
-                    color_blue      "#89b4fa"
-                    color_lavender  "#b4befe"
-                    color_text      "#cdd6f4"
-                    color_subtext1  "#bac2de"
-                    color_subtext0  "#a6adc8"
-                    color_overlay2  "#9399b2"
-                    color_overlay1  "#7f849c"
-                    color_overlay0  "#6c7086"
-                    color_surface2  "#585b70"
-                    color_surface1  "#45475a"
-                    color_surface0  "#313244"
-                    color_base      "#1e1e2e"
-                    color_mantle    "#181825"
-                    color_crust     "#11111b"
+                    color_dark    "#181825"
+                    color_red     "#f38ba8"
+                    color_blue    "#89b4fa"
+                    color_green   "#a6e3a1"
+                    color_mauve   "#cba6f7"
+                    color_default "#cdd6f4"
 
-                    format_left   "#[bg=$surface0,fg=$sapphire]#[bg=$sapphire,fg=$crust,bold] {session} #[bg=$surface0] {mode}#[bg=$surface0] {tabs}"
-                    format_center "{notifications}"
-                    format_right  "#[bg=$surface0,fg=$flamingo]#[fg=$crust,bg=$flamingo] #[bg=$surface1,fg=$flamingo,bold] {command_user}@{command_host}#[bg=$surface0,fg=$surface1]#[bg=$surface0,fg=$maroon]#[bg=$maroon,fg=$crust]󰃭 #[bg=$surface1,fg=$maroon,bold] {datetime}#[bg=$surface0,fg=$surface1]"
+                    format_left   "{mode} #[fg=$default,bold]{session}   {tabs}"
+                    format_center ""
+                    format_right  "{command_usage}"
                     format_space  ""
-                    format_hide_on_overlength "true"
-                    format_precedence "lrc"
 
-                    border_enabled  "false"
-                    border_char     "─"
-                    border_format   "#[fg=$surface1]{char}"
-                    border_position "top"
+                    mode_normal        "#[bg=$mauve] "
+                    mode_tmux          "#[bg=$mauve] "
+                    mode_tab           "#[fg=$dark,bg=$mauve,bold][TAB]"
+                    mode_rename_pane   "#[fg=$dark,bg=$mauve,bold][RENAMEPANE]"
+                    mode_rename_tab    "#[fg=$dark,bg=$mauve,bold][RENAMETAB]"
+                    mode_resize        "#[fg=$dark,bg=$mauve,bold][RESIZE]"
+                    mode_scroll        "#[fg=$dark,bg=$mauve,bold][SCROLL]"
+                    mode_enter_search  "#[fg=$dark,bg=$mauve,bold][ENTERSEARCH]"
+                    mode_search        "#[fg=$dark,bg=$mauve,bold][SEARCH]"
 
-                    hide_frame_for_single_pane "true"
+                    tab_sync_indicator       "S"
+                    tab_fullscreen_indicator "󰊓"
+                    tab_floating_indicator   "⬚"
+                    tab_normal               "#[fg=$default]{name}  "
+                    tab_normal_fullscreen  "#[fg=$default]{fullscreen_indicator}{name}  "
+                    tab_normal_sync        "#[fg=$green,bold,italic]{sync_indicator}#[fg=$default]{name}  "
+                    tab_active             "#[fg=$mauve,bold,italic]{name}  "
+                    tab_active_fullscreen  "#[fg=$mauve,bold,italic]{fullscreen_indicator}{name}  "
+                    tab_active_sync        "#[fg=$green,bold,italic]{sync_indicator}#[fg=$mauve,bold,italic]{name}  "
 
-                    mode_normal         "#[bg=$surface0,fg=$green]#[bg=$green,fg=$crust,bold] #[bg=$surface1,fg=$green,bold] NOR#[bg=$surface0,fg=$surface1]"
-                    mode_tmux           "#[bg=$surface0,fg=$mauve]#[bg=$mauve,fg=$crust,bold] #[bg=$surface1,fg=$mauve,bold] MUX#[bg=$surface0,fg=$surface1]"
-                    mode_locked         "#[bg=$surface0,fg=$red]#[bg=$red,fg=$crust,bold] #[bg=$surface1,fg=$red,bold] LCK#[bg=$surface0,fg=$surface1]"
-                    mode_pane           "#[bg=$surface0,fg=$teal]#[bg=$teal,fg=$crust,bold] #[bg=$surface1,fg=$teal,bold] PAN#[bg=$surface0,fg=$surface1]"
-                    mode_tab            "#[bg=$surface0,fg=$teal]#[bg=$teal,fg=$crust,bold] #[bg=$surface1,fg=$teal,bold] TAB#[bg=$surface0,fg=$surface1]"
-                    mode_scroll         "#[bg=$surface0,fg=$flamingo]#[bg=$flamingo,fg=$crust,bold] #[bg=$surface1,fg=$flamingo,bold] SCR#[bg=$surface0,fg=$surface1]"
-                    mode_enter_search   "#[bg=$surface0,fg=$flamingo]#[bg=$flamingo,fg=$crust,bold] #[bg=$surface1,fg=$flamingo,bold] ENS#[bg=$surface0,fg=$surface1]"
-                    mode_search         "#[bg=$surface0,fg=$flamingo]#[bg=$flamingo,fg=$crust,bold] #[bg=$surface1,fg=$flamingo,bold] SRC#[bg=$surface0,fg=$surface1]"
-                    mode_resize         "#[bg=$surface0,fg=$yellow]#[bg=$yellow,fg=$crust,bold] #[bg=$surface1,fg=$yellow,bold] RES#[bg=$surface0,fg=$surface1]"
-                    mode_rename_tab     "#[bg=$surface0,fg=$yellow]#[bg=$yellow,fg=$crust,bold] #[bg=$surface1,fg=$yellow,bold] RNT#[bg=$surface0,fg=$surface1]"
-                    mode_rename_pane    "#[bg=$surface0,fg=$yellow]#[bg=$yellow,fg=$crust,bold] #[bg=$surface1,fg=$yellow,bold] RNP#[bg=$surface0,fg=$surface1]"
-                    mode_move           "#[bg=$surface0,fg=$yellow]#[bg=$yellow,fg=$crust,bold] #[bg=$surface1,fg=$yellow,bold] MOV#[bg=$surface0,fg=$surface1]"
-                    mode_session        "#[bg=$surface0,fg=$pink]#[bg=$pink,fg=$crust,bold] #[bg=$surface1,fg=$pink,bold] SES#[bg=$surface0,fg=$surface1]"
-                    mode_prompt         "#[bg=$surface0,fg=$pink]#[bg=$pink,fg=$crust,bold] #[bg=$surface1,fg=$pink,bold] PRM#[bg=$surface0,fg=$surface1]"
-
-                    tab_normal              "#[bg=$surface0,fg=$blue]#[bg=$blue,fg=$crust,bold]{index} #[bg=$surface1,fg=$blue,bold] {name}{floating_indicator}#[bg=$surface0,fg=$surface1]"
-                    tab_normal_fullscreen   "#[bg=$surface0,fg=$blue]#[bg=$blue,fg=$crust,bold]{index} #[bg=$surface1,fg=$blue,bold] {name}{fullscreen_indicator}#[bg=$surface0,fg=$surface1]"
-                    tab_normal_sync         "#[bg=$surface0,fg=$blue]#[bg=$blue,fg=$crust,bold]{index} #[bg=$surface1,fg=$blue,bold] {name}{sync_indicator}#[bg=$surface0,fg=$surface1]"
-
-                    tab_active              "#[bg=$surface0,fg=$peach]#[bg=$peach,fg=$crust,bold]{index} #[bg=$surface1,fg=$peach,bold] {name}{floating_indicator}#[bg=$surface0,fg=$surface1]"
-                    tab_active_fullscreen   "#[bg=$surface0,fg=$peach]#[bg=$peach,fg=$crust,bold]{index} #[bg=$surface1,fg=$peach,bold] {name}{fullscreen_indicator}#[bg=$surface0,fg=$surface1]"
-                    tab_active_sync         "#[bg=$surface0,fg=$peach]#[bg=$peach,fg=$crust,bold]{index} #[bg=$surface1,fg=$peach,bold] {name}{sync_indicator}#[bg=$surface0,fg=$surface1]"
-
-                    tab_separator           "#[bg=$surface0] "
-
-                    tab_sync_indicator       " "
-                    tab_fullscreen_indicator " 󰊓"
-                    tab_floating_indicator   " 󰹙"
-
-                    notification_format_unread "#[bg=$surface0,fg=$yellow]#[bg=$yellow,fg=$crust] #[bg=$surface1,fg=$yellow] {message}#[bg=$surface0,fg=$yellow]"
-                    notification_format_no_notifications ""
-                    notification_show_interval "10"
-
-                    command_host_command    "uname -n"
-                    command_host_format     "{stdout}"
-                    command_host_interval   "0"
-                    command_host_rendermode "static"
-
-                    command_user_command    "whoami"
-                    command_user_format     "{stdout}"
-                    command_user_interval   "10"
-                    command_user_rendermode "static"
-
-                    datetime          "{format}"
-                    datetime_format   "%Y-%m-%d 󰅐 %H:%M"
-                    datetime_timezone "Asia/Manila"
+                    command_usage_command    "bash -c "$HOME/.config/zellij/scripts/system_usage.sh""
+                    command_usage_format     "{stdout}"
+                    command_usage_rendermode "dynamic"
+                    command_usage_interval   "2"
                   }
                 }
-                children
               }
             }
           '';

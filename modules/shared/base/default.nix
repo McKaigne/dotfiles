@@ -53,7 +53,6 @@
       self.nixosModules.fish
       self.nixosModules.starship
       self.nixosModules.nitch
-      self.nixosModules.nvchad
 
       # Editors
       self.nixosModules.helix
