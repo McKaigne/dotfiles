@@ -23,16 +23,47 @@ _: {
           cd "$ZOXIDE_RESULT" && exec zellij attach -c "$SESSION_TITLE"
         fi
       '';
+
+      zellijWrapped = pkgs.symlinkJoin {
+        name = "zellij-${pkgs.zellij.version}";
+        version = pkgs.zellij.version;
+        paths = [ pkgs.zellij ];
+        nativeBuildInputs = [ pkgs.makeWrapper ];
+        postBuild = ''
+          rm -f $out/bin/zellij
+          cat << 'WRAPPER' > $out/bin/zellij
+#!/usr/bin/env sh
+mkdir -p "$HOME/.cache/zellij"
+if ! grep -Fq "${zjstatusWasm}" "$HOME/.cache/zellij/permissions.kdl" 2>/dev/null; then
+  cat << 'EOF' >> "$HOME/.cache/zellij/permissions.kdl"
+"${zjstatusWasm}" {
+    ReadApplicationState
+    ChangeApplicationState
+    RunCommands
+}
+"file://${zjstatusWasm}" {
+    ReadApplicationState
+    ChangeApplicationState
+    RunCommands
+}
+EOF
+fi
+exec ${pkgs.zellij}/bin/zellij "$@"
+WRAPPER
+          chmod +x $out/bin/zellij
+        '';
+      };
     in
     {
       environment.systemPackages = [
-        pkgs.zellij
+        zellijWrapped
         sesh
       ];
 
       home-manager.users.${user} = {
         programs.zellij = {
           enable = true;
+          package = zellijWrapped;
         };
 
         xdg.configFile."zellij/config.kdl" = {

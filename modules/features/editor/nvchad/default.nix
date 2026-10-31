@@ -20,8 +20,15 @@
             local M = {}
             M.base46 = {
               theme = "catppuccin",
+              transparency = true,
+              hl_override = {
+                StatusLine = { bg = "NONE" },
+                StatusLineNC = { bg = "NONE" },
+                St_EmptySpace = { bg = "NONE" },
+              },
             }
             M.ui = {
+              transparency = true,
               statusline = {
                 theme = "default",
                 separator_style = "block",
