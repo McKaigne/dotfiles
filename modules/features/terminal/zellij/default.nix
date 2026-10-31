@@ -104,7 +104,7 @@ WRAPPER
             pane_viewport_serialization true
             scrollback_lines_to_serialize 0
             serialization_interval 60
-            post_command_discovery_hook "echo "bash -c 'yazi'""
+            post_command_discovery_hook "echo "bash -c 'nnn'""
 
             plugins {
               zjstatus-bar location="file://${zjstatusWasm}" {
@@ -166,13 +166,13 @@ WRAPPER
                 bind "Shift j" { MovePane "Down"; SwitchToMode "Normal"; }
 
                 bind "b" {
-                  Run "bash" "-c" "'yazi'" {
+                  Run "bash" "-c" "'nnn'" {
                     direction "Right"
                   };
                   SwitchToMode "Normal";
                 }
                 bind "v" {
-                  Run "bash" "-c" "'yazi'" {
+                  Run "bash" "-c" "'nnn'" {
                     direction "Down"
                   };
                   SwitchToMode "Normal";

@@ -337,8 +337,9 @@ in
           FZF_ALT_C_COMMAND = "${pkgs.fd}/bin/fd --type d --strip-cwd-prefix --hidden --follow --exclude .git";
           FZF_ALT_C_OPTS = "--preview '${pkgs.eza}/bin/eza --tree --level=2 --color=always {} | head -200' --preview-window=right:60%:wrap";
 
-          NNN_COLORS = "2134";
-          NNN_FCOLORS = "c1e2272e006033f7c6d6abc4";
+          NNN_COLORS = "5423";
+          NNN_FCOLORS = "030305020704060801060501";
+          NNN_BATTHEME = "Catppuccin Mocha";
         };
 
         home-manager.users.${user} = {
