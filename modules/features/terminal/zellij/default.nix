@@ -148,12 +148,12 @@ WRAPPER
 
             keybinds clear-defaults=true {
               normal {
-                bind "Ctrl a" { SwitchToMode "Tmux"; }
+                bind "Ctrl Space" { SwitchToMode "Tmux"; }
               }
 
               tmux {
                 bind "Esc" "q" "Ctrl c" { SwitchToMode "Normal"; }
-                bind "Ctrl a" { Write 1; SwitchToMode "Normal"; }
+                bind "Ctrl Space" { SwitchToMode "Normal"; }
 
                 bind "h" { MoveFocus "Left"; SwitchToMode "Normal"; }
                 bind "Shift h" { MovePane "Left"; SwitchToMode "Normal"; }
@@ -225,11 +225,11 @@ WRAPPER
 
               renamepane {
                 bind "Enter" { SwitchToMode "Normal"; }
-                bind "Ctrl a" "Esc" "Ctrl c" { UndoRenamePane; SwitchToMode "Normal"; }
+                bind "Ctrl Space" "Esc" "Ctrl c" { UndoRenamePane; SwitchToMode "Normal"; }
               }
 
               resize {
-                bind "Ctrl a" "q" "Esc" "Ctrl c" "Ctrl r" { SwitchToMode "Normal"; }
+                bind "Ctrl Space" "q" "Esc" "Ctrl c" "Ctrl r" { SwitchToMode "Normal"; }
                 bind "h" "Left" { Resize "Increase Left"; }
                 bind "j" "Down" { Resize "Increase Down"; }
                 bind "k" "Up" { Resize "Increase Up"; }
@@ -237,7 +237,7 @@ WRAPPER
               }
 
               tab {
-                bind "Ctrl a" "Enter" "Esc" "q" "Ctrl c" { SwitchToMode "Normal"; }
+                bind "Ctrl Space" "Enter" "Esc" "q" "Ctrl c" { SwitchToMode "Normal"; }
                 bind "h" "Left" "Up" "k" { GoToPreviousTab; }
                 bind "Shift h" { MoveTab "Left"; }
                 bind "l" "Right" "Down" "j" { GoToNextTab; }
@@ -249,11 +249,11 @@ WRAPPER
 
               renametab {
                 bind "Enter" { SwitchToMode "Normal"; }
-                bind "Ctrl a" "Esc" "Ctrl c" { UndoRenameTab; SwitchToMode "Normal"; }
+                bind "Ctrl Space" "Esc" "Ctrl c" { UndoRenameTab; SwitchToMode "Normal"; }
               }
 
               scroll {
-                bind "Ctrl a" "q" "Esc" "Ctrl c" { SwitchToMode "Normal"; }
+                bind "Ctrl Space" "q" "Esc" "Ctrl c" { SwitchToMode "Normal"; }
                 bind "/" { SwitchToMode "EnterSearch"; SearchInput 0; }
                 bind "j" "Ctrl e" "Down" { ScrollDown; }
                 bind "k" "Ctrl y" "Up" { ScrollUp; }
@@ -268,12 +268,12 @@ WRAPPER
 
               entersearch {
                 bind "Esc" "Ctrl c" { SwitchToMode "Scroll"; }
-                bind "Ctrl a" { SwitchToMode "Normal"; }
+                bind "Ctrl Space" { SwitchToMode "Normal"; }
                 bind "Enter" { SwitchToMode "Search"; }
               }
 
               search {
-                bind "Ctrl a" "Ctrl c" "q" "Esc" { SwitchToMode "Normal"; }
+                bind "Ctrl Space" "Ctrl c" "q" "Esc" { SwitchToMode "Normal"; }
                 bind "n" { Search "up"; }
                 bind "N" { Search "down"; }
                 bind "c" { SearchToggleOption "CaseSensitivity"; }
