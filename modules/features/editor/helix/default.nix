@@ -23,7 +23,7 @@ _: {
             shellcheck
             shfmt
             # Containers
-            dockerfile-language-server-nodejs
+            dockerfile-language-server
             docker-compose-language-service
           ];
           languages = {
