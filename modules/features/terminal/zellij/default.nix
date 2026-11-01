@@ -36,14 +36,16 @@ if ! grep -Fq "${zjstatusWasm}" "$HOME/.cache/zellij/permissions.kdl" 2>/dev/nul
     ReadApplicationState
     ChangeApplicationState
     RunCommands
+    ReadCliPipes
 }
 EOF
 fi
-if ! grep -Fq "${zjstatusHintsWasm}" "$HOME/.cache/zellij/permissions.kdl" 2>/dev/null; then
+if ! grep -Fq "${zjstatusHintsWasm}" "$HOME/.cache/zellij/permissions.kdl" 2>/dev/null || ! grep -Fq "MessageAndLaunchOtherPlugins" "$HOME/.cache/zellij/permissions.kdl" 2>/dev/null; then
   cat << 'EOF' >> "$HOME/.cache/zellij/permissions.kdl"
 "${zjstatusHintsWasm}" {
     ReadApplicationState
     ChangeApplicationState
+    MessageAndLaunchOtherPlugins
 }
 EOF
 fi
@@ -156,7 +158,7 @@ WRAPPER
                 max_length 0
                 overflow_str "..."
                 pipe_name "zjstatus_hints"
-                hide_in_base_mode true
+                hide_in_base_mode false
               }
             }
 
@@ -398,14 +400,14 @@ WRAPPER
                     border_position "top"
                     hide_frame_for_single_pane "false"
 
-                    mode_locked      "#[bg=#f38ba8,bold] "
-                    mode_normal      "#[bg=#cba6f7,bold] "
-                    mode_resize      "#[bg=#fab387,bold] "
+                    mode_locked      "#[bg=#cba6f7,bold] "
+                    mode_normal      "#[bg=#89b4fa,bold] "
+                    mode_resize      "#[bg=#f9e2af,bold] "
                     mode_pane        "#[bg=#a6e3a1,bold] "
-                    mode_move        "#[bg=#f9e2af,bold] "
-                    mode_tab         "#[bg=#89dceb,bold] "
+                    mode_move        "#[bg=#fab387,bold] "
+                    mode_tab         "#[bg=#94e2d5,bold] "
                     mode_scroll      "#[bg=#f2cdcd,bold] "
-                    mode_search      "#[bg=#89b4fa,bold] "
+                    mode_search      "#[bg=#89dceb,bold] "
                     mode_entersearch "#[bg=#74c7ec,bold] "
                     mode_renametab   "#[bg=#94e2d5,bold] "
                     mode_renamepane  "#[bg=#a6e3a1,bold] "
