@@ -85,7 +85,7 @@ WRAPPER
             ui {
               pane_frames {
                 rounded_corners true
-                hide_session_name false
+                hide_session_name true
               }
             }
 
@@ -103,29 +103,62 @@ WRAPPER
                 black "#181825"
                 white "#cdd6f4"
 
-                frame_selected {
+                ribbon_selected {
                   base "#cba6f7"
-                  background "#1e1e2e"
-                  emphasis_0 "#fab387"
-                  emphasis_1 "#a6e3a1"
-                  emphasis_2 "#89b4fa"
-                  emphasis_3 "#f38ba8"
-                }
-                frame_unselected {
-                  base "#45475a"
-                  background "#1e1e2e"
-                  emphasis_0 "#fab387"
-                  emphasis_1 "#a6e3a1"
-                  emphasis_2 "#89b4fa"
-                  emphasis_3 "#f38ba8"
-                }
-                frame_highlight {
-                  base "#fab387"
                   background "#1e1e2e"
                   emphasis_0 "#cba6f7"
                   emphasis_1 "#a6e3a1"
                   emphasis_2 "#89b4fa"
                   emphasis_3 "#f38ba8"
+                }
+                ribbon_unselected {
+                  base "#cba6f7"
+                  background "#1e1e2e"
+                  emphasis_0 "#cba6f7"
+                  emphasis_1 "#a6e3a1"
+                  emphasis_2 "#89b4fa"
+                  emphasis_3 "#f38ba8"
+                }
+                text_unselected {
+                  base "#cdd6f4"
+                  background "#1e1e2e"
+                  emphasis_0 "#fab387"
+                  emphasis_1 "#a6e3a1"
+                  emphasis_2 "#89b4fa"
+                  emphasis_3 "#f38ba8"
+                }
+                text_selected {
+                  base "#cdd6f4"
+                  background "#1e1e2e"
+                  emphasis_0 "#fab387"
+                  emphasis_1 "#a6e3a1"
+                  emphasis_2 "#89b4fa"
+                  emphasis_3 "#f38ba8"
+                }
+
+                frame_selected {
+                  base "#cba6f7"
+                  background "#1e1e2e"
+                  emphasis_0 "#cba6f7"
+                  emphasis_1 "#b4befe"
+                  emphasis_2 "#89b4fa"
+                  emphasis_3 "#a6e3a1"
+                }
+                frame_highlight {
+                  base "#cba6f7"
+                  background "#1e1e2e"
+                  emphasis_0 "#cba6f7"
+                  emphasis_1 "#b4befe"
+                  emphasis_2 "#89b4fa"
+                  emphasis_3 "#a6e3a1"
+                }
+                frame_unselected {
+                  base "#45475a"
+                  background "#1e1e2e"
+                  emphasis_0 "#6c7086"
+                  emphasis_1 "#585b70"
+                  emphasis_2 "#45475a"
+                  emphasis_3 "#313244"
                 }
               }
             }
@@ -395,23 +428,23 @@ WRAPPER
                     border_position "top"
                     hide_frame_for_single_pane "false"
 
-                    mode_locked       "#[fg=#cba6f7]C-SPC #[fg=#6c7086,italic]󰌌 unlock"
-                    mode_normal       "#[fg=#cba6f7]h/j/k/l #[fg=#6c7086,italic]󰆍 focus #[fg=#cba6f7]s/v #[fg=#6c7086,italic]split #[fg=#cba6f7]f #[fg=#6c7086,italic]󰈞 files #[fg=#cba6f7]y #[fg=#6c7086,italic]󰛢 mark #[fg=#cba6f7]p #[fg=#6c7086,italic]pane #[fg=#cba6f7]t #[fg=#6c7086,italic]󰓩 tab #[fg=#cba6f7]r #[fg=#6c7086,italic]󰩨 resize #[fg=#cba6f7]m #[fg=#6c7086,italic] move #[fg=#cba6f7]s #[fg=#6c7086,italic]󰞘 scroll #[fg=#cba6f7]o #[fg=#6c7086,italic]󰈆 session #[fg=#cba6f7]Esc #[fg=#6c7086,italic]󰌌 lock"
-                    mode_move         "#[fg=#cba6f7]h/j/k/l #[fg=#6c7086,italic] move #[fg=#cba6f7]n/p #[fg=#6c7086,italic]reorder #[fg=#cba6f7]Esc #[fg=#6c7086,italic]󰌌 done"
-                    mode_pane         "#[fg=#cba6f7]h/j/k/l #[fg=#6c7086,italic]󰆍 focus #[fg=#cba6f7]s/v #[fg=#6c7086,italic]split #[fg=#cba6f7]x #[fg=#6c7086,italic]close #[fg=#cba6f7]z #[fg=#6c7086,italic]zoom #[fg=#cba6f7]w #[fg=#6c7086,italic]float #[fg=#cba6f7]Esc #[fg=#6c7086,italic]󰌌 done"
-                    mode_tab          "#[fg=#cba6f7]h/l #[fg=#6c7086,italic]󰓩 switch #[fg=#cba6f7]1-9 #[fg=#6c7086,italic]jump #[fg=#cba6f7]n #[fg=#6c7086,italic]new #[fg=#cba6f7]x #[fg=#6c7086,italic]close #[fg=#cba6f7]r #[fg=#6c7086,italic]rename #[fg=#cba6f7]s #[fg=#6c7086,italic]sync #[fg=#cba6f7]Esc #[fg=#6c7086,italic]󰌌 done"
-                    mode_resize       "#[fg=#cba6f7]h/j/k/l #[fg=#6c7086,italic]󰩨 resize #[fg=#cba6f7]+/- #[fg=#6c7086,italic]scale #[fg=#cba6f7]Esc #[fg=#6c7086,italic]󰌌 done"
-                    mode_scroll       "#[fg=#cba6f7]j/k #[fg=#6c7086,italic]󰞘 scroll #[fg=#cba6f7]d/u #[fg=#6c7086,italic]half-page #[fg=#cba6f7]/ #[fg=#6c7086,italic]󰍉 search #[fg=#cba6f7]e #[fg=#6c7086,italic]edit #[fg=#cba6f7]Esc #[fg=#6c7086,italic]󰌌 done"
-                    mode_search       "#[fg=#cba6f7]n/N #[fg=#6c7086,italic]󰍉 next/prev #[fg=#cba6f7]c #[fg=#6c7086,italic]case #[fg=#cba6f7]w #[fg=#6c7086,italic]wrap #[fg=#cba6f7]o #[fg=#6c7086,italic]word #[fg=#cba6f7]Esc #[fg=#6c7086,italic]󰌌 done"
-                    mode_entersearch  "#[fg=#cba6f7]Enter #[fg=#6c7086,italic]󰍉 search #[fg=#cba6f7]Esc #[fg=#6c7086,italic]cancel"
-                    mode_renametab    "#[fg=#cba6f7]Enter #[fg=#6c7086,italic]󰓩 submit #[fg=#cba6f7]Esc #[fg=#6c7086,italic]cancel"
-                    mode_renamepane   "#[fg=#cba6f7]Enter #[fg=#6c7086,italic]󰆍 submit #[fg=#cba6f7]Esc #[fg=#6c7086,italic]cancel"
-                    mode_session      "#[fg=#cba6f7]d #[fg=#6c7086,italic]󰈆 detach #[fg=#cba6f7]w #[fg=#6c7086,italic]manager #[fg=#cba6f7]q #[fg=#6c7086,italic]󰗼 quit #[fg=#cba6f7]Esc #[fg=#6c7086,italic]󰌌 done"
-                    mode_tmux         "#[fg=#cba6f7]C-SPC #[fg=#6c7086,italic]tmux #[fg=#cba6f7]Esc #[fg=#6c7086,italic]󰌌 lock"
+                    mode_locked       "#[fg=#cba6f7]C-SPC #[fg=#6c7086,italic]󰌿 unlock"
+                    mode_normal       "#[fg=#cba6f7]h/j/k/l #[fg=#6c7086,italic]󰆍 focus #[fg=#cba6f7]s/v #[fg=#6c7086,italic]󰤼 split #[fg=#cba6f7]f #[fg=#6c7086,italic]󰈞 files #[fg=#cba6f7]y #[fg=#6c7086,italic]󰛢 mark #[fg=#cba6f7]p #[fg=#6c7086,italic]󰆍 pane #[fg=#cba6f7]t #[fg=#6c7086,italic]󰓩 tab #[fg=#cba6f7]r #[fg=#6c7086,italic]󰩨 resize #[fg=#cba6f7]m #[fg=#6c7086,italic] move #[fg=#cba6f7]s #[fg=#6c7086,italic]󰞘 scroll #[fg=#cba6f7]o #[fg=#6c7086,italic]󱂬 session #[fg=#cba6f7]Esc #[fg=#6c7086,italic]󰌾 lock"
+                    mode_move         "#[fg=#cba6f7]h/j/k/l #[fg=#6c7086,italic] move #[fg=#cba6f7]n/p #[fg=#6c7086,italic]󰒭 reorder #[fg=#cba6f7]Esc #[fg=#6c7086,italic]󰌾 done"
+                    mode_pane         "#[fg=#cba6f7]h/j/k/l #[fg=#6c7086,italic]󰒋 focus #[fg=#cba6f7]s/v #[fg=#6c7086,italic]󰤼 split #[fg=#cba6f7]x #[fg=#6c7086,italic]󰅖 close #[fg=#cba6f7]z #[fg=#6c7086,italic]󰊓 zoom #[fg=#cba6f7]w #[fg=#6c7086,italic]󰉈 float #[fg=#cba6f7]c #[fg=#6c7086,italic]󰑕 rename #[fg=#cba6f7]Esc #[fg=#6c7086,italic]󰌾 done"
+                    mode_tab          "#[fg=#cba6f7]h/l #[fg=#6c7086,italic]󰓩 switch #[fg=#cba6f7]1-9 #[fg=#6c7086,italic]󰒭 jump #[fg=#cba6f7]n #[fg=#6c7086,italic]󰐕 new #[fg=#cba6f7]x #[fg=#6c7086,italic]󰅖 close #[fg=#cba6f7]r #[fg=#6c7086,italic]󰑕 rename #[fg=#cba6f7]s #[fg=#6c7086,italic]󰓦 sync #[fg=#cba6f7]Esc #[fg=#6c7086,italic]󰌾 done"
+                    mode_resize       "#[fg=#cba6f7]h/j/k/l #[fg=#6c7086,italic]󰩨 resize #[fg=#cba6f7]+/- #[fg=#6c7086,italic]󰩬 scale #[fg=#cba6f7]Esc #[fg=#6c7086,italic]󰌾 done"
+                    mode_scroll       "#[fg=#cba6f7]j/k #[fg=#6c7086,italic]󰞘 scroll #[fg=#cba6f7]d/u #[fg=#6c7086,italic]󱕑 half-page #[fg=#cba6f7]/ #[fg=#6c7086,italic]󰍉 search #[fg=#cba6f7]e #[fg=#6c7086,italic]󰷈 edit #[fg=#cba6f7]Esc #[fg=#6c7086,italic]󰌾 done"
+                    mode_search       "#[fg=#cba6f7]n/N #[fg=#6c7086,italic]󰍉 next/prev #[fg=#cba6f7]c #[fg=#6c7086,italic]󰬲 case #[fg=#cba6f7]w #[fg=#6c7086,italic]󰑐 wrap #[fg=#cba6f7]o #[fg=#6c7086,italic]󰬵 word #[fg=#cba6f7]Esc #[fg=#6c7086,italic]󰌾 done"
+                    mode_entersearch  "#[fg=#cba6f7]Enter #[fg=#6c7086,italic]󰍉 search #[fg=#cba6f7]Esc #[fg=#6c7086,italic]󰅖 cancel"
+                    mode_renametab    "#[fg=#cba6f7]Enter #[fg=#6c7086,italic]󰑕 submit #[fg=#cba6f7]Esc #[fg=#6c7086,italic]󰅖 cancel"
+                    mode_renamepane   "#[fg=#cba6f7]Enter #[fg=#6c7086,italic]󰑕 submit #[fg=#cba6f7]Esc #[fg=#6c7086,italic]󰅖 cancel"
+                    mode_session      "#[fg=#cba6f7]d #[fg=#6c7086,italic]󰈆 detach #[fg=#cba6f7]w #[fg=#6c7086,italic]󰀻 manager #[fg=#cba6f7]q #[fg=#6c7086,italic]󰗼 quit #[fg=#cba6f7]Esc #[fg=#6c7086,italic]󰌾 done"
+                    mode_tmux         "#[fg=#cba6f7]C-SPC #[fg=#6c7086,italic]󰌌 tmux #[fg=#cba6f7]Esc #[fg=#6c7086,italic]󰌾 lock"
 
                     tab_sync_indicator       "󰓦"
                     tab_fullscreen_indicator "󰊓"
-                    tab_floating_indicator   "⬚"
+                    tab_floating_indicator   "󰉈"
                     tab_separator          " "
 
                     tab_normal              "#[fg=#cdd6f4]{name}  "
