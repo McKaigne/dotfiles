@@ -126,14 +126,26 @@ printf '#[fg=#cba6f7] %s #[fg=#89b4fa] %s
                 frame_selected {
                   base "#cba6f7"
                   background "#1e1e2e"
+                  emphasis_0 "#fab387"
+                  emphasis_1 "#a6e3a1"
+                  emphasis_2 "#89b4fa"
+                  emphasis_3 "#f38ba8"
                 }
                 frame_unselected {
                   base "#45475a"
                   background "#1e1e2e"
+                  emphasis_0 "#fab387"
+                  emphasis_1 "#a6e3a1"
+                  emphasis_2 "#89b4fa"
+                  emphasis_3 "#f38ba8"
                 }
                 frame_highlight {
                   base "#fab387"
                   background "#1e1e2e"
+                  emphasis_0 "#cba6f7"
+                  emphasis_1 "#a6e3a1"
+                  emphasis_2 "#89b4fa"
+                  emphasis_3 "#f38ba8"
                 }
               }
             }
