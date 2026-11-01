@@ -88,47 +88,6 @@ _: {
                 mode.select = "SEL";
               };
             };
-            keys.insert = {
-              esc = [
-                "normal_mode"
-                "move_char_left"
-              ];
-            };
-            keys.normal = {
-              esc = [
-                "collapse_selection"
-                "keep_primary_selection"
-              ];
-              y = [
-                ":clipboard-yank"
-                "yank"
-              ];
-              p = ":clipboard-paste-after";
-              P = ":clipboard-paste-before";
-              Y = [
-                ":clipboard-yank-join"
-                "yank_main_selection_to_clipboard"
-              ];
-              R = ":clipboard-paste-replace";
-            };
-            keys.select = {
-              esc = [
-                "collapse_selection"
-                "keep_primary_selection"
-                "normal_mode"
-              ];
-              y = [
-                ":clipboard-yank"
-                "yank"
-              ];
-              p = ":clipboard-paste-after";
-              P = ":clipboard-paste-before";
-              Y = [
-                ":clipboard-yank-join"
-                "yank_main_selection_to_clipboard"
-              ];
-              R = ":clipboard-paste-replace";
-            };
           };
           themes = {
             catppuccin_mocha_transparent = {

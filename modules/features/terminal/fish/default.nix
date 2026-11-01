@@ -11,7 +11,9 @@ _: {
       p = config.palette;
       isFlag = cmd: lib.hasPrefix "-" cmd;
       safeAbbrs = lib.filterAttrs (_: cmd: !isFlag cmd) config.workstation.shellAbbrs;
-      lsColors = pkgs.runCommand "vivid-ls-colors" { } "${pkgs.vivid}/bin/vivid generate catppuccin-mocha > $out";
+      lsColorsFish = pkgs.runCommand "vivid-ls-colors.fish" { } ''
+        printf 'set -gx LS_COLORS "%s"\n' "$(${pkgs.vivid}/bin/vivid generate catppuccin-mocha)" > $out
+      '';
     in
     {
       programs.fish.enable = true;
@@ -53,15 +55,14 @@ _: {
             set fish_cursor_visual block
 
             # Alt-e and Ctrl-x Ctrl-e open current buffer in Helix
-            bind -M insert e edit_command_buffer
-            bind -M default e edit_command_buffer
+            bind -M insert \ee edit_command_buffer
+            bind -M default \ee edit_command_buffer
             bind -M insert \cx\ce edit_command_buffer
             bind -M default \cx\ce edit_command_buffer
 
             if test "$TERM" != dumb
-                set -gx LS_COLORS (cat ${lsColors})
+                source ${lsColorsFish}
                 ${pkgs.starship}/bin/starship init fish | source
-                ${pkgs.carapace}/bin/carapace _carapace fish | source
             end
           '';
 
