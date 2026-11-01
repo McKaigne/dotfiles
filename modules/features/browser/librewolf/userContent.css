@@ -1,5 +1,6 @@
 @-moz-document url-prefix("about:") {
 body {
+font-family: "Atkinson Hyperlegible", sans-serif !important;
 background-color: #1e1e2e !important;
 color: #cdd6f4 !important;
 }
@@ -43,7 +44,10 @@ color: #11111b !important;
 
 @-moz-document url-prefix("moz-extension://") {
 body, * {
-font-family: "AtkynsonMono Nerd Font", monospace !important;
+font-family: "Atkinson Hyperlegible", sans-serif !important;
 font-size: 14px !important;
+}
+#tridactyl-command-line, .TridactylCommandline, #tridactyl-input {
+font-family: "AtkynsonMono Nerd Font", monospace !important;
 }
 }

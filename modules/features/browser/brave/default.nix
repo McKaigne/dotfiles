@@ -26,6 +26,10 @@ _: {
         MetricsReportingEnabled = false;
         DnsOverHttpsMode = "secure";
         DnsOverHttpsTemplates = "https://dns.quad9.net/dns-query";
+        StandardFontFamily = "Atkinson Hyperlegible";
+        SansSerifFontFamily = "Atkinson Hyperlegible";
+        FixedFontFamily = "AtkynsonMono Nerd Font";
+        SerifFontFamily = "Noto Serif";
 
         ExtensionInstallForcelist = [
           "hfjbmagddngcpeloejdejnfgbamkjaeg;https://clients2.google.com/service/update2/crx"

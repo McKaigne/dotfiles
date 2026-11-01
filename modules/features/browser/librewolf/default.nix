@@ -140,6 +140,22 @@
               Value = true;
               Status = "locked";
             };
+            "font.name.sans-serif.x-western" = {
+              Value = "Atkinson Hyperlegible";
+              Status = "locked";
+            };
+            "font.name.serif.x-western" = {
+              Value = "Atkinson Hyperlegible";
+              Status = "locked";
+            };
+            "font.name.monospace.x-western" = {
+              Value = "AtkynsonMono Nerd Font";
+              Status = "locked";
+            };
+            "font.default.x-western" = {
+              Value = "sans-serif";
+              Status = "locked";
+            };
           };
         };
       };
