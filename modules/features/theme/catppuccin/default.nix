@@ -71,7 +71,7 @@ _: {
         xdg.configFile."gtk-3.0/gtk.css" = {
           text = ''
             * {
-              border-radius: 0px !important;
+              border-radius: ${toString theme.radius}px !important;
             }
             @define-color accent_color ${p.mauve};
             @define-color accent_bg_color ${p.mauve};
@@ -118,7 +118,7 @@ _: {
         xdg.configFile."gtk-4.0/gtk.css" = {
           text = ''
             * {
-              border-radius: 0px !important;
+              border-radius: ${toString theme.radius}px !important;
             }
             @define-color accent_color ${p.mauve};
             @define-color accent_bg_color ${p.mauve};

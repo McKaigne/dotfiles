@@ -1,56 +1,117 @@
 # NixOS Workstations: Hyde & Castor
 
-Declarative NixOS configuration for workstations hyde and castor.
+Declarative dual-host workstation configuration managed with NixOS Flakes, Niri, and Catppuccin Mocha.
 
-## Hosts
+---
 
-- **hyde**: AMD GPU, ROCm compute, user jekyll.
-- **castor**: Intel Iris Xe, mobile efficiency profile, user pollux.
+## 1. Fleet Overview
 
-## Core Stack
+| Host | Primary User | Role | Graphics & Compute | Primary Display | Profile |
+| :--- | :--- | :--- | :--- | :--- | :--- |
+| **hyde** | `jekyll` | Compute & Production | AMD GPU, ROCm Cycles, OpenCL | DP-1 (1920x1080 @ 240Hz) | Desktop Workstation |
+| **castor** | `pollux` | Mobile Efficiency | Intel Iris Xe (`iHD`), thermald, PPD | eDP-1 (Native @ 141 DPI) | Mobile Laptop |
 
-- **Compositor**: Niri (scrollable tiling, 0px radius, 3px borders, 16px gaps, snappy animations).
-- **Shell**: Noctalia (top bar, plugins: bitwarden, cheatsheet, lid-guard, obs-control).
-- **Font**: Cozette bitmap (.otb), 1.0 line height, large integer scaling.
-- **Theme**: Catppuccin Mocha transparent (0.85 opacity, dual-pass GPU blur).
-- **Editor**: Helix (modal editing, system clipboard by default, relative numbers, multiple bufferline).
-- **Multiplexer**: Zellij (borderless panes, simplified UI, session serialization).
-- **Interactive Shell**: Fish (vi mode, Alt-e / Ctrl-x Ctrl-e editor buffer open, clast / chist).
-- **Browser**: LibreWolf with pinned extensions from Nix store, Tridactyl, sharp CSS.
+---
 
-## Deployment
+## 2. Core Architecture
 
-Remote deployment runs over Tailscale with hyde as the build host.
+| Subsystem | Selection | Implementation Details |
+| :--- | :--- | :--- |
+| **Compositor** | **Niri** | Scrollable-tiling Wayland compositor. Layout: 4px radius, 2px borders, 8px gaps, GPU blur. |
+| **Desktop Shell** | **Noctalia** | Top bar, notification center, control center, lockscreen widgets, DDC/CI brightness. |
+| **Typography** | **Atkinson** | Atkinson Hyperlegible (UI sans-serif) and AtkynsonMono Nerd Font (fixed-width monospace). |
+| **Theme Engine** | **Catppuccin Mocha** | Single-source palette with Mauve accent, 0.85 window opacity, dual-pass GPU blur. |
+| **Editor** | **Helix** | Default editor (`hx`). Modal editing, LSP integration (`nixd`, `taplo`, etc.), system clipboard. |
+| **Multiplexer** | **Zellij** | `zjstatus` WASM status bar, Tmux navigation layer (`Ctrl+Space`), session serialization. |
+| **Interactive Shell** | **Fish** | Vi key bindings, Atuin history sync, Carapace completions, space-expanded abbreviations. |
+| **Browsers** | **LibreWolf / Brave** | LibreWolf (Tridactyl native, Sidebery, custom CSS) with Brave Origin secondary fallback. |
+| **Mesh Network** | **Tailscale** | MagicDNS node routing, strict deploy firewall (`tailscale0` port 22 only). |
 
-- `nr [host]`: switch generation
-- `ntest [host]`: test generation
-- `nboot [host]`: set next boot
+---
 
-## Keybindings Summary
+## 3. Workflow & Operations
 
-- `Mod + Space`: Maximize column width
-- `Mod + Shift + Space`: Fullscreen window
-- `Mod + Ctrl + Space`: Toggle window floating
-- `Mod + Alt + Space`: Toggle focus floating/tiling
-- `Mod + F`: Foot terminal (Shift: Zellij workspace main, Ctrl: Zellij session picker)
-- `Mod + D`: LibreWolf (Shift: Brave, Ctrl: Private)
-- `Mod + S`: PCManFM
-- `Mod + A`: Ferdium (Shift: Niri overview)
-- `Mod + G`: Obsidian
-- `Mod + T`: Screenshot area (Shift: Fullscreen)
-- `Mod + E`: Noctalia notifications (Shift: Clear history, Mod + X: Dismiss)
-- `Mod + V`: Noctalia settings (Shift: Clipboard panel)
-- `Mod + C`: Noctalia control center (Shift: Pavucontrol)
-- `Mod + B`: Bitwarden Desktop (Shift: Noctalia Bitwarden panel, Ctrl: Bluetooth)
-- `Mod + W`: Noctalia wallpaper selector (Shift: Wi-Fi panel, Ctrl: Toggle bar)
-- `Mod + R`: OBS Studio (Shift: Noctalia OBS control panel)
-- `Mod + ;`: Noctalia app launcher
-- `Mod + /`: Noctalia keybind cheatsheet
-- `Mod + Esc`: Session menu (Shift: Lock screen, Ctrl: Display power off)
-- `Mod + Q`: Close window
-- `Mod + H / J / K / L`: Focus column / workspace
-- `Mod + Shift + H / J / K / L`: Move column / workspace
-- `Mod + Ctrl + H / L`: Resize column width
-- `Mod + U / I`: Focus window stack up / down
-- `Mod + 1..9, 0`: Workspaces 1 through 10
+All management commands run directly in Fish:
+
+~~~fish
+# Inspect state and stage changes
+gst                     # Check git status for untracked or sensitive files
+ga                      # Stage changes in /etc/nixos
+nh os build             # Build local generation closure without activating
+
+# Local deployment
+ntest                   # Activate temporary generation (reboot reverts)
+nr                      # Switch permanently to new generation
+nboot                   # Set next boot generation without activating
+
+# Remote deployment (Hyde acts as build host)
+nr castor               # Build on hyde, transfer and activate on castor
+ntest castor            # Test generation remotely on castor
+nboot castor            # Set next boot generation remotely on castor
+
+# Noctalia GUI state synchronization
+nsync                   # Merge runtime GUI tweaks into declarative base and rebuild
+
+# LLM context generation
+cfb nix                 # Capture /etc/nixos tree and config snapshot to clipboard
+cfb cfg                 # Capture ~/.config tree and config snapshot to clipboard
+~~~
+
+---
+
+## 4. Keybinding Matrix
+
+Compositor modifier is `Mod` (`Super` / `Logo`).
+
+### Space Tree: Viewport & Layout
+| Keybind | Action |
+| :--- | :--- |
+| `Mod + Space` | Fill screen (maximize column width) |
+| `Mod + Shift + Space` | Fullscreen window |
+| `Mod + Ctrl + Space` | Toggle window floating |
+| `Mod + Alt + Space` | Switch focus between floating and tiling layers |
+
+### Left Hand: Applications & Panels
+| Keybind | Action |
+| :--- | :--- |
+| `Mod + F` | Terminal: Foot client (Shift: Zellij workspace main, Ctrl: Session picker) |
+| `Mod + D` | Browser: LibreWolf (Shift: Brave Origin, Ctrl: Private window) |
+| `Mod + S` | File Manager: PCManFM |
+| `Mod + A` | Messaging: Ferdium (Shift: Niri overview) |
+| `Mod + G` | Knowledge Vault: Obsidian |
+| `Mod + T` | Snip: Area screenshot to clipboard (Shift: Fullscreen) |
+| `Mod + E` | Notices: Notification center (Shift: Clear history, `Mod + X`: Dismiss active) |
+| `Mod + V` | Settings: Noctalia GUI (Shift: Clipboard manager panel) |
+| `Mod + C` | Control Center: Quick toggles (Shift: Pavucontrol audio mixer) |
+| `Mod + B` | Security: Bitwarden desktop (Shift: Noctalia vault panel, Ctrl: Bluetooth) |
+| `Mod + W` | Wallpaper: Noctalia picker (Shift: Network panel, Ctrl: Toggle top bar) |
+| `Mod + R` | Capture: OBS Studio (Shift: Noctalia OBS control panel) |
+| `Mod + ;` | Launcher: Noctalia application runner |
+| `Mod + /` | Cheatsheet: Keybind cheatsheet overlay |
+| `Mod + Esc` | Session: Noctalia power menu (Shift: Lock screen, Ctrl: Turn off displays) |
+| `Mod + Q` | Close focused window |
+
+### Right Hand: Ribbon & Workspace Navigation
+| Keybind | Action |
+| :--- | :--- |
+| `Mod + H / L` | Focus column left / right |
+| `Mod + Shift + H / L` | Move column left / right |
+| `Mod + Ctrl + H / L` | Resize column width (-5% / +5%) |
+| `Mod + J / K` | Focus workspace down / up |
+| `Mod + Shift + J / K` | Move column to workspace down / up |
+| `Mod + U / I` | Focus window down / up inside column stack |
+| `Mod + Shift + U / I` | Move window down / up inside column stack |
+| `Mod + Ctrl + U / I` | Resize window height (-5% / +5%) |
+| `Mod + M / ,` | Consume window into column from left / right |
+| `Mod + .` | Expel window from column |
+| `Mod + 1..9, 0` | Focus workspace 1 through 10 (Shift: Move column) |
+
+---
+
+## 5. Security & Invariant Rules
+
+- **SSHD Hardening:** SSH daemon is exposed strictly on `tailscale0`. Passwords and keyboard-interactive auth are disabled. Root logins require dedicated Ed25519 deploy keys restricted by Tailscale CIDR (`100.64.0.0/10,fd7a:115c:a1e0::/48`).
+- **Memory Subsystem:** Both machines operate swapless disk layouts with pure ZRAM. Kernel parameters require `vm.swappiness = 180`, `vm.watermark_scale_factor = 125`, and `vm.page-cluster = 0` to eliminate file cache eviction and I/O thrashing.
+- **Compute Isolation:** ROCm, OpenCL, and compute-heavy suites reside strictly in `modules/hosts/hyde` and are never evaluated on `castor`.
+- **Pure Flake Evaluation:** Runtime downloads (`curl | bash`, unpinned URLs, unhashed derivations) and imperative runtime installers are prohibited by NixOS module assertions.
 

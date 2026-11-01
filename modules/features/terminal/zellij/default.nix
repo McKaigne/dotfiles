@@ -72,12 +72,12 @@ WRAPPER
           package = zellijWrapped;
         };
 
-        xdg.configFile."zellij/scripts/system_usage.sh" = {
+        xdg.configFile."zellij/scripts/systemUsage.sh" = {
           text = ''
-            #!/usr/bin/env sh
-            load=$(awk '{print $1}' /proc/loadavg)
-            mem=$(free -m 2>/dev/null | awk '/Mem:/ { printf("%.0f%%", $3/$2*100) }')
-            printf '#[fg=#cba6f7] %s #[fg=#89b4fa] %s
+#!/usr/bin/env sh
+load=$(awk '{print $1}' /proc/loadavg)
+mem=$(free -m 2>/dev/null | awk '/Mem:/ { printf("%.0f%%", $3/$2*100) }')
+printf '#[fg=#cba6f7] %s #[fg=#89b4fa] %s
 ' "$load" "$mem"
           '';
           executable = true;
@@ -144,7 +144,7 @@ WRAPPER
                 tab_active_fullscreen  "#[fg=$mauve,bold,italic]{fullscreen_indicator}{name}  "
                 tab_active_sync        "#[fg=$green,bold,italic]{sync_indicator}#[fg=$mauve,bold,italic]{name}  "
 
-                command_usage_command    "${homeDir}/.config/zellij/scripts/system_usage.sh"
+                command_usage_command    "${homeDir}/.config/zellij/scripts/systemUsage.sh"
                 command_usage_format     "{stdout}"
                 command_usage_rendermode "dynamic"
                 command_usage_interval   "2"
@@ -339,7 +339,7 @@ WRAPPER
                     tab_active_fullscreen  "#[fg=$mauve,bold,italic]{fullscreen_indicator}{name}  "
                     tab_active_sync        "#[fg=$green,bold,italic]{sync_indicator}#[fg=$mauve,bold,italic]{name}  "
 
-                    command_usage_command    "${homeDir}/.config/zellij/scripts/system_usage.sh"
+                    command_usage_command    "${homeDir}/.config/zellij/scripts/systemUsage.sh"
                     command_usage_format     "{stdout}"
                     command_usage_rendermode "dynamic"
                     command_usage_interval   "2"

@@ -11,18 +11,14 @@ _: {
           defaultEditor = true;
           extraPackages = with pkgs; [
             wl-clipboard
-            # Nix
             nixd
             nixfmt
-            # Config & Markup
             marksman
             taplo
             yaml-language-server
-            # Shell scripting
             bash-language-server
             shellcheck
             shfmt
-            # Containers
             dockerfile-language-server
             docker-compose-language-service
           ];
@@ -49,7 +45,7 @@ _: {
               cursorline = false;
               mouse = true;
               true-color = true;
-              color-modes = true; # Re-enable color modes
+              color-modes = true;
               bufferline = "multiple";
               auto-format = true;
               auto-save = false;
@@ -77,7 +73,7 @@ _: {
                   "mode"
                   "file-name"
                   "file-modification-indicator"
-                ]; # Re-add mode
+                ];
                 center = [ ];
                 right = [
                   "diagnostics"
@@ -87,7 +83,7 @@ _: {
                   "spinner"
                 ];
                 separator = " │ ";
-                mode.normal = "NOR"; # Set to 3-letter labels
+                mode.normal = "NOR";
                 mode.insert = "INS";
                 mode.select = "SEL";
               };
@@ -162,7 +158,7 @@ _: {
                 fg = "base";
                 bg = "mauve";
                 modifiers = [ "bold" ];
-              }; # Revert to bold colored block
+              };
               "ui.statusline.insert" = {
                 fg = "base";
                 bg = "green";
