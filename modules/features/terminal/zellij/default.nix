@@ -216,7 +216,32 @@ WRAPPER
                 bind "v" { NewPane "Right"; SwitchToMode "Locked"; }
                 bind "n" { NewPane; SwitchToMode "Locked"; }
                 bind "x" { CloseFocus; SwitchToMode "Locked"; }
-                bind "f" "z" { ToggleFocusFullscreen; SwitchToMode "Locked"; }
+                // Zoom toggle on z
+                bind "z" { ToggleFocusFullscreen; SwitchToMode "Locked"; }
+
+                // Harpoon on y
+                bind "y" {
+                  LaunchOrFocusPlugin "file://${harpoonWasm}" {
+                    floating true
+                    move_to_focused_tab true
+                  };
+                  SwitchToMode "Locked";
+                }
+
+                // Monocle on f (floating) and Shift+F (in-place)
+                bind "f" {
+                  LaunchOrFocusPlugin "file://${monocleWasm}" {
+                    floating true
+                  };
+                  SwitchToMode "Locked";
+                }
+                bind "F" {
+                  LaunchPlugin "file://${monocleWasm}" {
+                    in_place true
+                    kiosk true
+                  };
+                  SwitchToMode "Locked";
+                }
                 bind "w" { ToggleFloatingPanes; SwitchToMode "Locked"; }
                 bind "e" { TogglePaneEmbedOrFloating; SwitchToMode "Locked"; }
 
@@ -263,7 +288,32 @@ WRAPPER
                 bind "n" { NewPane; SwitchToMode "Locked"; }
                 bind "d" { NewPane "stacked"; SwitchToMode "Locked"; }
                 bind "x" { CloseFocus; SwitchToMode "Locked"; }
-                bind "f" "z" { ToggleFocusFullscreen; SwitchToMode "Locked"; }
+                // Zoom toggle on z
+                bind "z" { ToggleFocusFullscreen; SwitchToMode "Locked"; }
+
+                // Harpoon on y
+                bind "y" {
+                  LaunchOrFocusPlugin "file://${harpoonWasm}" {
+                    floating true
+                    move_to_focused_tab true
+                  };
+                  SwitchToMode "Locked";
+                }
+
+                // Monocle on f (floating) and Shift+F (in-place)
+                bind "f" {
+                  LaunchOrFocusPlugin "file://${monocleWasm}" {
+                    floating true
+                  };
+                  SwitchToMode "Locked";
+                }
+                bind "F" {
+                  LaunchPlugin "file://${monocleWasm}" {
+                    in_place true
+                    kiosk true
+                  };
+                  SwitchToMode "Locked";
+                }
                 bind "w" { ToggleFloatingPanes; SwitchToMode "Locked"; }
                 bind "e" { TogglePaneEmbedOrFloating; SwitchToMode "Locked"; }
                 bind "c" { SwitchToMode "RenamePane"; PaneNameInput 0; }
