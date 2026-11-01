@@ -8,6 +8,14 @@ _: {
         url = "https://github.com/dj95/zjstatus/releases/download/v0.25.0/zjstatus.wasm";
         sha256 = "282ceab219e56e1908c9fac33907241fe6c3e1ef7d85faab3e5f438cef87b8fe";
       };
+      monocleWasm = pkgs.fetchurl {
+        url = "https://github.com/imsnif/monocle/releases/download/v0.100.2/monocle.wasm";
+        sha256 = "4cb7e2cc912d975b4e755c93e44e7f0de62ef9240a09a89b735490cf4713792c";
+      };
+      harpoonWasm = pkgs.fetchurl {
+        url = "https://github.com/Nacho114/harpoon/releases/download/v0.3.0/harpoon.wasm";
+        sha256 = "7f8cf57a71f1dbbbd115337a31638780d7e18e9b876def1c81c970188caa32f2";
+      };
 
       sesh = pkgs.writeScriptBin "sesh" ''
         #! /usr/bin/env sh
@@ -42,15 +50,17 @@ if ! grep -Fq "${zjstatusWasm}" "$HOME/.cache/zellij/permissions.kdl" 2>/dev/nul
     ChangeApplicationState
     RunCommands
 }
-"file://${zjstatusWasm}" {
+"${monocleWasm}" {
     ReadApplicationState
     ChangeApplicationState
     RunCommands
+    ChangeFocusedPane
+    OpenNewPane
 }
-"https://github.com/dj95/zjstatus/releases/latest/download/zjstatus.wasm" {
+"${harpoonWasm}" {
     ReadApplicationState
     ChangeApplicationState
-    RunCommands
+    ChangeFocusedPane
 }
 EOF
 fi
@@ -86,12 +96,45 @@ printf '#[fg=#cba6f7] %s #[fg=#89b4fa] %s
         xdg.configFile."zellij/config.kdl" = {
           text = ''
             default_shell "fish"
+            default_mode "locked"
             scroll_buffer_size 10000
             copy_command "${pkgs.wl-clipboard}/bin/wl-copy"
+            pane_frames true
+            theme "catppuccin-mocha"
 
             ui {
               pane_frames {
                 rounded_corners true
+                hide_session_name false
+              }
+            }
+
+            themes {
+              catppuccin-mocha {
+                bg "#1e1e2e"
+                fg "#cdd6f4"
+                red "#f38ba8"
+                green "#a6e3a1"
+                blue "#89b4fa"
+                yellow "#f9e2af"
+                magenta "#cba6f7"
+                orange "#fab387"
+                cyan "#94e2d5"
+                black "#181825"
+                white "#cdd6f4"
+
+                frame_selected {
+                  base "#cba6f7"
+                  background "#1e1e2e"
+                }
+                frame_unselected {
+                  base "#45475a"
+                  background "#1e1e2e"
+                }
+                frame_highlight {
+                  base "#fab387"
+                  background "#1e1e2e"
+                }
               }
             }
 
@@ -123,16 +166,18 @@ printf '#[fg=#cba6f7] %s #[fg=#89b4fa] %s
                 format_right  "{command_usage}"
                 format_space  ""
 
-                mode_normal        "#[bg=$mauve] "
-                mode_tmux          "#[bg=$peach] "
-                mode_tab           "#[bg=$teal] "
-                mode_rename_pane   "#[bg=$yellow] "
-                mode_rename_tab    "#[bg=$yellow] "
-                mode_resize        "#[bg=$yellow] "
-                mode_scroll        "#[bg=$flamingo] "
-                mode_enter_search  "#[bg=$flamingo] "
-                mode_search        "#[bg=$blue] "
-                mode_locked        "#[bg=$red] "
+                mode_locked        "#[bg=$surface0,fg=$mauve,bold] LOCKED #[fg=$subtext0]Ctrl+g: unlock "
+                mode_normal        "#[bg=$peach,fg=$dark,bold] UNLOCKED #[fg=$peach,bg=$dark]#[fg=$default,bg=$dark] p: pane │ t: tab │ s: scroll │ m: move │ r: resize │ o: session │ Alt+y: harpoon │ Alt+m/M: monocle #[fg=$dark,bg=$peach] "
+                mode_pane          "#[bg=$peach,fg=$dark,bold] PANE #[fg=$peach,bg=$dark]#[fg=$default,bg=$dark] d: down │ r: right │ s: stack │ x: close │ f: zoom │ w: float │ i: pin │ z: frames #[fg=$dark,bg=$peach] "
+                mode_tab           "#[bg=$teal,fg=$dark,bold] TAB #[fg=$teal,bg=$dark]#[fg=$default,bg=$dark] n: new │ x: close │ r: rename │ h/l: move │ b: break │ s: sync #[fg=$dark,bg=$teal] "
+                mode_resize        "#[bg=$yellow,fg=$dark,bold] RESIZE #[fg=$yellow,bg=$dark]#[fg=$default,bg=$dark] h/j/k/l: resize │ +/-: grow/shrink │ Esc: locked #[fg=$dark,bg=$yellow] "
+                mode_move          "#[bg=$blue,fg=$dark,bold] MOVE #[fg=$blue,bg=$dark]#[fg=$default,bg=$dark] h/j/k/l: move pane around │ Esc: locked #[fg=$dark,bg=$blue] "
+                mode_scroll        "#[bg=$flamingo,fg=$dark,bold] SCROLL #[fg=$flamingo,bg=$dark]#[fg=$default,bg=$dark] j/k: scroll │ d/u: half-page │ s: search │ e: edit in hx │ Esc: locked #[fg=$dark,bg=$flamingo] "
+                mode_enter_search  "#[bg=$flamingo,fg=$dark,bold] SEARCH #[fg=$flamingo,bg=$dark]#[fg=$default,bg=$dark] Enter: find │ Esc: cancel #[fg=$dark,bg=$flamingo] "
+                mode_search        "#[bg=$blue,fg=$dark,bold] SEARCH #[fg=$blue,bg=$dark]#[fg=$default,bg=$dark] n/p: next/prev │ c: case │ w: wrap │ o: word │ Esc: locked #[fg=$dark,bg=$blue] "
+                mode_session       "#[bg=$mauve,fg=$dark,bold] SESSION #[fg=$mauve,bg=$dark]#[fg=$default,bg=$dark] d: detach │ w: manager │ Esc: locked #[fg=$dark,bg=$mauve] "
+                mode_rename_pane   "#[bg=$yellow,fg=$dark,bold] RENAME PANE #[fg=$default] Enter: apply │ Esc: cancel "
+                mode_rename_tab    "#[bg=$yellow,fg=$dark,bold] RENAME TAB #[fg=$default] Enter: apply │ Esc: cancel "
 
                 tab_sync_indicator       "S"
                 tab_fullscreen_indicator "󰊓"
@@ -152,155 +197,159 @@ printf '#[fg=#cba6f7] %s #[fg=#89b4fa] %s
             }
 
             keybinds clear-defaults=true {
-              normal {
-                bind "Ctrl Space" { SwitchToMode "Tmux"; }
+              locked {
+                bind "Ctrl g" { SwitchToMode "Normal"; }
               }
 
-              tmux {
-                bind "Esc" "q" "Ctrl c" { SwitchToMode "Normal"; }
-                bind "Ctrl Space" { SwitchToMode "Normal"; }
+              shared_except "locked" {
+                bind "Ctrl g" { SwitchToMode "Locked"; }
 
-                bind "h" { MoveFocus "Left"; SwitchToMode "Normal"; }
-                bind "Shift h" { MovePane "Left"; SwitchToMode "Normal"; }
-                bind "l" { MoveFocus "Right"; SwitchToMode "Normal"; }
-                bind "Shift l" { MovePane "Right"; SwitchToMode "Normal"; }
-                bind "k" { MoveFocus "Up"; SwitchToMode "Normal"; }
-                bind "Shift k" { MovePane "Up"; SwitchToMode "Normal"; }
-                bind "j" { MoveFocus "Down"; SwitchToMode "Normal"; }
-                bind "Shift j" { MovePane "Down"; SwitchToMode "Normal"; }
-
-                bind "b" {
-                  Run "nnn" {
-                    direction "Right"
-                  };
-                  SwitchToMode "Normal";
-                }
-                bind "v" {
-                  Run "nnn" {
-                    direction "Down"
-                  };
-                  SwitchToMode "Normal";
-                }
-
-                bind "n" { NewPane "stacked"; SwitchToMode "Normal"; }
-                bind "x" { CloseFocus; SwitchToMode "Normal"; }
-                bind "z" { ToggleFocusFullscreen; SwitchToMode "Normal"; }
-                bind "o" { NewPane; SwitchToMode "Normal"; }
-                bind "Shift r" { SwitchToMode "RenamePane"; PaneNameInput 0; }
-                bind "g" { NextSwapLayout; SwitchToMode "Normal"; }
-                bind "G" {
-                  Run "lazygit" {
+                // Harpoon on Alt+y
+                bind "Alt y" {
+                  LaunchOrFocusPlugin "file://${harpoonWasm}" {
                     floating true
-                    close_on_exit true
+                    move_to_focused_tab true
                   };
-                  SwitchToMode "Normal";
                 }
-                bind "." { ToggleFloatingPanes; SwitchToMode "Normal"; }
-                bind ">" { TogglePaneEmbedOrFloating; SwitchToMode "Normal"; }
-                bind "Ctrl r" { SwitchToMode "Resize"; }
 
-                bind "a" { ToggleTab; SwitchToMode "Normal"; }
-                bind "t" { NewTab; SwitchToMode "Normal"; }
-                bind "Ctrl t" { SwitchToMode "Tab"; }
-                bind "1" { GoToTab 1; SwitchToMode "Normal"; }
-                bind "2" { GoToTab 2; SwitchToMode "Normal"; }
-                bind "3" { GoToTab 3; SwitchToMode "Normal"; }
-                bind "4" { GoToTab 4; SwitchToMode "Normal"; }
-                bind "5" { GoToTab 5; SwitchToMode "Normal"; }
-                bind "6" { GoToTab 6; SwitchToMode "Normal"; }
-                bind "7" { GoToTab 7; SwitchToMode "Normal"; }
-                bind "8" { GoToTab 8; SwitchToMode "Normal"; }
-                bind "9" { GoToTab 9; SwitchToMode "Normal"; }
+                // Monocle on Alt+m (new floating pane)
+                bind "Alt m" {
+                  LaunchOrFocusPlugin "file://${monocleWasm}" {
+                    floating true
+                  };
+                }
+
+                // Monocle on Alt+Shift+m (in-place on current pane)
+                bind "Alt M" {
+                  LaunchPlugin "file://${monocleWasm}" {
+                    in_place true
+                    kiosk true
+                  };
+                }
+              }
+
+              normal {
+                bind "p" { SwitchToMode "Pane"; }
+                bind "t" { SwitchToMode "Tab"; }
+                bind "r" { SwitchToMode "Resize"; }
+                bind "m" { SwitchToMode "Move"; }
+                bind "s" { SwitchToMode "Scroll"; }
+                bind "o" { SwitchToMode "Session"; }
+                bind "q" { Quit; }
+                bind "Esc" "Enter" { SwitchToMode "Locked"; }
+              }
+
+              pane {
+                bind "h" "Left" { MoveFocus "Left"; }
+                bind "l" "Right" { MoveFocus "Right"; }
+                bind "j" "Down" { MoveFocus "Down"; }
+                bind "k" "Up" { MoveFocus "Up"; }
+                bind "p" { SwitchFocus; }
+                bind "n" { NewPane; SwitchToMode "Locked"; }
+                bind "d" { NewPane "Down"; SwitchToMode "Locked"; }
+                bind "r" { NewPane "Right"; SwitchToMode "Locked"; }
+                bind "s" { NewPane "stacked"; SwitchToMode "Locked"; }
+                bind "x" { CloseFocus; SwitchToMode "Locked"; }
+                bind "f" { ToggleFocusFullscreen; SwitchToMode "Locked"; }
+                bind "z" { TogglePaneFrames; SwitchToMode "Locked"; }
+                bind "w" { ToggleFloatingPanes; SwitchToMode "Locked"; }
+                bind "e" { TogglePaneEmbedOrFloating; SwitchToMode "Locked"; }
+                bind "c" { SwitchToMode "RenamePane"; PaneNameInput 0; }
+                bind "i" { TogglePanePinned; SwitchToMode "Locked"; }
+                bind "Esc" { SwitchToMode "Locked"; }
+              }
+
+              tab {
+                bind "h" "Left" { GoToPreviousTab; }
+                bind "l" "Right" { GoToNextTab; }
+                bind "n" { NewTab; SwitchToMode "Locked"; }
+                bind "x" { CloseTab; SwitchToMode "Locked"; }
                 bind "r" { SwitchToMode "RenameTab"; TabNameInput 0; }
-                bind "Shift x" { CloseTab; SwitchToMode "Normal"; }
+                bind "s" { ToggleActiveSyncTab; SwitchToMode "Locked"; }
+                bind "b" { BreakPane; SwitchToMode "Locked"; }
+                bind "]" { BreakPaneRight; SwitchToMode "Locked"; }
+                bind "[" { BreakPaneLeft; SwitchToMode "Locked"; }
+                bind "1" { GoToTab 1; SwitchToMode "Locked"; }
+                bind "2" { GoToTab 2; SwitchToMode "Locked"; }
+                bind "3" { GoToTab 3; SwitchToMode "Locked"; }
+                bind "4" { GoToTab 4; SwitchToMode "Locked"; }
+                bind "5" { GoToTab 5; SwitchToMode "Locked"; }
+                bind "6" { GoToTab 6; SwitchToMode "Locked"; }
+                bind "7" { GoToTab 7; SwitchToMode "Locked"; }
+                bind "8" { GoToTab 8; SwitchToMode "Locked"; }
+                bind "9" { GoToTab 9; SwitchToMode "Locked"; }
+                bind "Tab" { ToggleTab; }
+                bind "Esc" { SwitchToMode "Locked"; }
+              }
 
-                bind "Ctrl l" { Clear; SwitchToMode "Normal"; }
-                bind "s" "f" { EditScrollback { ansi true; }; SwitchToMode "Normal"; }
-                bind "/" { SwitchToMode "EnterSearch"; SearchInput 0; }
-                bind "Ctrl d" "d" { SwitchToMode "Scroll"; }
+              resize {
+                bind "h" "Left" { Resize "Increase Left"; }
+                bind "j" "Down" { Resize "Increase Down"; }
+                bind "k" "Up" { Resize "Increase Up"; }
+                bind "l" "Right" { Resize "Increase Right"; }
+                bind "H" { Resize "Decrease Left"; }
+                bind "J" { Resize "Decrease Down"; }
+                bind "K" { Resize "Decrease Up"; }
+                bind "L" { Resize "Decrease Right"; }
+                bind "=" "+" { Resize "Increase"; }
+                bind "-" { Resize "Decrease"; }
+                bind "Esc" { SwitchToMode "Locked"; }
+              }
 
+              move {
+                bind "n" "Tab" { MovePane; }
+                bind "p" { MovePaneBackwards; }
+                bind "h" "Left" { MovePane "Left"; }
+                bind "j" "Down" { MovePane "Down"; }
+                bind "k" "Up" { MovePane "Up"; }
+                bind "l" "Right" { MovePane "Right"; }
+                bind "Esc" { SwitchToMode "Locked"; }
+              }
+
+              scroll {
+                bind "e" { EditScrollback { ansi true; }; SwitchToMode "Locked"; }
+                bind "s" "/" { SwitchToMode "EnterSearch"; SearchInput 0; }
+                bind "Ctrl c" { ScrollToBottom; SwitchToMode "Locked"; }
+                bind "j" "Down" { ScrollDown; }
+                bind "k" "Up" { ScrollUp; }
+                bind "Ctrl f" "PageDown" { PageScrollDown; }
+                bind "Ctrl b" "PageUp" { PageScrollUp; }
+                bind "d" { HalfPageScrollDown; }
+                bind "u" { HalfPageScrollUp; }
+                bind "Esc" { SwitchToMode "Locked"; }
+              }
+
+              entersearch {
+                bind "Esc" "Ctrl c" { SwitchToMode "Scroll"; }
+                bind "Enter" { SwitchToMode "Search"; }
+              }
+
+              search {
+                bind "Ctrl c" { ScrollToBottom; SwitchToMode "Locked"; }
+                bind "j" "Down" { ScrollDown; }
+                bind "k" "Up" { ScrollUp; }
+                bind "Ctrl f" "PageDown" { PageScrollDown; }
+                bind "Ctrl b" "PageUp" { PageScrollUp; }
+                bind "d" { HalfPageScrollDown; }
+                bind "u" { HalfPageScrollUp; }
+                bind "n" { Search "down"; }
+                bind "p" { Search "up"; }
+                bind "c" { SearchToggleOption "CaseSensitivity"; }
+                bind "w" { SearchToggleOption "Wrap"; }
+                bind "o" { SearchToggleOption "WholeWord"; }
+                bind "Esc" { SwitchToMode "Locked"; }
+              }
+
+              session {
+                bind "d" { Detach; }
                 bind "w" {
                   LaunchOrFocusPlugin "session-manager" {
                     floating true
                     move_to_focused_tab true
                   };
-                  SwitchToMode "Normal";
+                  SwitchToMode "Locked";
                 }
-                bind "p" {
-                  LaunchOrFocusPlugin "zellij:plugin-manager" {
-                    floating true
-                    move_to_focused_tab true
-                  };
-                  SwitchToMode "Normal";
-                }
-              }
-
-              renamepane {
-                bind "Enter" { SwitchToMode "Normal"; }
-                bind "Ctrl Space" "Esc" "Ctrl c" { UndoRenamePane; SwitchToMode "Normal"; }
-              }
-
-              resize {
-                bind "Ctrl Space" "q" "Esc" "Ctrl c" "Ctrl r" { SwitchToMode "Normal"; }
-                bind "h" "Left" { Resize "Increase Left"; }
-                bind "j" "Down" { Resize "Increase Down"; }
-                bind "k" "Up" { Resize "Increase Up"; }
-                bind "l" "Right" { Resize "Increase Right"; }
-              }
-
-              tab {
-                bind "Ctrl Space" "Enter" "Esc" "q" "Ctrl c" { SwitchToMode "Normal"; }
-                bind "h" "Left" "Up" "k" { GoToPreviousTab; }
-                bind "Shift h" { MoveTab "Left"; }
-                bind "l" "Right" "Down" "j" { GoToNextTab; }
-                bind "Shift l" { MoveTab "Right"; }
-                bind "x" { CloseTab; }
-                bind "r" { SwitchToMode "RenameTab"; TabNameInput 0; }
-                bind "s" { ToggleActiveSyncTab; SwitchToMode "Normal"; }
-              }
-
-              renametab {
-                bind "Enter" { SwitchToMode "Normal"; }
-                bind "Ctrl Space" "Esc" "Ctrl c" { UndoRenameTab; SwitchToMode "Normal"; }
-              }
-
-              scroll {
-                bind "Ctrl Space" "q" "Esc" "Ctrl c" { SwitchToMode "Normal"; }
-                bind "/" { SwitchToMode "EnterSearch"; SearchInput 0; }
-                bind "j" "Ctrl e" "Down" { ScrollDown; }
-                bind "k" "Ctrl y" "Up" { ScrollUp; }
-                bind "Ctrl d" { HalfPageScrollDown; }
-                bind "Ctrl u" { HalfPageScrollUp; }
-                bind "Ctrl f" { PageScrollDown; }
-                bind "Ctrl b" { PageScrollUp; }
-                bind "G" { ScrollToBottom; }
-                bind "g" { ScrollToTop; }
-                bind "s" "f" { EditScrollback { ansi true; }; SwitchToMode "Normal"; }
-              }
-
-              entersearch {
-                bind "Esc" "Ctrl c" { SwitchToMode "Scroll"; }
-                bind "Ctrl Space" { SwitchToMode "Normal"; }
-                bind "Enter" { SwitchToMode "Search"; }
-              }
-
-              search {
-                bind "Ctrl Space" "Ctrl c" "q" "Esc" { SwitchToMode "Normal"; }
-                bind "n" { Search "up"; }
-                bind "N" { Search "down"; }
-                bind "c" { SearchToggleOption "CaseSensitivity"; }
-                bind "w" { SearchToggleOption "Wrap"; }
-                bind "o" { SearchToggleOption "WholeWord"; }
-                bind "/" { SwitchToMode "EnterSearch"; SearchInput 0; }
-                bind "j" "Down" { ScrollDown; }
-                bind "k" "Up" { ScrollUp; }
-                bind "Ctrl d" { HalfPageScrollDown; }
-                bind "Ctrl u" { HalfPageScrollUp; }
-                bind "Ctrl f" { PageScrollDown; }
-                bind "Ctrl b" { PageScrollUp; }
-                bind "G" { ScrollToBottom; }
-                bind "g" { ScrollToTop; }
-                bind "s" "f" { EditScrollback { ansi true; }; SwitchToMode "Normal"; }
+                bind "Esc" { SwitchToMode "Locked"; }
               }
             }
           '';
@@ -330,16 +379,18 @@ printf '#[fg=#cba6f7] %s #[fg=#89b4fa] %s
                     format_right  "{command_usage}"
                     format_space  ""
 
-                    mode_normal        "#[bg=$mauve] "
-                    mode_tmux          "#[bg=$peach] "
-                    mode_tab           "#[bg=$teal] "
-                    mode_rename_pane   "#[bg=$yellow] "
-                    mode_rename_tab    "#[bg=$yellow] "
-                    mode_resize        "#[bg=$yellow] "
-                    mode_scroll        "#[bg=$flamingo] "
-                    mode_enter_search  "#[bg=$flamingo] "
-                    mode_search        "#[bg=$blue] "
-                    mode_locked        "#[bg=$red] "
+                    mode_locked        "#[bg=$surface0,fg=$mauve,bold] LOCKED #[fg=$subtext0]Ctrl+g: unlock "
+                    mode_normal        "#[bg=$peach,fg=$dark,bold] UNLOCKED #[fg=$peach,bg=$dark]#[fg=$default,bg=$dark] p: pane │ t: tab │ s: scroll │ m: move │ r: resize │ o: session │ Alt+y: harpoon │ Alt+m/M: monocle #[fg=$dark,bg=$peach] "
+                    mode_pane          "#[bg=$peach,fg=$dark,bold] PANE #[fg=$peach,bg=$dark]#[fg=$default,bg=$dark] d: down │ r: right │ s: stack │ x: close │ f: zoom │ w: float │ i: pin │ z: frames #[fg=$dark,bg=$peach] "
+                    mode_tab           "#[bg=$teal,fg=$dark,bold] TAB #[fg=$teal,bg=$dark]#[fg=$default,bg=$dark] n: new │ x: close │ r: rename │ h/l: move │ b: break │ s: sync #[fg=$dark,bg=$teal] "
+                    mode_resize        "#[bg=$yellow,fg=$dark,bold] RESIZE #[fg=$yellow,bg=$dark]#[fg=$default,bg=$dark] h/j/k/l: resize │ +/-: grow/shrink │ Esc: locked #[fg=$dark,bg=$yellow] "
+                    mode_move          "#[bg=$blue,fg=$dark,bold] MOVE #[fg=$blue,bg=$dark]#[fg=$default,bg=$dark] h/j/k/l: move pane around │ Esc: locked #[fg=$dark,bg=$blue] "
+                    mode_scroll        "#[bg=$flamingo,fg=$dark,bold] SCROLL #[fg=$flamingo,bg=$dark]#[fg=$default,bg=$dark] j/k: scroll │ d/u: half-page │ s: search │ e: edit in hx │ Esc: locked #[fg=$dark,bg=$flamingo] "
+                    mode_enter_search  "#[bg=$flamingo,fg=$dark,bold] SEARCH #[fg=$flamingo,bg=$dark]#[fg=$default,bg=$dark] Enter: find │ Esc: cancel #[fg=$dark,bg=$flamingo] "
+                    mode_search        "#[bg=$blue,fg=$dark,bold] SEARCH #[fg=$blue,bg=$dark]#[fg=$default,bg=$dark] n/p: next/prev │ c: case │ w: wrap │ o: word │ Esc: locked #[fg=$dark,bg=$blue] "
+                    mode_session       "#[bg=$mauve,fg=$dark,bold] SESSION #[fg=$mauve,bg=$dark]#[fg=$default,bg=$dark] d: detach │ w: manager │ Esc: locked #[fg=$dark,bg=$mauve] "
+                    mode_rename_pane   "#[bg=$yellow,fg=$dark,bold] RENAME PANE #[fg=$default] Enter: apply │ Esc: cancel "
+                    mode_rename_tab    "#[bg=$yellow,fg=$dark,bold] RENAME TAB #[fg=$default] Enter: apply │ Esc: cancel "
 
                     tab_sync_indicator       "S"
                     tab_fullscreen_indicator "󰊓"

@@ -53,8 +53,8 @@ nboot castor            # Set next boot generation remotely on castor
 nsync                   # Merge runtime GUI tweaks into declarative base and rebuild
 
 # LLM context generation
-cfb nix                 # Capture /etc/nixos tree and config snapshot to clipboard
-cfb cfg                 # Capture ~/.config tree and config snapshot to clipboard
+rnix                    # Pack /etc/nixos via repomix to clipboard
+rcfg                    # Pack ~/.config via repomix to clipboard
 ~~~
 
 ---

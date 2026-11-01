@@ -1,88 +1,4 @@
-_:
-let
-  cfb =
-    { pkgs }:
-    pkgs.writeShellScriptBin "cfb" ''
-      set -euo pipefail
-
-      targetPath="."
-      if [ $# -ge 1 ]; then
-        case "$1" in
-          nix) targetPath="/etc/nixos" ;;
-          cfg) targetPath="$HOME/.config" ;;
-          *) targetPath="$1" ;;
-        esac
-      fi
-
-      targetPath="$(realpath "$targetPath" 2>/dev/null || echo "$targetPath")"
-      if [ ! -d "$targetPath" ]; then
-        echo "Error: Target directory '$targetPath' does not exist." >&2
-        exit 1
-      fi
-
-      echo "Generating structured LLM context snapshot for: $targetPath..." >&2
-
-      hostName="$(hostname 2>/dev/null || echo workstation)"
-      userName="$(whoami 2>/dev/null || echo user)"
-      dateString="$(date '+%Y-%m-%d %H:%M:%S')"
-
-      tmpfile="$(mktemp)"
-      trap 'rm -f "$tmpfile"' EXIT
-
-      cat << SNAP_HEADER > "$tmpfile"
-================================================================================
-SYSTEM CONTEXT SNAPSHOT
-Host: $hostName | User: $userName | Target: $targetPath | Date: $dateString
-================================================================================
-
---------------------------------------------------------------------------------
-DIRECTORY TOPOLOGY (including empty directories)
---------------------------------------------------------------------------------
-SNAP_HEADER
-
-      if [[ "$targetPath" == *".config"* ]]; then
-        treeIgnores='.git|flake.lock|result|node_modules|target|*cache*|*Cache*|*.log|*.sqlite*|*.db*|*.bin|*.dat|*asar*|*BraveSoftware*|*brave*|*chromium*|*floorp*|*librewolf*|*mozilla*|*google-chrome*|*obsidian*|*zennotes*|*Ferdium*|*OpenRGB*|*credential*|*token*|*secret*|*.key|*LearnHarness*|.gh'
-        ${pkgs.tree}/bin/tree "$targetPath" -a -I "$treeIgnores" --noreport 2>/dev/null >> "$tmpfile" || ${pkgs.tree}/bin/tree "$targetPath" -a -I '.git|result' --noreport >> "$tmpfile"
-        fdExcludes=(-E .git -E flake.lock -E node_modules -E target -E result -E "*cache*" -E "*Cache*" -E "*.log" -E "*.sqlite*" -E "*.db*" -E "*asar" -E "*BraveSoftware*" -E "*brave*" -E "*chromium*" -E "*floorp*" -E "*librewolf*" -E "*mozilla*" -E "*google-chrome*" -E "*obsidian*" -E "*zennotes*" -E "*Ferdium*" -E "*OpenRGB*" -E "*credential*" -E "*token*" -E "*secret*" -E "*.key" -E "*LearnHarness*" -E ".gh")
-      else
-        ${pkgs.tree}/bin/tree "$targetPath" -a -I '.git|flake.lock|result|node_modules|target|*cache*|*Cache*|*.log|*.sqlite*|*.db*' --noreport 2>/dev/null >> "$tmpfile" || ${pkgs.tree}/bin/tree "$targetPath" --noreport >> "$tmpfile"
-        fdExcludes=(-E .git -E flake.lock -E node_modules -E target -E result -E "*cache*" -E "*Cache*" -E "*.log" -E "*.sqlite*" -E "*.db*" -E "*credential*" -E "*token*" -E "*secret*" -E "*.key" -E "*LearnHarness*" -E ".gh")
-      fi
-
-      cat << 'CONTENTS_HEADER' >> "$tmpfile"
-
---------------------------------------------------------------------------------
-FILE CONTENTS
---------------------------------------------------------------------------------
-CONTENTS_HEADER
-
-      extensions=(-e nix -e kdl -e toml -e conf -e ini -e el -e json -e fish -e zsh -e sh -e py -e css -e lua -e md)
-
-      count=0
-      while IFS= read -r -d $'\0' file; do
-        relPath="''${file#$targetPath/}"
-        printf '\n--- START OF FILE: %s ---\n' "$relPath" >> "$tmpfile"
-        cat "$file" >> "$tmpfile" 2>/dev/null || true
-        printf '\n--- END OF FILE: %s ---\n' "$relPath" >> "$tmpfile"
-        count=$((count + 1))
-      done < <(${pkgs.fd}/bin/fd . "$targetPath" -t f -L -H -S -250k "''${extensions[@]}" "''${fdExcludes[@]}" -0 2>/dev/null)
-
-      if [ "$count" -eq 0 ]; then
-        printf '\n[No configuration files found matching extension filters.]\n' >> "$tmpfile"
-      fi
-
-      if command -v ${pkgs.wl-clipboard}/bin/wl-copy >/dev/null 2>&1 && [ -n "''${WAYLAND_DISPLAY:-}" ]; then
-        ${pkgs.wl-clipboard}/bin/wl-copy < "$tmpfile"
-        byteSize=$(wc -c < "$tmpfile")
-        kilobyteSize=$(( byteSize / 1024 ))
-        echo "[Copied context: Tree + $count files ($kilobyteSize KB) from $targetPath to clipboard]" >&2
-      else
-        cat "$tmpfile"
-        echo "[Wayland session not detected: output dumped to stdout]" >&2
-      fi
-    '';
-in
-{
+_: {
   flake.nixosModules.core =
     {
       config,
@@ -92,8 +8,7 @@ in
     }:
     let
       user = config.mainUser;
-      cfbPkg = cfb { inherit pkgs; };
-
+      
       ndeployScript = pkgs.writeShellScriptBin "ndeploy" ''
         set -euo pipefail
 
@@ -190,6 +105,8 @@ in
           television = "tv";
 
           ncd = "cd /etc/nixos";
+          rnix = "repomix /etc/nixos";
+          rcfg = "repomix ~/.config";
           nupdate = "nix flake update --flake /etc/nixos";
           nclean = "sudo nix-collect-garbage -d && nix-collect-garbage -d";
 
@@ -343,6 +260,59 @@ in
         };
 
         home-manager.users.${user} = {
+          xdg.configFile."repomix/repomix.config.json" = {
+            text = builtins.toJSON {
+              output = {
+                filePath = "/tmp/repomix-output.xml";
+                style = "xml";
+                copyToClipboard = true;
+                showLineNumbers = false;
+                topFilesLength = 5;
+              };
+              ignore = {
+                useGitignore = true;
+                useDefaultPatterns = true;
+                customPatterns = [
+                  "**/flake.lock"
+                  "**/result"
+                  "**/node_modules/**"
+                  "**/target/**"
+                  "**/*cache*"
+                  "**/*Cache*"
+                  "**/*.log"
+                  "**/*.sqlite*"
+                  "**/*.db*"
+                  "**/*.bin"
+                  "**/*.dat"
+                  "**/*asar*"
+                  "**/BraveSoftware/**"
+                  "**/brave/**"
+                  "**/chromium/**"
+                  "**/floorp/**"
+                  "**/librewolf/**"
+                  "**/mozilla/**"
+                  "**/google-chrome/**"
+                  "**/obsidian/**"
+                  "**/Ferdium/**"
+                  "**/obs-studio/**"
+                  "**/*credential*"
+                  "**/*token*"
+                  "**/*secret*"
+                  "**/*.key"
+                  "**/.gh/**"
+                  "**/*.jpg"
+                  "**/*.png"
+                  "**/*.webp"
+                  "**/*.wasm"
+                ];
+              };
+              security = {
+                enableSecurityCheck = true;
+              };
+            };
+            force = true;
+          };
+
           programs.zoxide = {
             enable = true;
             enableBashIntegration = true;
@@ -424,7 +394,7 @@ in
           nnn
           gawk
           vivid
-          cfbPkg
+          repomix
           aria2
           p7zip
           unrar
