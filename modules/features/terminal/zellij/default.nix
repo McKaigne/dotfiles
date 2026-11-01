@@ -80,6 +80,7 @@ WRAPPER
             scroll_buffer_size 10000
             copy_command "${pkgs.wl-clipboard}/bin/wl-copy"
             pane_frames true
+            pane_frame_style "full"
             theme "catppuccin-mocha"
 
             ui {
@@ -417,6 +418,9 @@ WRAPPER
                 children
                 pane size=1 borderless=true {
                   plugin location="file://${zjstatusWasm}" {
+                    pane_frame_style "full"
+                    hide_frame_for_single_pane "false"
+
                     format_left   "#[bg=#cba6f7] #[default] {session}  {tabs}"
                     format_center ""
                     format_right  "{mode} "
@@ -426,7 +430,6 @@ WRAPPER
                     border_char "─"
                     border_format "#[fg=#45475a]{char}"
                     border_position "top"
-                    hide_frame_for_single_pane "false"
 
                     mode_locked       "#[fg=#cba6f7]C-SPC #[fg=#6c7086,italic]󰌿 unlock"
                     mode_normal       "#[fg=#cba6f7]h/j/k/l #[fg=#6c7086,italic]󰆍 focus #[fg=#cba6f7]s/v #[fg=#6c7086,italic]󰤼 split #[fg=#cba6f7]f #[fg=#6c7086,italic]󰈞 files #[fg=#cba6f7]y #[fg=#6c7086,italic]󰛢 mark #[fg=#cba6f7]p #[fg=#6c7086,italic]󰆍 pane #[fg=#cba6f7]t #[fg=#6c7086,italic]󰓩 tab #[fg=#cba6f7]r #[fg=#6c7086,italic]󰩨 resize #[fg=#cba6f7]m #[fg=#6c7086,italic] move #[fg=#cba6f7]s #[fg=#6c7086,italic]󰞘 scroll #[fg=#cba6f7]o #[fg=#6c7086,italic]󱂬 session #[fg=#cba6f7]Esc #[fg=#6c7086,italic]󰌾 lock"
@@ -436,9 +439,9 @@ WRAPPER
                     mode_resize       "#[fg=#cba6f7]h/j/k/l #[fg=#6c7086,italic]󰩨 resize #[fg=#cba6f7]+/- #[fg=#6c7086,italic]󰩬 scale #[fg=#cba6f7]Esc #[fg=#6c7086,italic]󰌾 done"
                     mode_scroll       "#[fg=#cba6f7]j/k #[fg=#6c7086,italic]󰞘 scroll #[fg=#cba6f7]d/u #[fg=#6c7086,italic]󱕑 half-page #[fg=#cba6f7]/ #[fg=#6c7086,italic]󰍉 search #[fg=#cba6f7]e #[fg=#6c7086,italic]󰷈 edit #[fg=#cba6f7]Esc #[fg=#6c7086,italic]󰌾 done"
                     mode_search       "#[fg=#cba6f7]n/N #[fg=#6c7086,italic]󰍉 next/prev #[fg=#cba6f7]c #[fg=#6c7086,italic]󰬲 case #[fg=#cba6f7]w #[fg=#6c7086,italic]󰑐 wrap #[fg=#cba6f7]o #[fg=#6c7086,italic]󰬵 word #[fg=#cba6f7]Esc #[fg=#6c7086,italic]󰌾 done"
-                    mode_entersearch  "#[fg=#cba6f7]Enter #[fg=#6c7086,italic]󰍉 search #[fg=#cba6f7]Esc #[fg=#6c7086,italic]󰅖 cancel"
-                    mode_renametab    "#[fg=#cba6f7]Enter #[fg=#6c7086,italic]󰑕 submit #[fg=#cba6f7]Esc #[fg=#6c7086,italic]󰅖 cancel"
-                    mode_renamepane   "#[fg=#cba6f7]Enter #[fg=#6c7086,italic]󰑕 submit #[fg=#cba6f7]Esc #[fg=#6c7086,italic]󰅖 cancel"
+                    mode_entersearch  "#[fg=#cba6f7]Enter #[fg=#6c7086,italic]󰍉 search #[fg=#cba6f7]Esc #[fg=#6c7086,italic]cancel"
+                    mode_renametab    "#[fg=#cba6f7]Enter #[fg=#6c7086,italic]󰓩 submit #[fg=#cba6f7]Esc #[fg=#6c7086,italic]cancel"
+                    mode_renamepane   "#[fg=#cba6f7]Enter #[fg=#6c7086,italic]󰑕 submit #[fg=#cba6f7]Esc #[fg=#6c7086,italic]cancel"
                     mode_session      "#[fg=#cba6f7]d #[fg=#6c7086,italic]󰈆 detach #[fg=#cba6f7]w #[fg=#6c7086,italic]󰀻 manager #[fg=#cba6f7]q #[fg=#6c7086,italic]󰗼 quit #[fg=#cba6f7]Esc #[fg=#6c7086,italic]󰌾 done"
                     mode_tmux         "#[fg=#cba6f7]C-SPC #[fg=#6c7086,italic]󰌌 tmux #[fg=#cba6f7]Esc #[fg=#6c7086,italic]󰌾 lock"
 
