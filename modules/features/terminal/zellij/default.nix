@@ -135,10 +135,18 @@ WRAPPER
                 text_unselected {
                   base "#cdd6f4"
                   background "#1e1e2e"
+                  emphasis_0 "#fab387"
+                  emphasis_1 "#a6e3a1"
+                  emphasis_2 "#89b4fa"
+                  emphasis_3 "#f38ba8"
                 }
                 text_selected {
                   base "#cdd6f4"
                   background "#1e1e2e"
+                  emphasis_0 "#fab387"
+                  emphasis_1 "#a6e3a1"
+                  emphasis_2 "#89b4fa"
+                  emphasis_3 "#f38ba8"
                 }
 
                 frame_selected {
