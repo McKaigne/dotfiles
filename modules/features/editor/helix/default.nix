@@ -75,9 +75,9 @@ _: {
                 center = [ ];
                 right = [ "diagnostics" "selections" "position" "file-type" ];
                 separator = " │ ";
-                mode.normal = "NORMAL";
-                mode.insert = "INSERT";
-                mode.select = "SELECT";
+                mode.normal = " ";
+                mode.insert = " ";
+                mode.select = " ";
               };
             };
             keys.insert = {
@@ -117,9 +117,9 @@ _: {
               "ui.cursorline.secondary" = { };
               "ui.statusline" = { fg = "subtext1"; };
               "ui.statusline.inactive" = { fg = "overlay0"; };
-              "ui.statusline.normal" = { fg = "base"; bg = "lavender"; modifiers = [ "bold" ]; };
-              "ui.statusline.insert" = { fg = "base"; bg = "green"; modifiers = [ "bold" ]; };
-              "ui.statusline.select" = { fg = "base"; bg = "peach"; modifiers = [ "bold" ]; };
+              "ui.statusline.normal" = { bg = "mauve"; fg = "mauve"; };
+              "ui.statusline.insert" = { bg = "green"; fg = "green"; };
+              "ui.statusline.select" = { bg = "peach"; fg = "peach"; };
               "ui.bufferline" = { fg = "subtext0"; };
               "ui.bufferline.active" = { fg = "mauve"; underline = { color = "mauve"; style = "line"; }; modifiers = [ "bold" ]; };
             };
