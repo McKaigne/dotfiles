@@ -7,10 +7,6 @@ _: {
         url = "https://github.com/dj95/zjstatus/releases/download/v0.25.0/zjstatus.wasm";
         sha256 = "282ceab219e56e1908c9fac33907241fe6c3e1ef7d85faab3e5f438cef87b8fe";
       };
-      zjstatusHintsWasm = pkgs.fetchurl {
-        url = "https://github.com/b0o/zjstatus-hints/releases/latest/download/zjstatus-hints.wasm";
-        sha256 = "936c55e9025c0edbd43421383efc151bdfdc78e924f966bfe9e7c682bec8719d";
-      };
       monocleWasm = pkgs.fetchurl {
         url = "https://github.com/imsnif/monocle/releases/download/v0.100.2/monocle.wasm";
         sha256 = "4cb7e2cc912d975b4e755c93e44e7f0de62ef9240a09a89b735490cf4713792c";
@@ -37,15 +33,6 @@ if ! grep -Fq "${zjstatusWasm}" "$HOME/.cache/zellij/permissions.kdl" 2>/dev/nul
     ChangeApplicationState
     RunCommands
     ReadCliPipes
-}
-EOF
-fi
-if ! grep -Fq "${zjstatusHintsWasm}" "$HOME/.cache/zellij/permissions.kdl" 2>/dev/null || ! grep -Fq "MessageAndLaunchOtherPlugins" "$HOME/.cache/zellij/permissions.kdl" 2>/dev/null; then
-  cat << 'EOF' >> "$HOME/.cache/zellij/permissions.kdl"
-"${zjstatusHintsWasm}" {
-    ReadApplicationState
-    ChangeApplicationState
-    MessageAndLaunchOtherPlugins
 }
 EOF
 fi
@@ -116,39 +103,6 @@ WRAPPER
                 black "#181825"
                 white "#cdd6f4"
 
-                ribbon_selected {
-                  base "#cba6f7"
-                  background "#1e1e2e"
-                  emphasis_0 "#cba6f7"
-                  emphasis_1 "#a6e3a1"
-                  emphasis_2 "#89b4fa"
-                  emphasis_3 "#f38ba8"
-                }
-                ribbon_unselected {
-                  base "#cba6f7"
-                  background "#1e1e2e"
-                  emphasis_0 "#cba6f7"
-                  emphasis_1 "#a6e3a1"
-                  emphasis_2 "#89b4fa"
-                  emphasis_3 "#f38ba8"
-                }
-                text_unselected {
-                  base "#cdd6f4"
-                  background "#1e1e2e"
-                  emphasis_0 "#fab387"
-                  emphasis_1 "#a6e3a1"
-                  emphasis_2 "#89b4fa"
-                  emphasis_3 "#f38ba8"
-                }
-                text_selected {
-                  base "#cdd6f4"
-                  background "#1e1e2e"
-                  emphasis_0 "#fab387"
-                  emphasis_1 "#a6e3a1"
-                  emphasis_2 "#89b4fa"
-                  emphasis_3 "#f38ba8"
-                }
-
                 frame_selected {
                   base "#cba6f7"
                   background "#1e1e2e"
@@ -185,19 +139,6 @@ WRAPPER
             pane_viewport_serialization true
             scrollback_lines_to_serialize 500
             serialization_interval 60
-
-            plugins {
-              zjstatus-hints location="file://${zjstatusHintsWasm}" {
-                max_length 0
-                overflow_str "..."
-                pipe_name "zjstatus_hints"
-                hide_in_base_mode false
-              }
-            }
-
-            load_plugins {
-              zjstatus-hints
-            }
 
             keybinds clear-defaults=true {
               locked {
@@ -443,13 +384,10 @@ WRAPPER
                 children
                 pane size=1 borderless=true {
                   plugin location="file://${zjstatusWasm}" {
-                    format_left   "{mode} {session} {tabs}"
+                    format_left   "#[bg=#cba6f7] #[default] {session}  {tabs}"
                     format_center ""
-                    format_right  "{pipe_zjstatus_hints}"
+                    format_right  "{mode} "
                     format_space  ""
-
-                    pipe_zjstatus_hints_format "#[italic]{output}"
-                    pipe_zjstatus_hints_rendermode "dynamic"
 
                     border_enabled "false"
                     border_char "─"
@@ -457,19 +395,19 @@ WRAPPER
                     border_position "top"
                     hide_frame_for_single_pane "false"
 
-                    mode_locked      "#[bg=#cba6f7,bold] "
-                    mode_normal      "#[bg=#89b4fa,bold] "
-                    mode_resize      "#[bg=#f9e2af,bold] "
-                    mode_pane        "#[bg=#a6e3a1,bold] "
-                    mode_move        "#[bg=#fab387,bold] "
-                    mode_tab         "#[bg=#94e2d5,bold] "
-                    mode_scroll      "#[bg=#f2cdcd,bold] "
-                    mode_search      "#[bg=#89dceb,bold] "
-                    mode_entersearch "#[bg=#74c7ec,bold] "
-                    mode_renametab   "#[bg=#94e2d5,bold] "
-                    mode_renamepane  "#[bg=#a6e3a1,bold] "
-                    mode_session     "#[bg=#f5c2e7,bold] "
-                    mode_tmux        "#[bg=#b4befe,bold] "
+                    mode_locked       "#[fg=#cba6f7]C-SPC #[fg=#6c7086,italic]󰌌 unlock"
+                    mode_normal       "#[fg=#cba6f7]h/j/k/l #[fg=#6c7086,italic]󰆍 focus #[fg=#cba6f7]s/v #[fg=#6c7086,italic]split #[fg=#cba6f7]f #[fg=#6c7086,italic]󰈞 files #[fg=#cba6f7]y #[fg=#6c7086,italic]󰛢 mark #[fg=#cba6f7]p #[fg=#6c7086,italic]pane #[fg=#cba6f7]t #[fg=#6c7086,italic]󰓩 tab #[fg=#cba6f7]r #[fg=#6c7086,italic]󰩨 resize #[fg=#cba6f7]m #[fg=#6c7086,italic] move #[fg=#cba6f7]s #[fg=#6c7086,italic]󰞘 scroll #[fg=#cba6f7]o #[fg=#6c7086,italic]󰈆 session #[fg=#cba6f7]Esc #[fg=#6c7086,italic]󰌌 lock"
+                    mode_move         "#[fg=#cba6f7]h/j/k/l #[fg=#6c7086,italic] move #[fg=#cba6f7]n/p #[fg=#6c7086,italic]reorder #[fg=#cba6f7]Esc #[fg=#6c7086,italic]󰌌 done"
+                    mode_pane         "#[fg=#cba6f7]h/j/k/l #[fg=#6c7086,italic]󰆍 focus #[fg=#cba6f7]s/v #[fg=#6c7086,italic]split #[fg=#cba6f7]x #[fg=#6c7086,italic]close #[fg=#cba6f7]z #[fg=#6c7086,italic]zoom #[fg=#cba6f7]w #[fg=#6c7086,italic]float #[fg=#cba6f7]Esc #[fg=#6c7086,italic]󰌌 done"
+                    mode_tab          "#[fg=#cba6f7]h/l #[fg=#6c7086,italic]󰓩 switch #[fg=#cba6f7]1-9 #[fg=#6c7086,italic]jump #[fg=#cba6f7]n #[fg=#6c7086,italic]new #[fg=#cba6f7]x #[fg=#6c7086,italic]close #[fg=#cba6f7]r #[fg=#6c7086,italic]rename #[fg=#cba6f7]s #[fg=#6c7086,italic]sync #[fg=#cba6f7]Esc #[fg=#6c7086,italic]󰌌 done"
+                    mode_resize       "#[fg=#cba6f7]h/j/k/l #[fg=#6c7086,italic]󰩨 resize #[fg=#cba6f7]+/- #[fg=#6c7086,italic]scale #[fg=#cba6f7]Esc #[fg=#6c7086,italic]󰌌 done"
+                    mode_scroll       "#[fg=#cba6f7]j/k #[fg=#6c7086,italic]󰞘 scroll #[fg=#cba6f7]d/u #[fg=#6c7086,italic]half-page #[fg=#cba6f7]/ #[fg=#6c7086,italic]󰍉 search #[fg=#cba6f7]e #[fg=#6c7086,italic]edit #[fg=#cba6f7]Esc #[fg=#6c7086,italic]󰌌 done"
+                    mode_search       "#[fg=#cba6f7]n/N #[fg=#6c7086,italic]󰍉 next/prev #[fg=#cba6f7]c #[fg=#6c7086,italic]case #[fg=#cba6f7]w #[fg=#6c7086,italic]wrap #[fg=#cba6f7]o #[fg=#6c7086,italic]word #[fg=#cba6f7]Esc #[fg=#6c7086,italic]󰌌 done"
+                    mode_entersearch  "#[fg=#cba6f7]Enter #[fg=#6c7086,italic]󰍉 search #[fg=#cba6f7]Esc #[fg=#6c7086,italic]cancel"
+                    mode_renametab    "#[fg=#cba6f7]Enter #[fg=#6c7086,italic]󰓩 submit #[fg=#cba6f7]Esc #[fg=#6c7086,italic]cancel"
+                    mode_renamepane   "#[fg=#cba6f7]Enter #[fg=#6c7086,italic]󰆍 submit #[fg=#cba6f7]Esc #[fg=#6c7086,italic]cancel"
+                    mode_session      "#[fg=#cba6f7]d #[fg=#6c7086,italic]󰈆 detach #[fg=#cba6f7]w #[fg=#6c7086,italic]manager #[fg=#cba6f7]q #[fg=#6c7086,italic]󰗼 quit #[fg=#cba6f7]Esc #[fg=#6c7086,italic]󰌌 done"
+                    mode_tmux         "#[fg=#cba6f7]C-SPC #[fg=#6c7086,italic]tmux #[fg=#cba6f7]Esc #[fg=#6c7086,italic]󰌌 lock"
 
                     tab_sync_indicator       "󰓦"
                     tab_fullscreen_indicator "󰊓"

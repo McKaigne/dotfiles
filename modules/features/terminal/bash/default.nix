@@ -15,7 +15,7 @@ _: {
           enableCompletion = true;
           shellAliases = { };
           initExtra = ''
-            set -o vi
+            set -o emacs
             export STARSHIP_CONFIG="/etc/starship.toml"
             eval "$(${pkgs.starship}/bin/starship init bash)"
           '';

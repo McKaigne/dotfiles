@@ -72,8 +72,7 @@ _: {
             ZSH_HIGHLIGHT_STYLES[redirection]='fg=${config.palette.overlay0}'
             ZSH_HIGHLIGHT_STYLES[unknown-token]='fg=${config.palette.red},bold'
 
-            bindkey -v
-            export KEYTIMEOUT=1
+            bindkey -e
             autoload -z edit-command-line
             zle -N edit-command-line
             bindkey '^X^E' edit-command-line

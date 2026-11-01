@@ -48,17 +48,11 @@ _: {
           '';
 
           interactiveShellInit = ''
-            fish_vi_key_bindings
-            set fish_cursor_default block
-            set fish_cursor_insert line
-            set fish_cursor_replace_one underscore
-            set fish_cursor_visual block
+            fish_default_key_bindings
 
             # Alt-e and Ctrl-x Ctrl-e open current buffer in Helix
-            bind -M insert \ee edit_command_buffer
-            bind -M default \ee edit_command_buffer
-            bind -M insert \cx\ce edit_command_buffer
-            bind -M default \cx\ce edit_command_buffer
+            bind \ee edit_command_buffer
+            bind \cx\ce edit_command_buffer
 
             if test "$TERM" != dumb
                 source ${lsColorsFish}
