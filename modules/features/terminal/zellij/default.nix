@@ -350,53 +350,50 @@ printf '#[fg=#cba6f7] %s #[fg=#89b4fa] %s
           force = true;
         };
 
-        xdg.configFile."zellij/layouts/default.kdl" = {
+                xdg.configFile."zellij/layouts/default.kdl" = {
           text = ''
             layout {
               default_tab_template {
                 children
                 pane size=1 borderless=true {
                   plugin location="file://${zjstatusWasm}" {
-                    color_dark     "#181825"
-                    color_red      "#f38ba8"
-                    color_blue     "#89b4fa"
-                    color_green    "#a6e3a1"
-                    color_mauve    "#cba6f7"
-                    color_peach    "#fab387"
-                    color_yellow   "#f9e2af"
-                    color_teal     "#94e2d5"
-                    color_flamingo "#f2cdcd"
-                    color_default  "#cdd6f4"
-
-                    format_left   "{mode} #[fg=$default,bold]{session}   {tabs}"
+                    format_left   "{mode} {session} {tabs}"
                     format_center ""
+                    format_right  "{pipe_zjstatus_hints}"
                     format_space  ""
-
                     pipe_zjstatus_hints_format "{output}"
 
-                    mode_locked        "#[bg=$surface0,fg=$mauve,bold] LOCKED #[fg=$subtext0]Ctrl+g: unlock "
-                    mode_normal        "#[bg=$peach,fg=$dark,bold] UNLOCKED #[fg=$peach,bg=$dark]#[fg=$default,bg=$dark] p: pane │ t: tab │ s: scroll │ m: move │ r: resize │ o: session │ Alt+y: harpoon │ Alt+m/M: monocle #[fg=$dark,bg=$peach] "
-                    mode_pane          "#[bg=$peach,fg=$dark,bold] PANE #[fg=$peach,bg=$dark]#[fg=$default,bg=$dark] d: down │ r: right │ s: stack │ x: close │ f: zoom │ w: float │ i: pin │ z: frames #[fg=$dark,bg=$peach] "
-                    mode_tab           "#[bg=$teal,fg=$dark,bold] TAB #[fg=$teal,bg=$dark]#[fg=$default,bg=$dark] n: new │ x: close │ r: rename │ h/l: move │ b: break │ s: sync #[fg=$dark,bg=$teal] "
-                    mode_resize        "#[bg=$yellow,fg=$dark,bold] RESIZE #[fg=$yellow,bg=$dark]#[fg=$default,bg=$dark] h/j/k/l: resize │ +/-: grow/shrink │ Esc: locked #[fg=$dark,bg=$yellow] "
-                    mode_move          "#[bg=$blue,fg=$dark,bold] MOVE #[fg=$blue,bg=$dark]#[fg=$default,bg=$dark] h/j/k/l: move pane around │ Esc: locked #[fg=$dark,bg=$blue] "
-                    mode_scroll        "#[bg=$flamingo,fg=$dark,bold] SCROLL #[fg=$flamingo,bg=$dark]#[fg=$default,bg=$dark] j/k: scroll │ d/u: half-page │ s: search │ e: edit in hx │ Esc: locked #[fg=$dark,bg=$flamingo] "
-                    mode_enter_search  "#[bg=$flamingo,fg=$dark,bold] SEARCH #[fg=$flamingo,bg=$dark]#[fg=$default,bg=$dark] Enter: find │ Esc: cancel #[fg=$dark,bg=$flamingo] "
-                    mode_search        "#[bg=$blue,fg=$dark,bold] SEARCH #[fg=$blue,bg=$dark]#[fg=$default,bg=$dark] n/p: next/prev │ c: case │ w: wrap │ o: word │ Esc: locked #[fg=$dark,bg=$blue] "
-                    mode_session       "#[bg=$mauve,fg=$dark,bold] SESSION #[fg=$mauve,bg=$dark]#[fg=$default,bg=$dark] d: detach │ w: manager │ Esc: locked #[fg=$dark,bg=$mauve] "
-                    mode_rename_pane   "#[bg=$yellow,fg=$dark,bold] RENAME PANE #[fg=$default] Enter: apply │ Esc: cancel "
-                    mode_rename_tab    "#[bg=$yellow,fg=$dark,bold] RENAME TAB #[fg=$default] Enter: apply │ Esc: cancel "
+                    border_enabled "false"
+                    border_char "─"
+                    border_format "#[fg=#45475a]{char}"
+                    border_position "top"
+                    hide_frame_for_single_pane "false"
 
-                    tab_sync_indicator       "S"
+                    mode_locked      "#[bg=#f38ba8,bold] "
+                    mode_normal      "#[bg=#cba6f7,bold] "
+                    mode_resize      "#[bg=#fab387,bold] "
+                    mode_pane        "#[bg=#a6e3a1,bold] "
+                    mode_move        "#[bg=#f9e2af,bold] "
+                    mode_tab         "#[bg=#89dceb,bold] "
+                    mode_scroll      "#[bg=#f2cdcd,bold] "
+                    mode_search      "#[bg=#89b4fa,bold] "
+                    mode_entersearch "#[bg=#74c7ec,bold] "
+                    mode_renametab   "#[bg=#94e2d5,bold] "
+                    mode_renamepane  "#[bg=#a6e3a1,bold] "
+                    mode_session     "#[bg=#f5c2e7,bold] "
+                    mode_tmux        "#[bg=#b4befe,bold] "
+
+                    tab_sync_indicator       "󰓦"
                     tab_fullscreen_indicator "󰊓"
                     tab_floating_indicator   "⬚"
-                    tab_normal               "#[fg=$default]{name}  "
-                    tab_normal_fullscreen  "#[fg=$default]{fullscreen_indicator}{name}  "
-                    tab_normal_sync        "#[fg=$green,bold,italic]{sync_indicator}#[fg=$default]{name}  "
-                    tab_active             "#[fg=$mauve,bold,italic]{name}  "
-                    tab_active_fullscreen  "#[fg=$mauve,bold,italic]{fullscreen_indicator}{name}  "
-                    tab_active_sync        "#[fg=$green,bold,italic]{sync_indicator}#[fg=$mauve,bold,italic]{name}  "
+                    tab_separator          " "
 
+                    tab_normal              "#[fg=#cdd6f4]{name}  "
+                    tab_normal_fullscreen   "#[fg=#cdd6f4]{fullscreen_indicator}{name}  "
+                    tab_normal_sync         "#[fg=#a6e3a1,bold,italic]{sync_indicator}#[fg=#cdd6f4]{name}  "
+                    tab_active              "#[fg=#cba6f7,bold,italic]{name}  "
+                    tab_active_fullscreen   "#[fg=#cba6f7,bold,italic]{fullscreen_indicator}{name}  "
+                    tab_active_sync         "#[fg=#a6e3a1,bold,italic]{sync_indicator}#[fg=#cba6f7,bold,italic]{name}  "
                   }
                 }
               }
