@@ -81,7 +81,7 @@ WRAPPER
             copy_command "${pkgs.wl-clipboard}/bin/wl-copy"
             pane_frames true
             pane_frame_style "full"
-            theme "catppuccin-mocha"
+            theme "catppuccin-mocha-mauve"
 
             ui {
               pane_frames {
@@ -91,17 +91,17 @@ WRAPPER
             }
 
             themes {
-              catppuccin-mocha {
+              catppuccin-mocha-mauve {
                 bg "#1e1e2e"
                 fg "#cdd6f4"
                 red "#f38ba8"
-                green "#a6e3a1"
+                green "#cba6f7"
                 blue "#89b4fa"
                 yellow "#f9e2af"
                 magenta "#cba6f7"
                 orange "#fab387"
                 cyan "#94e2d5"
-                black "#181825"
+                black "#45475a"
                 white "#cdd6f4"
 
                 ribbon_selected {
