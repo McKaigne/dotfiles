@@ -7,48 +7,6 @@ _: {
         url = "https://github.com/dj95/zjstatus/releases/download/v0.25.0/zjstatus.wasm";
         sha256 = "282ceab219e56e1908c9fac33907241fe6c3e1ef7d85faab3e5f438cef87b8fe";
       };
-      monocleWasm = pkgs.fetchurl {
-        url = "https://github.com/imsnif/monocle/releases/download/v0.100.2/monocle.wasm";
-        sha256 = "4cb7e2cc912d975b4e755c93e44e7f0de62ef9240a09a89b735490cf4713792c";
-      };
-      harpoonWasm = pkgs.fetchurl {
-        url = "https://github.com/Nacho114/harpoon/releases/download/v0.3.0/harpoon.wasm";
-        sha256 = "7f8cf57a71f1dbbbd115337a31638780d7e18e9b876def1c81c970188caa32f2";
-      };
-      sessionizerWasm = pkgs.fetchurl {
-        url = "https://release-assets.githubusercontent.com/github-production-release-asset/860535873/2fcaca1c-c285-4839-aa82-5df62e1d1a12?sp=r&sv=2018-11-09&sr=b&spr=https&se=2026-11-01T17%3A01%3A54Z&rscd=attachment%3B+filename%3Dzellij-sessionizer.wasm&rsct=application%2Foctet-stream&skoid=96c2d410-5711-43a1-aedd-ab1947aa7ab0&sktid=398a6654-997b-47e9-b12b-9515b896b4de&skt=2026-11-01T16%3A01%3A23Z&ske=2026-11-01T17%3A01%3A54Z&sks=b&skv=2018-11-09&sig=13M2Z4YjAOyFo7O3eElcDHdJaUxCCi2SnX3JBahhXik%3D&jwt=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJnaXRodWIuY29tIiwiYXVkIjoicmVsZWFzZS1hc3NldHMuZ2l0aHVidXNlcmNvbnRlbnQuY29tIiwia2V5Ijoia2V5MSIsImV4cCI6MTc5MzU0OTY5OSwibmJmIjoxNzkzNTQ5Mzk5LCJwYXRoIjoicmVsZWFzZWFzc2V0cHJvZHVjdGlvbi5ibG9iLmNvcmUud2luZG93cy5uZXQifQ.DxTpMOp9wLTaA-FhqvFYQp8qkjQGC8AbGpk2ylHT0PM&response-content-disposition=attachment%3B%20filename%3Dzellij-sessionizer.wasm&response-content-type=application%2Foctet-stream";
-        sha256 = "0nx01gmf9jaivw22dffdy8nj1v840mgdkn0gkbwq2kp74g042664";
-      };
-
-      sessionizerScript = pkgs.writeShellScriptBin "zellij-sessionizer" ''
-        set -euo pipefail
-        user="${user}"
-        homeDir="/home/$user"
-
-        if [ -n "''${ZELLIJ:-}" ]; then
-          exec ${pkgs.zellij}/bin/zellij action launch-or-focus-plugin "file://${sessionizerWasm}" \
-            --floating \
-            --move-to-focused-tab \
-            -c "cwd=/,root_dirs=$homeDir/projects;$homeDir/src;$homeDir/dev;$homeDir,individual_dirs=/etc/nixos;$homeDir/.config;$homeDir"
-        fi
-
-        LAYOUT_FILE=$(mktemp /tmp/zellij-sessionizer-XXXXXX.kdl)
-        trap "rm -f \"$LAYOUT_FILE\"" EXIT
-
-        cat << EOF > "$LAYOUT_FILE"
-layout {
-    pane {
-        plugin location="file://${sessionizerWasm}" {
-            cwd "/"
-            root_dirs "$homeDir/projects;$homeDir/src;$homeDir/dev;$homeDir"
-            individual_dirs "/etc/nixos;$homeDir/.config;$homeDir"
-        }
-    }
-}
-EOF
-
-        exec ${pkgs.zellij}/bin/zellij --layout "$LAYOUT_FILE"
-      '';
 
       zellijWrapped = pkgs.symlinkJoin {
         name = "zellij-${pkgs.zellij.version}";
@@ -70,37 +28,6 @@ if ! grep -Fq "${zjstatusWasm}" "$HOME/.cache/zellij/permissions.kdl" 2>/dev/nul
 }
 EOF
 fi
-if ! grep -Fq "${monocleWasm}" "$HOME/.cache/zellij/permissions.kdl" 2>/dev/null; then
-  cat << 'EOF' >> "$HOME/.cache/zellij/permissions.kdl"
-"${monocleWasm}" {
-    ReadApplicationState
-    ChangeApplicationState
-    RunCommands
-    ChangeFocusedPane
-    OpenNewPane
-}
-EOF
-fi
-if ! grep -Fq "${harpoonWasm}" "$HOME/.cache/zellij/permissions.kdl" 2>/dev/null; then
-  cat << 'EOF' >> "$HOME/.cache/zellij/permissions.kdl"
-"${harpoonWasm}" {
-    ReadApplicationState
-    ChangeApplicationState
-    ChangeFocusedPane
-}
-EOF
-fi
-if ! grep -Fq "${sessionizerWasm}" "$HOME/.cache/zellij/permissions.kdl" 2>/dev/null; then
-  cat << 'EOF' >> "$HOME/.cache/zellij/permissions.kdl"
-"${sessionizerWasm}" {
-    ReadApplicationState
-    ChangeApplicationState
-    RunCommands
-    OpenNewPane
-    OpenNewTab
-}
-EOF
-fi
 exec ${pkgs.zellij}/bin/zellij "$@"
 WRAPPER
           chmod +x $out/bin/zellij
@@ -110,7 +37,6 @@ WRAPPER
     {
       environment.systemPackages = [
         zellijWrapped
-        sessionizerScript
       ];
 
       home-manager.users.${user} = {
@@ -227,29 +153,6 @@ WRAPPER
 
               shared_except "locked" {
                 bind "Ctrl space" { SwitchToMode "Locked"; }
-
-                // Harpoon on Alt+y
-                bind "Alt y" {
-                  LaunchOrFocusPlugin "file://${harpoonWasm}" {
-                    floating true
-                    move_to_focused_tab true
-                  };
-                }
-
-                // Monocle on Alt+m (new floating pane)
-                bind "Alt m" {
-                  LaunchOrFocusPlugin "file://${monocleWasm}" {
-                    floating true
-                  };
-                }
-
-                // Monocle on Alt+Shift+m (in-place on current pane)
-                bind "Alt M" {
-                  LaunchPlugin "file://${monocleWasm}" {
-                    in_place true
-                    kiosk true
-                  };
-                }
               }
 
               shared_except "locked" "entersearch" "renametab" "renamepane" {
@@ -270,41 +173,9 @@ WRAPPER
                 bind "v" { NewPane "Right"; SwitchToMode "Locked"; }
                 bind "n" { NewPane; SwitchToMode "Locked"; }
                 bind "x" { CloseFocus; SwitchToMode "Locked"; }
-                bind "z" { ToggleFocusFullscreen; SwitchToMode "Locked"; }
+                bind "z" "f" { ToggleFocusFullscreen; SwitchToMode "Locked"; }
                 bind "w" { ToggleFloatingPanes; SwitchToMode "Locked"; }
                 bind "e" { TogglePaneEmbedOrFloating; SwitchToMode "Locked"; }
-
-                // Plugins
-                bind "y" {
-                  LaunchOrFocusPlugin "file://${harpoonWasm}" {
-                    floating true
-                    move_to_focused_tab true
-                  };
-                  SwitchToMode "Locked";
-                }
-                bind "f" {
-                  LaunchOrFocusPlugin "file://${monocleWasm}" {
-                    floating true
-                  };
-                  SwitchToMode "Locked";
-                }
-                bind "F" {
-                  LaunchPlugin "file://${monocleWasm}" {
-                    in_place true
-                    kiosk true
-                  };
-                  SwitchToMode "Locked";
-                }
-                bind "S" {
-                  LaunchOrFocusPlugin "file://${sessionizerWasm}" {
-                    floating true
-                    move_to_focused_tab true
-                    cwd "/"
-                    root_dirs "/home/${user}/projects;/home/${user}/src;/home/${user}/dev;/home/${user}"
-                    individual_dirs "/etc/nixos;/home/${user}/.config;/home/${user}"
-                  };
-                  SwitchToMode "Locked";
-                }
 
                 bind "p" { SwitchToMode "Pane"; }
                 bind "t" { SwitchToMode "Tab"; }
@@ -442,16 +313,6 @@ WRAPPER
 
               session {
                 bind "d" { Detach; }
-                bind "s" {
-                  LaunchOrFocusPlugin "file://${sessionizerWasm}" {
-                    floating true
-                    move_to_focused_tab true
-                    cwd "/"
-                    root_dirs "/home/${user}/projects;/home/${user}/src;/home/${user}/dev;/home/${user}"
-                    individual_dirs "/etc/nixos;/home/${user}/.config;/home/${user}"
-                  };
-                  SwitchToMode "Locked";
-                }
                 bind "w" {
                   LaunchOrFocusPlugin "session-manager" {
                     floating true
@@ -498,7 +359,7 @@ WRAPPER
                     border_position "top"
 
                     mode_locked       "#[fg=#cba6f7]C-SPC #[fg=#6c7086,italic]󰌿 unlock"
-                    mode_normal       "#[fg=#cba6f7]h/j/k/l #[fg=#6c7086,italic]󰆍 focus #[fg=#cba6f7]s/v #[fg=#6c7086,italic]󰤼 split #[fg=#cba6f7]f #[fg=#6c7086,italic]󰈞 files #[fg=#cba6f7]y #[fg=#6c7086,italic]󰛢 mark #[fg=#cba6f7]S #[fg=#6c7086,italic]󰄬 sessionizer #[fg=#cba6f7]p #[fg=#6c7086,italic]󰆍 pane #[fg=#cba6f7]t #[fg=#6c7086,italic]󰓩 tab #[fg=#cba6f7]r #[fg=#6c7086,italic]󰩨 resize #[fg=#cba6f7]m #[fg=#6c7086,italic] move #[fg=#cba6f7]s #[fg=#6c7086,italic]󰞘 scroll #[fg=#cba6f7]o #[fg=#6c7086,italic]󱂬 session #[fg=#cba6f7]Esc #[fg=#6c7086,italic]󰌾 lock"
+                    mode_normal       "#[fg=#cba6f7]h/j/k/l #[fg=#6c7086,italic]󰆍 focus #[fg=#cba6f7]s/v #[fg=#6c7086,italic]󰤼 split #[fg=#cba6f7]z/f #[fg=#6c7086,italic]󰊓 zoom #[fg=#cba6f7]p #[fg=#6c7086,italic]󰆍 pane #[fg=#cba6f7]t #[fg=#6c7086,italic]󰓩 tab #[fg=#cba6f7]r #[fg=#6c7086,italic]󰩨 resize #[fg=#cba6f7]m #[fg=#6c7086,italic] move #[fg=#cba6f7]s #[fg=#6c7086,italic]󰞘 scroll #[fg=#cba6f7]o #[fg=#6c7086,italic]󱂬 session #[fg=#cba6f7]Esc #[fg=#6c7086,italic]󰌾 lock"
                     mode_move         "#[fg=#cba6f7]h/j/k/l #[fg=#6c7086,italic] move #[fg=#cba6f7]n/p #[fg=#6c7086,italic]󰒭 reorder #[fg=#cba6f7]Esc #[fg=#6c7086,italic]󰌾 done"
                     mode_pane         "#[fg=#cba6f7]h/j/k/l #[fg=#6c7086,italic]󰒋 focus #[fg=#cba6f7]s/v #[fg=#6c7086,italic]󰤼 split #[fg=#cba6f7]x #[fg=#6c7086,italic]󰅖 close #[fg=#cba6f7]z #[fg=#6c7086,italic]󰊓 zoom #[fg=#cba6f7]w #[fg=#6c7086,italic]󰉈 float #[fg=#cba6f7]c #[fg=#6c7086,italic]󰑕 rename #[fg=#cba6f7]Esc #[fg=#6c7086,italic]󰌾 done"
                     mode_tab          "#[fg=#cba6f7]h/l #[fg=#6c7086,italic]󰓩 switch #[fg=#cba6f7]1-9 #[fg=#6c7086,italic]󰒭 jump #[fg=#cba6f7]n #[fg=#6c7086,italic]󰐕 new #[fg=#cba6f7]x #[fg=#6c7086,italic]󰅖 close #[fg=#cba6f7]r #[fg=#6c7086,italic]󰑕 rename #[fg=#cba6f7]s #[fg=#6c7086,italic]󰓦 sync #[fg=#cba6f7]Esc #[fg=#6c7086,italic]󰌾 done"
@@ -508,7 +369,7 @@ WRAPPER
                     mode_entersearch  "#[fg=#cba6f7]Enter #[fg=#6c7086,italic]󰍉 search #[fg=#cba6f7]Esc #[fg=#6c7086,italic]cancel"
                     mode_renametab    "#[fg=#cba6f7]Enter #[fg=#6c7086,italic]󰓩 submit #[fg=#cba6f7]Esc #[fg=#6c7086,italic]cancel"
                     mode_renamepane   "#[fg=#cba6f7]Enter #[fg=#6c7086,italic]󰑕 submit #[fg=#cba6f7]Esc #[fg=#6c7086,italic]cancel"
-                    mode_session      "#[fg=#cba6f7]s #[fg=#6c7086,italic]󰄬 sessionizer #[fg=#cba6f7]d #[fg=#6c7086,italic]󰈆 detach #[fg=#cba6f7]w #[fg=#6c7086,italic]󰀻 manager #[fg=#cba6f7]q #[fg=#6c7086,italic]󰗼 quit #[fg=#cba6f7]Esc #[fg=#6c7086,italic]󰌾 done"
+                    mode_session      "#[fg=#cba6f7]d #[fg=#6c7086,italic]󰈆 detach #[fg=#cba6f7]w #[fg=#6c7086,italic]󰀻 manager #[fg=#cba6f7]q #[fg=#6c7086,italic]󰗼 quit #[fg=#cba6f7]Esc #[fg=#6c7086,italic]󰌾 done"
                     mode_tmux         "#[fg=#cba6f7]C-SPC #[fg=#6c7086,italic]󰌌 tmux #[fg=#cba6f7]Esc #[fg=#6c7086,italic]󰌾 lock"
 
                     tab_sync_indicator       "󰓦"

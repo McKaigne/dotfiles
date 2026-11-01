@@ -221,7 +221,7 @@ binds {
   // 02 - Applications & System Panels
   Mod+F                  hotkey-overlay-title="Terminal: Foot Client"               { spawn "@footclient@"; }
   Mod+Shift+F            hotkey-overlay-title="Terminal: Zellij Workspace (main)"   { spawn "@footclient@" "-e" "@zellij@" "attach" "-c" "main"; }
-  Mod+Ctrl+F             hotkey-overlay-title="Terminal: Zellij Sessionizer"        { spawn "@footclient@" "-e" "zellij-sessionizer"; }
+  Mod+Ctrl+F             hotkey-overlay-title="Terminal: Zellij Session Picker"     { spawn "@footclient@" "-e" "@zellij@" "attach"; }
 
   Mod+D                  hotkey-overlay-title="Browser: LibreWolf"                  { spawn "@librewolf@"; }
   Mod+Shift+D            hotkey-overlay-title="Browser: Brave Origin"               { spawn "@brave@"; }
