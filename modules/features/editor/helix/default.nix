@@ -31,7 +31,9 @@ _: {
               {
                 name = "nix";
                 auto-format = true;
-                formatter = { command = "nixfmt"; };
+                formatter = {
+                  command = "nixfmt";
+                };
               }
               {
                 name = "julia";
@@ -71,9 +73,19 @@ _: {
                 display-inlay-hints = true;
               };
               statusline = {
-                left = [ "mode" "spinner" "file-name" "file-modification-indicator" ];
+                left = [
+                  "mode"
+                  "spinner"
+                  "file-name"
+                  "file-modification-indicator"
+                ];
                 center = [ ];
-                right = [ "diagnostics" "selections" "position" "file-type" ];
+                right = [
+                  "diagnostics"
+                  "selections"
+                  "position"
+                  "file-type"
+                ];
                 separator = " │ ";
                 mode.normal = " ";
                 mode.insert = " ";
@@ -81,22 +93,44 @@ _: {
               };
             };
             keys.insert = {
-              esc = [ "normal_mode" "move_char_left" ];
+              esc = [
+                "normal_mode"
+                "move_char_left"
+              ];
             };
             keys.normal = {
-              esc = [ "collapse_selection" "keep_primary_selection" ];
-              y = [ ":clipboard-yank" "yank" ];
+              esc = [
+                "collapse_selection"
+                "keep_primary_selection"
+              ];
+              y = [
+                ":clipboard-yank"
+                "yank"
+              ];
               p = ":clipboard-paste-after";
               P = ":clipboard-paste-before";
-              Y = [ ":clipboard-yank-join" "yank_main_selection_to_clipboard" ];
+              Y = [
+                ":clipboard-yank-join"
+                "yank_main_selection_to_clipboard"
+              ];
               R = ":clipboard-paste-replace";
             };
             keys.select = {
-              esc = [ "collapse_selection" "keep_primary_selection" "normal_mode" ];
-              y = [ ":clipboard-yank" "yank" ];
+              esc = [
+                "collapse_selection"
+                "keep_primary_selection"
+                "normal_mode"
+              ];
+              y = [
+                ":clipboard-yank"
+                "yank"
+              ];
               p = ":clipboard-paste-after";
               P = ":clipboard-paste-before";
-              Y = [ ":clipboard-yank-join" "yank_main_selection_to_clipboard" ];
+              Y = [
+                ":clipboard-yank-join"
+                "yank_main_selection_to_clipboard"
+              ];
               R = ":clipboard-paste-replace";
             };
           };
@@ -104,24 +138,73 @@ _: {
             catppuccin_mocha_transparent = {
               inherits = "catppuccin_mocha";
               "ui.background" = { };
-              "ui.cursor" = { fg = "crust"; bg = "rosewater"; };
-              "ui.cursor.normal" = { fg = "crust"; bg = "rosewater"; };
-              "ui.cursor.insert" = { fg = "crust"; bg = "rosewater"; };
-              "ui.cursor.select" = { fg = "crust"; bg = "rosewater"; };
-              "ui.cursor.primary" = { fg = "crust"; bg = "rosewater"; };
-              "ui.cursor.primary.normal" = { fg = "crust"; bg = "rosewater"; };
-              "ui.cursor.primary.insert" = { fg = "crust"; bg = "rosewater"; };
-              "ui.cursor.primary.select" = { fg = "crust"; bg = "rosewater"; };
-              "ui.cursor.match" = { fg = "crust"; bg = "peach"; };
+              "ui.cursor" = {
+                fg = "crust";
+                bg = "rosewater";
+              };
+              "ui.cursor.normal" = {
+                fg = "crust";
+                bg = "rosewater";
+              };
+              "ui.cursor.insert" = {
+                fg = "crust";
+                bg = "rosewater";
+              };
+              "ui.cursor.select" = {
+                fg = "crust";
+                bg = "rosewater";
+              };
+              "ui.cursor.primary" = {
+                fg = "crust";
+                bg = "rosewater";
+              };
+              "ui.cursor.primary.normal" = {
+                fg = "crust";
+                bg = "rosewater";
+              };
+              "ui.cursor.primary.insert" = {
+                fg = "crust";
+                bg = "rosewater";
+              };
+              "ui.cursor.primary.select" = {
+                fg = "crust";
+                bg = "rosewater";
+              };
+              "ui.cursor.match" = {
+                fg = "crust";
+                bg = "peach";
+              };
               "ui.cursorline.primary" = { };
               "ui.cursorline.secondary" = { };
-              "ui.statusline" = { fg = "subtext1"; };
-              "ui.statusline.inactive" = { fg = "overlay0"; };
-              "ui.statusline.normal" = { bg = "mauve"; fg = "mauve"; };
-              "ui.statusline.insert" = { bg = "green"; fg = "green"; };
-              "ui.statusline.select" = { bg = "peach"; fg = "peach"; };
-              "ui.bufferline" = { fg = "subtext0"; };
-              "ui.bufferline.active" = { fg = "mauve"; underline = { color = "mauve"; style = "line"; }; modifiers = [ "bold" ]; };
+              "ui.statusline" = {
+                fg = "subtext1";
+              };
+              "ui.statusline.inactive" = {
+                fg = "overlay0";
+              };
+              "ui.statusline.normal" = {
+                bg = "mauve";
+                fg = "mauve";
+              };
+              "ui.statusline.insert" = {
+                bg = "green";
+                fg = "green";
+              };
+              "ui.statusline.select" = {
+                bg = "peach";
+                fg = "peach";
+              };
+              "ui.bufferline" = {
+                fg = "subtext0";
+              };
+              "ui.bufferline.active" = {
+                fg = "mauve";
+                underline = {
+                  color = "mauve";
+                  style = "line";
+                };
+                modifiers = [ "bold" ];
+              };
             };
           };
         };
