@@ -5,6 +5,7 @@ _: {
       programs.starship = {
         enable = true;
         package = pkgs.starship;
+        presets = [ "jetpack" ];
       };
 
       environment.sessionVariables = {
@@ -12,6 +13,6 @@ _: {
       };
 
       environment.etc."environment.d/10-starship.conf".text = "STARSHIP_CONFIG=/etc/starship.toml\n";
-      environment.etc."starship.toml".source = ./starship.toml;
+      environment.etc."starship.toml".source = "${pkgs.starship}/share/starship/presets/jetpack.toml";
     };
 }

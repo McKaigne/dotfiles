@@ -3,7 +3,6 @@ _: {
     { config, pkgs, ... }:
     let
       user = config.mainUser;
-      homeDir = config.home-manager.users.${user}.home.homeDirectory;
       zjstatusWasm = pkgs.fetchurl {
         url = "https://github.com/dj95/zjstatus/releases/download/v0.25.0/zjstatus.wasm";
         sha256 = "282ceab219e56e1908c9fac33907241fe6c3e1ef7d85faab3e5f438cef87b8fe";
@@ -17,21 +16,6 @@ _: {
         sha256 = "7f8cf57a71f1dbbbd115337a31638780d7e18e9b876def1c81c970188caa32f2";
       };
 
-      sesh = pkgs.writeScriptBin "sesh" ''
-        #! /usr/bin/env sh
-        ZOXIDE_RESULT=$(zoxide query --interactive 2>/dev/null)
-        if [ -z "$ZOXIDE_RESULT" ]; then
-          exit 0
-        fi
-        SESSION_TITLE=$(basename "$ZOXIDE_RESULT")
-        SESSION_LIST=$(zellij list-sessions -n 2>/dev/null | awk '{print $1}')
-
-        if echo "$SESSION_LIST" | grep -q "^$SESSION_TITLE$"; then
-          exec zellij attach "$SESSION_TITLE"
-        else
-          cd "$ZOXIDE_RESULT" && exec zellij attach -c "$SESSION_TITLE"
-        fi
-      '';
 
       zellijWrapped = pkgs.symlinkJoin {
         name = "zellij-${pkgs.zellij.version}";
@@ -73,7 +57,6 @@ WRAPPER
     {
       environment.systemPackages = [
         zellijWrapped
-        sesh
       ];
 
       home-manager.users.${user} = {
@@ -171,14 +154,17 @@ printf '#[fg=#cba6f7] %s #[fg=#89b4fa] %s
                 color_yellow   "#f9e2af"
                 color_teal     "#94e2d5"
                 color_flamingo "#f2cdcd"
+                    color_subtext0 "#a6adc8"
                 color_default  "#cdd6f4"
 
                 format_left   "{mode} #[fg=$default,bold]{session}   {tabs}"
                 format_center ""
-                format_right  "{command_usage}"
                 format_space  ""
 
+                    pipe_zjstatus_hints_format "{output}"
+
                 mode_locked        "#[bg=$surface0,fg=$mauve,bold] LOCKED #[fg=$subtext0]Ctrl+g: unlock "
+                    mode_tmux          "#[bg=$blue] "
                 mode_normal        "#[bg=$peach,fg=$dark,bold] UNLOCKED #[fg=$peach,bg=$dark]#[fg=$default,bg=$dark] p: pane │ t: tab │ s: scroll │ m: move │ r: resize │ o: session │ Alt+y: harpoon │ Alt+m/M: monocle #[fg=$dark,bg=$peach] "
                 mode_pane          "#[bg=$peach,fg=$dark,bold] PANE #[fg=$peach,bg=$dark]#[fg=$default,bg=$dark] d: down │ r: right │ s: stack │ x: close │ f: zoom │ w: float │ i: pin │ z: frames #[fg=$dark,bg=$peach] "
                 mode_tab           "#[bg=$teal,fg=$dark,bold] TAB #[fg=$teal,bg=$dark]#[fg=$default,bg=$dark] n: new │ x: close │ r: rename │ h/l: move │ b: break │ s: sync #[fg=$dark,bg=$teal] "
@@ -201,10 +187,6 @@ printf '#[fg=#cba6f7] %s #[fg=#89b4fa] %s
                 tab_active_fullscreen  "#[fg=$mauve,bold,italic]{fullscreen_indicator}{name}  "
                 tab_active_sync        "#[fg=$green,bold,italic]{sync_indicator}#[fg=$mauve,bold,italic]{name}  "
 
-                command_usage_command    "${homeDir}/.config/zellij/scripts/systemUsage.sh"
-                command_usage_format     "{stdout}"
-                command_usage_rendermode "dynamic"
-                command_usage_interval   "2"
               }
             }
 
@@ -388,8 +370,9 @@ printf '#[fg=#cba6f7] %s #[fg=#89b4fa] %s
 
                     format_left   "{mode} #[fg=$default,bold]{session}   {tabs}"
                     format_center ""
-                    format_right  "{command_usage}"
                     format_space  ""
+
+                    pipe_zjstatus_hints_format "{output}"
 
                     mode_locked        "#[bg=$surface0,fg=$mauve,bold] LOCKED #[fg=$subtext0]Ctrl+g: unlock "
                     mode_normal        "#[bg=$peach,fg=$dark,bold] UNLOCKED #[fg=$peach,bg=$dark]#[fg=$default,bg=$dark] p: pane │ t: tab │ s: scroll │ m: move │ r: resize │ o: session │ Alt+y: harpoon │ Alt+m/M: monocle #[fg=$dark,bg=$peach] "
@@ -414,10 +397,6 @@ printf '#[fg=#cba6f7] %s #[fg=#89b4fa] %s
                     tab_active_fullscreen  "#[fg=$mauve,bold,italic]{fullscreen_indicator}{name}  "
                     tab_active_sync        "#[fg=$green,bold,italic]{sync_indicator}#[fg=$mauve,bold,italic]{name}  "
 
-                    command_usage_command    "${homeDir}/.config/zellij/scripts/systemUsage.sh"
-                    command_usage_format     "{stdout}"
-                    command_usage_rendermode "dynamic"
-                    command_usage_interval   "2"
                   }
                 }
               }
