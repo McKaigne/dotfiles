@@ -116,6 +116,31 @@ WRAPPER
                 black "#181825"
                 white "#cdd6f4"
 
+                ribbon_selected {
+                  base "#cba6f7"
+                  background "#1e1e2e"
+                  emphasis_0 "#cba6f7"
+                  emphasis_1 "#a6e3a1"
+                  emphasis_2 "#89b4fa"
+                  emphasis_3 "#f38ba8"
+                }
+                ribbon_unselected {
+                  base "#cba6f7"
+                  background "#1e1e2e"
+                  emphasis_0 "#cba6f7"
+                  emphasis_1 "#a6e3a1"
+                  emphasis_2 "#89b4fa"
+                  emphasis_3 "#f38ba8"
+                }
+                text_unselected {
+                  base "#cdd6f4"
+                  background "#1e1e2e"
+                }
+                text_selected {
+                  base "#cdd6f4"
+                  background "#1e1e2e"
+                }
+
                 frame_selected {
                   base "#cba6f7"
                   background "#1e1e2e"
@@ -216,10 +241,11 @@ WRAPPER
                 bind "v" { NewPane "Right"; SwitchToMode "Locked"; }
                 bind "n" { NewPane; SwitchToMode "Locked"; }
                 bind "x" { CloseFocus; SwitchToMode "Locked"; }
-                // Zoom toggle on z
                 bind "z" { ToggleFocusFullscreen; SwitchToMode "Locked"; }
+                bind "w" { ToggleFloatingPanes; SwitchToMode "Locked"; }
+                bind "e" { TogglePaneEmbedOrFloating; SwitchToMode "Locked"; }
 
-                // Harpoon on y
+                // Plugins
                 bind "y" {
                   LaunchOrFocusPlugin "file://${harpoonWasm}" {
                     floating true
@@ -227,8 +253,6 @@ WRAPPER
                   };
                   SwitchToMode "Locked";
                 }
-
-                // Monocle on f (floating) and Shift+F (in-place)
                 bind "f" {
                   LaunchOrFocusPlugin "file://${monocleWasm}" {
                     floating true
@@ -242,8 +266,6 @@ WRAPPER
                   };
                   SwitchToMode "Locked";
                 }
-                bind "w" { ToggleFloatingPanes; SwitchToMode "Locked"; }
-                bind "e" { TogglePaneEmbedOrFloating; SwitchToMode "Locked"; }
 
                 bind "p" { SwitchToMode "Pane"; }
                 bind "t" { SwitchToMode "Tab"; }
@@ -288,32 +310,7 @@ WRAPPER
                 bind "n" { NewPane; SwitchToMode "Locked"; }
                 bind "d" { NewPane "stacked"; SwitchToMode "Locked"; }
                 bind "x" { CloseFocus; SwitchToMode "Locked"; }
-                // Zoom toggle on z
-                bind "z" { ToggleFocusFullscreen; SwitchToMode "Locked"; }
-
-                // Harpoon on y
-                bind "y" {
-                  LaunchOrFocusPlugin "file://${harpoonWasm}" {
-                    floating true
-                    move_to_focused_tab true
-                  };
-                  SwitchToMode "Locked";
-                }
-
-                // Monocle on f (floating) and Shift+F (in-place)
-                bind "f" {
-                  LaunchOrFocusPlugin "file://${monocleWasm}" {
-                    floating true
-                  };
-                  SwitchToMode "Locked";
-                }
-                bind "F" {
-                  LaunchPlugin "file://${monocleWasm}" {
-                    in_place true
-                    kiosk true
-                  };
-                  SwitchToMode "Locked";
-                }
+                bind "f" "z" { ToggleFocusFullscreen; SwitchToMode "Locked"; }
                 bind "w" { ToggleFloatingPanes; SwitchToMode "Locked"; }
                 bind "e" { TogglePaneEmbedOrFloating; SwitchToMode "Locked"; }
                 bind "c" { SwitchToMode "RenamePane"; PaneNameInput 0; }
@@ -442,7 +439,9 @@ WRAPPER
                     format_center ""
                     format_right  "{pipe_zjstatus_hints}"
                     format_space  ""
-                    pipe_zjstatus_hints_format "{output}"
+
+                    pipe_zjstatus_hints_format "#[italic]{output}"
+                    pipe_zjstatus_hints_rendermode "dynamic"
 
                     border_enabled "false"
                     border_char "─"
