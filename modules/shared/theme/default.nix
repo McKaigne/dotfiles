@@ -46,11 +46,11 @@ _: {
           sans = {
             name = lib.mkOption {
               type = lib.types.str;
-              default = "Victor Mono";
+              default = "Atkinson Hyperlegible";
             };
             package = lib.mkOption {
               type = lib.types.package;
-              default = pkgs.victor-mono;
+              default = pkgs.atkinson-hyperlegible;
             };
             size = lib.mkOption {
               type = lib.types.int;
@@ -60,11 +60,11 @@ _: {
           mono = {
             name = lib.mkOption {
               type = lib.types.str;
-              default = "Victor Mono";
+              default = "AtkynsonMono Nerd Font";
             };
             package = lib.mkOption {
               type = lib.types.package;
-              default = pkgs.victor-mono;
+              default = pkgs.nerd-fonts.atkynson-mono;
             };
             size = lib.mkOption {
               type = lib.types.int;

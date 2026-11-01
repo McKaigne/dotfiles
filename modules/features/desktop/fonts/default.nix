@@ -4,8 +4,8 @@ _: {
     {
       fonts = {
         packages = with pkgs; [
-          victor-mono
-          nerd-fonts.victor-mono
+          atkinson-hyperlegible
+          nerd-fonts.atkynson-mono
           noto-fonts
           noto-fonts-cjk-sans
           noto-fonts-color-emoji
@@ -22,8 +22,8 @@ _: {
             lcdfilter = "default";
           };
           defaultFonts = {
-            monospace = [ "Victor Mono" ];
-            sansSerif = [ "Victor Mono" "Noto Sans" ];
+            monospace = [ "AtkynsonMono Nerd Font" ];
+            sansSerif = [ "Atkinson Hyperlegible" "Noto Sans" ];
             serif = [ "Noto Serif" ];
             emoji = [ "Noto Color Emoji" ];
           };

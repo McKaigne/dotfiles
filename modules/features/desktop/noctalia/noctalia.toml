@@ -27,7 +27,7 @@ order = [ "top" ]
         "clock",
         "session"
     ]
-    font_family = "Victor Mono"
+    font_family = "Atkinson Hyperlegible"
     font_scale = 1.15
     margin_edge = 8
     margin_ends = 350
@@ -129,7 +129,7 @@ avatar_path = "/etc/nixos/avatar.jpg"
 button_borders = false
 card_borders = false
 corner_radius_scale = 0.4
-font_family = "Victor Mono"
+font_family = "Atkinson Hyperlegible"
 input_borders = false
 popup_borders = false
 popup_shadows = false
