@@ -23,6 +23,13 @@ _: {
             docker-compose-language-service
           ];
           languages = {
+            language-server.nixd = {
+              command = "nixd";
+              config.nixd = {
+                nixpkgs.expr = "import <nixpkgs> { }";
+                options.nixos.expr = "(builtins.getFlake \"/etc/nixos\").nixosConfigurations.${config.networking.hostName}.options";
+              };
+            };
             language = [
               {
                 name = "nix";
@@ -30,6 +37,7 @@ _: {
                 formatter = {
                   command = "nixfmt";
                 };
+                language-servers = [ "nixd" ];
               }
               {
                 name = "julia";
@@ -48,7 +56,14 @@ _: {
               color-modes = true;
               bufferline = "multiple";
               auto-format = true;
-              auto-save = false;
+              auto-save = {
+                focus-lost = true;
+              };
+              end-of-line-diagnostics = "hint";
+              inline-diagnostics = {
+                cursor-line = "warning";
+                other-lines = "disable";
+              };
               middle-click-paste = true;
               cursor-shape = {
                 normal = "block";
@@ -67,6 +82,7 @@ _: {
               lsp = {
                 display-messages = true;
                 display-inlay-hints = true;
+                snippets = true;
               };
               statusline = {
                 left = [
