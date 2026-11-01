@@ -1,3 +1,7 @@
+[animation]
+enabled = true
+speed = 1.0
+
 [backdrop]
 blur_intensity = 0.6
 enabled = true
@@ -131,7 +135,7 @@ wallpaper_scheme = "m3-content"
 [wallpaper]
 directory = "/etc/wallpapers"
 fill_mode = "crop"
-transition_duration = 200
+transition_duration = 300
 
     [wallpaper.default]
     path = "/etc/wallpapers/isekaiJoucho.jpg"
