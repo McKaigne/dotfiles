@@ -173,7 +173,7 @@ WRAPPER
                 bind "v" { NewPane "Right"; SwitchToMode "Locked"; }
                 bind "n" { NewPane; SwitchToMode "Locked"; }
                 bind "x" { CloseFocus; SwitchToMode "Locked"; }
-                bind "z" "f" { ToggleFocusFullscreen; SwitchToMode "Locked"; }
+                bind "f" { ToggleFocusFullscreen; SwitchToMode "Locked"; }
                 bind "w" { ToggleFloatingPanes; SwitchToMode "Locked"; }
                 bind "e" { TogglePaneEmbedOrFloating; SwitchToMode "Locked"; }
 
@@ -215,16 +215,16 @@ WRAPPER
                 bind "k" "Up" { MoveFocus "Up"; }
                 bind "l" "Right" { MoveFocus "Right"; }
 
-                bind "s" { NewPane "Down"; SwitchToMode "Locked"; }
-                bind "v" "r" { NewPane "Right"; SwitchToMode "Locked"; }
-                bind "n" { NewPane; SwitchToMode "Locked"; }
-                bind "d" { NewPane "stacked"; SwitchToMode "Locked"; }
-                bind "x" { CloseFocus; SwitchToMode "Locked"; }
-                bind "f" "z" { ToggleFocusFullscreen; SwitchToMode "Locked"; }
-                bind "w" { ToggleFloatingPanes; SwitchToMode "Locked"; }
-                bind "e" { TogglePaneEmbedOrFloating; SwitchToMode "Locked"; }
+                bind "s" { NewPane "Down"; }
+                bind "v" "r" { NewPane "Right"; }
+                bind "n" { NewPane; }
+                bind "d" { NewPane "stacked"; }
+                bind "x" { CloseFocus; }
+                bind "f" { ToggleFocusFullscreen; }
+                bind "w" { ToggleFloatingPanes; }
+                bind "e" { TogglePaneEmbedOrFloating; }
                 bind "c" { SwitchToMode "RenamePane"; PaneNameInput 0; }
-                bind "i" { TogglePanePinned; SwitchToMode "Locked"; }
+                bind "i" { TogglePanePinned; }
                 bind "Tab" { SwitchFocus; }
                 bind "p" { SwitchToMode "Normal"; }
               }
@@ -359,17 +359,17 @@ WRAPPER
                     border_position "top"
 
                     mode_locked       ""
-                    mode_normal       "#[fg=#cba6f7]h/j/k/l #[fg=#6c7086,italic]󰈈 focus #[fg=#cba6f7]s/v #[fg=#6c7086,italic]󰤼 split #[fg=#cba6f7]z/f #[fg=#6c7086,italic]󰊓 zoom #[fg=#cba6f7]x #[fg=#6c7086,italic] close #[fg=#cba6f7]u/d #[fg=#6c7086,italic]󰮾 scroll #[fg=#cba6f7]t #[fg=#6c7086,italic]󰓩 tab #[fg=#cba6f7]r #[fg=#6c7086,italic]󰩨 resize #[fg=#cba6f7]m #[fg=#6c7086,italic]󰮴 move #[fg=#cba6f7]o #[fg=#6c7086,italic]󱂬 session"
+                    mode_normal       "#[fg=#cba6f7]h/j/k/l #[fg=#6c7086,italic]󰈈 focus #[fg=#cba6f7]s/v #[fg=#6c7086,italic]󰤼 split #[fg=#cba6f7]f #[fg=#6c7086,italic]󰊓 fullscreen #[fg=#cba6f7]x #[fg=#6c7086,italic]󰃕 close #[fg=#cba6f7]u/d #[fg=#6c7086,italic]󰮾 scroll #[fg=#cba6f7]p #[fg=#6c7086,italic]󰆍 pane #[fg=#cba6f7]t #[fg=#6c7086,italic]󰓩 tab #[fg=#cba6f7]r #[fg=#6c7086,italic]󰩨 resize #[fg=#cba6f7]m #[fg=#6c7086,italic]󰮴 move #[fg=#cba6f7]o #[fg=#6c7086,italic]󱂬 session"
                     mode_move         "#[fg=#cba6f7]h/j/k/l #[fg=#6c7086,italic]󰮴 move #[fg=#cba6f7]n/p #[fg=#6c7086,italic]󰒭 reorder"
-                    mode_pane         "#[fg=#cba6f7]h/j/k/l #[fg=#6c7086,italic]󰈈 focus #[fg=#cba6f7]s/v #[fg=#6c7086,italic]󰤼 split #[fg=#cba6f7]x #[fg=#6c7086,italic] close #[fg=#cba6f7]z #[fg=#6c7086,italic]󰊓 zoom #[fg=#cba6f7]w #[fg=#6c7086,italic]󰉈 float #[fg=#cba6f7]c #[fg=#6c7086,italic]󰑕 rename"
-                    mode_tab          "#[fg=#cba6f7]h/l #[fg=#6c7086,italic]󰮸 switch #[fg=#cba6f7]1-9 #[fg=#6c7086,italic]󰮸 jump #[fg=#cba6f7]n #[fg=#6c7086,italic]󰐕 new #[fg=#cba6f7]x #[fg=#6c7086,italic] close #[fg=#cba6f7]r #[fg=#6c7086,italic]󰑕 rename #[fg=#cba6f7]s #[fg=#6c7086,italic]󰓦 sync"
+                    mode_pane         "#[fg=#cba6f7]h/j/k/l #[fg=#6c7086,italic]󰈈 focus #[fg=#cba6f7]s/v #[fg=#6c7086,italic]󰤼 split #[fg=#cba6f7]x #[fg=#6c7086,italic]󰃕 close #[fg=#cba6f7]f #[fg=#6c7086,italic]󰊓 fullscreen #[fg=#cba6f7]w #[fg=#6c7086,italic]󰉈 float #[fg=#cba6f7]c #[fg=#6c7086,italic]󰑕 rename"
+                    mode_tab          "#[fg=#cba6f7]h/l #[fg=#6c7086,italic]󰮸 switch #[fg=#cba6f7]1-9 #[fg=#6c7086,italic] jump #[fg=#cba6f7]n #[fg=#6c7086,italic]󰐕 new #[fg=#cba6f7]x #[fg=#6c7086,italic]󰃕 close #[fg=#cba6f7]r #[fg=#6c7086,italic]󰑕 rename #[fg=#cba6f7]s #[fg=#6c7086,italic]󰓦 sync"
                     mode_resize       "#[fg=#cba6f7]h/j/k/l #[fg=#6c7086,italic]󰩨 resize #[fg=#cba6f7]+/- #[fg=#6c7086,italic]󰩬 scale"
                     mode_scroll       "#[fg=#cba6f7]j/k #[fg=#6c7086,italic]󰮾 scroll #[fg=#cba6f7]d/u #[fg=#6c7086,italic]󱕑 half-page #[fg=#cba6f7]/ #[fg=#6c7086,italic]󰍉 search #[fg=#cba6f7]e #[fg=#6c7086,italic]󰷈 edit"
                     mode_search       "#[fg=#cba6f7]n/N #[fg=#6c7086,italic]󰍉 next/prev #[fg=#cba6f7]c #[fg=#6c7086,italic]󰬲 case #[fg=#cba6f7]w #[fg=#6c7086,italic]󰑐 wrap #[fg=#cba6f7]o #[fg=#6c7086,italic]󰬵 word"
                     mode_entersearch  "#[fg=#cba6f7]Enter #[fg=#6c7086,italic]󰍉 search"
                     mode_renametab    "#[fg=#cba6f7]Enter #[fg=#6c7086,italic]󰑕 submit"
                     mode_renamepane   "#[fg=#cba6f7]Enter #[fg=#6c7086,italic]󰑕 submit"
-                    mode_session      "#[fg=#cba6f7]d #[fg=#6c7086,italic]󰈆 detach #[fg=#cba6f7]w #[fg=#6c7086,italic]󰀻 manager #[fg=#cba6f7]q #[fg=#6c7086,italic] quit"
+                    mode_session      "#[fg=#cba6f7]d #[fg=#6c7086,italic]󰈆 detach #[fg=#cba6f7]w #[fg=#6c7086,italic]󰀻 manager #[fg=#cba6f7]q #[fg=#6c7086,italic]󰃕 quit"
                     mode_tmux         ""
 
                     tab_sync_indicator       "󰓦"
