@@ -215,5 +215,6 @@ enabled = [
     "noctalia/bitwarden",
     "kenn/keybind-cheatsheet",
     "8bury/lid-guard",
-    "ayagmar/obs-control"
+    "ayagmar/obs-control",
+    "h-jangra/keyviz"
 ]

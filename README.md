@@ -86,6 +86,8 @@ Compositor modifier is `Mod` (`Super` / `Logo`).
 | `Mod + B` | Security: Bitwarden desktop (Shift: Noctalia vault panel, Ctrl: Bluetooth) |
 | `Mod + W` | Wallpaper: Noctalia picker (Shift: Network panel, Ctrl: Toggle top bar) |
 | `Mod + R` | Capture: OBS Studio (Shift: Noctalia OBS control panel) |
+| `Mod + Z` | System: Toggle Lid Guard sleep inhibitor |
+| `Mod + X` | System: Toggle Key Visualizer HUD overlay (Shift: Dismiss active notice) |
 | `Mod + ;` | Launcher: Noctalia application runner |
 | `Mod + /` | Cheatsheet: Keybind cheatsheet overlay |
 | `Mod + Esc` | Session: Noctalia power menu (Shift: Lock screen, Ctrl: Turn off displays) |

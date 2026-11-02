@@ -118,6 +118,20 @@ blur {
   saturation 1.2
 }
 
+
+// Security: Mask sensitive surfaces in screencasts and screen shares
+window-rule {
+  match app-id=r#"^(com\.bitwarden\.desktop|[Bb]itwarden)$"#
+  match app-id=r#"^[Ff]erdium$"#
+  match title=r#".*(Private Browsing|Incognito).*"#
+  block-out-from "screencast"
+}
+
+layer-rule {
+  match namespace="^noctalia-attached-panel.*bitwarden.*$"
+  block-out-from "screencast"
+}
+
 window-rule {
   geometry-corner-radius @cornerRadius@
   clip-to-geometry true
@@ -239,7 +253,9 @@ binds {
 
   Mod+E                  hotkey-overlay-title="Notices: Notification Center Panel"  { spawn "@noctalia@" "msg" "panel-toggle" "notifications"; }
   Mod+Shift+E            hotkey-overlay-title="Notices: Clear Notice History"       { spawn "@noctalia@" "msg" "notification-clear-all"; }
-  Mod+X                  hotkey-overlay-title="Notices: Dismiss Active Notice"      { spawn "@noctalia@" "msg" "notification-clear-active"; }
+  Mod+Z                  hotkey-overlay-title="Lid Guard: Toggle Sleep Inhibitor"   { spawn "@noctalia@" "msg" "plugin" "8bury/lid-guard:lid-guard-service" "all" "toggle"; }
+  Mod+X                  hotkey-overlay-title="Keyviz: Toggle Key Visualizer HUD"   { spawn "@noctalia@" "msg" "panel-toggle" "h-jangra/keyviz:overlay"; }
+  Mod+Shift+X            hotkey-overlay-title="Notices: Dismiss Active Notice"      { spawn "@noctalia@" "msg" "notification-clear-active"; }
 
   Mod+V                  hotkey-overlay-title="Settings: Noctalia Settings GUI"     { spawn "@noctalia@" "msg" "settings-toggle"; }
   Mod+Shift+V            hotkey-overlay-title="Clipboard: History Panel"            { spawn "@noctalia@" "msg" "panel-toggle" "clipboard"; }
