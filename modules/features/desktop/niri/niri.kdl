@@ -83,31 +83,35 @@ animations {
     spring damping-ratio=1.0 stiffness=1000 epsilon=0.0001
   }
   window-open {
-    duration-ms 200
+    duration-ms 150
     curve "ease-out-quad"
   }
   window-close {
-    duration-ms 200
+    duration-ms 150
     curve "ease-out-cubic"
   }
   horizontal-view-movement {
-    spring damping-ratio=1.0 stiffness=900 epsilon=0.0001
+    duration-ms 140
+    curve "ease-out-quad"
   }
   window-movement {
-    spring damping-ratio=1.0 stiffness=800 epsilon=0.0001
+    duration-ms 140
+    curve "ease-out-quad"
   }
   window-resize {
-    spring damping-ratio=1.0 stiffness=1000 epsilon=0.0001
+    duration-ms 140
+    curve "ease-out-quad"
   }
   config-notification-open-close {
-    spring damping-ratio=0.6 stiffness=1200 epsilon=0.001
+    spring damping-ratio=0.6 stiffness=1000 epsilon=0.001
   }
   screenshot-ui-open {
-    duration-ms 300
+    duration-ms 200
     curve "ease-out-quad"
   }
   overview-open-close {
-    spring damping-ratio=1.0 stiffness=900 epsilon=0.0001
+    duration-ms 150
+    curve "ease-out-quad"
   }
 }
 
@@ -118,8 +122,6 @@ blur {
   saturation 1.2
 }
 
-
-// Security: Mask sensitive surfaces in screencasts and screen shares
 window-rule {
   match app-id=r#"^(com\.bitwarden\.desktop|[Bb]itwarden)$"#
   match app-id=r#"^[Ff]erdium$"#
@@ -157,6 +159,8 @@ window-rule {
   match app-id="^com.gabm.satty$"
   match app-id="^xarchiver$"
   match app-id="^blueman-manager$"
+  match app-id="^obs$"
+  match app-id="^com.obsproject.Studio$"
   opacity @windowOpacity@
   background-effect {
     blur true
@@ -173,7 +177,13 @@ window-rule {
   }
 }
 
-// System Portals, Dialogs, and Media Players
+window-rule {
+  match title="^Zellij Session Manager$"
+  open-floating true
+  default-column-width { proportion 0.55; }
+  default-window-height { proportion 0.65; }
+}
+
 window-rule {
   match app-id=r#"^org\.freedesktop\.impl\.portal\.desktop.*$"#
   match app-id=r#"^xdg-desktop-portal.*$"#
@@ -226,16 +236,16 @@ spawn-at-startup "@systemctl@" "--user" "import-environment" "PATH" "XDG_DATA_DI
 spawn-at-startup "@noctalia@"
 
 binds {
-  // 01 - Layout & Window Layer
   Mod+Space              hotkey-overlay-title="Fill Screen (Maximize Column Width)" { maximize-column; }
   Mod+Shift+Space        hotkey-overlay-title="Fullscreen Window"                   { fullscreen-window; }
   Mod+Ctrl+Space         hotkey-overlay-title="Toggle Window Floating"              { toggle-window-floating; }
   Mod+Alt+Space          hotkey-overlay-title="Switch Focus Floating/Tiling"        { switch-focus-between-floating-and-tiling; }
 
-  // 02 - Applications & System Panels
+  Mod+C                  hotkey-overlay-title="Universal Copy"                      { spawn "@wtype@" "-M" "ctrl" "-k" "Insert"; }
+  Mod+V                  hotkey-overlay-title="Universal Paste"                     { spawn "@wtype@" "-M" "shift" "-k" "Insert"; }
+
   Mod+F                  hotkey-overlay-title="Terminal: Foot Client"               { spawn "@footclient@"; }
-  Mod+Shift+F            hotkey-overlay-title="Terminal: Zellij Workspace (main)"   { spawn "@footclient@" "-e" "@zellij@" "attach" "-c" "main"; }
-  Mod+Ctrl+F             hotkey-overlay-title="Terminal: Zellij Session Picker"     { spawn "@footclient@" "-e" "@zellij@" "attach"; }
+  Mod+Shift+F            hotkey-overlay-title="Zellij: Session & Project Manager"   { spawn "@footclient@" "-T" "Zellij Session Manager" "-e" "@zsession@"; }
 
   Mod+D                  hotkey-overlay-title="Browser: LibreWolf"                  { spawn "@librewolf@"; }
   Mod+Shift+D            hotkey-overlay-title="Browser: Brave Origin"               { spawn "@brave@"; }
@@ -244,7 +254,9 @@ binds {
   Mod+S                  hotkey-overlay-title="Files: PCManFM File Manager"         { spawn "@pcmanfm@"; }
 
   Mod+A                  hotkey-overlay-title="Chat: Ferdium Messaging Client"      { spawn "@ferdium@"; }
-  Mod+Shift+A            hotkey-overlay-title="Overview: Niri Workspace View"       { toggle-overview; }
+  Mod+W                  hotkey-overlay-title="Overview: Niri Workspace View"       { toggle-overview; }
+  Mod+Shift+W            hotkey-overlay-title="Wallpaper: Noctalia Selector"        { spawn "@noctalia@" "msg" "panel-toggle" "wallpaper"; }
+  Mod+Ctrl+W             hotkey-overlay-title="Bar: Toggle Noctalia Top Bar"        { spawn "@noctalia@" "msg" "bar-toggle"; }
 
   Mod+G                  hotkey-overlay-title="Notes: Obsidian Knowledge Vault"     { spawn "@obsidian@"; }
 
@@ -257,23 +269,19 @@ binds {
   Mod+X                  hotkey-overlay-title="Keyviz: Toggle Key Visualizer HUD"   { spawn "@noctalia@" "msg" "panel-toggle" "h-jangra/keyviz:overlay"; }
   Mod+Shift+X            hotkey-overlay-title="Notices: Dismiss Active Notice"      { spawn "@noctalia@" "msg" "notification-clear-active"; }
 
-  Mod+V                  hotkey-overlay-title="Settings: Noctalia Settings GUI"     { spawn "@noctalia@" "msg" "settings-toggle"; }
+  Mod+Comma              hotkey-overlay-title="Settings: Noctalia Settings GUI"     { spawn "@noctalia@" "msg" "settings-toggle"; }
+  Mod+Period             hotkey-overlay-title="Control: Noctalia Control Center"    { spawn "@noctalia@" "msg" "panel-toggle" "control-center"; }
   Mod+Shift+V            hotkey-overlay-title="Clipboard: History Panel"            { spawn "@noctalia@" "msg" "panel-toggle" "clipboard"; }
-  Mod+C                  hotkey-overlay-title="Control: Noctalia Control Center"    { spawn "@noctalia@" "msg" "panel-toggle" "control-center"; }
   Mod+Shift+C            hotkey-overlay-title="Audio: Pavucontrol Mixer"            { spawn "@pavucontrol@"; }
 
   Mod+B                  hotkey-overlay-title="Security: Bitwarden Desktop"         { spawn "@bitwarden@"; }
   Mod+Shift+B            hotkey-overlay-title="Security: Bitwarden Noctalia Panel"  { spawn "@noctalia@" "msg" "panel-toggle" "noctalia/bitwarden:vault"; }
   Mod+Ctrl+B             hotkey-overlay-title="Bluetooth: Noctalia Panel"           { spawn "@noctalia@" "msg" "panel-toggle" "bluetooth"; }
-  Mod+W                  hotkey-overlay-title="Wallpaper: Noctalia Selector"        { spawn "@noctalia@" "msg" "panel-toggle" "wallpaper"; }
-  Mod+Shift+W            hotkey-overlay-title="Network: Wi-Fi / Network Panel"      { spawn "@noctalia@" "msg" "panel-toggle" "network"; }
-  Mod+Ctrl+W             hotkey-overlay-title="Bar: Toggle Noctalia Top Bar"        { spawn "@noctalia@" "msg" "bar-toggle"; }
 
   Mod+R                  hotkey-overlay-title="Capture: OBS Studio"                 { spawn "obs"; }
   Mod+Shift+R            hotkey-overlay-title="Capture: OBS Control Panel"          { spawn "@noctalia@" "msg" "panel-toggle" "ayagmar/obs-control:panel"; }
 
   Mod+Semicolon          hotkey-overlay-title="Launcher: Noctalia App Runner"       { spawn "@noctalia@" "msg" "panel-toggle" "launcher"; }
-
   Mod+Slash              hotkey-overlay-title="Cheatsheet: Keybind Cheatsheet"      { spawn "@noctalia@" "msg" "panel-toggle" "kenn/keybind-cheatsheet:cheatsheet"; }
 
   Mod+Escape             hotkey-overlay-title="Session: Noctalia Power Menu"        { spawn "@noctalia@" "msg" "panel-toggle" "session"; }
@@ -281,7 +289,6 @@ binds {
   Mod+Ctrl+Escape        hotkey-overlay-title="Monitors: Turn Off Displays"         { power-off-monitors; }
   Mod+Q                  hotkey-overlay-title="Close Focused Window"                { close-window; }
 
-  // 03 - Navigation & Column Management
   Mod+Alt+H              hotkey-overlay-title="Focus Monitor Left"                  { focus-monitor-left; }
   Mod+Alt+L              hotkey-overlay-title="Focus Monitor Right"                 { focus-monitor-right; }
   Mod+Alt+Shift+H        hotkey-overlay-title="Move Column to Monitor Left"         { move-column-to-monitor-left; }
@@ -306,10 +313,9 @@ binds {
   Mod+Ctrl+I             hotkey-overlay-title="Expand Window Height (+5%)"          { set-window-height "+5%"; }
 
   Mod+M                  hotkey-overlay-title="Consume Window from Left"            { consume-or-expel-window-left; }
-  Mod+Comma              hotkey-overlay-title="Consume Window from Right"           { consume-or-expel-window-right; }
-  Mod+Period             hotkey-overlay-title="Expel Window from Column"            { expel-window-from-column; }
+  Mod+Shift+M            hotkey-overlay-title="Consume Window from Right"           { consume-or-expel-window-right; }
+  Mod+N                  hotkey-overlay-title="Expel Window from Column"            { expel-window-from-column; }
 
-  // 04 - Workspaces
   Mod+1                  { focus-workspace "one"; }
   Mod+2                  { focus-workspace "two"; }
   Mod+3                  { focus-workspace "three"; }
@@ -335,7 +341,6 @@ binds {
   Mod+WheelScrollDown    cooldown-ms=150 { focus-column-right; }
   Mod+WheelScrollUp      cooldown-ms=150 { focus-column-left; }
 
-  // 05 - Hardware Media Keys
   Print                  hotkey-overlay-title="Fullscreen Screenshot"               { spawn "@screenshotFull@"; }
   XF86MonBrightnessUp    { spawn "@brightnessUp@"; }
   XF86MonBrightnessDown  { spawn "@brightnessDown@"; }

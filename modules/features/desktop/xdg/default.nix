@@ -105,7 +105,7 @@ _: {
             win_width=900
             win_height=600
             splitter_pos=180
-            side_pane_mode=places
+            side_pane_mode=dirtree
             view_mode=detailed
             show_hidden=1
             show_statusbar=0

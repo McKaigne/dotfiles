@@ -8,14 +8,40 @@ _: {
         sha256 = "282ceab219e56e1908c9fac33907241fe6c3e1ef7d85faab3e5f438cef87b8fe";
       };
 
+      zsessionScript = pkgs.writeShellScriptBin "zsession" ''
+        set -euo pipefail
+        active_sessions=$(${pkgs.zellij}/bin/zellij list-sessions -n 2>/dev/null || true)
+        recent_dirs=$(${pkgs.zoxide}/bin/zoxide query -l 2>/dev/null || true)
+        selection=$( (
+          if [ -n "$active_sessions" ]; then
+            echo "$active_sessions" | while read -r s; do [ -n "$s" ] && echo "[session] $s"; done
+          fi
+          if [ -n "$recent_dirs" ]; then
+            echo "$recent_dirs" | head -n 30 | while read -r d; do [ -n "$d" ] && echo "[project] $d"; done
+          fi
+          echo "[new] Start empty session"
+        ) | ${pkgs.fzf}/bin/fzf --prompt="Zellij ➜ " --header="Attach active session or launch project directory")
+        [ -z "$selection" ] && exit 0
+        tag=$(echo "$selection" | ${pkgs.coreutils}/bin/cut -d " " -f 1)
+        val=$(echo "$selection" | ${pkgs.coreutils}/bin/cut -d " " -f 2-)
+        if [ "$tag" = "[session]" ]; then
+          exec ${pkgs.zellij}/bin/zellij attach "$val"
+        elif [ "$tag" = "[project]" ]; then
+          name=$(${pkgs.coreutils}/bin/basename "$val" | ${pkgs.coreutils}/bin/tr "." "_")
+          exec ${pkgs.zellij}/bin/zellij attach -c "$name" options --default-cwd "$val"
+        else
+          exec ${pkgs.zellij}/bin/zellij
+        fi
+      '';
+
       zellijWrapped = pkgs.symlinkJoin {
         name = "zellij-${pkgs.zellij.version}";
         version = pkgs.zellij.version;
         paths = [ pkgs.zellij ];
         nativeBuildInputs = [ pkgs.makeWrapper ];
         postBuild = ''
-                    rm -f $out/bin/zellij
-                    cat << 'WRAPPER' > $out/bin/zellij
+          rm -f $out/bin/zellij
+          cat << 'WRAPPER' > $out/bin/zellij
           #!/usr/bin/env sh
           mkdir -p "$HOME/.cache/zellij"
           if ! grep -Fq "${zjstatusWasm}" "$HOME/.cache/zellij/permissions.kdl" 2>/dev/null; then
@@ -30,13 +56,14 @@ _: {
           fi
           exec ${pkgs.zellij}/bin/zellij "$@"
           WRAPPER
-                    chmod +x $out/bin/zellij
+          chmod +x $out/bin/zellij
         '';
       };
     in
     {
       environment.systemPackages = [
         zellijWrapped
+        zsessionScript
       ];
 
       home-manager.users.${user} = {
@@ -85,9 +112,9 @@ _: {
                   emphasis_3 "#f38ba8"
                 }
                 ribbon_unselected {
-                  base "#cba6f7"
+                  base "#585b70"
                   background "#1e1e2e"
-                  emphasis_0 "#cba6f7"
+                  emphasis_0 "#a6adc8"
                   emphasis_1 "#a6e3a1"
                   emphasis_2 "#89b4fa"
                   emphasis_3 "#f38ba8"
@@ -102,8 +129,33 @@ _: {
                 }
                 text_selected {
                   base "#cdd6f4"
+                  background "#313244"
+                  emphasis_0 "#fab387"
+                  emphasis_1 "#a6e3a1"
+                  emphasis_2 "#89b4fa"
+                  emphasis_3 "#f38ba8"
+                }
+
+                table_title {
+                  base "#cba6f7"
                   background "#1e1e2e"
                   emphasis_0 "#fab387"
+                  emphasis_1 "#a6e3a1"
+                  emphasis_2 "#89b4fa"
+                  emphasis_3 "#f38ba8"
+                }
+                table_cell_unselected {
+                  base "#cdd6f4"
+                  background "#1e1e2e"
+                  emphasis_0 "#fab387"
+                  emphasis_1 "#a6e3a1"
+                  emphasis_2 "#89b4fa"
+                  emphasis_3 "#f38ba8"
+                }
+                table_cell_selected {
+                  base "#cdd6f4"
+                  background "#313244"
+                  emphasis_0 "#cba6f7"
                   emphasis_1 "#a6e3a1"
                   emphasis_2 "#89b4fa"
                   emphasis_3 "#f38ba8"
@@ -164,10 +216,10 @@ _: {
               }
 
               normal {
-                bind "h" "Left" { MoveFocus "Left"; }
-                bind "j" "Down" { MoveFocus "Down"; }
-                bind "k" "Up" { MoveFocus "Up"; }
-                bind "l" "Right" { MoveFocus "Right"; }
+                bind "h" "Left" { MoveFocus "Left"; SwitchToMode "Locked"; }
+                bind "j" "Down" { MoveFocus "Down"; SwitchToMode "Locked"; }
+                bind "k" "Up" { MoveFocus "Up"; SwitchToMode "Locked"; }
+                bind "l" "Right" { MoveFocus "Right"; SwitchToMode "Locked"; }
 
                 bind "s" { NewPane "Down"; SwitchToMode "Locked"; }
                 bind "v" { NewPane "Right"; SwitchToMode "Locked"; }
@@ -198,12 +250,12 @@ _: {
                 bind "9" { GoToTab 9; SwitchToMode "Locked"; }
                 bind "0" { GoToTab 10; SwitchToMode "Locked"; }
 
-                bind "[" { GoToPreviousTab; }
-                bind "]" { GoToNextTab; }
-                bind "Tab" { ToggleTab; }
+                bind "[" { GoToPreviousTab; SwitchToMode "Locked"; }
+                bind "]" { GoToNextTab; SwitchToMode "Locked"; }
+                bind "Tab" { ToggleTab; SwitchToMode "Locked"; }
 
-                bind "=" "+" { Resize "Increase"; }
-                bind "-" { Resize "Decrease"; }
+                bind "=" "+" { Resize "Increase"; SwitchToMode "Locked"; }
+                bind "-" { Resize "Decrease"; SwitchToMode "Locked"; }
 
                 bind "D" { Detach; }
                 bind "q" { Quit; }
@@ -232,23 +284,23 @@ _: {
               tab {
                 bind "h" "Left" "k" "Up" { GoToPreviousTab; }
                 bind "l" "Right" "j" "Down" { GoToNextTab; }
-                bind "n" { NewTab; SwitchToMode "Locked"; }
-                bind "x" { CloseTab; SwitchToMode "Locked"; }
+                bind "n" { NewTab; }
+                bind "x" { CloseTab; }
                 bind "r" { SwitchToMode "RenameTab"; TabNameInput 0; }
-                bind "s" { ToggleActiveSyncTab; SwitchToMode "Locked"; }
-                bind "b" { BreakPane; SwitchToMode "Locked"; }
-                bind "]" { BreakPaneRight; SwitchToMode "Locked"; }
-                bind "[" { BreakPaneLeft; SwitchToMode "Locked"; }
-                bind "1" { GoToTab 1; SwitchToMode "Locked"; }
-                bind "2" { GoToTab 2; SwitchToMode "Locked"; }
-                bind "3" { GoToTab 3; SwitchToMode "Locked"; }
-                bind "4" { GoToTab 4; SwitchToMode "Locked"; }
-                bind "5" { GoToTab 5; SwitchToMode "Locked"; }
-                bind "6" { GoToTab 6; SwitchToMode "Locked"; }
-                bind "7" { GoToTab 7; SwitchToMode "Locked"; }
-                bind "8" { GoToTab 8; SwitchToMode "Locked"; }
-                bind "9" { GoToTab 9; SwitchToMode "Locked"; }
-                bind "0" { GoToTab 10; SwitchToMode "Locked"; }
+                bind "s" { ToggleActiveSyncTab; }
+                bind "b" { BreakPane; }
+                bind "]" { BreakPaneRight; }
+                bind "[" { BreakPaneLeft; }
+                bind "1" { GoToTab 1; }
+                bind "2" { GoToTab 2; }
+                bind "3" { GoToTab 3; }
+                bind "4" { GoToTab 4; }
+                bind "5" { GoToTab 5; }
+                bind "6" { GoToTab 6; }
+                bind "7" { GoToTab 7; }
+                bind "8" { GoToTab 8; }
+                bind "9" { GoToTab 9; }
+                bind "0" { GoToTab 10; }
                 bind "Tab" { ToggleTab; }
                 bind "t" { SwitchToMode "Normal"; }
               }
@@ -320,6 +372,13 @@ _: {
                   };
                   SwitchToMode "Locked";
                 }
+                bind "p" {
+                  Run "${zsessionScript}/bin/zsession" {
+                    floating true
+                    close_on_exit true
+                  };
+                  SwitchToMode "Locked";
+                }
                 bind "q" { Quit; }
                 bind "o" { SwitchToMode "Normal"; }
               }
@@ -359,9 +418,9 @@ _: {
                     border_position "top"
 
                     mode_locked       ""
-                    mode_normal       "#[fg=#cba6f7]h/j/k/l #[fg=#6c7086,italic]󰈈 focus #[fg=#cba6f7]s/v #[fg=#6c7086,italic]󰕮 split #[fg=#cba6f7]f #[fg=#6c7086,italic]󰊓 fullscreen #[fg=#cba6f7]x #[fg=#6c7086,italic]󰧻 kill #[fg=#cba6f7]u/d #[fg=#6c7086,italic]󰮾 scroll #[fg=#cba6f7]p #[fg=#6c7086,italic]󱥇 pane #[fg=#cba6f7]t #[fg=#6c7086,italic]󰓩 tab #[fg=#cba6f7]r #[fg=#6c7086,italic]󰩨 resize #[fg=#cba6f7]m #[fg=#6c7086,italic]󰮴 move #[fg=#cba6f7]o #[fg=#6c7086,italic]󱂬 session"
+                    mode_normal       "#[fg=#cba6f7]h/j/k/l #[fg=#6c7086,italic]󰈈 focus #[fg=#cba6f7]s/v #[fg=#6c7086,italic]󰕮 split #[fg=#cba6f7]f #[fg=#6c7086,italic]󰊓 full #[fg=#cba6f7]x #[fg=#6c7086,italic]󰧻 kill #[fg=#cba6f7]p #[fg=#6c7086,italic]󱥇 pane #[fg=#cba6f7]t #[fg=#6c7086,italic]󰓩 tab #[fg=#cba6f7]r #[fg=#6c7086,italic]󰩨 resize #[fg=#cba6f7]o #[fg=#6c7086,italic]󱂬 session"
                     mode_move         "#[fg=#cba6f7]h/j/k/l #[fg=#6c7086,italic]󰮴 move #[fg=#cba6f7]n/p #[fg=#6c7086,italic]󱎄 reorder"
-                    mode_pane         "#[fg=#cba6f7]h/j/k/l #[fg=#6c7086,italic]󰈈 focus #[fg=#cba6f7]s/v #[fg=#6c7086,italic]󰕮 split #[fg=#cba6f7]x #[fg=#6c7086,italic]󰧻 kill #[fg=#cba6f7]f #[fg=#6c7086,italic]󰊓 fullscreen #[fg=#cba6f7]w #[fg=#6c7086,italic]󰉈 float #[fg=#cba6f7]c #[fg=#6c7086,italic]󰘙 rename"
+                    mode_pane         "#[fg=#cba6f7]h/j/k/l #[fg=#6c7086,italic]󰈈 focus #[fg=#cba6f7]s/v #[fg=#6c7086,italic]󰕮 split #[fg=#cba6f7]x #[fg=#6c7086,italic]󰧻 kill #[fg=#cba6f7]f #[fg=#6c7086,italic]󰊓 full #[fg=#cba6f7]w #[fg=#6c7086,italic]󰉈 float #[fg=#cba6f7]c #[fg=#6c7086,italic]󰘙 rename"
                     mode_tab          "#[fg=#cba6f7]h/l #[fg=#6c7086,italic]󰮸 switch #[fg=#cba6f7]1-9 #[fg=#6c7086,italic] jump #[fg=#cba6f7]n #[fg=#6c7086,italic]󰝜 new #[fg=#cba6f7]x #[fg=#6c7086,italic]󰧻 kill #[fg=#cba6f7]r #[fg=#6c7086,italic]󰂮 rename #[fg=#cba6f7]s #[fg=#6c7086,italic]󰓦 sync"
                     mode_resize       "#[fg=#cba6f7]h/j/k/l #[fg=#6c7086,italic]󰩨 resize #[fg=#cba6f7]+/- #[fg=#6c7086,italic]󰩬 scale"
                     mode_scroll       "#[fg=#cba6f7]j/k #[fg=#6c7086,italic]󰮾 scroll #[fg=#cba6f7]d/u #[fg=#6c7086,italic] half-page #[fg=#cba6f7]/ #[fg=#6c7086,italic]󰍉 search #[fg=#cba6f7]e #[fg=#6c7086,italic] edit"
@@ -369,7 +428,7 @@ _: {
                     mode_entersearch  "#[fg=#cba6f7]Enter #[fg=#6c7086,italic]󰍉 search"
                     mode_renametab    "#[fg=#cba6f7]Enter #[fg=#6c7086,italic] submit"
                     mode_renamepane   "#[fg=#cba6f7]Enter #[fg=#6c7086,italic] submit"
-                    mode_session      "#[fg=#cba6f7]d #[fg=#6c7086,italic]󰈆 detach #[fg=#cba6f7]w #[fg=#6c7086,italic]󰀻 manager #[fg=#cba6f7]q #[fg=#6c7086,italic]󰧻 kill"
+                    mode_session      "#[fg=#cba6f7]d #[fg=#6c7086,italic]󰈆 detach #[fg=#cba6f7]w #[fg=#6c7086,italic]󰀻 manager #[fg=#cba6f7]p #[fg=#6c7086,italic]󰚝 project #[fg=#cba6f7]q #[fg=#6c7086,italic]󰧻 kill"
                     mode_tmux         ""
 
                     tab_sync_indicator       "󰓦"
