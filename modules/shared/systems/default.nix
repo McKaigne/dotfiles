@@ -1,7 +1,8 @@
 { self, inputs, ... }: {
   systems = [ "x86_64-linux" ];
 
-  perSystem = { pkgs, system, ... }:
+  perSystem =
+    { pkgs, system, ... }:
     let
       statixConf = pkgs.writeText "statix.toml" ''
         disabled = [ "repeated_keys" ]
@@ -28,44 +29,66 @@
           done
 
           if [ "$check" -eq 1 ]; then
-            fd -t f -e nix -X nixfmt --check
+            fd -t f -e nix -X nixfmt -w 80 --check
           else
-            fd -t f -e nix -X nixfmt
+            fd -t f -e nix -X nixfmt -w 80
           fi
         '';
       };
 
       checks = {
-        castor-eval = pkgs.runCommand "check-castor-eval" { } ''
-          echo "${builtins.unsafeDiscardStringContext self.nixosConfigurations.castor.config.system.build.toplevel.drvPath}" > $out
-        '';
+        castor-eval =
+          let
+            drv = builtins.unsafeDiscardStringContext self.nixosConfigurations.castor.config.system.build.toplevel.drvPath;
+          in
+          pkgs.runCommand "check-castor-eval" { } ''
+            echo "${drv}" > $out
+          '';
 
-        hyde-eval = pkgs.runCommand "check-hyde-eval" { } ''
-          echo "${builtins.unsafeDiscardStringContext self.nixosConfigurations.hyde.config.system.build.toplevel.drvPath}" > $out
-        '';
+        hyde-eval =
+          let
+            drv = builtins.unsafeDiscardStringContext self.nixosConfigurations.hyde.config.system.build.toplevel.drvPath;
+          in
+          pkgs.runCommand "check-hyde-eval" { } ''
+            echo "${drv}" > $out
+          '';
 
-        niri-validate-hyde = pkgs.runCommand "check-niri-validate-hyde" {
-          nativeBuildInputs = [ pkgs.niri ];
-        } ''
-          export HOME=$(mktemp -d)
-          export XDG_RUNTIME_DIR=$(mktemp -d)
-          niri validate -c ${pkgs.writeText "niri-hyde.kdl" self.nixosConfigurations.hyde.config.home-manager.users.jekyll.xdg.configFile."niri/config.kdl".text}
-          touch $out
-        '';
+        niri-validate-hyde =
+          let
+            niriText =
+              self.nixosConfigurations.hyde.config.home-manager.users.jekyll.xdg.configFile."niri/config.kdl".text;
+            niriConf = pkgs.writeText "niri-hyde.kdl" niriText;
+          in
+          pkgs.runCommand "check-niri-validate-hyde"
+            {
+              nativeBuildInputs = [ pkgs.niri ];
+            }
+            ''
+              export HOME=$(mktemp -d)
+              export XDG_RUNTIME_DIR=$(mktemp -d)
+              niri validate -c ${niriConf}
+              touch $out
+            '';
 
-        statix-check = pkgs.runCommand "check-statix" {
-          nativeBuildInputs = [ pkgs.statix ];
-        } ''
-          statix check --config ${statixConf} ${self}/modules
-          touch $out
-        '';
+        statix-check =
+          pkgs.runCommand "check-statix"
+            {
+              nativeBuildInputs = [ pkgs.statix ];
+            }
+            ''
+              statix check --config ${statixConf} ${self}/modules
+              touch $out
+            '';
 
-        deadnix-check = pkgs.runCommand "check-deadnix" {
-          nativeBuildInputs = [ pkgs.deadnix ];
-        } ''
-          deadnix -f ${self}/modules
-          touch $out
-        '';
+        deadnix-check =
+          pkgs.runCommand "check-deadnix"
+            {
+              nativeBuildInputs = [ pkgs.deadnix ];
+            }
+            ''
+              deadnix -f ${self}/modules
+              touch $out
+            '';
       };
     };
 }

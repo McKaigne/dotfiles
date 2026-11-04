@@ -8,7 +8,7 @@ _: {
     }:
     let
       user = config.mainUser;
-      
+
       ndeployScript = pkgs.writeShellScriptBin "ndeploy" ''
         set -euo pipefail
 
@@ -232,7 +232,6 @@ _: {
 
         environment.localBinInPath = true;
 
-
         hardware.keyboard.qmk.enable = true;
 
         services.udev.extraRules = ''
@@ -339,7 +338,6 @@ _: {
             historyWidget.command = "";
           };
 
-
           programs.carapace = {
             enable = true;
             enableFishIntegration = true;
@@ -402,9 +400,11 @@ _: {
           devenv
           wl-clipboard
           nodejs_22
-          (python3.withPackages (ps: with ps; [
-            evdev
-          ]))
+          (python3.withPackages (
+            ps: with ps; [
+              evdev
+            ]
+          ))
           evtest
         ];
       };

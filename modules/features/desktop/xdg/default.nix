@@ -17,7 +17,10 @@ _: {
         config = {
           common.default = [ "gtk" ];
           niri = {
-            default = [ "gnome" "gtk" ];
+            default = [
+              "gnome"
+              "gtk"
+            ];
             "org.freedesktop.impl.portal.FileChooser" = [ "gtk" ];
           };
         };
@@ -31,7 +34,11 @@ _: {
           exec = "footclient -e hx %F";
           icon = "helix";
           terminal = false;
-          categories = [ "Utility" "TextEditor" "Development" ];
+          categories = [
+            "Utility"
+            "TextEditor"
+            "Development"
+          ];
           mimeType = [
             "text/plain"
             "text/markdown"
@@ -45,7 +52,6 @@ _: {
             "application/yaml"
           ];
         };
-
 
         xdg.mimeApps = {
           enable = true;

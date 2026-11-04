@@ -27,7 +27,9 @@ _: {
               command = "nixd";
               config.nixd = {
                 nixpkgs.expr = "import <nixpkgs> { }";
-                options.nixos.expr = "(builtins.getFlake \"/etc/nixos\").nixosConfigurations.${config.networking.hostName}.options";
+                options.nixos.expr =
+                  "(builtins.getFlake \"/etc/nixos\").nixosConfigurations."
+                  + "${config.networking.hostName}.options";
               };
             };
             language = [

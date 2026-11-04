@@ -23,7 +23,10 @@ _: {
           };
           defaultFonts = {
             monospace = [ "AtkynsonMono Nerd Font" ];
-            sansSerif = [ "Atkinson Hyperlegible" "Noto Sans" ];
+            sansSerif = [
+              "Atkinson Hyperlegible"
+              "Noto Sans"
+            ];
             serif = [ "Noto Serif" ];
             emoji = [ "Noto Color Emoji" ];
           };

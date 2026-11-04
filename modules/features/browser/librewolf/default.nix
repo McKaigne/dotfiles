@@ -10,7 +10,9 @@
       system = pkgs.stdenv.hostPlatform.system;
       ff = inputs.firefox-addons.packages.${system};
 
-      xpiPath = addon: "file://${addon}/share/mozilla/extensions/{ec8030f7-c20a-464f-9b0e-13a3a9e97384}/${addon.addonId}.xpi";
+      xpiPath =
+        addon:
+        "file://${addon}/share/mozilla/extensions/{ec8030f7-c20a-464f-9b0e-13a3a9e97384}/${addon.addonId}.xpi";
     in
     {
       nixpkgs.overlays = [

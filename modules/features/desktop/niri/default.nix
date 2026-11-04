@@ -131,7 +131,9 @@ in
       system = pkgs.stdenv.hostPlatform.system;
       noctaliaPkg = inputs.noctalia.packages.${system}.default;
       displayCfg = config.workstation.display;
-      modeLine = lib.optionalString (displayCfg.mode != null) "  mode \"${displayCfg.mode}\"\n";
+      modeLine = lib.optionalString (
+        displayCfg.mode != null
+      ) "  mode \"${displayCfg.mode}\"\n";
       renderedOutputConfig = ''
         output "${displayCfg.output}" {
         ${modeLine}  scale ${displayCfg.scale}

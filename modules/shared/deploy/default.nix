@@ -16,14 +16,18 @@ _: {
         }
         {
           assertion = !config.services.openssh.openFirewall;
-          message = "services.openssh.openFirewall must be false; sshd is exposed only on tailscale0.";
+          message =
+            "services.openssh.openFirewall must be false; "
+            + "sshd is exposed only on tailscale0.";
         }
         {
           assertion = config.services.openssh.settings.PasswordAuthentication == false;
           message = "sshd PasswordAuthentication must be false.";
         }
         {
-          assertion = lib.all (k: lib.hasPrefix "from=" k) config.users.users.root.openssh.authorizedKeys.keys;
+          assertion = lib.all (
+            k: lib.hasPrefix "from=" k
+          ) config.users.users.root.openssh.authorizedKeys.keys;
           message = "Every root authorized key must contain a from= restriction.";
         }
       ];
