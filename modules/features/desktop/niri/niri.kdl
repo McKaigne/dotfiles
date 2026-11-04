@@ -14,6 +14,7 @@ gestures {
 
 input {
   focus-follows-mouse max-scroll-amount="0%"
+  warp-mouse-to-focus mode="center-xy"
 
   touchpad {
     tap
