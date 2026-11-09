@@ -12,9 +12,7 @@ _: {
         lazyssh
         usbtree
         linecast
-        codex
-        herdr
-        pi-coding-agent
+        claude-code
         whois
         dnsutils
       ];
