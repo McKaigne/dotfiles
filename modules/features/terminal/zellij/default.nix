@@ -8,44 +8,17 @@ _: {
         sha256 = "282ceab219e56e1908c9fac33907241fe6c3e1ef7d85faab3e5f438cef87b8fe";
       };
 
-      zsessionScript = pkgs.writeShellScriptBin "zsession" ''
-        set -euo pipefail
-        active_sessions=$(${pkgs.zellij}/bin/zellij list-sessions -n 2>/dev/null || true)
-        recent_dirs=$(${pkgs.zoxide}/bin/zoxide query -l 2>/dev/null || true)
-        selection=$( (
-          if [ -n "$active_sessions" ]; then
-            echo "$active_sessions" | while read -r s; do [ -n "$s" ] && echo "[session] $s"; done
-          fi
-          if [ -n "$recent_dirs" ]; then
-            echo "$recent_dirs" | head -n 30 | while read -r d; do [ -n "$d" ] && echo "[project] $d"; done
-          fi
-          echo "[new] Start empty session"
-        ) | ${pkgs.fzf}/bin/fzf --prompt="Zellij ➜ " --header="Attach active session or launch project directory")
-        [ -z "$selection" ] && exit 0
-        tag=$(echo "$selection" | ${pkgs.coreutils}/bin/cut -d " " -f 1)
-        val=$(echo "$selection" | ${pkgs.coreutils}/bin/cut -d " " -f 2-)
-        if [ "$tag" = "[session]" ]; then
-          exec ${pkgs.zellij}/bin/zellij attach "$val"
-        elif [ "$tag" = "[project]" ]; then
-          name=$(${pkgs.coreutils}/bin/basename "$val" | ${pkgs.coreutils}/bin/tr "." "_")
-          exec ${pkgs.zellij}/bin/zellij attach -c "$name" options --default-cwd "$val"
-        else
-          exec ${pkgs.zellij}/bin/zellij
-        fi
-      '';
-
       zellijWrapped = pkgs.symlinkJoin {
         name = "zellij-${pkgs.zellij.version}";
         version = pkgs.zellij.version;
         paths = [ pkgs.zellij ];
-        nativeBuildInputs = [ pkgs.makeWrapper ];
         postBuild = ''
           rm -f $out/bin/zellij
           cat << 'WRAPPER' > $out/bin/zellij
           #!/usr/bin/env sh
-          mkdir -p "$HOME/.cache/zellij"
-          if ! grep -Fq "${zjstatusWasm}" "$HOME/.cache/zellij/permissions.kdl" 2>/dev/null; then
-            cat << 'EOF' >> "$HOME/.cache/zellij/permissions.kdl"
+          ${pkgs.coreutils}/bin/mkdir -p "$HOME/.cache/zellij"
+          if ! ${pkgs.gnugrep}/bin/grep -Fq "${zjstatusWasm}" "$HOME/.cache/zellij/permissions.kdl" 2>/dev/null; then
+            ${pkgs.coreutils}/bin/cat << 'EOF' >> "$HOME/.cache/zellij/permissions.kdl"
           "${zjstatusWasm}" {
               ReadApplicationState
               ChangeApplicationState
@@ -59,10 +32,46 @@ _: {
           chmod +x $out/bin/zellij
         '';
       };
+
+      zsessionScript = pkgs.writeShellScriptBin "zsession" ''
+        set -euo pipefail
+        active_sessions=$(${zellijWrapped}/bin/zellij list-sessions -n 2>/dev/null || true)
+        recent_dirs=$(${pkgs.zoxide}/bin/zoxide query -l 2>/dev/null || true)
+        selection=$( (
+          if [ -n "$active_sessions" ]; then
+            echo "$active_sessions" | while read -r s; do [ -n "$s" ] && echo "[session] $s"; done
+          fi
+          if [ -n "$recent_dirs" ]; then
+            echo "$recent_dirs" | head -n 30 | while read -r d; do [ -n "$d" ] && echo "[project] $d"; done
+          fi
+          echo "[new] Start empty session"
+        ) | ${pkgs.fzf}/bin/fzf --prompt="Zellij ➜ " --header="Attach active session or launch project directory")
+        [ -z "$selection" ] && exit 0
+        tag=$(echo "$selection" | ${pkgs.coreutils}/bin/cut -d " " -f 1)
+        val=$(echo "$selection" | ${pkgs.coreutils}/bin/cut -d " " -f 2-)
+        if [ -n "''${ZELLIJ:-}" ]; then
+          if [ "$tag" = "[session]" ]; then
+            exec ${zellijWrapped}/bin/zellij action switch-session "$val"
+          elif [ "$tag" = "[project]" ]; then
+            name=$(${pkgs.coreutils}/bin/basename "$val" | ${pkgs.coreutils}/bin/tr "." "_")
+            exec ${zellijWrapped}/bin/zellij action switch-session "$name" --cwd "$val"
+          else
+            exec ${zellijWrapped}/bin/zellij action switch-session "scratch-$(${pkgs.coreutils}/bin/date +%H%M%S)"
+          fi
+        else
+          if [ "$tag" = "[session]" ]; then
+            exec ${zellijWrapped}/bin/zellij attach "$val"
+          elif [ "$tag" = "[project]" ]; then
+            name=$(${pkgs.coreutils}/bin/basename "$val" | ${pkgs.coreutils}/bin/tr "." "_")
+            exec ${zellijWrapped}/bin/zellij attach -c "$name" options --default-cwd "$val"
+          else
+            exec ${zellijWrapped}/bin/zellij
+          fi
+        fi
+      '';
     in
     {
       environment.systemPackages = [
-        zellijWrapped
         zsessionScript
       ];
 

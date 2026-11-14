@@ -7,7 +7,10 @@ _: {
       p = config.palette;
     in
     {
-      environment.systemPackages = [ pkgs.foot ];
+      environment.systemPackages = [
+        pkgs.foot
+        pkgs.libsixel
+      ];
 
       home-manager.users.${user} = {
         programs.foot = {

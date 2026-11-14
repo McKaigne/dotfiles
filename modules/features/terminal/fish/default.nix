@@ -22,12 +22,10 @@ _: {
       home-manager.users.${user} = {
         programs.fish = {
           enable = true;
-          shellAliases = { };
           shellAbbrs = safeAbbrs;
 
           shellInit = ''
             set -g fish_greeting ""
-            set -gx STARSHIP_CONFIG "/etc/starship.toml"
 
             set -g fish_color_normal ${p.hex.text}
             set -g fish_color_command ${p.hex.mauve} --bold
@@ -43,8 +41,6 @@ _: {
             set -g fish_color_operator ${p.hex.mauve}
             set -g fish_color_escape ${p.hex.pink}
             set -g fish_color_autosuggestion ${p.hex.surface2}
-
-            abbr --add ntrace -- --show-trace
           '';
 
           interactiveShellInit = ''
@@ -53,6 +49,8 @@ _: {
             # Alt-e and Ctrl-x Ctrl-e open current buffer in Helix
             bind \ee edit_command_buffer
             bind \cx\ce edit_command_buffer
+
+            abbr --add ntrace --position anywhere -- --show-trace
 
             if test "$TERM" != dumb
                 source ${lsColorsFish}
@@ -97,50 +95,52 @@ _: {
             nsync = {
               description = "Synchronize Noctalia runtime GUI state to declarative base";
               body = ''
-                                set -l targetHost (hostname 2>/dev/null; or echo "hyde")
-                                set -l targetFile "/etc/nixos/modules/features/desktop/noctalia/noctalia.toml"
-                                set -l stateFile "$HOME/.local/state/noctalia/settings.toml"
-                                set -l tmpFile (mktemp)
+                set -l targetHost (hostname 2>/dev/null; or echo "hyde")
+                set -l targetFile "/etc/nixos/modules/features/desktop/noctalia/noctalia.toml"
+                set -l stateFile "$HOME/.local/state/noctalia/settings.toml"
+                set -l tmpFile (mktemp)
 
-                                echo "==> [1/5] Exporting Noctalia merged configuration via IPC..."
-                                if not noctalia config export > "$tmpFile"
-                                    echo "Error: Failed to export config via noctalia IPC." >&2
-                                    rm -f "$tmpFile"
-                                    return 1
-                                end
+                echo "==> [1/5] Exporting Noctalia merged configuration via IPC..."
+                if not noctalia config export > "$tmpFile"
+                    echo "Error: Failed to export config via noctalia IPC." >&2
+                    rm -f "$tmpFile"
+                    return 1
+                end
 
-                                echo "==> [2/5] Normalizing wallpaper paths and enforcing template suppression..."
-                                ${pkgs.gnused}/bin/sed -i -E 's|directory = "[^"]*wallpapers"|directory = "/etc/wallpapers"|g' "$tmpFile"
-                                ${pkgs.gnused}/bin/sed -i -E 's|path = "[^"]*/wallpapers/([^"]+)"|path = "/etc/wallpapers/\1"|g' "$tmpFile"
+                echo "==> [2/5] Normalizing wallpaper paths and enforcing template suppression..."
+                ${pkgs.gnused}/bin/sed -i -E 's|directory = "[^"]*wallpapers"|directory = "/etc/wallpapers"|g' "$tmpFile"
+                ${pkgs.gnused}/bin/sed -i -E 's|path = "[^"]*/wallpapers/([^"]+)"|path = "/etc/wallpapers/\1"|g' "$tmpFile"
 
-                                if ${pkgs.gnugrep}/bin/grep -q "\[theme\.templates\]" "$tmpFile"
-                                    ${pkgs.gnused}/bin/sed -i -E 's/enable_builtin_templates = true/enable_builtin_templates = false/g' "$tmpFile"
-                                    ${pkgs.gnused}/bin/sed -i -E 's/enable_community_templates = true/enable_community_templates = false/g' "$tmpFile"
-                                else
-                                    printf "
-                [theme.templates]
-                enable_builtin_templates = false
-                enable_community_templates = false
-                " >> "$tmpFile"
-                                end
+                if ${pkgs.gnugrep}/bin/grep -q '^\[theme\.templates\]' "$tmpFile"
+                    ${pkgs.gnused}/bin/sed -i -E 's/^enable_builtin_templates = true/enable_builtin_templates = false/g' "$tmpFile"
+                    ${pkgs.gnused}/bin/sed -i -E 's/^enable_community_templates = true/enable_community_templates = false/g' "$tmpFile"
+                    if not ${pkgs.gnugrep}/bin/grep -q '^enable_builtin_templates = false' "$tmpFile"
+                        ${pkgs.gnused}/bin/sed -i '/^\[theme\.templates\]/a enable_builtin_templates = false' "$tmpFile"
+                    end
+                    if not ${pkgs.gnugrep}/bin/grep -q '^enable_community_templates = false' "$tmpFile"
+                        ${pkgs.gnused}/bin/sed -i '/^\[theme\.templates\]/a enable_community_templates = false' "$tmpFile"
+                    end
+                else
+                    printf "\n[theme.templates]\nenable_builtin_templates = false\nenable_community_templates = false\n" >> "$tmpFile"
+                end
 
-                                mv -f "$tmpFile" "$targetFile"
+                mv -f "$tmpFile" "$targetFile"
 
-                                echo "==> [3/5] Staging changes in git..."
-                                if not git -C /etc/nixos add -A
-                                    echo "Error: Git staging failed." >&2
-                                    return 1
-                                end
+                echo "==> [3/5] Staging changes in git..."
+                if not git -C /etc/nixos add -A
+                    echo "Error: Git staging failed." >&2
+                    return 1
+                end
 
-                                echo "==> [4/5] Rebuilding NixOS generation for host: $targetHost..."
-                                if nh os switch --flake "/etc/nixos#$targetHost"
-                                    echo "==> [5/5] Purging mutable runtime state override..."
-                                    rm -f "$stateFile"
-                                    echo "==> Noctalia declarative state synchronized and baked into system generation."
-                                else
-                                    echo "Error: nh os switch failed. Runtime state preserved for recovery." >&2
-                                    return 1
-                                end
+                echo "==> [4/5] Rebuilding NixOS generation for host: $targetHost..."
+                if nh os switch /etc/nixos -H "$targetHost"
+                    echo "==> [5/5] Purging mutable runtime state override..."
+                    rm -f "$stateFile"
+                    echo "==> Noctalia declarative state synchronized and baked into system generation."
+                else
+                    echo "Error: nh os switch failed. Runtime state preserved for recovery." >&2
+                    return 1
+                end
               '';
             };
           };
