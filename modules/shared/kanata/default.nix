@@ -29,7 +29,7 @@ _: {
                 _    _    _    _    _    _    _    _    _    _    _    _    _    _    _
                 _    esc  @bk  @fd  @fw  ins  _    home pgdn pgup end  caps _    _
                 _    @oa  @oc  @om  @os  ralt _    left down up   rght del  _
-                _    @un  @ct  @cl  @cp  @ps  ssrq ret  bspc tab  menu _
+                _    @un  @ct  @cret @cp  @ps  ssrq ret  bspc tab  menu _
                 _    _    _              ret                 _    _    @fun
               ''
             else
@@ -37,7 +37,7 @@ _: {
                 _    _    _    _    _    _    _    _    _    _    _    _    _    _    _
                 _    esc  @bk  @fd  @fw  ins  home pgdn pgup end  caps _    _    _
                 _    @oa  @oc  @om  @os  ralt left down up   rght del  _    _
-                _    @un  @ct  @cl  @cp  @ps  ret  bspc tab  menu ssrq _
+                _    @un  @ct  @cret @cp  @ps  ret  bspc tab  menu ssrq _
                 _    _    _              ret                 @fun _    _
               '';
 
@@ -124,7 +124,7 @@ _: {
             fd   C-f
             un   C-z
             ct   C-x
-            cl   C-w
+            cret C-ret
             cp   C-c
             ps   C-v
             tcp  C-S-c
