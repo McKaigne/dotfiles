@@ -29,7 +29,7 @@ _: {
                 _    _    _    _    _    _    _    _    _    _    _    _    _    _    _
                 _    esc  @bk  @fd  @fw  ins  _    home pgdn pgup end  caps _    _
                 _    @oa  @oc  @om  @os  ralt _    left down up   rght del  _
-                _    @un  @ct  @cret @cp  @ps  ssrq ret  bspc tab  menu _
+                _    @un  @ct  @cret @cp @ps  ssrq ret  bspc tab  menu _
                 _    _    _              ret                 _    _    @fun
               ''
             else
@@ -37,7 +37,7 @@ _: {
                 _    _    _    _    _    _    _    _    _    _    _    _    _    _    _
                 _    esc  @bk  @fd  @fw  ins  home pgdn pgup end  caps _    _    _
                 _    @oa  @oc  @om  @os  ralt left down up   rght del  _    _
-                _    @un  @ct  @cret @cp  @ps  ret  bspc tab  menu ssrq _
+                _    @un  @ct  @cret @cp @ps  ret  bspc tab  menu ssrq _
                 _    _    _              ret                 @fun _    _
               '';
 
@@ -63,17 +63,17 @@ _: {
             if isWide then
               ''
                 _    _    _    _    _    _    _    _    _    _    _    _    _    _    _
-                _    @ex  @at  @hs  @dl  @pc  _    =    grv  @cln scln @pl  _    _
-                _    @oa  @oc  @om  @os  @cr  _    @st  @lp  @lb  [    -    _
-                _    _    _    \    @pip @am  @und @tld @rp  @rb  ]    _
+                _    @pl  [    @lb  @lp  @lt  _    @gt  @rp  @rb  ]    @tld _    _
+                _    -    @st  @und =    @at  _    @hs  @os  @om  @oc  @oa  _
+                _    @cr  @cln scln /    @pc  grv  @dl  \    @am  @pip _
                 _    _    @fun           @snum               _    _    _
               ''
             else
               ''
                 _    _    _    _    _    _    _    _    _    _    _    _    _    _    _
-                _    @ex  @at  @hs  @dl  @pc  =    grv  @cln scln @pl  _    _    _
-                _    @oa  @oc  @om  @os  @cr  @st  @lp  @lb  [    -    _    _
-                _    _    _    \    @pip @am  @tld @rp  @rb  ]    @und _
+                _    @pl  [    @lb  @lp  @lt  @gt  @rp  @rb  ]    @tld _    _    _
+                _    -    @st  @und =    @at  @hs  @os  @om  @oc  @oa  _    _
+                _    @cr  @cln scln /    @pc  @dl  \    @am  @pip grv  _
                 _    _    @fun           @snum               _    _    _
               '';
 
@@ -81,18 +81,40 @@ _: {
             if isWide then
               ''
                 _    _    _    _    _    _    _    _    _    _    _    _    _    _    _
-                _    _    _    _    _    nlck _    =    7    8    9    @pl  _    _
-                _    @oa  @oc  @om  @os  ralt _    @st  4    5    6    -    _
-                _    _    menu tab  bspc ret  /    0    1    2    3    _
+                _    @pl  9    8    7    =    _    nlck _    _    _    _    _    _
+                _    -    6    5    4    @st  _    ralt @os  @om  @oc  @oa  _
+                _    /    3    2    1    0    _    ret  bspc tab  menu _
                 _    _    @fun           _                   _    _    _
               ''
             else
               ''
                 _    _    _    _    _    _    _    _    _    _    _    _    _    _    _
-                _    _    _    _    _    nlck =    7    8    9    @pl  _    _    _
-                _    @oa  @oc  @om  @os  ralt @st  4    5    6    -    _    _
-                _    _    menu tab  bspc ret  0    1    2    3    /    _
+                _    @pl  9    8    7    =    nlck _    _    _    _    _    _    _
+                _    -    6    5    4    @st  ralt @os  @om  @oc  @oa  _    _
+                _    /    3    2    1    0    ret  bspc tab  menu _    _
                 _    _    @fun           _                   _    _    _
+              '';
+
+          symChords =
+            if isWide then
+              ''
+                (w e) @neq  55 first-release (base gaming ext fun num)
+                (e r) @lte  55 first-release (base gaming ext fun num)
+                (r t) grv   55 first-release (base gaming ext fun num)
+                (s d) @arw  55 first-release (base gaming ext fun num)
+                (d f) @dotb 55 first-release (base gaming ext fun num)
+                (u i) '     55 first-release (base gaming ext fun num)
+                (i o) @gte  55 first-release (base gaming ext fun num)
+              ''
+            else
+              ''
+                (w e) @neq  55 first-release (base gaming ext fun num)
+                (e r) @lte  55 first-release (base gaming ext fun num)
+                (r t) grv   55 first-release (base gaming ext fun num)
+                (s d) @arw  55 first-release (base gaming ext fun num)
+                (d f) @dotb 55 first-release (base gaming ext fun num)
+                (y u) '     55 first-release (base gaming ext fun num)
+                (u i) @gte  55 first-release (base gaming ext fun num)
               '';
         in
         ''
@@ -143,15 +165,27 @@ _: {
             pl   S-=
             lb   S-[
             rb   S-]
+            lt   S-,
+            gt   S-.
             cln  S-scln
             tld  S-grv
             und  S--
             pip  S-\
 
+            neq  (macro S-1 =)
+            lte  (macro S-, =)
+            gte  (macro S-. =)
+            arw  (macro = S-.)
+            dotb (macro . S-[)
+
             l0   (layer-switch base)
             l1   (layer-switch gaming)
             gex  (switch ((and lctl lalt)) (layer-switch base) break () esc break)
             cgex (switch ((and lctl lalt)) (layer-switch base) break () caps break)
+          )
+
+          (defchordsv2
+            ${symChords}
           )
 
           (deflayer base
