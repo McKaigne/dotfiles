@@ -27,16 +27,16 @@ _: {
             if isWide then
               ''
                 _    _    _    _    _    _    _    _    _    _    _    _    _    _    _
-                _    esc  @bk  @fd  @fw  ins  _    pgup home up   end  caps _    _
-                _    @oa  @oc  @om  @os  ralt _    pgdn left down rght del  _
+                _    esc  @bk  @fd  @fw  ins  _    home pgdn pgup end  caps _    _
+                _    @oa  @oc  @om  @os  ralt _    left down up   rght del  _
                 _    @un  @ct  @cl  @cp  @ps  ssrq ret  bspc tab  menu _
                 _    _    _              ret                 _    _    @fun
               ''
             else
               ''
                 _    _    _    _    _    _    _    _    _    _    _    _    _    _    _
-                _    esc  @bk  @fd  @fw  ins  pgup home up   end  caps _    _    _
-                _    @oa  @oc  @om  @os  ralt pgdn left down rght del  _    _
+                _    esc  @bk  @fd  @fw  ins  home pgdn pgup end  caps _    _    _
+                _    @oa  @oc  @om  @os  ralt left down up   rght del  _    _
                 _    @un  @ct  @cl  @cp  @ps  ret  bspc tab  menu ssrq _
                 _    _    _              ret                 @fun _    _
               '';
