@@ -255,7 +255,7 @@ binds {
   Mod+S                  hotkey-overlay-title="Files: PCManFM File Manager"         { spawn "@pcmanfm@"; }
 
   Mod+A                  hotkey-overlay-title="Chat: Ferdium Messaging Client"      { spawn "@ferdium@"; }
-  Mod+W                  hotkey-overlay-title="Overview: Niri Workspace View"       { toggle-overview; }
+  Mod+Tab                hotkey-overlay-title="Overview: Niri Workspace View"       { toggle-overview; }
   Mod+Shift+W            hotkey-overlay-title="Wallpaper: Noctalia Selector"        { spawn "@noctalia@" "msg" "panel-toggle" "wallpaper"; }
   Mod+Ctrl+W             hotkey-overlay-title="Bar: Toggle Noctalia Top Bar"        { spawn "@noctalia@" "msg" "bar-toggle"; }
 
@@ -288,7 +288,7 @@ binds {
   Mod+Escape             hotkey-overlay-title="Session: Noctalia Power Menu"        { spawn "@noctalia@" "msg" "panel-toggle" "session"; }
   Mod+Shift+Escape       hotkey-overlay-title="Session: Lock Screen"                { spawn "@noctalia@" "msg" "session" "lock"; }
   Mod+Ctrl+Escape        hotkey-overlay-title="Monitors: Turn Off Displays"         { power-off-monitors; }
-  Mod+Q                  hotkey-overlay-title="Close Focused Window"                { close-window; }
+  Mod+BackSpace          hotkey-overlay-title="Close Focused Window"                { close-window; }
 
   Mod+Alt+Left           hotkey-overlay-title="Focus Monitor Left"                  { focus-monitor-left; }
   Mod+Alt+Right          hotkey-overlay-title="Focus Monitor Right"                 { focus-monitor-right; }
@@ -315,7 +315,7 @@ binds {
 
   Mod+Home               hotkey-overlay-title="Consume Window from Left"            { consume-or-expel-window-left; }
   Mod+End                hotkey-overlay-title="Consume Window from Right"           { consume-or-expel-window-right; }
-  Mod+Tab                hotkey-overlay-title="Expel Window from Column"            { expel-window-from-column; }
+  Mod+Delete             hotkey-overlay-title="Expel Window from Column"            { expel-window-from-column; }
 
   Mod+1                  { focus-workspace "one"; }
   Mod+2                  { focus-workspace "two"; }
