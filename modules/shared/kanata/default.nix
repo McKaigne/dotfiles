@@ -29,16 +29,34 @@ _: {
                 _    _    _    _    _    _    _    _    _    _    _    _    _    _    _
                 _    esc  @bk  @fd  @fw  ins  _    home pgdn pgup end  caps _    _
                 _    @oa  @oc  @om  @os  ralt _    left down up   rght del  _
-                _    @un  @ct  @cret @cp @ps  ssrq ret  bspc tab  menu _
-                _    _    _              ret                 _    _    @fun
+                _    @un  @ct  @cp  @ps  @cret ssrq ret bspc tab  menu _
+                _    _    _              _                   @mou _    @fun
               ''
             else
               ''
                 _    _    _    _    _    _    _    _    _    _    _    _    _    _    _
                 _    esc  @bk  @fd  @fw  ins  home pgdn pgup end  caps _    _    _
                 _    @oa  @oc  @om  @os  ralt left down up   rght del  _    _
-                _    @un  @ct  @cret @cp @ps  ret  bspc tab  menu ssrq _
-                _    _    _              ret                 @fun _    _
+                _    @un  @ct  @cp  @ps  @cret ret bspc tab  menu ssrq @mou
+                _    _    _              _                   @fun _    _
+              '';
+
+          mouseRows =
+            if isWide then
+              ''
+                _    _    _    _    _    _    _    _    _    _    _    _    _    _    _
+                _    esc  @bk  @fd  @fw  ins  _    @mwl @mwd @mwu @mwr caps _    _
+                _    @oa  @oc  @om  @os  ralt _    @msl @msd @msu @msr mmid _
+                _    @un  @ct  @cp  @ps  @cret ssrq ret mlft mrgt menu _
+                _    _    _              _                   _    _    @fun
+              ''
+            else
+              ''
+                _    _    _    _    _    _    _    _    _    _    _    _    _    _    _
+                _    esc  @bk  @fd  @fw  ins  @mwl @mwd @mwu @mwr caps _    _    _
+                _    @oa  @oc  @om  @os  ralt @msl @msd @msu @msr mmid _    _
+                _    @un  @ct  @cp  @ps  @cret ret mlft mrgt menu ssrq _
+                _    _    _              _                   @fun _    _
               '';
 
           funRows =
@@ -47,16 +65,16 @@ _: {
                 _    _    _    _    _    _    _    _    _    _    _    _    _    _    _
                 _    mstop prev pp  next brup _    f12  f7   f8   f9   slck _    _
                 _    @oa  @oc  @om  @os  brdn _    f11  f4   f5   f6   @l0  _
-                _    mute vold volu @tcp @tps @l1  f10  f1   f2   f3   _
-                _    _    _              ret                 _    _    _
+                _    mute vold @tcp @tps volu @l1  f10  f1   f2   f3   _
+                _    _    _              _                   _    _    _
               ''
             else
               ''
                 _    _    _    _    _    _    _    _    _    _    _    _    _    _    _
                 _    mstop prev pp  next brup f12  f7   f8   f9   slck _    _    _
                 _    @oa  @oc  @om  @os  brdn f11  f4   f5   f6   @l0  _    _
-                _    mute vold volu @tcp @tps f10  f1   f2   f3   @l1  _
-                _    _    _              ret                 _    _    _
+                _    mute vold @tcp @tps volu f10  f1   f2   f3   @l1  _
+                _    _    _              _                   _    _    _
               '';
 
           symRows =
@@ -98,23 +116,23 @@ _: {
           symChords =
             if isWide then
               ''
-                (w e) @neq  55 first-release (base gaming ext fun num)
-                (e r) @lte  55 first-release (base gaming ext fun num)
-                (r t) grv   55 first-release (base gaming ext fun num)
-                (s d) @arw  55 first-release (base gaming ext fun num)
-                (d f) @dotb 55 first-release (base gaming ext fun num)
-                (u i) '     55 first-release (base gaming ext fun num)
-                (i o) @gte  55 first-release (base gaming ext fun num)
+                (w e) @neq  55 first-release (base gaming ext fun num mouse)
+                (e r) @lte  55 first-release (base gaming ext fun num mouse)
+                (r t) grv   55 first-release (base gaming ext fun num mouse)
+                (s d) @arw  55 first-release (base gaming ext fun num mouse)
+                (d f) @dotb 55 first-release (base gaming ext fun num mouse)
+                (u i) '     55 first-release (base gaming ext fun num mouse)
+                (i o) @gte  55 first-release (base gaming ext fun num mouse)
               ''
             else
               ''
-                (w e) @neq  55 first-release (base gaming ext fun num)
-                (e r) @lte  55 first-release (base gaming ext fun num)
-                (r t) grv   55 first-release (base gaming ext fun num)
-                (s d) @arw  55 first-release (base gaming ext fun num)
-                (d f) @dotb 55 first-release (base gaming ext fun num)
-                (y u) '     55 first-release (base gaming ext fun num)
-                (u i) @gte  55 first-release (base gaming ext fun num)
+                (w e) @neq  55 first-release (base gaming ext fun num mouse)
+                (e r) @lte  55 first-release (base gaming ext fun num mouse)
+                (r t) grv   55 first-release (base gaming ext fun num mouse)
+                (s d) @arw  55 first-release (base gaming ext fun num mouse)
+                (d f) @dotb 55 first-release (base gaming ext fun num mouse)
+                (y u) '     55 first-release (base gaming ext fun num mouse)
+                (u i) @gte  55 first-release (base gaming ext fun num mouse)
               '';
         in
         ''
@@ -132,6 +150,7 @@ _: {
 
           (defalias
             ext  (layer-while-held ext)
+            mou  (layer-while-held mouse)
             sym  (layer-while-held sym)
             fun  (layer-while-held fun)
             snum (tap-hold-press 200 200 spc (layer-while-held num))
@@ -140,6 +159,15 @@ _: {
             oc   (one-shot 2000 lctl)
             om   (one-shot 2000 lmet)
             os   (one-shot 2000 lsft)
+
+            msl  (movemouse-accel-left 10 1000 2 10)
+            msd  (movemouse-accel-down 10 1000 2 10)
+            msu  (movemouse-accel-up 10 1000 2 10)
+            msr  (movemouse-accel-right 10 1000 2 10)
+            mwl  (mwheel-left 50 120)
+            mwd  (mwheel-down 50 120)
+            mwu  (mwheel-up 50 120)
+            mwr  (mwheel-right 50 120)
 
             bk   A-left
             fw   A-rght
@@ -204,6 +232,10 @@ _: {
             ${extRows}
           )
 
+          (deflayer mouse
+            ${mouseRows}
+          )
+
           (deflayer fun
             ${funRows}
           )
@@ -228,6 +260,8 @@ _: {
             extraDefCfg = ''
               process-unmapped-keys yes
               concurrent-tap-hold yes
+              movemouse-inherit-accel-state yes
+              movemouse-smooth-diagonals yes
               linux-device-detect-mode keyboard-only
               linux-output-device-name kanata-ansi
               linux-dev-names-exclude (
@@ -245,6 +279,8 @@ _: {
             extraDefCfg = ''
               process-unmapped-keys yes
               concurrent-tap-hold yes
+              movemouse-inherit-accel-state yes
+              movemouse-smooth-diagonals yes
               linux-device-detect-mode keyboard-only
               linux-output-device-name kanata-alice
               linux-dev-names-include (
