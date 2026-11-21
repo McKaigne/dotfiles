@@ -2,6 +2,8 @@
   flake.modules.homeManager."noctalia" = {pkgs, ...}: {
     xdg.configFile."noctalia/40-desktop-widgets.toml".source = (pkgs.formats.toml {}).generate "40-desktop-widgets.toml" {
       "desktop_widgets" = {
+        # Ly-sec's widgets are laid out for a 1440p screen; off by default.
+        "enabled" = false;
         "schema_version" = 2;
         "widget_order" = [
           "desktop-widget-0000000000000015"
