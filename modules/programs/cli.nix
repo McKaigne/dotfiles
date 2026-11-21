@@ -92,7 +92,7 @@ in
 
         bat = {
           enable = true;
-          config.theme = "Noctalia";
+          config.theme = "noctalia";
         };
       };
 

@@ -56,17 +56,17 @@
           package = pkgs.gruvbox-plus-icons;
         };
         font = {
-          name = "EB Garamond";
-          size = 11;
-          package = pkgs.eb-garamond;
+          name = "Maple Mono NF";
+          size = 10;
+          package = pkgs.maple-mono.NF;
         };
         gtk4.theme = null;
       };
 
       dconf.settings."org/gnome/desktop/interface" = {
-        font-name = "EB Garamond 11";
-        document-font-name = "EB Garamond 11";
-        monospace-font-name = "GaramontoCode Nerd Font 11";
+        font-name = "Maple Mono NF 10";
+        document-font-name = "Maple Mono NF 10";
+        monospace-font-name = "Maple Mono NF 10";
       };
 
       xdg.configFile = {

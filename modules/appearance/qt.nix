@@ -34,8 +34,8 @@
         style=Adwaita-Dark
 
         [Fonts]
-        fixed="GaramontoCode Nerd Font,11,-1,5,50,0,0,0,0,0"
-        general="EB Garamond,11,-1,5,50,0,0,0,0,0"
+        fixed="Maple Mono NF,10,-1,5,50,0,0,0,0,0"
+        general="Maple Mono NF,10,-1,5,50,0,0,0,0,0"
       '';
     in
     {

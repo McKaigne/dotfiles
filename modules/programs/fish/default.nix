@@ -21,9 +21,8 @@ in
     let
       isFlag = cmd: lib.hasPrefix "-" cmd;
       safeAbbrs = lib.filterAttrs (_: cmd: !isFlag cmd) config.workstation.shellAbbrs;
-
       tideVarsRaw = builtins.readFile ./data/fish_variables;
-      tideVarsHash = builtins.hashString "sha256" (tideVarsRaw + ":v4-fish-lists");
+      tideVarsHash = builtins.hashString "sha256" (tideVarsRaw + ":v6-tide-clean");
 
       setuvarLines = lib.filter (l: lib.hasPrefix "SETUVAR " l) (
         lib.splitString "\n" tideVarsRaw

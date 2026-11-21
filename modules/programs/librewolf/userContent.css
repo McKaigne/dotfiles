@@ -1,6 +1,6 @@
 @-moz-document url-prefix("about:") {
   body {
-    font-family: "EB Garamond", serif !important;
+    font-family: "Maple Mono NF", monospace !important;
   }
 
   * {
@@ -10,10 +10,10 @@
 
 @-moz-document url-prefix("moz-extension://") {
   body {
-    font-family: "EB Garamond", serif !important;
+    font-family: "Maple Mono NF", monospace !important;
     font-size: 14px;
   }
   #tridactyl-command-line, .TridactylCommandline, #tridactyl-input {
-    font-family: "GaramontoCode Nerd Font", monospace !important;
+    font-family: "Maple Mono NF", monospace !important;
   }
 }

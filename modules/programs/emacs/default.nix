@@ -76,6 +76,7 @@
             org-appear
             org-roam
             elcord
+            ligature
           ];
       };
 

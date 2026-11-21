@@ -24,7 +24,7 @@ in
       programs.zathura = {
         enable = true;
         options = {
-          font = "EB Garamond 11";
+          font = "Maple Mono NF 10";
           recolor = "true";
           recolor-keephue = "true";
           selection-clipboard = "clipboard";

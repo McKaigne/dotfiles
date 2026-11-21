@@ -30,7 +30,7 @@
         QT_WAYLAND_DISABLE_WINDOWDECORATION = "1";
         EDITOR = "emacs";
         VISUAL = "emacs";
-        BAT_THEME = "Noctalia";
+        BAT_THEME = "noctalia";
 
         FZF_DEFAULT_COMMAND = "${pkgs.fd}/bin/fd --type f --strip-cwd-prefix --hidden --follow --exclude .git";
         FZF_CTRL_T_COMMAND = "${pkgs.fd}/bin/fd --type f --strip-cwd-prefix --hidden --follow --exclude .git";

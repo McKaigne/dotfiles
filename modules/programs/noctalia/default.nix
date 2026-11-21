@@ -1,7 +1,10 @@
 { inputs, config, ... }:
 {
   flake.modules.nixos.noctalia = {
-    home-manager.sharedModules = [ config.flake.modules.homeManager.noctalia ];
+    home-manager.sharedModules = [
+      config.flake.modules.homeManager.noctalia
+      config.flake.modules.homeManager.noctalia-sync
+    ];
     nixpkgs.overlays = [
       (final: _: {
         noctalia = final.callPackage (inputs.noctalia.outPath + "/nix/package.nix") {
@@ -21,4 +24,8 @@
         recursive = true;
       };
     };
+
+  flake.modules.homeManager.noctalia-sync = {
+    imports = [ ./gui-sync.nix ];
+  };
 }

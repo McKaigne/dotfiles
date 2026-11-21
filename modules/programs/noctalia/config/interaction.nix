@@ -7,7 +7,7 @@
           {
             hot_corners = {
               delay_ms = 2000;
-              enabled = false;
+              enabled = true;
             };
             keybinds = {
               tab_previous = [ "Shift+ISO_Left_Tab" ];

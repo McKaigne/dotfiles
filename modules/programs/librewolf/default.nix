@@ -149,19 +149,19 @@ in
               Status = "locked";
             };
             "font.name.sans-serif.x-western" = {
-              Value = "EB Garamond";
+              Value = "Maple Mono NF";
               Status = "locked";
             };
             "font.name.serif.x-western" = {
-              Value = "EB Garamond";
+              Value = "Maple Mono NF";
               Status = "locked";
             };
             "font.name.monospace.x-western" = {
-              Value = "GaramontoCode Nerd Font";
+              Value = "Maple Mono NF";
               Status = "locked";
             };
             "font.default.x-western" = {
-              Value = "sans-serif";
+              Value = "monospace";
               Status = "locked";
             };
           };

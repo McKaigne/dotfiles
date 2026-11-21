@@ -12,12 +12,12 @@
             passwordless-sync-users = [ config.workstation.username ];
             greeter-args = "";
             settings = {
-              session.default = "Niri";
+              session = { default = "Umbriel"; last = "Umbriel"; };
               user.default = config.workstation.username;
               appearance = {
                 scheme = "Synced";
                 password_style = "random";
-                font_family = "EB Garamond";
+                font_family = "Maple Mono NF";
               };
               cursor = {
                 theme = config.workstation.cursor.theme;

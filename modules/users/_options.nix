@@ -96,13 +96,13 @@
         nlock = "noctalia msg session lock";
         nclosemsg = "noctalia msg notification-clear-active";
 
-        nreload = "niri msg action load-config-file";
-        nclose = "niri msg action close-window";
-        nquit = "niri msg action quit";
-        nfocus = "niri msg action focus-window --id";
-        nwins = "niri msg -j windows";
-        nwork = "niri msg -j workspaces";
-        nmon = "niri msg -j outputs";
+        nreload = "umbriel msg config-reload";
+        nclose = "umbriel msg window-close";
+        nquit = "umbriel msg session-quit";
+        nfocus = "umbriel msg window-focus";
+        nwins = "umbriel msg windows";
+        nwork = "umbriel msg workspaces";
+        nmon = "umbriel msg outputs";
 
         zj = "zellij";
         zja = "zellij attach";
@@ -130,7 +130,7 @@
         hxh = "hx /etc/nixos/modules/hosts/hyde/default.nix";
         hxc = "hx /etc/nixos/modules/system/environment.nix";
         hxfish = "hx /etc/nixos/modules/programs/fish/default.nix";
-        hxi = "hx /etc/nixos/modules/desktops/niri/keybinds.nix";
+        hxi = "hx /etc/nixos/modules/desktops/umbriel/keybinds.nix";
         hxz = "hx /etc/nixos/modules/programs/zellij.nix";
       };
     };

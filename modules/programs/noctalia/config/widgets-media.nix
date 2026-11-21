@@ -6,19 +6,28 @@
         (pkgs.formats.toml { }).generate "36-widgets-media.toml"
           {
             widget = {
-              input_volume.enabled = true;
-              media = {
-                hide_album_art = true;
-                hide_when_no_media = true;
-                title_scroll = "on_hover";
+              input_volume = {
+                glyph_position = "after";
+                peek = true;
+                peek_delay_ms = 350;
               };
-              volume.enabled = true;
+              media = {
+                glyph_position = "after";
+                peek = true;
+                peek_delay_ms = 350;
+                show_glyph = false;
+              };
+              volume = {
+                glyph_position = "after";
+                peek = true;
+                peek_delay_ms = 350;
+              };
               volume_input_minimal = {
                 device = "input";
                 type = "volume";
               };
               volume_minimal = {
-                font_family = "GaramontoCode Nerd Font";
+                font_family = "Maple Mono NF";
                 type = "volume";
               };
             };

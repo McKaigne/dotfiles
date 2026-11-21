@@ -6,7 +6,6 @@
         (pkgs.formats.toml { }).generate "34-osd.toml"
           {
             osd = {
-              background_opacity = 1.0;
               orientation = "vertical";
               position_vertical = "center_right";
               kinds = {

@@ -5,13 +5,13 @@ let
 in
 {
   flake.modules.nixos.host-workstation =
-    { config, lib, ... }:
+    { config, ... }:
     {
       imports = with m.nixos; [
         m.generic.workstation-options
         nixosBase
         user-workstation
-        desktop-niri
+        m.nixos."desktop-umbriel"
         noctalia-greeter-package
         noctalia-greeter
         noctalia-plymouth
@@ -31,18 +31,6 @@ in
         krita
         kdenlive
         media-tools
-      ];
-
-      assertions = [
-        {
-          assertion =
-            let
-              user = config.workstation.username;
-              niriCfg = config.home-manager.users.${user}.programs.niri.finalConfig or "";
-            in
-            !lib.hasInfix "xray true" niriCfg;
-          message = "Niri config must never enable xray true.";
-        }
       ];
 
       nixpkgs.hostPlatform = config.workstation.system;

@@ -17,12 +17,12 @@
                   "btop"
                   "cava"
                   "emacs"
+                  "foot"
                   "gtk3"
                   "gtk4"
                   "kcolorscheme"
-                  "kitty"
-                  "niri"
                   "qt"
+                  "umbriel"
                 ];
                 community_ids = [
                   "chromium-based"

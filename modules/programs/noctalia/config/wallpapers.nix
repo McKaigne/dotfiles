@@ -8,6 +8,7 @@
             wallpaper = {
               directory = "/etc/wallpapers";
               fill_mode = "crop";
+              transition = [ "melt" ];
               transition_duration = 300;
               default.path = "/etc/wallpapers/isekaiJoucho.jpg";
               last.path = "/etc/wallpapers/isekaiJoucho.jpg";

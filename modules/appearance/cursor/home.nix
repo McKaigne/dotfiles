@@ -83,17 +83,15 @@
         '';
       };
 
-      cursorConfigTemplate = pkgs.writeText "bibata-cursor.kdl.in" ''
-        cursor {
-          xcursor-theme "${theme}-{{colors.primary.default.hex_stripped}}-{{colors.terminal_background.default.hex_stripped}}"
-          xcursor-size 24
-        }
+      cursorConfigTemplate = pkgs.writeText "bibata-cursor.toml.in" ''
+        [input.cursor]
+        theme = "${theme}-{{colors.primary.default.hex_stripped}}-{{colors.terminal_background.default.hex_stripped}}"
       '';
 
       noctaliaTemplate = (pkgs.formats.toml { }).generate "bibata-cursor.toml" {
         theme.templates.user.bibata-cursor = {
           input_path = cursorConfigTemplate;
-          output_path = "$XDG_CONFIG_HOME/niri/bibata-cursor.kdl";
+          output_path = "$XDG_CONFIG_HOME/umbriel/bibata-cursor.toml";
           pre_hook = "${lib.getExe generateCursor} {{colors.primary.default.hex_stripped}} {{colors.terminal_background.default.hex_stripped}}";
         };
       };

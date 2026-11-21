@@ -24,7 +24,7 @@ in
       name = "Helix";
       genericName = "Text Editor";
       comment = "Modal text editor";
-      exec = "kitty -e hx %F";
+      exec = "foot -e hx %F";
       icon = "helix";
       terminal = false;
       categories = [
@@ -92,7 +92,7 @@ in
       text = ''
         [config]
         bm_open_method=0
-        terminal=kitty
+        terminal=foot
 
         [volume]
         mount_on_removable=1

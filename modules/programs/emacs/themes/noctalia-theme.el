@@ -81,8 +81,8 @@
    `(minibuffer-prompt ((t (:foreground ,primary :weight bold))))
    `(magit-diff-added ((t (:background ,success-container :foreground ,on-success-container))))
    `(magit-diff-removed ((t (:background ,err-container :foreground ,on-err-container))))
-   `(fixed-pitch ((t (:family "GaramontoCode Nerd Font"))))
-   `(fixed-pitch-serif ((t (:family "GaramontoCode Nerd Font"))))
-   `(variable-pitch ((t (:family "EB Garamond"))))))
+   `(fixed-pitch ((t (:family "Maple Mono NF"))))
+   `(fixed-pitch-serif ((t (:family "Maple Mono NF"))))
+   `(variable-pitch ((t (:family "Maple Mono NF"))))))
 
 (provide-theme 'noctalia)

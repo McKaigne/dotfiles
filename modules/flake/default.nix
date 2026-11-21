@@ -55,24 +55,6 @@
             echo "${drv}" > $out
           '';
 
-        niri-validate-hyde =
-          let
-            niriSrc =
-              self.nixosConfigurations.hyde.config.home-manager.users.jekyll.xdg.configFile.niri-config.source;
-          in
-          pkgs.runCommand "check-niri-validate-hyde" { } ''
-            ln -s ${niriSrc} $out
-          '';
-
-        niri-validate-castor =
-          let
-            niriSrc =
-              self.nixosConfigurations.castor.config.home-manager.users.pollux.xdg.configFile.niri-config.source;
-          in
-          pkgs.runCommand "check-niri-validate-castor" { } ''
-            ln -s ${niriSrc} $out
-          '';
-
         statix-check =
           pkgs.runCommand "check-statix"
             {

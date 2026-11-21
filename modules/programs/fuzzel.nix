@@ -17,7 +17,7 @@
           include=${fuzzelColors}
 
           [main]
-          font=EB Garamond:size=14
+          font=Maple Mono NF:size=12
           prompt="➜ "
           lines=12
           width=35

@@ -132,3 +132,12 @@
   (add-hook 'delete-frame-functions #'lysec-elcord-sync)
   (add-hook 'delete-terminal-functions #'lysec-elcord-sync)
   (lysec-elcord-sync))
+
+(use-package ligature
+  :demand t
+  :config
+  (ligature-set-ligatures 'prog-mode
+    '("-->" "//" "/*" "*/" "<!--" "-->" "==" "===" "!=" "!==" "||" "&&"
+      ">=" "<=" "=>" "->" "<-" "<<" ">>" "::" "++" "--" "..." ".."
+      "/*" "*/" "/**" "**" "***" ";;" "!!" "??"))
+  (global-ligature-mode t))

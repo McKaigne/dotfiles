@@ -20,7 +20,7 @@ in
       imports = with m.homeManager; [
         emacs
         development
-        kitty
+        foot
         zellij
         helix
         btop
@@ -40,7 +40,7 @@ in
         sessionVariables = {
           EDITOR = "emacs";
           VISUAL = "emacs";
-          TERMINAL = "kitty";
+          TERMINAL = "foot";
         };
         file = {
           ".face" = {

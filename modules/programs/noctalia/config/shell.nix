@@ -10,7 +10,7 @@
               avatar_path = "/etc/nixos/avatar.jpg";
               button_borders = false;
               card_borders = false;
-              font_family = "EB Garamond";
+              font_family = "Maple Mono NF";
               input_borders = false;
               launch_apps_as_systemd_services = true;
               polkit_agent = true;
