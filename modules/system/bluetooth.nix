@@ -2,25 +2,23 @@
   nixos.base = {pkgs, ...}: {
     hardware.bluetooth = {
       enable = true;
-      powerOnBoot = true;
-      settings = {
-        General = {
-          Experimental = true;
-          JustWorksRepairing = "always";
-        };
-        Input.ClassicBondedOnly = false;
-      };
+      settings.General.Experimental = true;
     };
+    # Blueman manager for advanced pairing; Noctalia's panel stays the agent.
     services.blueman.enable = true;
     services.dbus = {
       enable = true;
       packages = [pkgs.bluez];
     };
     environment.systemPackages = [pkgs.bluez];
+  };
 
-    services.udev.extraRules = ''
-      KERNEL=="event*", SUBSYSTEM=="input", ATTRS{name}=="*[Ff]low84*", SYMLINK+="input/by-id/lofree-flow84", TAG+="uaccess", TAG+="systemd", ENV{SYSTEMD_ALIAS}="/dev/input/by-id/lofree-flow84"
-      KERNEL=="event*", SUBSYSTEM=="input", ATTRS{name}=="*[Ll]ofree*", SYMLINK+="input/by-id/lofree-flow84", TAG+="uaccess", TAG+="systemd", ENV{SYSTEMD_ALIAS}="/dev/input/by-id/lofree-flow84"
+  homeManager.base = {
+    # Hide blueman-applet's autostart so it doesn't duplicate Noctalia's tray and pairing prompts.
+    xdg.configFile."autostart/blueman.desktop".text = ''
+      [Desktop Entry]
+      Type=Application
+      Hidden=true
     '';
   };
 }
