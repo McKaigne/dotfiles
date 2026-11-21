@@ -24,7 +24,6 @@ in {
         librewolf = prev.librewolf.override {
           nativeMessagingHosts = [
             prev.tridactyl-native
-            prev.pywalfox-native
           ];
         };
       })
@@ -32,7 +31,6 @@ in {
 
     environment.systemPackages = with pkgs; [
       tridactyl-native
-      pywalfox-native
     ];
 
     environment.etc."librewolf/policies/policies.json".text = builtins.toJSON {
@@ -174,6 +172,7 @@ in {
   };
 
   flake.modules.homeManager.librewolf = {
+    config,
     lib,
     pkgs,
     ...
@@ -181,6 +180,11 @@ in {
     ff = inputs.firefox-addons.packages.${pkgs.stdenv.hostPlatform.system};
   in {
     home.sessionVariables.BROWSER = lib.getExe pkgs.librewolf;
+
+    # Noctalia is the Pywalfox host and keeps ~/.mozilla/.../pywalfox.json pointed at
+    # its current binary. LibreWolf only looks in ~/.librewolf, so link it there.
+    home.file.".librewolf/native-messaging-hosts/pywalfox.json".source =
+      config.lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/.mozilla/native-messaging-hosts/pywalfox.json";
 
     xdg.configFile."tridactyl/tridactylrc" = {
       text = ''

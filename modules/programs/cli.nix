@@ -84,8 +84,8 @@ in {
       };
 
       bat = {
+        # Noctalia's bat template owns ~/.config/bat/config; BAT_THEME is set globally.
         enable = true;
-        config.theme = "noctalia";
       };
     };
 

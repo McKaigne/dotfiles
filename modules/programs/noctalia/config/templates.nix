@@ -36,14 +36,6 @@
             output_path = "$XDG_CACHE_HOME/noctalia/terminal-colors.sh";
             post_hook = "${pushTerminalColors}";
           };
-          # Pywalfox only re-reads ~/.cache/wal/colors.json when asked; wait for
-          # the pywalfox template to write it, then refresh LibreWolf.
-          pywalfox-refresh = {
-            input_path = "${pkgs.writeText "pywalfox-stamp.in" "{{colors.primary.default.hex}}\n"}";
-            output_path = "$XDG_CACHE_HOME/noctalia/pywalfox.stamp";
-            post_hook = "sleep 2; ${pkgs.pywalfox-native}/bin/pywalfox update";
-            hook_async = true;
-          };
           zathura = {
             input_path = "${../templates/zathura}";
             output_path = "$XDG_CONFIG_HOME/zathura/noctalia";
