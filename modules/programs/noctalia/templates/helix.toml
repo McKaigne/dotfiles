@@ -67,9 +67,8 @@
 "ui.statusline.insert" = { fg = "onTertiary", bg = "tertiary", modifiers = ["bold"] }
 "ui.statusline.select" = { fg = "onSecondary", bg = "secondary", modifiers = ["bold"] }
 
-"ui.bufferline" = { fg = "onSurface", bg = "#000000" }
-"ui.bufferline.active" = { fg = "primary", bg = "#000000", modifiers = ["bold"] }
-"ui.bufferline.background" = { bg = "#000000" }
+"ui.bufferline" = { fg = "onSurfaceVariant" }
+"ui.bufferline.active" = { fg = "primary", modifiers = ["bold"] }
 
 "ui.popup" = { fg = "onSurface", bg = "surfaceContainerLow" }
 "ui.window" = { fg = "onSurface" }

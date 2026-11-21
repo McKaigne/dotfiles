@@ -75,7 +75,7 @@
     zellijThemeTemplate = pkgs.writeText "zellij-noctalia.kdl.in" ''
       themes {
         noctalia {
-          bg "{{colors.surface.default.hex}}"
+          bg "{{colors.terminal_background.default.hex}}"
           fg "{{colors.on_surface.default.hex}}"
           red "{{colors.error.default.hex}}"
           green "{{colors.primary.default.hex}}"
@@ -89,7 +89,7 @@
 
           ribbon_selected {
             base "{{colors.primary.default.hex}}"
-            background "{{colors.surface.default.hex}}"
+            background "{{colors.terminal_background.default.hex}}"
             emphasis_0 "{{colors.primary.default.hex}}"
             emphasis_1 "{{colors.tertiary.default.hex}}"
             emphasis_2 "{{colors.secondary.default.hex}}"
@@ -97,7 +97,7 @@
           }
           ribbon_unselected {
             base "{{colors.on_surface_variant.default.hex}}"
-            background "{{colors.surface.default.hex}}"
+            background "{{colors.terminal_background.default.hex}}"
             emphasis_0 "{{colors.on_surface_variant.default.hex}}"
             emphasis_1 "{{colors.tertiary.default.hex}}"
             emphasis_2 "{{colors.secondary.default.hex}}"
@@ -105,7 +105,7 @@
           }
           text_unselected {
             base "{{colors.on_surface.default.hex}}"
-            background "{{colors.surface.default.hex}}"
+            background "{{colors.terminal_background.default.hex}}"
             emphasis_0 "{{colors.tertiary.default.hex}}"
             emphasis_1 "{{colors.primary.default.hex}}"
             emphasis_2 "{{colors.secondary.default.hex}}"
@@ -121,7 +121,7 @@
           }
           table_title {
             base "{{colors.primary.default.hex}}"
-            background "{{colors.surface.default.hex}}"
+            background "{{colors.terminal_background.default.hex}}"
             emphasis_0 "{{colors.tertiary.default.hex}}"
             emphasis_1 "{{colors.primary.default.hex}}"
             emphasis_2 "{{colors.secondary.default.hex}}"
@@ -129,7 +129,7 @@
           }
           table_cell_unselected {
             base "{{colors.on_surface.default.hex}}"
-            background "{{colors.surface.default.hex}}"
+            background "{{colors.terminal_background.default.hex}}"
             emphasis_0 "{{colors.tertiary.default.hex}}"
             emphasis_1 "{{colors.primary.default.hex}}"
             emphasis_2 "{{colors.secondary.default.hex}}"
@@ -145,7 +145,7 @@
           }
           frame_selected {
             base "{{colors.primary.default.hex}}"
-            background "{{colors.surface.default.hex}}"
+            background "{{colors.terminal_background.default.hex}}"
             emphasis_0 "{{colors.primary.default.hex}}"
             emphasis_1 "{{colors.secondary.default.hex}}"
             emphasis_2 "{{colors.tertiary.default.hex}}"
@@ -153,7 +153,7 @@
           }
           frame_highlight {
             base "{{colors.primary.default.hex}}"
-            background "{{colors.surface.default.hex}}"
+            background "{{colors.terminal_background.default.hex}}"
             emphasis_0 "{{colors.primary.default.hex}}"
             emphasis_1 "{{colors.secondary.default.hex}}"
             emphasis_2 "{{colors.tertiary.default.hex}}"
@@ -161,7 +161,7 @@
           }
           frame_unselected {
             base "{{colors.outline_variant.default.hex}}"
-            background "{{colors.surface.default.hex}}"
+            background "{{colors.terminal_background.default.hex}}"
             emphasis_0 "{{colors.outline.default.hex}}"
             emphasis_1 "{{colors.outline_variant.default.hex}}"
             emphasis_2 "{{colors.surface_container_highest.default.hex}}"

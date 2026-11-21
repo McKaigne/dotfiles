@@ -110,7 +110,7 @@
       themeFile=${lib.escapeShellArg themeFile}
       $DRY_RUN_CMD ${pkgs.coreutils}/bin/mkdir -p "$(dirname "$themeFile")"
       if [ ! -f "$themeFile" ] && [ -z "''${DRY_RUN_CMD:-}" ]; then
-        printf '"ui.background" = "none"\n"ui.bufferline" = { fg = "#cdd6f4", bg = "#000000" }\n"ui.bufferline.active" = { fg = "#cba6f7", bg = "#000000", modifiers = ["bold"] }\n"ui.bufferline.background" = { bg = "#000000" }\n' > "$themeFile"
+        printf '"ui.background" = "none"\n' > "$themeFile"
       fi
     '';
   };
