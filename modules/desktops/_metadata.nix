@@ -1,13 +1,11 @@
 rec {
   names = [
     "umbriel"
-    "niri"
   ];
 
   # wayland-sessions .desktop Name= values for noctalia-greeter --session
   greeterSession = desktop:
     {
-      niri = "Niri";
       umbriel = "Umbriel";
     }
     .${

@@ -25,7 +25,7 @@
         outer_border_width = 0;
         corner_radius = 12;
         title_bar = {
-          mode = "forced";
+          mode = "off";
         };
 
         shadow = {

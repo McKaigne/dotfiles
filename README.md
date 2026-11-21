@@ -2,7 +2,7 @@
 
 Based on [Ly-sec/nixos](https://github.com/Ly-sec/nixos): a dendritic flake-parts
 config built around [Umbriel](modules/desktops/umbriel) and
-[Noctalia](modules/programs/noctalia), with Niri as the alternate session.
+[Noctalia](modules/programs/noctalia).
 
 | Host | User | Hardware |
 | :--- | :--- | :--- |
@@ -21,6 +21,3 @@ nr              # switch this host (ndeploy switch)
 ntest           # activate until reboot
 nr castor       # build on hyde, activate on castor over Tailscale
 ```
-
-The active desktop is set per host in `modules/hosts/<host>/default.nix`
-(`desktop = "umbriel"` or `"niri"`).

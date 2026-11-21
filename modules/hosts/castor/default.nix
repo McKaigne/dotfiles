@@ -12,9 +12,7 @@ in {
     stateVersion = "25.05";
     system = "x86_64-linux";
 
-    # Active compositor, change here to switch sessions.
     desktop = "umbriel";
-    # desktop = "niri";
 
     git = {
       name = "McKaigne";

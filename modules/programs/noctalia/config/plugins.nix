@@ -3,10 +3,8 @@
     xdg.configFile."noctalia/50-plugins.toml".source = (pkgs.formats.toml {}).generate "50-plugins.toml" {
       "plugins" = {
         "auto_update" = "all";
-        # Reads Niri's config; Umbriel uses its built-in cheatsheet instead.
-        "enabled" = [
-          "kenn/keybind-cheatsheet"
-        ];
+        # Mod+/ uses Umbriel's built-in cheatsheet.
+        "enabled" = [];
         "source" = [
           {
             "kind" = "git";

@@ -2,6 +2,7 @@
   flake.modules.homeManager."noctalia" = {pkgs, ...}: {
     xdg.configFile."noctalia/32-dock.toml".source = (pkgs.formats.toml {}).generate "32-dock.toml" {
       "dock" = {
+        "enabled" = false;
         "colorize_icons" = true;
         "concave_edge_corners" = true;
         "icon_size" = 26;
