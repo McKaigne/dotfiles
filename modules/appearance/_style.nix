@@ -5,14 +5,14 @@
 
   # Background translucency for the bar, panels, terminals and GTK apps. Text
   # and images stay opaque; the compositor blurs whatever shows through.
-  opacity = 0.8;
+  opacity = 0.6;
 
-  # Heavy frosted-glass blur behind every translucent surface.
-  # (Popular "strong glass" Hyprland/KDE setups use ~4 passes at size 8-12;
-  # this is deliberately heavier.)
+  # Strong frosted glass, as in popular Hyprland/KDE "strong blur" setups. Each
+  # pass halves the image: much past 4-5 passes the wallpaper collapses into
+  # one flat color and the glass looks solid instead of blurrier.
   blur = {
-    passes = 7;
-    radius = 35;
+    passes = 4;
+    radius = 12;
   };
 
   # Corner radius shared by windows and the bar.
