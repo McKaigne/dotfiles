@@ -66,6 +66,7 @@ def color_map(palette):
         raise ValueError("palette colors must use #RRGGBB")
 
     background, foreground = palette["background"], palette["foreground"]
+    # Preserve the neutral shading when the foreground/background polarity changes.
     neutral = {
         "#282828": 0.0,
         "#32302f": 0.04,
@@ -112,6 +113,8 @@ def build_theme(source, target, palette, mapping, digest):
             return shutil.copyfile(src, dst)
         original = path.read_bytes()
         relative = path.relative_to(source)
+        # Share immutable colored app icons with the installed theme. Monochrome
+        # app icons still need foreground mapping for contrast in both modes.
         colored_app = (
             relative.parts[0] == "apps"
             and "symbolic" not in relative.parts
@@ -131,6 +134,8 @@ def build_theme(source, target, palette, mapping, digest):
         Path(dst).write_bytes(recolored)
         return dst
 
+    # Dark is self-contained; the light theme links into it. Recoloring its neutral
+    # ramp and embedded CSS roles produces both modes without dangling links.
     shutil.copytree(
         source,
         target,
@@ -194,6 +199,7 @@ def generate(source, palette_path):
         name = PREFIX + digest[:20]
         target = icons / name
 
+        # The lock ensures these can only be remnants of an interrupted build.
         for path in icons.glob(".noctalia-gruvbox-build-*"):
             if path.is_dir() and not path.is_symlink():
                 shutil.rmtree(path)
@@ -209,6 +215,7 @@ def generate(source, palette_path):
                 build_theme(source, work, palette, mapping, digest)
                 work.rename(target)
 
+        # A newer template render may have arrived while this palette was building.
         if palette_path.read_bytes() != raw:
             return
 
@@ -233,6 +240,7 @@ def main():
 
 
 if __name__ == "__main__":
+    # Let TemporaryDirectory clean up if Noctalia terminates a running hook.
     signal.signal(signal.SIGTERM, lambda number, _frame: sys.exit(128 + number))
     try:
         main()

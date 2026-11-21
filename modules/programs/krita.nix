@@ -1,7 +1,5 @@
 {
-  flake.modules.nixos.krita =
-    { pkgs, ... }:
-    {
-      environment.systemPackages = [ pkgs.krita ];
-    };
+  flake.modules.nixos.krita = {pkgs, ...}: {
+    environment.systemPackages = [pkgs.krita];
+  };
 }

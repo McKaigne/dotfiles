@@ -1,65 +1,7 @@
-{ lib, ... }:
 {
-  options.workstation = {
-    username = lib.mkOption {
-      type = lib.types.str;
-      default = "pollux";
-      description = "Primary workstation user account.";
-    };
-
-    hostname = lib.mkOption {
-      type = lib.types.str;
-      description = "Networking hostname.";
-    };
-
-    stateVersion = lib.mkOption {
-      type = lib.types.str;
-      default = "25.05";
-      description = "NixOS / Home Manager stateVersion.";
-    };
-
-    system = lib.mkOption {
-      type = lib.types.str;
-      default = "x86_64-linux";
-      description = "Nixpkgs host system.";
-    };
-
-    isDesktopCompute = lib.mkOption {
-      type = lib.types.bool;
-      default = false;
-      description = "Whether host enables desktop compute/studio modules.";
-    };
-
-    display = {
-      output = lib.mkOption {
-        type = lib.types.str;
-        default = "DP-1";
-        description = "Primary display connector identifier.";
-      };
-
-      mode = lib.mkOption {
-        type = lib.types.nullOr lib.types.str;
-        default = null;
-        description = "Display resolution and refresh rate string.";
-      };
-
-      scale = lib.mkOption {
-        type = lib.types.str;
-        default = "1.0";
-        description = "Display output scaling factor.";
-      };
-
-      xftDpi = lib.mkOption {
-        type = lib.types.str;
-        default = "96";
-        description = "Xft DPI value.";
-      };
-    };
-
-    shellAbbrs = lib.mkOption {
-      type = lib.types.attrsOf lib.types.str;
-      description = "Unified Fish abbreviation mappings.";
-      default = {
+  flake.modules.homeManager."fish" = {pkgs, ...}: {
+    programs.fish = {
+      shellAbbrs = {
         f = "tv";
         television = "tv";
 
@@ -132,6 +74,45 @@
         hxfish = "hx /etc/nixos/modules/programs/fish/default.nix";
         hxi = "hx /etc/nixos/modules/desktops/umbriel/keybinds.nix";
         hxz = "hx /etc/nixos/modules/programs/zellij.nix";
+      };
+
+      interactiveShellInit = ''
+        abbr --add ntrace --position anywhere -- --show-trace
+      '';
+
+      functions = {
+        fkill = {
+          description = "Interactively select and kill a process";
+          body = ''
+            set -l selected (ps -eo pid,user,comm,%cpu,%mem | ${pkgs.fzf}/bin/fzf --header="Select process to kill (ESC to cancel)")
+            if test -n "$selected"
+              set -l targetPid (echo "$selected" | ${pkgs.gawk}/bin/awk '{print $1}')
+              kill -9 "$targetPid"; and echo "Killed process $targetPid"
+            end
+          '';
+        };
+
+        clast = {
+          description = "Re-run last command and copy its output to clipboard";
+          body = ''
+            set -l cmd (history --max 1)
+            if test -n "$cmd"
+              eval "$cmd" | ${pkgs.wl-clipboard}/bin/wl-copy
+              and echo "Copied output of '$cmd' to clipboard."
+            end
+          '';
+        };
+
+        chist = {
+          description = "Interactively select a historical command and copy its output";
+          body = ''
+            set -l cmd (history | ${pkgs.fzf}/bin/fzf --reverse --header="Select command to copy output to clipboard:")
+            if test -n "$cmd"
+              eval "$cmd" | ${pkgs.wl-clipboard}/bin/wl-copy
+              and echo "Copied output of '$cmd' to clipboard."
+            end
+          '';
+        };
       };
     };
   };

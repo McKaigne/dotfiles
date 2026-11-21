@@ -1,47 +1,57 @@
-{ inputs, config, ... }:
-let
-  m = config.flake.modules;
-in
 {
-  flake.nixosConfigurations.hyde = inputs.nixpkgs.lib.nixosSystem {
-    modules = [
-      m.nixos.host-workstation
-      m.nixos.hyde-hardware
-      m.nixos.blender
-      m.nixos.obs
-      m.nixos.godot
-      m.nixos.containers
-      m.nixos.openrgb
-      {
-        workstation = {
-          username = "jekyll";
-          hostname = "hyde";
-          stateVersion = "25.05";
-          system = "x86_64-linux";
-          isDesktopCompute = true;
-          display = {
-            output = "DP-1";
-            mode = "1920x1080@240.000";
-            scale = "1.0";
-            xftDpi = "96";
-          };
-        };
+  inputs,
+  config,
+  ...
+}: let
+  m = config.flake.modules;
+  mkHost = import ../_mkHost.nix {inherit inputs m;};
+in {
+  flake.nixosConfigurations.hyde = mkHost "hyde" {
+    username = "jekyll";
+    hostname = "hyde";
+    stateVersion = "25.05";
+    system = "x86_64-linux";
 
-        boot.initrd.kernelModules = [ "amdgpu" ];
-        boot.kernelModules = [ ];
-        boot.kernelParams = [
-          "nvme_core.default_ps_max_latency_us=0"
-          "pcie_aspm=off"
-          "systemd.default_device_timeout_sec=30"
-        ];
+    # Active compositor, change here to switch sessions.
+    desktop = "umbriel";
+    # desktop = "niri";
 
-        hardware.graphics = {
-          enable = true;
-          enable32Bit = true;
-        };
-        hardware.amdgpu.opencl.enable = true;
-        hardware.i2c.enable = true;
-      }
+    git = {
+      name = "McKaigne";
+      email = "abellorchristian2007@gmail.com";
+    };
+  };
+
+  flake.modules.nixos.host-hyde = {pkgs, ...}: {
+    imports = with m.nixos; [
+      hyde-hardware
+      blender
+      obs
+      godot
+      containers
+      openrgb
     ];
+
+    boot.initrd.kernelModules = ["amdgpu"];
+    boot.kernelParams = [
+      "nvme_core.default_ps_max_latency_us=0"
+      "pcie_aspm=off"
+      "systemd.default_device_timeout_sec=30"
+    ];
+
+    hardware.graphics = {
+      enable = true;
+      enable32Bit = true;
+    };
+    hardware.amdgpu.opencl.enable = true;
+    services.xserver.videoDrivers = ["amdgpu"];
+
+    # DDC/CI monitor brightness.
+    hardware.i2c.enable = true;
+    environment.systemPackages = [pkgs.ddcutil];
+
+    environment.sessionVariables.XFT_DPI = "96";
+
+    services.displayManager.noctalia-greeter.settings.output.name = "DP-1";
   };
 }

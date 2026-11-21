@@ -1,7 +1,5 @@
 {
-  flake.modules.homeManager.microfetch =
-    { pkgs, ... }:
-    {
-      home.packages = [ pkgs.microfetch ];
-    };
+  flake.modules.homeManager."microfetch" = {pkgs, ...}: {
+    home.packages = [pkgs.microfetch];
+  };
 }

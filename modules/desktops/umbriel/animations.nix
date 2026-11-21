@@ -16,9 +16,24 @@
         curve = "cinematic";
 
         beziers = {
-          cinematic = [ 0.16 0.84 0.24 1.0 ];
-          window_flow = [ 0.20 0.75 0.25 1.0 ];
-          workspace_flow = [ 0.20 0.80 0.24 1.0 ];
+          cinematic = [
+            0.16
+            0.84
+            0.24
+            1.0
+          ];
+          window_flow = [
+            0.20
+            0.75
+            0.25
+            1.0
+          ];
+          workspace_flow = [
+            0.20
+            0.80
+            0.24
+            1.0
+          ];
         };
 
         springs.apparition = {

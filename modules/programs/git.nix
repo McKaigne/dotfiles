@@ -1,18 +1,47 @@
-{
-  flake.modules.nixos.git = {
+{config, ...}: {
+  flake.modules.nixos."git" = {pkgs, ...}: {
+    environment.systemPackages = [pkgs.git];
+    home-manager.sharedModules = [config.flake.modules.homeManager."git"];
+  };
+  flake.modules.homeManager."git" = {
+    pkgs,
+    lib,
+    config,
+    ...
+  }: let
+    git = config.workstation.git;
+  in {
+    programs.gpg.enable = true;
+
+    # keyboxd deadlocks here (duplicate daemon + pubring.db.lock). Use pubring.kbx instead.
+    home.file."${config.programs.gpg.homedir}/common.conf".text = ''
+      # Managed by home-manager — intentionally no use-keyboxd.
+    '';
+
+    services.gpg-agent = {
+      enable = true;
+      enableFishIntegration = true;
+      pinentry.package = pkgs.pinentry-curses;
+      defaultCacheTtl = 3600;
+    };
+
     programs.git = {
       enable = true;
-      config = {
-        user = {
-          name = "McKaigne";
-          email = "abellorchristian2007@gmail.com";
-        };
+      signing = lib.mkIf (git.signingKey != null) {
+        key = git.signingKey;
+        signByDefault = true;
+      };
+      settings = {
+        user.name = git.name;
+        user.email = git.email;
+        gpg.format = "openpgp";
         init.defaultBranch = "main";
+        pull.rebase = false;
         credential = {
           "https://github.com".helper = "!gh auth git-credential";
           "https://gist.github.com".helper = "!gh auth git-credential";
         };
-        safe.directory = [ "/etc/nixos" ];
+        safe.directory = ["/etc/nixos"];
         core.pager = "delta";
         interactive.diffFilter = "delta --color-only";
         delta = {
@@ -24,5 +53,6 @@
         diff.colorMoved = "default";
       };
     };
+    home.packages = [pkgs.gh pkgs.lazygit pkgs.delta];
   };
 }

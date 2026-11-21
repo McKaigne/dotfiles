@@ -1,7 +1,5 @@
 {
-  flake.modules.homeManager.nitch =
-    { pkgs, ... }:
-    {
-      home.packages = [ pkgs.nitch ];
-    };
+  flake.modules.homeManager.nitch = {pkgs, ...}: {
+    home.packages = [pkgs.nitch];
+  };
 }

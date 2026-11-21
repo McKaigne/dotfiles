@@ -1,7 +1,3 @@
 {
-  flake.modules.nixos.media-tools =
-    { pkgs, ... }:
-    {
-      environment.systemPackages = [ pkgs.ffmpeg ];
-    };
+  flake.modules.nixos."media-tools" = {pkgs, ...}: {environment.systemPackages = [pkgs.ffmpeg];};
 }

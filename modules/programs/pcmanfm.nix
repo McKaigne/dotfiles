@@ -1,23 +1,19 @@
-{ config, ... }:
-let
+{config, ...}: let
   flakeConfig = config;
-in
-{
-  flake.modules.nixos.pcmanfm =
-    { pkgs, ... }:
-    {
-      home-manager.sharedModules = [ flakeConfig.flake.modules.homeManager.pcmanfm ];
-      environment.systemPackages = with pkgs; [
-        pcmanfm
-        xarchiver
-        libfm
-        lxmenu-data
-        shared-mime-info
-        cliphist
-        satty
-        wl-mirror
-      ];
-    };
+in {
+  flake.modules.nixos.pcmanfm = {pkgs, ...}: {
+    home-manager.sharedModules = [flakeConfig.flake.modules.homeManager.pcmanfm];
+    environment.systemPackages = with pkgs; [
+      pcmanfm
+      xarchiver
+      libfm
+      lxmenu-data
+      shared-mime-info
+      cliphist
+      satty
+      wl-mirror
+    ];
+  };
 
   flake.modules.homeManager.pcmanfm = {
     xdg.desktopEntries.helix = {

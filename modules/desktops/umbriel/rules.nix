@@ -1,5 +1,5 @@
 {
-  flake.modules.homeManager."desktop-umbriel" = {
+  flake.modules.homeManager."desktop-umbriel" = {...}: {
     programs.umbriel.settings = {
       layer_rule = [
         {
@@ -11,14 +11,14 @@
       ];
 
       window_rule = [
-        {
-          match.app_id = "^(com\\.bitwarden\\.desktop|[Bb]itwarden)$";
-          block_capture = true;
-        }
-        {
-          match.title = ".*(Private Browsing|Incognito).*";
-          block_capture = true;
-        }
+        # {
+        #   match.app_id = "^(steam_app_[0-9]+|gamescope)$";
+        #   hdr = "on";
+        # }
+        # {
+        #   match.app_id = "^Minecraft[*]$";
+        #   hdr = "fullscreen";
+        # }
         {
           match.app_id = "^helium$";
           default_maximize = true;
@@ -33,14 +33,7 @@
             anchor = "bottom_right";
           };
         }
-        {
-          match.app_id = "^dev\\.noctalia\\.Noctalia$";
-          default_floating = true;
-          default_floating_size_px = {
-            width = 1020;
-            height = 900;
-          };
-        }
+
         {
           match.app_id = "^dev\\.noctalia\\.UmbrielSharePicker$";
           default_floating = true;
@@ -48,10 +41,6 @@
             width = 800;
             height = 600;
           };
-        }
-        {
-          match.app_id = "^(pavucontrol|com\\.saivert\\.pwvucontrol|easyeffects|com\\.gabm\\.satty|xarchiver|blueman-manager)$";
-          default_floating = true;
         }
       ];
     };

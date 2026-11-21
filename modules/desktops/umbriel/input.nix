@@ -1,5 +1,5 @@
 {
-  flake.modules.homeManager."desktop-umbriel" = {
+  flake.modules.homeManager."desktop-umbriel" = {...}: {
     programs.umbriel.settings.input = {
       middle_click_paste = true;
 

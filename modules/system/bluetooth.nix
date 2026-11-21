@@ -1,23 +1,10 @@
 {
-  nixos.base = {
-    hardware.bluetooth = {
+  nixos.base = {pkgs, ...}: {
+    hardware.bluetooth.enable = true;
+    services.dbus = {
       enable = true;
-      powerOnBoot = true;
-      settings = {
-        General = {
-          Experimental = true;
-          JustWorksRepairing = "always";
-        };
-        Input = {
-          ClassicBondedOnly = false;
-        };
-      };
+      packages = [pkgs.bluez];
     };
-    services.blueman.enable = true;
-
-    services.udev.extraRules = ''
-      KERNEL=="event*", SUBSYSTEM=="input", ATTRS{name}=="*[Ff]low84*", SYMLINK+="input/by-id/lofree-flow84", TAG+="uaccess", TAG+="systemd", ENV{SYSTEMD_ALIAS}="/dev/input/by-id/lofree-flow84"
-      KERNEL=="event*", SUBSYSTEM=="input", ATTRS{name}=="*[Ll]ofree*", SYMLINK+="input/by-id/lofree-flow84", TAG+="uaccess", TAG+="systemd", ENV{SYSTEMD_ALIAS}="/dev/input/by-id/lofree-flow84"
-    '';
+    environment.systemPackages = [pkgs.bluez];
   };
 }

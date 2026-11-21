@@ -1,6 +1,5 @@
-
-.direnv/
-*.bak
-result
-result-*
-/tmp/
+vars.local.nix
+__pycache__/
+*.py[cod]
+/result
+/result-*

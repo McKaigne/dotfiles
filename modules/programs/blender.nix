@@ -1,7 +1,5 @@
 {
-  flake.modules.nixos.blender =
-    { pkgs, ... }:
-    {
-      environment.systemPackages = [ pkgs.pkgsRocm.blender ];
-    };
+  flake.modules.nixos.blender = {pkgs, ...}: {
+    environment.systemPackages = [pkgs.pkgsRocm.blender];
+  };
 }
