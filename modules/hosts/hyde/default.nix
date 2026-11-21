@@ -13,6 +13,7 @@
       self.nixosModules.obs
       self.nixosModules.godot
       self.nixosModules.containers
+      self.nixosModules.openrgb
 
       (_: {
         networking.hostName = "hyde";
