@@ -4,7 +4,25 @@
     programs.dconf.enable = true;
     environment.systemPackages = [pkgs.gnome-themes-extra];
   };
-  flake.modules.homeManager."gtk" = {pkgs, ...}: {
+  flake.modules.homeManager."gtk" = {
+    config,
+    lib,
+    pkgs,
+    ...
+  }: {
+    # Noctalia owns gtk.css (it imports noctalia.css). Append the glass import
+    # after it so its translucent backgrounds win; never rewrite the file.
+    home.activation.gtkGlassImport = lib.hm.dag.entryAfter ["writeBoundary"] ''
+      if [ -z "''${DRY_RUN_CMD:-}" ]; then
+        for dir in gtk-3.0 gtk-4.0; do
+          css=${lib.escapeShellArg config.xdg.configHome}/$dir/gtk.css
+          mkdir -p "$(dirname "$css")"
+          [ -f "$css" ] || echo '@import url("noctalia.css");' > "$css"
+          grep -q 'glass.css' "$css" || echo '@import url("glass.css");' >> "$css"
+        done
+      fi
+    '';
+
     gtk = {
       enable = true;
       theme = {

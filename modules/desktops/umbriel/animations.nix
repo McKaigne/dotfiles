@@ -99,9 +99,10 @@ in {
           curve = "easeoutcubic";
         };
 
+        # Unfocused windows are darkened by a shader in rules.nix instead,
+        # since this fades whole windows, text included.
         dim_unfocused = {
-          enabled = true;
-          dim = style.unfocusedDim;
+          enabled = false;
           effect = "";
         };
       };

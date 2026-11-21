@@ -28,6 +28,7 @@ in {
               stateVersion
               system
               desktop
+              screenWidth
               git
               ;
           };

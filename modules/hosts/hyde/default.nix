@@ -13,6 +13,7 @@ in {
     system = "x86_64-linux";
 
     desktop = "umbriel";
+    screenWidth = 1920;
 
     git = {
       name = "McKaigne";

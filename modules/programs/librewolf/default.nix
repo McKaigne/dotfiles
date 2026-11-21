@@ -99,6 +99,11 @@ in {
             Value = "https://dns.quad9.net/dns-query";
             Status = "locked";
           };
+          # Lets the window behind the toolbars be translucent (see userChrome.css).
+          "browser.tabs.allow_transparent_browser" = {
+            Value = true;
+            Status = "locked";
+          };
           "toolkit.legacyUserProfileCustomizations.stylesheets" = {
             Value = true;
             Status = "locked";
@@ -219,7 +224,11 @@ in {
             ff.pywalfox
           ];
         };
-        userChrome = builtins.readFile ./userChrome.css;
+        # Glass percentage comes from the shared style.
+        userChrome =
+          builtins.replaceStrings ["@GLASS_PERCENT@"]
+          [(toString (builtins.floor ((import ../../appearance/_style.nix).opacity * 100)))]
+          (builtins.readFile ./userChrome.css);
         userContent = builtins.readFile ./userContent.css;
       };
     };

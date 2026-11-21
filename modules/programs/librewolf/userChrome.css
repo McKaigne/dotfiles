@@ -33,3 +33,22 @@
 #sidebar {
   border-radius: 0px !important;
 }
+
+/* Glass: translucent toolbars and sidebar over Umbriel's blur. Only
+   backgrounds change; text, icons and web pages stay opaque. */
+:root,
+#main-window,
+#browser,
+#tabbrowser-tabbox,
+#tabbrowser-tabpanels {
+  background: transparent !important;
+}
+
+#navigator-toolbox,
+#nav-bar,
+#PersonalToolbar,
+#sidebar-box,
+#sidebar-main {
+  background-color: color-mix(in srgb, var(--toolbar-bgcolor, #000) @GLASS_PERCENT@%, transparent) !important;
+  background-image: none !important;
+}

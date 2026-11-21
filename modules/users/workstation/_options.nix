@@ -27,6 +27,12 @@ in {
       description = "Active compositor / desktop session";
     };
 
+    screenWidth = lib.mkOption {
+      type = lib.types.nullOr lib.types.int;
+      default = null;
+      description = "Logical width of the main output; lets the bar match a lone centered window.";
+    };
+
     git = {
       name = lib.mkOption {
         type = lib.types.str;

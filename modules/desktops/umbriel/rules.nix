@@ -1,5 +1,20 @@
-{
-  flake.modules.homeManager."desktop-umbriel" = {...}: {
+let
+  style = import ../../appearance/_style.nix;
+in {
+  flake.modules.homeManager."desktop-umbriel" = {pkgs, ...}: let
+    # Darken colors, keep alpha: unfocused windows look dimmer, never more transparent.
+    darken = pkgs.writeText "unfocused-darken.glsl" ''
+      vec4 window(vec2 uv) {
+        vec4 c = umbriel_sample(uv);
+        return vec4(c.rgb * ${toString (1.0 - style.unfocusedDim)}, c.a);
+      }
+    '';
+  in {
+    programs.umbriel.settings.effects.preset.unfocused-darken = {
+      kind = "window";
+      shader = "${darken}";
+    };
+
     programs.umbriel.settings = {
       layer_rule = [
         {
@@ -15,6 +30,10 @@
         {
           match.app_id = ".*";
           blur = true;
+        }
+        {
+          match.is_focused = false;
+          window_effect = "unfocused-darken";
         }
         # {
         #   match.app_id = "^(steam_app_[0-9]+|gamescope)$";
