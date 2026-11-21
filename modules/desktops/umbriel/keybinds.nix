@@ -14,6 +14,7 @@
       "Mod+Return" = "spawn ${pkgs.foot}/bin/foot";
       "Mod+Ctrl+Return" = "spawn ${noctalia} msg panel-toggle launcher";
       "Mod+Tab" = "spawn ${noctalia} msg window-switcher";
+      "Mod+slash" = "cheatsheet-toggle";
       "Mod+B" = "spawn ${browser}";
       "Mod+E" = "spawn ${pcmanfm}";
 

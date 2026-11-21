@@ -40,8 +40,6 @@
             "left_bracket"
             "tray_minimal"
             "separator"
-            "nix_monitor_2"
-            "separator"
             "volume_minimal"
             "separator"
             "volume_input_minimal"

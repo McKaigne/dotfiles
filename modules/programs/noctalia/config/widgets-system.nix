@@ -20,9 +20,6 @@
         };
         "clock_minimal" = {
           "type" = "clock";
-          "actions" = {
-            "right" = "exec noctalia msg panel-toggle noctalia/world_clock:panel";
-          };
         };
         "cpu_temp_minimal" = {
           "anchor" = true;

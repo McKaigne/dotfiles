@@ -11,7 +11,6 @@
           "desktop-widget-0000000000000010"
           "desktop-widget-0000000000000001"
           "desktop-widget-0000000000000004"
-          "desktop-widget-000000000000000e"
           "desktop-widget-000000000000000f"
           "desktop-widget-0000000000000011"
           "desktop-widget-0000000000000016"
@@ -19,7 +18,6 @@
           "desktop-widget-0000000000000009"
           "desktop-widget-000000000000000a"
           "desktop-widget-000000000000000c"
-          "desktop-widget-0000000000000018"
         ];
         "grid" = {
           "cell_size" = 16;
@@ -109,20 +107,6 @@
               "forecast_days" = 3;
               "shadow" = false;
               "show_forecast" = false;
-            };
-          };
-          "desktop-widget-000000000000000e" = {
-            "box_height" = 110.2890625;
-            "box_width" = 421.3984375;
-            "cx" = 1279.5;
-            "cy" = 1347.14453125;
-            "output" = "DP-1";
-            "placement_height" = 1440.0;
-            "placement_width" = 2560.0;
-            "rotation" = 0.0;
-            "type" = "noctalia/lyrics:desktop";
-            "settings" = {
-              "background_opacity" = 1.0;
             };
           };
           "desktop-widget-000000000000000f" = {
@@ -273,20 +257,6 @@
               "background_opacity" = 1.0;
               "opacity" = 1.0;
               "title" = "";
-            };
-          };
-          "desktop-widget-0000000000000018" = {
-            "box_height" = 110.6015625;
-            "box_width" = 422.80078125;
-            "cx" = 1279.599609375;
-            "cy" = 1347.5;
-            "output" = "DP-1";
-            "placement_height" = 1440.0;
-            "placement_width" = 2560.0;
-            "rotation" = 0.0;
-            "type" = "noctalia/lyrics:desktop";
-            "settings" = {
-              "background_opacity" = 1.0;
             };
           };
         };

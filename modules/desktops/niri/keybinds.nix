@@ -23,6 +23,10 @@
         hotkey-overlay.title = "Open App Launcher: Noctalia";
         action = spawn noctalia "msg" "panel-toggle" "launcher";
       };
+      "Mod+Slash" = {
+        hotkey-overlay.title = "Keybind Cheatsheet";
+        action = spawn noctalia "msg" "panel-toggle" "kenn/keybind-cheatsheet:cheatsheet";
+      };
       "Alt+Tab" = {
         hotkey-overlay.title = "Open Window Switcher: Noctalia";
         action = spawn noctalia "msg" "window-switcher";
