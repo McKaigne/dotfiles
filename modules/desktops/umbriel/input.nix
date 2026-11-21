@@ -1,5 +1,5 @@
 {
-  flake.modules.homeManager."desktop-umbriel" = {...}: {
+  flake.modules.homeManager."desktop-umbriel" = {config, ...}: {
     programs.umbriel.settings.input = {
       middle_click_paste = true;
 
@@ -22,6 +22,7 @@
       };
 
       cursor = {
+        theme = config.workstation.cursor.theme;
         size = 24;
         hardware_cursor = true;
         hide_when_typing = false;
