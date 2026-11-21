@@ -1,0 +1,40 @@
+{ config, lib, ... }:
+let
+  hostCfg = config.flake.nixosConfigurations.hyde.config;
+  inherit (config.flake.nixosConfigurations.hyde) pkgs;
+  inherit (hostCfg.workstation) system username;
+  home = hostCfg.home-manager.users.${username};
+  files = lib.filterAttrs (
+    name: value:
+    value.enable && lib.hasPrefix "noctalia/" name && lib.hasSuffix ".toml" name
+  ) home.xdg.configFile;
+  fixture = pkgs.linkFarm "noctalia-config-fixture" (
+    lib.mapAttrsToList (name: value: {
+      name = lib.removePrefix "noctalia/" name;
+      path = value.source;
+    }) files
+  );
+in
+{
+  flake.checks.${system}.noctalia-config =
+    pkgs.runCommand "noctalia-config-validated"
+      {
+        nativeBuildInputs = [
+          pkgs.noctalia
+          pkgs.gnugrep
+        ];
+      }
+      ''
+        export HOME="$TMPDIR/home"
+        mkdir -p "$HOME"
+        noctalia config validate ${fixture} > diagnostics 2>&1 || {
+          cat diagnostics
+          exit 1
+        }
+        cat diagnostics
+        if grep -E 'unknown setting|unknown section' diagnostics; then
+          exit 1
+        fi
+        touch "$out"
+      '';
+}

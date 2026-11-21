@@ -1,5 +1,5 @@
-_: {
-  flake.nixosModules.hydeHardware =
+{
+  flake.modules.nixos.hyde-hardware =
     {
       config,
       lib,
@@ -26,9 +26,7 @@ _: {
       fileSystems."/" = {
         device = "/dev/disk/by-uuid/67e9e9e2-5400-4799-8c1c-0a1a7da3fe28";
         fsType = "ext4";
-        options = [
-          "noatime"
-        ];
+        options = [ "noatime" ];
       };
 
       fileSystems."/boot" = {

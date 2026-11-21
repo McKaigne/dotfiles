@@ -1,5 +1,5 @@
-_: {
-  flake.nixosModules.castorHardware =
+{
+  flake.modules.nixos.castor-hardware =
     {
       config,
       lib,

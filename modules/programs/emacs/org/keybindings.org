@@ -1,0 +1,54 @@
+#+title: Emacs · Key guide
+#+startup: overview
+#+options: toc:nil num:nil
+
+*Open* ~SPC h b~ · *Fold a section* ~TAB~ · *Close this pane* ~SPC w c~
+
+*Quick start*
+
+| Key       | Action           |
+|-----------+------------------|
+| ~SPC SPC~ | Run a command    |
+| ~SPC .~   | Open a file      |
+| ~SPC ,~   | Switch buffers   |
+| ~SPC f s~ | Save             |
+| ~SPC w v~ | Split right      |
+| ~SPC w s~ | Split below      |
+| ~SPC o f~ | File manager     |
+| ~SPC q q~ | Close the client |
+
+* Reading the keys
+
+Meow uses normal mode for editing commands, insert mode for typing, and motion
+mode for tool buffers. In normal mode, ~i~ starts inserting before point, ~a~
+after point, and ~Esc~ returns to normal mode.
+
+The text editing layout is US QWERTY (~h/j/k/l~ for left/down/up/right).
+Notes and journals are stored under ~/org/~.
+
+* Editing with Meow (US QWERTY)
+
+| Key                   | Action                                      |
+|-----------------------+---------------------------------------------|
+| ~h/j/k/l~             | Move left / down / up / right               |
+| ~H/J/K/L~             | Extend selection left / down / up / right   |
+| ~b/e~                 | Back / next word                            |
+| ~w/W~                 | Mark word / symbol                          |
+| ~x/X~                 | Select line / goto line                     |
+| ~o/O~                 | Select block / to block                     |
+| ~i/a~                 | Insert / append                             |
+| ~I/A~                 | Open line above / below                     |
+| ~c/s/d~               | Change / kill / delete                      |
+| ~y/p~                 | Save (copy) / yank (paste)                  |
+| ~u/U~                 | Undo / undo in selection                    |
+| ~g/G~                 | Cancel selection / grab                     |
+| ~,/./[/]~             | Inner / bounds / beginning / end of thing   |
+| ~SPC h t~             | Interactive Meow tutorial                   |
+
+* Apply configuration changes
+
+#+begin_example
+nr
+systemctl --user restart emacs
+emacs
+#+end_example

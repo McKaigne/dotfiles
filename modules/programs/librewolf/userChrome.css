@@ -1,0 +1,35 @@
+#TabsToolbar { display: none !important; }
+#sidebar-panel-header { display: none !important; }
+
+#sidebar-box {
+  padding-inline-start: 0px !important;
+  border-right: none !important;
+}
+
+#sidebar-splitter {
+  display: none !important;
+  width: 0px !important;
+  border: none !important;
+}
+
+:root {
+  --toolbarbutton-border-radius: 4px !important;
+  --urlbar-icon-border-radius: 4px !important;
+  --urlbar-border-radius: 4px !important;
+  --arrowpanel-border-radius: 4px !important;
+  --arrowpanel-menuitem-border-radius: 4px !important;
+}
+
+* {
+  font-family: "EB Garamond", serif !important;
+  border-radius: 4px !important;
+}
+
+#main-window,
+#navigator-toolbox,
+#nav-bar,
+#sidebar-box,
+#sidebar-splitter,
+#sidebar {
+  border-radius: 0px !important;
+}
