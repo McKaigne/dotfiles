@@ -10,7 +10,6 @@
         noctalia = final.callPackage (inputs.noctalia.outPath + "/nix/package.nix") {rev = "local";};
       })
     ];
-    environment.etc."wallpapers".source = ../../../assets/wallpapers;
   };
   flake.modules.homeManager.noctalia = {pkgs, ...}: {
     home.packages = [pkgs.noctalia];

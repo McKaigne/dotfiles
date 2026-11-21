@@ -1,27 +1,44 @@
 {
-  flake.modules.homeManager."noctalia" = {pkgs, ...}: {
+  flake.modules.homeManager."noctalia" = {
+    config,
+    lib,
+    pkgs,
+    ...
+  }: let
+    # Plain folder in home: drop images in, no rebuild needed.
+    dir = "${config.home.homeDirectory}/Pictures/Wallpapers";
+    seed = ../../../../assets/default-wallpaper.jpg;
+  in {
+    # Give a fresh machine (e.g. castor) the default wallpaper; never overwrite.
+    home.activation.seedWallpapers = lib.hm.dag.entryAfter ["writeBoundary"] ''
+      run mkdir -p ${lib.escapeShellArg dir}
+      if [ ! -e ${lib.escapeShellArg "${dir}/isekaiJoucho.jpg"} ]; then
+        run install -m 0644 ${seed} ${lib.escapeShellArg "${dir}/isekaiJoucho.jpg"}
+      fi
+    '';
+
     xdg.configFile."noctalia/43-wallpapers.toml".source = (pkgs.formats.toml {}).generate "43-wallpapers.toml" {
       "wallpaper" = {
-        "directory" = "/etc/wallpapers";
+        "directory" = dir;
         "transition" = [
           "melt"
         ];
         "default" = {
-          "path" = "/etc/wallpapers/isekaiJoucho.jpg";
+          "path" = "${dir}/isekaiJoucho.jpg";
         };
         "last" = {
-          "path" = "/etc/wallpapers/isekaiJoucho.jpg";
+          "path" = "${dir}/isekaiJoucho.jpg";
         };
         "favorite" = [
           {
             "palette_source" = "wallpaper";
-            "path" = "/etc/wallpapers/wallhaven-mld9jk.jpg";
+            "path" = "${dir}/wallhaven-mld9jk.jpg";
             "theme_mode" = "dark";
             "wallpaper_scheme" = "vibrant";
           }
           {
             "palette_source" = "wallpaper";
-            "path" = "/etc/wallpapers/wallhaven-o5rjq9.png";
+            "path" = "${dir}/wallhaven-o5rjq9.png";
             "theme_mode" = "dark";
             "wallpaper_scheme" = "m3-monochrome";
           }

@@ -12,6 +12,8 @@
   body {
     font-family: "Maple Mono NF", monospace !important;
     font-size: 14px;
+    /* Sidebery reads its font from this variable (default: system-ui). */
+    --general-font-family: "Maple Mono NF", monospace !important;
   }
   #tridactyl-command-line, .TridactylCommandline, #tridactyl-input {
     font-family: "Maple Mono NF", monospace !important;
