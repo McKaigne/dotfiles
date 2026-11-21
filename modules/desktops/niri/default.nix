@@ -17,5 +17,8 @@
     programs.niri.package = pkgs.niri;
 
     systemd.user.services.niri-flake-polkit.enable = false;
+
+    # niri runs X11 apps through xwayland-satellite when it is on PATH.
+    environment.systemPackages = [pkgs.xwayland-satellite];
   };
 }
