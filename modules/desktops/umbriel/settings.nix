@@ -7,7 +7,6 @@ in {
 
       scratchpad = [
         {name = "terminal";}
-        {name = "music";}
       ];
 
       environment = {

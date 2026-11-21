@@ -1,4 +1,6 @@
 {
+  # CUA-style desktop binds (Windows/GNOME conventions) plus mnemonic app binds.
+  # Mod is the Super/Windows key. Mod+/ shows them all.
   flake.modules.homeManager."desktop-umbriel" = {
     config,
     pkgs,
@@ -6,138 +8,130 @@
     ...
   }: let
     browser = config.home.sessionVariables.BROWSER;
-    pcmanfm = "${pkgs.pcmanfm}/bin/pcmanfm";
     noctalia = lib.getExe pkgs.noctalia;
-    wpctl = "${pkgs.wireplumber}/bin/wpctl";
-  in {
-    programs.umbriel.settings.keybinds = {
-      "Mod+Return" = "spawn ${pkgs.foot}/bin/foot";
-      "Mod+Ctrl+Return" = "spawn ${noctalia} msg panel-toggle launcher";
-      "Mod+Tab" = "spawn ${noctalia} msg window-switcher";
-      "Mod+slash" = "cheatsheet-toggle";
-      "Mod+B" = "spawn ${browser}";
-      "Mod+E" = "spawn ${pcmanfm}";
-
-      "XF86AudioMute" = {
-        action = "spawn ${wpctl} set-mute @DEFAULT_AUDIO_SINK@ toggle";
-        allow_when_locked = true;
-      };
-      "XF86MonBrightnessUp" = {
-        action = "spawn ${noctalia} msg brightness-up";
-        allow_when_locked = true;
-      };
-      "XF86MonBrightnessDown" = {
-        action = "spawn ${noctalia} msg brightness-down";
-        allow_when_locked = true;
-      };
-      "Mod+Delete" = {
-        action = "spawn ${wpctl} set-mute @DEFAULT_AUDIO_SOURCE@ toggle";
-        allow_when_locked = true;
-      };
-      "Mod+Page_Up" = {
-        action = "spawn ${wpctl} set-volume @DEFAULT_AUDIO_SINK@ 0.05+";
-        allow_when_locked = true;
-      };
-      "Mod+Page_Down" = {
-        action = "spawn ${wpctl} set-volume @DEFAULT_AUDIO_SINK@ 0.05-";
-        allow_when_locked = true;
-      };
-
-      "Mod+O" = "overview-toggle";
-      "Mod+S" = "screencast-follow-output";
-      "Mod+Ctrl+S" = "screencast-follow-window";
-      "Mod+Shift+S" = "screencast-set-output";
-      "Mod+Ctrl+Shift+S" = "screencast-set-window";
-
-      "Mod+WheelUp" = {
-        action = "workspace-previous";
-        cooldown_ms = 150;
-      };
-      "Mod+WheelDown" = {
-        action = "workspace-next";
-        cooldown_ms = 150;
-      };
-      "Mod+Shift+Ctrl+Left" = "window-move-to-output-left";
-      "Mod+Shift+Ctrl+Right" = "window-move-to-output-right";
-      "Mod+Shift+Ctrl+Up" = "window-move-to-workspace-previous";
-      "Mod+Shift+Ctrl+Down" = "window-move-to-workspace-next";
-
-      "Mod+Q" = "window-close";
-      "Ctrl+Alt+Delete" = "session-quit";
-      "Mod+Escape" = "session-quit";
-
-      "Mod+Left" = "window-focus-left";
-      "Mod+H" = "window-focus-left";
-      "Mod+Right" = "window-focus-right";
-      "Mod+L" = "window-focus-right";
-      "Mod+Up" = "window-focus-up";
-      "Mod+K" = "window-focus-up";
-      "Mod+Down" = "window-focus-down";
-      "Mod+J" = "window-focus-down";
-
-      "Mod+Shift+Left" = "window-modify-primary-extent -0.1";
-      "Mod+Shift+Right" = "window-modify-primary-extent 0.1";
-
-      # Scratchpads
-      "Mod+Space" = "scratchpad-toggle terminal";
-      "Mod+Shift+Space" = "window-move-to-scratchpad terminal";
-      "Mod+Ctrl+Space" = "window-restore-from-scratchpad terminal";
-
-      "Mod+Alt+Space" = "scratchpad-toggle music";
-      "Mod+Alt+Shift+Space" = "window-move-to-scratchpad music";
-      "Mod+Alt+Ctrl+Space" = "window-restore-from-scratchpad music";
-      "Mod+Alt+Tab" = "scratchpad-focus-next music";
-
-      "Mod+Ctrl+Left" = "column-move-left";
-      "Mod+Ctrl+H" = "column-move-left";
-      "Mod+Ctrl+Right" = "column-move-right";
-      "Mod+Ctrl+L" = "column-move-right";
-      "Mod+Ctrl+Up" = "window-move-up";
-      "Mod+Ctrl+K" = "window-move-up";
-      "Mod+Ctrl+Down" = "window-move-down";
-      "Mod+Ctrl+J" = "window-move-down";
-
-      "Mod+comma" = "window-consume-left";
-      "Mod+period" = "window-consume-or-expel-right";
-      "Mod+R" = "window-cycle-primary-extent";
-      "Mod+F" = "window-toggle-fullscreen";
-      "Mod+Ctrl+F" = "window-toggle-maximize";
-      "Mod+M" = "window-toggle-maximize-to-edges";
-      "Mod+T" = "window-toggle-floating";
-      "Mod+P" = "window-toggle-pinned";
-      "Mod+F1" = "window-focus-next";
-      "Mod+Shift+C" = "config-reload";
-
-      # Workspace layout: cycle, or jump straight to one.
-      "Mod+Alt+L" = "workspace-set-layout toggle scrolling dwindle master stacking";
-      "Mod+Alt+S" = "workspace-set-layout scrolling";
-      "Mod+Alt+D" = "workspace-set-layout dwindle";
-      "Mod+Alt+M" = "workspace-set-layout master";
-      "Mod+Alt+F" = "workspace-set-layout stacking";
-
-      "Mod+1" = "workspace-switch 1";
-      "Mod+2" = "workspace-switch 2";
-      "Mod+3" = "workspace-switch 3";
-      "Mod+4" = "workspace-switch 4";
-      "Mod+5" = "workspace-switch 5";
-      "Mod+6" = "workspace-switch 6";
-      "Mod+7" = "workspace-switch 7";
-      "Mod+8" = "workspace-switch 8";
-      "Mod+9" = "workspace-switch 9";
-
-      "Mod+Ctrl+1" = "window-move-to-workspace 1";
-      "Mod+Ctrl+2" = "window-move-to-workspace 2";
-      "Mod+Ctrl+3" = "window-move-to-workspace 3";
-      "Mod+Ctrl+4" = "window-move-to-workspace 4";
-      "Mod+Ctrl+5" = "window-move-to-workspace 5";
-      "Mod+Ctrl+6" = "window-move-to-workspace 6";
-      "Mod+Ctrl+7" = "window-move-to-workspace 7";
-      "Mod+Ctrl+8" = "window-move-to-workspace 8";
-      "Mod+Ctrl+9" = "window-move-to-workspace 9";
-
-      "Ctrl+Alt+1" = "spawn ${noctalia} msg screenshot-region --annotate --copy-to-clipboard --no-save-to-file";
-      "Ctrl+Alt+2" = "spawn ${noctalia} msg screenshot-window --copy-to-clipboard --no-save-to-file";
-      "Ctrl+Alt+3" = "spawn ${noctalia} msg screenshot-fullscreen --copy-to-clipboard --no-save-to-file";
+    foot = "${pkgs.foot}/bin/foot";
+    pcmanfm = "${pkgs.pcmanfm}/bin/pcmanfm";
+    # Terminal tools open in their own foot window.
+    inFoot = cmd: "spawn ${foot} -e ${cmd}";
+    msg = args: "spawn ${noctalia} msg ${args}";
+    whenLocked = action: {
+      inherit action;
+      allow_when_locked = true;
     };
+  in {
+    programs.umbriel.settings.keybinds =
+      {
+        # --- Apps (mnemonic)
+        "Mod+Return" = "spawn ${foot}"; # terminal
+        "Mod+T" = "spawn ${foot}"; # Terminal
+        "Mod+Z" = inFoot "zellij attach --create main"; # Zellij session
+        "Mod+B" = "spawn ${browser}"; # Browser (LibreWolf)
+        "Mod+Shift+B" = "spawn helium"; # second Browser (Helium)
+        "Mod+E" = "spawn ${pcmanfm}"; # Explorer
+        "Mod+C" = inFoot "emacs"; # Code (Emacs)
+        "Mod+H" = inFoot "hx"; # Helix
+        "Mod+G" = inFoot "lazygit"; # Git
+        "Mod+M" = inFoot "btop"; # Monitor
+        "Mod+P" = "spawn bitwarden"; # Passwords
+        "Mod+O" = "spawn obs"; # OBS (hyde)
+
+        # --- Shell (Noctalia), Windows/GNOME style
+        "Mod" = msg "panel-toggle launcher"; # tap Super: launcher
+        "Mod+R" = msg "panel-toggle launcher"; # Run
+        "Alt+Tab" = msg "window-switcher";
+        "Mod+A" = msg "panel-toggle control-center"; # quick settings
+        "Mod+N" = msg "panel-toggle control-center notifications";
+        "Mod+V" = msg "panel-toggle clipboard"; # clipboard history
+        "Mod+I" = msg "settings-toggle"; # settings
+        "Mod+W" = msg "panel-toggle wallpaper";
+        "Mod+L" = msg "session lock"; # Lock
+        "Mod+X" = msg "panel-toggle session"; # power menu
+        "Ctrl+Alt+Delete" = msg "panel-toggle session";
+        "Mod+slash" = "cheatsheet-toggle";
+        "Mod+F1" = "cheatsheet-toggle"; # help
+
+        # Screenshots: Win+Shift+S snips a region; PrtSc the screen; Alt+PrtSc the window.
+        "Mod+Shift+S" = msg "screenshot-region --annotate --copy-to-clipboard --no-save-to-file";
+        "Print" = msg "screenshot-fullscreen --copy-to-clipboard --no-save-to-file";
+        "Alt+Print" = msg "screenshot-window --copy-to-clipboard --no-save-to-file";
+
+        # --- Windows
+        "Alt+F4" = "window-close";
+        "Mod+Q" = "window-close";
+        "Mod+Up" = "window-toggle-maximize";
+        "Mod+Down" = "window-minimize";
+        "Mod+F" = "window-toggle-fullscreen";
+        "Mod+F11" = "window-toggle-fullscreen";
+        "Mod+Space" = "window-toggle-floating";
+        "Mod+Shift+P" = "window-toggle-pinned";
+        "Mod+Tab" = "overview-toggle"; # task view
+
+        # Focus and move: arrows, like Win+arrows.
+        "Mod+Left" = "window-focus-left";
+        "Mod+Right" = "window-focus-right";
+        "Mod+Alt+Up" = "window-focus-up";
+        "Mod+Alt+Down" = "window-focus-down";
+        "Mod+Shift+Left" = "column-move-left";
+        "Mod+Shift+Right" = "column-move-right";
+        "Mod+Shift+Up" = "window-move-up";
+        "Mod+Shift+Down" = "window-move-down";
+
+        # Width: Mod+-/= nudge, Mod+Shift+R cycles presets. Mod+[ / ] stack into a column.
+        "Mod+minus" = "window-modify-primary-extent -0.1";
+        "Mod+equal" = "window-modify-primary-extent 0.1";
+        "Mod+Shift+R" = "window-cycle-primary-extent";
+        "Mod+bracketleft" = "window-consume-left";
+        "Mod+bracketright" = "window-consume-or-expel-right";
+
+        # Quake-style terminal scratchpad.
+        "Mod+grave" = "scratchpad-toggle terminal";
+        "Mod+Shift+grave" = "window-move-to-scratchpad terminal";
+        "Mod+Ctrl+grave" = "window-restore-from-scratchpad terminal";
+
+        # --- Workspaces: Win+Ctrl+Left/Right like Windows virtual desktops.
+        "Mod+Ctrl+Left" = "workspace-previous";
+        "Mod+Ctrl+Right" = "workspace-next";
+        "Mod+Ctrl+Shift+Left" = "window-move-to-workspace-previous";
+        "Mod+Ctrl+Shift+Right" = "window-move-to-workspace-next";
+        "Mod+WheelUp" = {
+          action = "workspace-previous";
+          cooldown_ms = 150;
+        };
+        "Mod+WheelDown" = {
+          action = "workspace-next";
+          cooldown_ms = 150;
+        };
+
+        # Layout: cycle, or jump straight to one.
+        "Mod+Alt+L" = "workspace-set-layout toggle scrolling dwindle master stacking";
+        "Mod+Alt+S" = "workspace-set-layout scrolling";
+        "Mod+Alt+D" = "workspace-set-layout dwindle";
+        "Mod+Alt+M" = "workspace-set-layout master";
+        "Mod+Alt+F" = "workspace-set-layout stacking";
+
+        "Mod+Ctrl+R" = "config-reload"; # Reload compositor config
+
+        # --- Hardware keys, usable on the lock screen
+        "XF86AudioRaiseVolume" = whenLocked (msg "volume-up");
+        "XF86AudioLowerVolume" = whenLocked (msg "volume-down");
+        "XF86AudioMute" = whenLocked (msg "volume-mute");
+        "XF86AudioMicMute" = whenLocked (msg "mic-mute");
+        "XF86AudioPlay" = whenLocked (msg "media toggle");
+        "XF86AudioNext" = whenLocked (msg "media next");
+        "XF86AudioPrev" = whenLocked (msg "media previous");
+        "XF86MonBrightnessUp" = whenLocked (msg "brightness-up");
+        "XF86MonBrightnessDown" = whenLocked (msg "brightness-down");
+        # Same controls for keyboards without media keys.
+        "Mod+Page_Up" = whenLocked (msg "volume-up");
+        "Mod+Page_Down" = whenLocked (msg "volume-down");
+        "Mod+Delete" = whenLocked (msg "mic-mute");
+      }
+      # Win+N switches workspace, Win+Shift+N moves the window there.
+      // lib.listToAttrs (lib.concatMap (n: let
+        i = toString n;
+      in [
+        (lib.nameValuePair "Mod+${i}" "workspace-switch ${i}")
+        (lib.nameValuePair "Mod+Shift+${i}" "window-move-to-workspace ${i}")
+      ]) (lib.range 1 9));
   };
 }
