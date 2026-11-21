@@ -19,6 +19,14 @@
       "Mod+E" = "spawn ${pcmanfm}";
 
       "XF86AudioMute" = "spawn ${wpctl} set-mute @DEFAULT_AUDIO_SINK@ toggle";
+      "XF86MonBrightnessUp" = {
+        action = "spawn ${noctalia} msg brightness-up";
+        allow_when_locked = true;
+      };
+      "XF86MonBrightnessDown" = {
+        action = "spawn ${noctalia} msg brightness-down";
+        allow_when_locked = true;
+      };
       "Mod+Delete" = "spawn ${wpctl} set-mute @DEFAULT_AUDIO_SOURCE@ toggle";
       "Mod+Page_Up" = "spawn ${wpctl} set-volume @DEFAULT_AUDIO_SINK@ 0.05+";
       "Mod+Page_Down" = "spawn ${wpctl} set-volume @DEFAULT_AUDIO_SINK@ 0.05-";
