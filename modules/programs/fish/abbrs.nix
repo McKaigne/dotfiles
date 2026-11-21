@@ -78,6 +78,11 @@
 
       interactiveShellInit = ''
         abbr --add ntrace --position anywhere -- --show-trace
+
+        # fzf colors from the Noctalia fzf template.
+        if test -r ~/.config/fzf/themes/noctalia.fish
+          source ~/.config/fzf/themes/noctalia.fish
+        end
       '';
 
       functions = {

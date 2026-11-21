@@ -5,6 +5,18 @@
         ${pkgs.dbus}/bin/dbus-send --session --dest="$dest" --type=method_call /org/pwmt/zathura org.pwmt.zathura.ExecuteCommand string:source >/dev/null 2>&1 || true
       done
     '';
+
+    # Open foot windows only read colors at startup; push OSC palette updates
+    # to every terminal the user owns, pywal-style. New windows use the foot template.
+    pushTerminalColors = pkgs.writeShellScript "push-terminal-colors" ''
+      seq="$(${pkgs.bash}/bin/bash "''${XDG_CACHE_HOME:-$HOME/.cache}/noctalia/terminal-colors.sh")"
+      for pts in /dev/pts/[0-9]*; do
+        if [ -O "$pts" ] && [ -w "$pts" ]; then
+          ${pkgs.coreutils}/bin/timeout 1 ${pkgs.bash}/bin/bash -c 'printf "%s" "$1" > "$2"' _ "$seq" "$pts" 2>/dev/null &
+        fi
+      done
+      wait
+    '';
   in {
     xdg.configFile."noctalia/70-templates.toml".source =
       (pkgs.formats.toml {}).generate "70-templates.toml"
@@ -18,6 +30,19 @@
           fuzzel = {
             input_path = "${../templates/fuzzel.ini}";
             output_path = "$XDG_CONFIG_HOME/fuzzel/noctalia.ini";
+          };
+          terminal-colors = {
+            input_path = "${../templates/terminal-colors.sh}";
+            output_path = "$XDG_CACHE_HOME/noctalia/terminal-colors.sh";
+            post_hook = "${pushTerminalColors}";
+          };
+          # Pywalfox only re-reads ~/.cache/wal/colors.json when asked; wait for
+          # the pywalfox template to write it, then refresh LibreWolf.
+          pywalfox-refresh = {
+            input_path = "${pkgs.writeText "pywalfox-stamp.in" "{{colors.primary.default.hex}}\n"}";
+            output_path = "$XDG_CACHE_HOME/noctalia/pywalfox.stamp";
+            post_hook = "sleep 2; ${pkgs.pywalfox-native}/bin/pywalfox update";
+            hook_async = true;
           };
           zathura = {
             input_path = "${../templates/zathura}";
