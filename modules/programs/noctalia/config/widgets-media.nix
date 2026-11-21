@@ -23,7 +23,6 @@
           "type" = "volume";
         };
         "volume_minimal" = {
-          "font_family" = "JetBrains Mono";
           "type" = "volume";
         };
       };

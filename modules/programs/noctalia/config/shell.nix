@@ -1,4 +1,6 @@
-{
+let
+  style = import ../../../appearance/_style.nix;
+in {
   flake.modules.homeManager."noctalia" = {pkgs, ...}: {
     xdg.configFile."noctalia/10-shell.toml".source = (pkgs.formats.toml {}).generate "10-shell.toml" {
       "shell" = {
@@ -7,7 +9,7 @@
         "button_borders" = false;
         "card_borders" = false;
         "circular_avatar" = false;
-        "font_family" = "Noto Sans";
+        "font_family" = style.font;
         "input_borders" = false;
         "launch_apps_as_systemd_services" = true;
         "polkit_agent" = true;
@@ -27,6 +29,8 @@
           "width" = 670;
         };
         "panel" = {
+          # Translucent panels and cards, blurred by Umbriel like the bar.
+          "transparency_mode" = "glass";
           "borders" = false;
           "clipboard_placement" = "attached";
           "launcher_placement" = "attached";

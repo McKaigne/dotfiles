@@ -1,4 +1,6 @@
-{
+let
+  style = import ../../appearance/_style.nix;
+in {
   flake.modules.homeManager."desktop-umbriel" = {config, ...}: {
     programs.umbriel.settings = {
       general.show_cheatsheet = false;
@@ -21,9 +23,10 @@
 
       appearance = {
         prefer_no_csd = true;
-        border_width = 2;
+        # Borderless: focus shows through dimming, not a frame.
+        border_width = 0;
         outer_border_width = 0;
-        corner_radius = 12;
+        corner_radius = style.radius;
         title_bar = {
           mode = "off";
         };
@@ -36,14 +39,14 @@
         };
 
         blur = {
-          enabled = false;
-          passes = 3;
-          radius = 5;
-          noise = 0.0;
+          enabled = true;
+          inherit (style.blur) passes radius;
+          noise = 0.02;
           brightness = 0.9;
           contrast = 0.9;
           saturation = 1.1;
-          optimized = false;
+          # One shared blur of the wallpaper: uniform frosted glass everywhere.
+          optimized = true;
         };
       };
 

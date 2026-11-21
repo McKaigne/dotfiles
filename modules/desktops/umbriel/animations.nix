@@ -1,4 +1,6 @@
-{
+let
+  style = import ../../appearance/_style.nix;
+in {
   flake.modules.homeManager."desktop-umbriel" = {
     programs.umbriel.settings = {
       effects = {
@@ -98,7 +100,8 @@
         };
 
         dim_unfocused = {
-          enabled = false;
+          enabled = true;
+          dim = style.unfocusedDim;
           effect = "";
         };
       };

@@ -1,4 +1,6 @@
-{
+let
+  style = import ../../../appearance/_style.nix;
+in {
   flake.modules.homeManager."noctalia" = {pkgs, ...}: {
     xdg.configFile."noctalia/30-bars.toml".source = (pkgs.formats.toml {}).generate "30-bars.toml" {
       "bar" = {
@@ -19,11 +21,15 @@
             "input_volume"
             "session"
           ];
-          "font_family" = "Noto Sans";
           "hover_highlight" = false;
-          "margin_ends" = 0;
-          "radius_top_left" = 0;
-          "radius_top_right" = 0;
+          # Float the bar: inset by the window gap so it lines up with the
+          # windows below, with the same corners and translucency.
+          "margin_ends" = style.gap;
+          "margin_edge" = style.gap;
+          "concave_edge_corners" = false;
+          "radius" = style.radius;
+          "background_opacity" = style.opacity;
+          "compositor_blur" = true;
           "start" = [
             "workspaces"
           ];
@@ -53,7 +59,6 @@
             "right_bracket"
             "session"
           ];
-          "font_family" = "JetBrains Mono";
           "hover_highlight" = false;
           "margin_ends" = 0;
           "padding" = 5;
@@ -87,7 +92,6 @@
           "color" = "on_surface_variant";
           "enabled" = false;
           "end" = [];
-          "font_family" = "JetBrains Mono";
           "font_scale" = 0.8499999884516001;
           "hover_highlight" = false;
           "margin_ends" = 0;

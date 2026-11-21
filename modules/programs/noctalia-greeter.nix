@@ -30,6 +30,7 @@
       appearance = {
         scheme = "Synced";
         password_style = "random";
+        font_family = (import ../appearance/_style.nix).font;
       };
       cursor = {
         theme = config.workstation.cursor.theme;

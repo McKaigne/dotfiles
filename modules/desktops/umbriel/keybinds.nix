@@ -108,6 +108,13 @@
       "Mod+F1" = "window-focus-next";
       "Mod+Shift+C" = "config-reload";
 
+      # Workspace layout: cycle, or jump straight to one.
+      "Mod+Alt+L" = "workspace-set-layout toggle scrolling dwindle master stacking";
+      "Mod+Alt+S" = "workspace-set-layout scrolling";
+      "Mod+Alt+D" = "workspace-set-layout dwindle";
+      "Mod+Alt+M" = "workspace-set-layout master";
+      "Mod+Alt+F" = "workspace-set-layout stacking";
+
       "Mod+1" = "workspace-switch 1";
       "Mod+2" = "workspace-switch 2";
       "Mod+3" = "workspace-switch 3";

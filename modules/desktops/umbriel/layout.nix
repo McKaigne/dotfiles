@@ -1,9 +1,11 @@
-{
+let
+  style = import ../../appearance/_style.nix;
+in {
   flake.modules.homeManager."desktop-umbriel" = {...}: {
     programs.umbriel.settings = {
       layout = {
         mode = "scrolling";
-        gap = 5;
+        gap = style.gap;
         extent_presets = [
           0.333
           0.5
@@ -11,7 +13,8 @@
         ];
         scrolling = {
           default_extent_fraction = 0.5;
-          center_underfull_strip = false;
+          # A lone window (or any strip narrower than the screen) sits centered.
+          center_underfull_strip = true;
         };
         stacking.drop_zones = true;
       };

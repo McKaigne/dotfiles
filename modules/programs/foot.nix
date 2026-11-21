@@ -12,12 +12,18 @@
       enable = true;
       settings = {
         main = {
-          font = "Maple Mono NF:size=11";
+          font = "${(import ../appearance/_style.nix).font}:size=11";
           pad = "8x8";
           initial-color-theme = "dark";
           include = "~/.config/foot/themes/noctalia";
         };
         scrollback.lines = 10000;
+        # After the theme include, so it applies on top of Noctalia's colors.
+        # "matching" also covers apps that paint the default background color.
+        colors-dark = {
+          alpha = (import ../appearance/_style.nix).opacity;
+          alpha-mode = "matching";
+        };
         cursor.style = "block";
       };
     };

@@ -11,6 +11,11 @@
       ];
 
       window_rule = [
+        # Blur behind every window; it only shows where an app draws a translucent background.
+        {
+          match.app_id = ".*";
+          blur = true;
+        }
         # {
         #   match.app_id = "^(steam_app_[0-9]+|gamescope)$";
         #   hdr = "on";

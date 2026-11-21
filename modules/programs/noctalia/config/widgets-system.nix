@@ -11,7 +11,6 @@
           "peek_delay_ms" = 350;
         };
         "brightness_minimal" = {
-          "font_family" = "JetBrains Mono";
           "type" = "brightness";
         };
         "clock" = {
@@ -23,7 +22,6 @@
         };
         "cpu_temp_minimal" = {
           "anchor" = true;
-          "font_family" = "JetBrains Mono";
           "show_glyph" = false;
           "show_value" = true;
           "stat" = "cpu_temp";
@@ -32,7 +30,6 @@
         };
         "cpu_usage_minimal" = {
           "anchor" = true;
-          "font_family" = "JetBrains Mono";
           "show_glyph" = false;
           "show_value" = true;
           "type" = "sysmon";
@@ -44,7 +41,6 @@
         "left_bracket" = {
           "color" = "primary";
           "enabled" = false;
-          "font_family" = "JetBrains Mono";
           "text" = "「";
           "type" = "text";
         };
@@ -58,7 +54,6 @@
         };
         "ram_usage_minimal" = {
           "anchor" = true;
-          "font_family" = "JetBrains Mono";
           "show_glyph" = false;
           "show_value" = true;
           "stat" = "ram_used";
@@ -68,7 +63,6 @@
         "right_bracket" = {
           "color" = "primary";
           "enabled" = false;
-          "font_family" = "JetBrains Mono";
           "text" = "」";
           "type" = "text";
         };
@@ -109,7 +103,6 @@
         };
         "tray_minimal" = {
           "colorize_icons" = true;
-          "font_family" = "JetBrains Mono";
           "match_adjacent_spacing" = true;
           "type" = "tray";
         };

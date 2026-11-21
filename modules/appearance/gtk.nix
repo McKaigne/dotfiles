@@ -11,6 +11,10 @@
         name = "adw-gtk3-dark";
         package = pkgs.adw-gtk3;
       };
+      font = {
+        name = (import ./_style.nix).font;
+        size = 10;
+      };
       # Match the post-26.05 default; Noctalia themes GTK4 itself.
       gtk4.theme = null;
       iconTheme = {

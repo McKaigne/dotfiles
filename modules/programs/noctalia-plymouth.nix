@@ -6,7 +6,7 @@
       themePackages = [
         inputs.noctalia-plymouth.packages.${pkgs.stdenv.hostPlatform.system}.default
       ];
-      font = "${pkgs.inter}/share/fonts/truetype/InterVariable.ttf";
+      font = "${pkgs.maple-mono.NF}/share/fonts/truetype/MapleMono-NF-Regular.ttf";
     };
   };
 }

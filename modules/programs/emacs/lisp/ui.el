@@ -37,6 +37,14 @@
 (add-hook 'enable-theme-functions #'lysec-style-panes)
 (lysec-style-panes)
 
+(defun lysec-transparent-background (&rest _)
+  "Let the terminal's translucent background show through behind text."
+  (set-face-background 'default "unspecified-bg"))
+
+;; Run after the theme and pane styling have set their colors.
+(add-hook 'enable-theme-functions #'lysec-transparent-background 90)
+(lysec-transparent-background)
+
 (defun lysec-key-menu-style ()
   "Give the key menu a surface and accents from the active theme."
   (face-remap-add-relative 'default
