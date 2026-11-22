@@ -2,10 +2,6 @@
   body {
     font-family: "Maple Mono NF", monospace !important;
   }
-
-  * {
-    border-radius: 4px !important;
-  }
 }
 
 @-moz-document url-prefix("moz-extension://") {
@@ -28,5 +24,19 @@
     --frame-bg: transparent !important;
     --toolbar-bg: transparent !important;
     background: transparent !important;
+  }
+}
+
+/* Glass pages: each page's own base background becomes the same tint as the
+   toolbars, over Umbriel's blur (needs browser.tabs.allow_transparent_browser
+   and the cleared .browserContainer in userChrome.css). User-sheet !important
+   beats both the site and Dark Reader; boxes a site paints inside the page
+   keep their own background. Canvas is the dark page colour in dark mode. */
+@-moz-document url-prefix("http://"), url-prefix("https://"), url-prefix("file://"), url-prefix("about:") {
+  html {
+    background-color: color-mix(in srgb, Canvas @GLASS_PERCENT@%, transparent) !important;
+  }
+  body {
+    background-color: transparent !important;
   }
 }

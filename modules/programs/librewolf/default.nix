@@ -234,7 +234,10 @@ in {
           builtins.replaceStrings ["@GLASS_PERCENT@"]
           [(toString (builtins.floor ((import ../../appearance/_style.nix).opacity * 100)))]
           (builtins.readFile ./userChrome.css);
-        userContent = builtins.readFile ./userContent.css;
+        userContent =
+          builtins.replaceStrings ["@GLASS_PERCENT@"]
+          [(toString (builtins.floor ((import ../../appearance/_style.nix).opacity * 100)))]
+          (builtins.readFile ./userContent.css);
       };
     };
   };

@@ -12,32 +12,32 @@
   border: none !important;
 }
 
-:root {
-  --toolbarbutton-border-radius: 4px !important;
-  --urlbar-icon-border-radius: 4px !important;
-  --urlbar-border-radius: 4px !important;
-  --arrowpanel-border-radius: 4px !important;
-  --arrowpanel-menuitem-border-radius: 4px !important;
-}
-
 * {
   font-family: "Maple Mono NF", monospace !important;
-  border-radius: 4px !important;
 }
 
-#main-window,
-#navigator-toolbox,
-#nav-bar,
-#sidebar-box,
-#sidebar-splitter,
-#sidebar {
+/* Square the page frame: no rounded corner (or inset shadow) where the web
+   page meets the toolbar and sidebar. */
+#tabbrowser-tabbox,
+#tabbrowser-tabpanels,
+.browserContainer,
+.browserStack,
+browser {
   border-radius: 0px !important;
+  box-shadow: none !important;
+  outline: none !important;
 }
 
 /* Glass: translucent toolbars and sidebar over Umbriel's blur. Only
-   backgrounds change; text, icons and web pages stay opaque. */
-/* Since Firefox 150 the window backdrop is painted on body, so the whole
-   chain down to each tab's <browser> has to be cleared (bug 2048355). */
+   backgrounds change; text, icons and web pages stay opaque. Three Firefox
+   155+ details, each of which leaves the bar solid black on its own:
+   - the window backdrop is painted on body, so the whole chain down to each
+     tab's <browser> has to be cleared (bug 2048355);
+   - the theme's frame colour (--lwt-accent-color, "known opaque" in
+     browser-shared.css) is painted behind everything;
+   - toolkit's toolbar.css paints every Linux <toolbar> with the GTK headerbar
+     colour unless appearance is none, and --toolbar-bgcolor is now
+     --toolbar-background-color. */
 :root,
 body,
 #main-window,
@@ -51,11 +51,28 @@ browser {
   background: transparent !important;
 }
 
+:root {
+  --lwt-accent-color: transparent !important;
+  --lwt-accent-color-inactive: transparent !important;
+  --toolbox-background-color-inactive: transparent !important;
+}
+
+/* One tint per area; everything inside stays clear so alphas don't stack
+   back up to solid. */
 #navigator-toolbox,
-#nav-bar,
-#PersonalToolbar,
 #sidebar-box,
 #sidebar-main {
-  background-color: color-mix(in srgb, var(--toolbar-bgcolor, #000) @GLASS_PERCENT@%, transparent) !important;
+  background-color: color-mix(in srgb, var(--toolbar-background-color, var(--toolbar-bgcolor, #15141b)) @GLASS_PERCENT@%, transparent) !important;
   background-image: none !important;
+}
+
+#titlebar,
+#toolbar-menubar,
+#TabsToolbar,
+#nav-bar,
+#PersonalToolbar {
+  appearance: none !important;
+  background: transparent !important;
+  background-image: none !important;
+  box-shadow: none !important;
 }
