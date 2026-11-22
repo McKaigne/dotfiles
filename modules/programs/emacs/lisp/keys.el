@@ -28,46 +28,47 @@
 ;; meow-leader-define-key: they land on C-c <letter> (the keys Emacs leaves
 ;; to the user), reached as SPC <letter>; meow's own keys stay as shipped.
 ;; c, x, h, m and g are keypad prefixes, so never leader letters.
-(defvar-keymap lysec-lsp-map
+;; Each key carries a label, so the keypad hints read as words.
+(defvar-keymap my-lsp-map
   :doc "Language server (eglot)."
-  "a" #'eglot-code-actions
-  "r" #'eglot-rename
-  "f" #'apheleia-format-buffer
-  "o" #'eglot-code-action-organize-imports
-  "d" #'eglot-find-declaration
-  "i" #'eglot-find-implementation
-  "t" #'eglot-find-typeDefinition
-  "e" #'consult-flymake
-  "s" #'eglot
-  "q" #'eglot-shutdown)
+  "a" '("code actions" . eglot-code-actions)
+  "r" '("rename" . eglot-rename)
+  "f" '("format" . apheleia-format-buffer)
+  "o" '("organize imports" . eglot-code-action-organize-imports)
+  "d" '("declaration" . eglot-find-declaration)
+  "i" '("implementation" . eglot-find-implementation)
+  "t" '("type definition" . eglot-find-typeDefinition)
+  "e" '("errors" . consult-flymake)
+  "s" '("start server" . eglot)
+  "q" '("stop server" . eglot-shutdown))
 
-(defvar-keymap lysec-notes-map
+(defvar-keymap my-notes-map
   :doc "Notes and Org."
-  "f" #'org-roam-node-find
-  "i" #'org-roam-node-insert
-  "b" #'org-roam-buffer-toggle
-  "j" #'lysec-org-journal
-  "c" #'org-capture
-  "a" #'org-agenda
-  "l" #'org-store-link)
+  "f" '("find note" . org-roam-node-find)
+  "i" '("insert link" . org-roam-node-insert)
+  "b" '("backlinks" . org-roam-buffer-toggle)
+  "j" '("journal" . my-org-journal)
+  "c" '("capture" . org-capture)
+  "a" '("agenda" . org-agenda)
+  "l" '("store link" . org-store-link))
 
 (meow-leader-define-key
- (cons "l" lysec-lsp-map)
- (cons "n" lysec-notes-map)
- '("t" . vterm-toggle-cd)
- '("o" . treemacs)
- '("d" . lysec-dashboard-open)
- '("b" . blamer-show-commit-info)
- '("k" . lysec-open-keybindings))
+ (cons "l" (cons "LSP" my-lsp-map))
+ (cons "n" (cons "notes" my-notes-map))
+ '("t" . ("terminal" . vterm-toggle-cd))
+ '("o" . ("file tree" . treemacs))
+ '("d" . ("dashboard" . my-dashboard-open))
+ '("b" . ("blame line" . blamer-show-commit-info))
+ '("k" . ("key guide" . my-open-keybindings)))
 (with-eval-after-load 'envrc
-  (meow-leader-define-key (cons "e" envrc-command-map)))
+  (meow-leader-define-key (cons "e" (cons "direnv" envrc-command-map))))
 
 ;; In Emacs's own maps where one fits.
 (keymap-set project-prefix-map "t" #'vterm-toggle-cd)
 (keymap-set project-prefix-map "C" #'recompile)
-(keymap-set project-prefix-map "E" #'lysec-project-environment-setup)
+(keymap-set project-prefix-map "E" #'my-project-environment-setup)
 (with-eval-after-load 'flymake
   (keymap-set flymake-mode-map "M-n" #'flymake-goto-next-error)
   (keymap-set flymake-mode-map "M-p" #'flymake-goto-prev-error))
 (with-eval-after-load 'markdown-mode
-  (keymap-set markdown-mode-map "C-c C-c v" #'lysec-markdown-preview))
+  (keymap-set markdown-mode-map "C-c C-c v" #'my-markdown-preview))

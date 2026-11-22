@@ -188,11 +188,11 @@
       };
       "emacs/paths.el".text = ''
         ;;; paths.el -*- lexical-binding: t -*-
-        (defvar lysec-tools-directory "${tools}/bin")
-        (defvar lysec-keybindings-file "/etc/nixos/modules/programs/emacs/org/keybindings.org")
-        (defvar lysec-org-directory "${orgDir}/")
+        (defvar my-tools-directory "${tools}/bin")
+        (defvar my-keybindings-file "/etc/nixos/modules/programs/emacs/org/keybindings.org")
+        (defvar my-org-directory "${orgDir}/")
         ;; Background opacity (appearance/_style.nix); text stays solid.
-        (defvar lysec-glass ${toString (builtins.floor (style.opacity * 100))})
+        (defvar my-glass ${toString (builtins.floor (style.opacity * 100))})
       '';
     };
 

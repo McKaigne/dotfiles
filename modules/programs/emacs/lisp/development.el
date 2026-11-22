@@ -37,23 +37,23 @@
                        "--extension" "strikethrough" "--extension" "autolink"
                        "--extension" "tasklist")))
 
-(defvar-local lysec-markdown-preview-source nil)
+(defvar-local my-markdown-preview-source nil)
 
-(defun lysec-markdown-render-code (dom)
+(defun my-markdown-render-code (dom)
   "Render DOM as code with terminal-visible styling."
   (shr-fontize-dom dom 'org-code))
 
-(defun lysec-markdown-render-code-block (dom)
+(defun my-markdown-render-code-block (dom)
   "Render DOM as a code block, preserving whitespace."
   (let ((start (point)))
     (shr-tag-pre dom)
     (shr-add-font start (point) 'org-block)))
 
-(defun lysec-markdown-preview ()
+(defun my-markdown-preview ()
   "Render Markdown in a reading pane, or refresh its existing preview."
   (interactive)
   (require 'eww)
-  (let* ((source (or lysec-markdown-preview-source (current-buffer)))
+  (let* ((source (or my-markdown-preview-source (current-buffer)))
          (html (generate-new-buffer " *Markdown HTML*"))
          preview)
     (unwind-protect
@@ -71,7 +71,7 @@
             (setq preview (get-buffer-create (format "*Markdown: %s*" name)))
             (with-current-buffer preview
               (eww-mode)
-              (setq-local lysec-markdown-preview-source source
+              (setq-local my-markdown-preview-source source
                           default-directory directory
                           shr-use-fonts nil
                           shr-use-colors nil
@@ -80,8 +80,8 @@
                           shr-table-vertical-line ?│
                           shr-table-corner ?┼
                           shr-external-rendering-functions
-                          '((code . lysec-markdown-render-code)
-                            (pre . lysec-markdown-render-code-block))
+                          '((code . my-markdown-render-code)
+                            (pre . my-markdown-render-code-block))
                           eww-data (list :url url))
               (dotimes (index 6)
                 (face-remap-add-relative
@@ -89,7 +89,7 @@
                  :inherit (intern (format "org-level-%d" (1+ index)))
                  :height 1.0 :weight 'bold :slant 'normal))
               (let ((map (copy-keymap eww-mode-map)))
-                (define-key map (kbd "g") #'lysec-markdown-preview)
+                (define-key map (kbd "g") #'my-markdown-preview)
                 (use-local-map map)))
             (pop-to-buffer preview
                            '((display-buffer-reuse-window display-buffer-in-side-window)
@@ -124,7 +124,7 @@
              '((c-mode c++-mode c-ts-mode c++-ts-mode)
                . ("clangd" "--background-index" "--clang-tidy")))
 
-(defun lysec-start-language-server ()
+(defun my-start-language-server ()
   "Load the project environment, then connect the language server."
   (when (and buffer-file-name
              (not (file-remote-p buffer-file-name))
@@ -137,11 +137,11 @@
                              'haskell-ts-mode 'julia-ts-mode 'kotlin-ts-mode
                              'dart-mode 'typst-ts-mode))
     (envrc-mode 1)
-    (setq-local exec-path (append exec-path (list lysec-tools-directory)))
+    (setq-local exec-path (append exec-path (list my-tools-directory)))
     (eglot-ensure)))
 
-(add-hook 'find-file-hook #'lysec-start-language-server t)
-(add-hook 'after-revert-hook #'lysec-start-language-server)
+(add-hook 'find-file-hook #'my-start-language-server t)
+(add-hook 'after-revert-hook #'my-start-language-server)
 (add-hook 'eglot-managed-mode-hook
           (lambda () (setq-local completion-category-defaults nil)))
 
@@ -176,7 +176,7 @@
               apheleia-inhibit-functions))
   (apheleia-global-mode 1))
 
-(defun lysec-project-environment-setup ()
+(defun my-project-environment-setup ()
   "Create and allow a direnv file using the project's default flake shell."
   (interactive)
   (let* ((project (project-current t))
@@ -197,14 +197,14 @@
 (setq compilation-scroll-output 'first-error
       compilation-ask-about-save nil)
 
-(defvar lysec-compile-history (make-hash-table :test #'equal)
+(defvar my-compile-history (make-hash-table :test #'equal)
   "Last compile command per project root.")
 (define-advice project-compile (:around (fn &rest args) remember)
   "Offer this project's previous command, and remember the new one."
   (let* ((root (project-root (project-current t)))
-         (compile-command (gethash root lysec-compile-history compile-command)))
+         (compile-command (gethash root my-compile-history compile-command)))
     (apply fn args)
-    (puthash root compile-command lysec-compile-history)))
+    (puthash root compile-command my-compile-history)))
 
 ;; A real terminal in the bottom panel (vterm is prebuilt by Nix).
 (use-package vterm

@@ -1,19 +1,19 @@
 ;;; notes.el -*- lexical-binding: t -*-
 
-(defvar lysec-org-directory (expand-file-name "~/Areas/Org/")
+(defvar my-org-directory (expand-file-name "~/Areas/Org/")
   "Root directory for notes, journal entries, and tasks.")
 
-(defun lysec-org-confirm-babel-evaluate (_language _body)
+(defun my-org-confirm-babel-evaluate (_language _body)
   "Ask before executing source blocks outside the local notes directory."
   (not (and buffer-file-name
             (not (file-remote-p buffer-file-name))
             (file-in-directory-p (file-truename buffer-file-name)
-                                 (file-truename lysec-org-directory)))))
+                                 (file-truename my-org-directory)))))
 
 (use-package org
   :demand t
   :custom
-  (org-directory lysec-org-directory)
+  (org-directory my-org-directory)
   (org-default-notes-file (expand-file-name "inbox.org" org-directory))
   (org-agenda-files (list (expand-file-name "inbox.org" org-directory)
                           (expand-file-name "tasks.org" org-directory)
@@ -28,11 +28,11 @@
   (org-log-done 'time)
   (org-log-into-drawer t)
   (org-todo-keywords '((sequence "TODO(t)" "NEXT(n)" "WAIT(w@)" "|" "DONE(d!)" "CANCELLED(c@)")))
-  (org-confirm-babel-evaluate #'lysec-org-confirm-babel-evaluate)
+  (org-confirm-babel-evaluate #'my-org-confirm-babel-evaluate)
   :config
-  (setq org-id-locations-file (lysec-state-file "org-id-locations")
-        org-persist-directory (lysec-state-file "org-persist/")
-        org-clock-persist-file (lysec-state-file "org-clock-save.el")
+  (setq org-id-locations-file (my-state-file "org-id-locations")
+        org-persist-directory (my-state-file "org-persist/")
+        org-clock-persist-file (my-state-file "org-clock-save.el")
         org-capture-templates
         `(("t" "Task" entry (file+headline ,org-default-notes-file "Tasks")
            "* TODO %?\n:PROPERTIES:\n:CREATED: %U\n:END:\n")
@@ -56,8 +56,8 @@
 (use-package org-roam
   :commands (org-roam-node-find org-roam-node-insert org-roam-buffer-toggle)
   :init
-  (setq org-roam-directory (file-truename lysec-org-directory)
-        org-roam-db-location (lysec-state-file "org-roam.db")
+  (setq org-roam-directory (file-truename my-org-directory)
+        org-roam-db-location (my-state-file "org-roam.db")
         org-roam-capture-templates
         '(("d" "Note" plain "%?"
            :target (file+head "notes/${slug}.org" "#+title: ${title}\n")
@@ -72,21 +72,21 @@
    '(("d" "Daily journal" entry "* %<%H:%M> %?"
       :target (file+head "%<%Y-%m-%d>.org" "#+title: %<%Y-%m-%d>\n")))))
 
-(defun lysec-org-open ()
+(defun my-org-open ()
   "Browse the notes directory."
   (interactive)
-  (dirvish lysec-org-directory))
-(defun lysec-org-journal ()
+  (dirvish my-org-directory))
+(defun my-org-journal ()
   "Open today's linked journal entry."
   (interactive)
   (require 'org-roam)
   (require 'org-roam-dailies)
   (org-roam-dailies-goto-today))
 
-(defun lysec-open-keybindings ()
+(defun my-open-keybindings ()
   "Open the key reference in a new pane to the right."
   (interactive)
-  (let ((file lysec-keybindings-file))
+  (let ((file my-keybindings-file))
     (unless (file-readable-p file)
       (user-error "Key reference is missing: %s" file))
     (select-window (split-window-right))

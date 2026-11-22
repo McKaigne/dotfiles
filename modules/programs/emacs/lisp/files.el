@@ -4,7 +4,7 @@
   :demand t
   :custom
   (dirvish-attributes '(nerd-icons file-size collapse subtree-state vc-state))
-  (dirvish-cache-dir (lysec-state-file "dirvish/"))
+  (dirvish-cache-dir (my-state-file "dirvish/"))
   :config
   (dirvish-override-dired-mode)
   (define-key dired-mode-map (kbd "q") #'dirvish-quit)
@@ -13,8 +13,8 @@
   :commands (treemacs treemacs-select-window)
   :custom
   (treemacs-width 28)
-  (treemacs-persist-file (lysec-state-file "treemacs-persist"))
-  (treemacs-last-error-persist-file (lysec-state-file "treemacs-errors"))
+  (treemacs-persist-file (my-state-file "treemacs-persist"))
+  (treemacs-last-error-persist-file (my-state-file "treemacs-errors"))
   (treemacs-is-never-other-window t)
   :config
   (treemacs-follow-mode 1)
@@ -24,7 +24,7 @@
   :config (treemacs-load-theme "nerd-icons"))
 (use-package magit :commands (magit-status magit-dispatch))
 
-(defun lysec-enable-line-blame ()
+(defun my-enable-line-blame ()
   "Initialize inline Git history in local, tracked text files."
   (when (and (not (local-variable-p 'blamer-mode))
              buffer-file-name
@@ -33,16 +33,16 @@
              (eq (vc-backend buffer-file-name) 'Git))
     (blamer-mode 1)))
 
-(defun lysec-dirvish-enable-line-blame (_find-fn file)
+(defun my-dirvish-enable-line-blame (_find-fn file)
   "Initialize annotations when Dirvish opens FILE from a preview buffer."
   (when-let* ((buffer (and (not (file-remote-p file)) (get-file-buffer file))))
-    (with-current-buffer buffer (lysec-enable-line-blame))))
+    (with-current-buffer buffer (my-enable-line-blame))))
 
 (use-package blamer
   :commands (blamer-mode blamer-show-commit-info)
-  :hook (find-file . lysec-enable-line-blame)
+  :hook (find-file . my-enable-line-blame)
   :init
-  (advice-add 'dirvish--find-entry :after #'lysec-dirvish-enable-line-blame)
+  (advice-add 'dirvish--find-entry :after #'my-dirvish-enable-line-blame)
   :custom
   (blamer-idle-time 0.6)
   (blamer-type 'visual)
@@ -68,19 +68,19 @@
   (diff-hl-draw-borders nil)
   (diff-hl-side 'left)
   :config
-  (define-fringe-bitmap 'lysec-diff-hl-bar [#b11100000] nil nil '(center t))
-  (setq diff-hl-fringe-bmp-function (lambda (&rest _) 'lysec-diff-hl-bar))
+  (define-fringe-bitmap 'my-diff-hl-bar [#b11100000] nil nil '(center t))
+  (setq diff-hl-fringe-bmp-function (lambda (&rest _) 'my-diff-hl-bar))
   (require 'diff-hl-flydiff)
   (diff-hl-flydiff-mode 1))
 
-(defun lysec-file-manager ()
+(defun my-file-manager ()
   "Browse the current file's directory or the buffer's working directory."
   (interactive)
   (dirvish (if buffer-file-name
                (file-name-directory buffer-file-name)
              default-directory)))
 
-(defun lysec-new-buffer ()
+(defun my-new-buffer ()
   "Create an unnamed text buffer in the current directory."
   (interactive)
   (let ((directory default-directory))
@@ -88,7 +88,7 @@
     (text-mode)
     (setq-local default-directory directory)))
 
-(defun lysec-project-open ()
+(defun my-project-open ()
   "Choose a project and open its file tree beside the editor."
   (interactive)
   (let ((default-directory (project-prompt-project-dir)))

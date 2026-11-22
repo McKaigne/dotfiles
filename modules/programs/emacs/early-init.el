@@ -13,5 +13,7 @@
 (scroll-bar-mode -1)
 ;; Font for GUI frames (the system font, appearance/_style.nix).
 (add-to-list 'default-frame-alist '(font . "Maple Mono NF-11"))
+;; No unstyled mode line flashing in before the theme and doom-modeline.
+(setq-default mode-line-format nil)
 ;; A little breathing room between the window edge and the text.
 (add-to-list 'default-frame-alist '(internal-border-width . 12))

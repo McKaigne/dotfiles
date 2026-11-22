@@ -13,7 +13,7 @@
 
 (use-package undo-fu-session
   :demand t
-  :custom (undo-fu-session-directory (lysec-state-file "undo/"))
+  :custom (undo-fu-session-directory (my-state-file "undo/"))
   :config (undo-fu-session-global-mode 1))
 ;; Meow as documented (KEYBINDING_QWERTY.org): the official QWERTY layout and
 ;; leader, and the default keypad (x/c/h/m/g → C-x/C-c/C-h/M-/C-M-, any other
