@@ -109,6 +109,12 @@ in {
             Value = true;
             Status = "locked";
           };
+          # Classic toolbar, not the 157 "Nova" redesign: userChrome.css's glass
+          # targets the classic structure (Nova left hyde's bar solid black).
+          "browser.theme.nova.enabled" = {
+            Value = false;
+            Status = "locked";
+          };
           "toolkit.legacyUserProfileCustomizations.stylesheets" = {
             Value = true;
             Status = "locked";

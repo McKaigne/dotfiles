@@ -64,6 +64,11 @@ in {
               id = "nixos";
               path = "/etc/nixos";
             };
+            # Same path on both machines, so gui.toml's wallpaper paths match.
+            wallpapers = {
+              id = "wallpapers";
+              path = "/var/lib/wallpapers";
+            };
           }
           // lib.genAttrs folders (name: {
             id = lib.toLower name;

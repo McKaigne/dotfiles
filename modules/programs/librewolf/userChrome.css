@@ -16,8 +16,12 @@
   font-family: "Maple Mono NF", monospace !important;
 }
 
-/* Square the page frame: no rounded corner (or inset shadow) where the web
-   page meets the toolbar and sidebar. */
+/* Square the page frame and the sidebar (Sidebery): no rounded corner (or
+   inset shadow) where the web page meets the toolbar and sidebar. */
+#sidebar-box,
+#sidebar,
+#sidebar-main,
+#sidebar-wrapper,
 #tabbrowser-tabbox,
 #tabbrowser-tabpanels,
 .browserContainer,
