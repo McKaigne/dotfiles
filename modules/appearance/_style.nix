@@ -3,17 +3,18 @@
 {
   font = "Maple Mono NF";
 
-  # Background translucency for the bar, panels, terminals and GTK apps, the
-  # same 80% Noctalia uses for its own windows so everything matches. Text
-  # and images stay opaque; the compositor blurs whatever shows through.
-  opacity = 0.8;
+  # Background translucency for the bar, panels, terminals and GTK apps
+  # (JaKooLit's Hyprland-Dots value). Text and images stay opaque; the
+  # compositor blurs whatever shows through. Noctalia's own settings window
+  # stays at its fixed 80%.
+  opacity = 0.9;
 
-  # Strong frosted glass, as in popular Hyprland/KDE "strong blur" setups. Each
-  # pass halves the image: much past 4-5 passes the wallpaper collapses into
-  # one flat color and the glass looks solid instead of blurrier.
+  # Moderate frosted glass (JaKooLit: size 6, 3 passes). Each pass halves the
+  # image: much past 4-5 passes the wallpaper collapses into one flat color
+  # and the glass looks solid instead of blurrier.
   blur = {
-    passes = 4;
-    radius = 12;
+    passes = 3;
+    radius = 6;
   };
 
   # Corner radius shared by windows and the bar.
@@ -22,9 +23,9 @@
   # Gap between windows; the floating bar is inset by the same amount.
   gap = 8;
 
-  # Unfocused windows are darkened by this fraction and drawn at this opacity,
-  # so the focused window stands out by the others receding; focus has no
-  # border or title bar.
-  unfocusedDim = 0.2;
-  unfocusedOpacity = 0.85;
+  # Unfocused windows are darkened by this fraction; their transparency
+  # matches the focused window's (opacity 1.0 = unchanged), so only the
+  # shade tells them apart. Focus has no border or title bar.
+  unfocusedDim = 0.1;
+  unfocusedOpacity = 1.0;
 }

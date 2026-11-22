@@ -12,10 +12,12 @@
   #     Ctrl+Alt       session: lock, power, reload
   #
   #   Keys keep their meaning under every modifier: Left/Right are columns,
-  #   Up/Down move within a column and on into the next workspace, PgUp/PgDn
-  #   and 1-5 are workspaces, Home/End the first and last column. H/J/K/L
-  #   always mirror the arrows. Plain letters are apps and panels, named
-  #   mnemonically; Q (close) and F (fullscreen) are the only window verbs.
+  #   Up/Down move within a column and on into the next workspace, 1-5 are
+  #   workspaces. H/J/K/L always mirror the arrows. Plain letters are apps and
+  #   panels, named mnemonically; Q (close), F (maximize) and R (cycle width)
+  #   are the window verbs. The everyday action gets plain Super; its rarer
+  #   sibling takes a second modifier (Super+F maximizes, Super+Shift+F goes
+  #   fullscreen).
   #
   #   One action, one bind, and nothing Kanata already provides: arrows come
   #   from its ext layer, media keys from its fun layer, and no bind relies on
@@ -95,27 +97,21 @@
         "Mod+Right" = "window-focus-right";
         "Mod+Up" = "window-focus-or-workspace-up";
         "Mod+Down" = "window-focus-or-workspace-down";
-        "Mod+Home" = "column-focus-first";
-        "Mod+End" = "column-focus-last";
-        "Mod+Page_Up" = "workspace-previous";
-        "Mod+Page_Down" = "workspace-next";
         "Mod+Escape" = once "workspace-focus-last";
         "Mod+Tab" = once "overview-toggle";
         "Mod+grave" = "scratchpad-toggle terminal";
 
         # --- Window verbs
         "Mod+Q" = once "window-close";
-        "Mod+F" = once "window-toggle-fullscreen";
+        "Mod+F" = once "window-toggle-maximize"; # column to full width
+        "Mod+Shift+F" = once "window-toggle-fullscreen";
+        "Mod+R" = "window-cycle-primary-extent"; # 1/3, 1/2, 2/3
 
         # --- Super+Shift: take the window along
         "Mod+Shift+Left" = "column-move-left";
         "Mod+Shift+Right" = "column-move-right";
         "Mod+Shift+Up" = "window-move-or-workspace-up";
         "Mod+Shift+Down" = "window-move-or-workspace-down";
-        "Mod+Shift+Home" = "column-move-to-first";
-        "Mod+Shift+End" = "column-move-to-last";
-        "Mod+Shift+Page_Up" = "window-move-to-workspace-previous";
-        "Mod+Shift+Page_Down" = "window-move-to-workspace-next";
         "Mod+Shift+grave" = once "window-move-to-scratchpad terminal";
         "Mod+Shift+Escape" = {
           action = "shortcuts-inhibit-toggle"; # pass shortcuts through to games/VMs
@@ -128,9 +124,6 @@
         "Mod+Ctrl+Right" = "window-modify-primary-extent +0.05";
         "Mod+Ctrl+Up" = "window-modify-secondary-extent -0.05";
         "Mod+Ctrl+Down" = "window-modify-secondary-extent +0.05";
-        "Mod+Ctrl+F" = once "window-toggle-maximize"; # column to full width
-        "Mod+Ctrl+R" = "window-cycle-primary-extent"; # 1/3, 1/2, 2/3
-        "Mod+Ctrl+Shift+R" = "window-cycle-primary-extent-back";
         "Mod+Ctrl+C" = once "column-center";
 
         # --- Super+Alt: structure
@@ -142,11 +135,7 @@
         "Mod+Alt+bracketright" = "window-consume-or-expel-right";
         "Mod+Alt+P" = once "window-toggle-pinned";
         "Mod+Alt+grave" = once "window-restore-from-scratchpad terminal";
-        "Mod+Alt+Tab" = once "workspace-set-layout toggle scrolling dwindle master stacking";
-        "Mod+Alt+S" = once "workspace-set-layout scrolling";
-        "Mod+Alt+D" = once "workspace-set-layout dwindle";
-        "Mod+Alt+M" = once "workspace-set-layout master";
-        "Mod+Alt+F" = once "workspace-set-layout stacking";
+        "Mod+Alt+Tab" = once "workspace-set-layout toggle scrolling dwindle master stacking"; # cycle layouts
 
         # --- Ctrl+Alt: session
         "Ctrl+Alt+L" = msg "session lock";
@@ -155,7 +144,6 @@
 
         # --- OS-wide conventions
         "Alt+Tab" = msg "window-switcher";
-        "Alt+F4" = once "window-close";
         "Print" = msg "screenshot-fullscreen --copy-to-clipboard --no-save-to-file";
         "Alt+Print" = msg "screenshot-window --copy-to-clipboard --no-save-to-file";
 

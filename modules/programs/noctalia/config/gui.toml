@@ -20,17 +20,29 @@ widget_order = [ "desktop-widget-0000000000000001" ]
     color_2 = "primary"
 
 [theme]
-community_palette = "Occult Umbral"
+community_palette = "Aura"
 source = "community"
 
 [wallpaper.default]
-path = "/home/jekyll/Pictures/Wallpapers/Hatsune.Miku.full.4725448.png"
+path = "/home/jekyll/Pictures/Wallpapers/isekaiJoucho.jpg"
 
 [wallpaper.last]
-path = "/home/jekyll/Pictures/Wallpapers/Hatsune.Miku.full.4725448.png"
+path = "/home/jekyll/Pictures/Wallpapers/isekaiJoucho.jpg"
 
 [wallpaper.monitors.DP-1]
+path = "/home/jekyll/Pictures/Wallpapers/isekaiJoucho.jpg"
+
+[[wallpaper.favorite]]
+community_palette = "Occult Umbral"
+palette_source = "community"
 path = "/home/jekyll/Pictures/Wallpapers/Hatsune.Miku.full.4725448.png"
+theme_mode = "dark"
+
+[[wallpaper.favorite]]
+community_palette = "Aura"
+palette_source = "community"
+path = "/home/jekyll/Pictures/Wallpapers/isekaiJoucho.jpg"
+theme_mode = "dark"
 
 [widget.brightness]
 glyph_position = "after"

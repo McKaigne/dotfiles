@@ -9,17 +9,19 @@
     lib,
     pkgs,
     ...
-  }: {
-    # Noctalia owns gtk.css (it imports noctalia.css). Append the glass import
-    # after it so its translucent backgrounds win; never rewrite the file.
+  }: let
+    glassLast = pkgs.writeShellApplication {
+      name = "gtk-glass-last";
+      runtimeInputs = [pkgs.gnugrep pkgs.coreutils];
+      text = builtins.readFile ./_gtk-glass-last.sh;
+    };
+  in {
+    # Noctalia owns gtk.css (it imports noctalia.css); keep the glass import
+    # after it so its translucent backgrounds win. Noctalia's theme hook runs
+    # the same script (see noctalia/config/templates.nix).
     home.activation.gtkGlassImport = lib.hm.dag.entryAfter ["writeBoundary"] ''
       if [ -z "''${DRY_RUN_CMD:-}" ]; then
-        for dir in gtk-3.0 gtk-4.0; do
-          css=${lib.escapeShellArg config.xdg.configHome}/$dir/gtk.css
-          mkdir -p "$(dirname "$css")"
-          [ -f "$css" ] || echo '@import url("noctalia.css");' > "$css"
-          grep -q 'glass.css' "$css" || echo '@import url("glass.css");' >> "$css"
-        done
+        ${lib.getExe glassLast}
       fi
     '';
 

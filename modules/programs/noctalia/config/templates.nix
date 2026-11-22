@@ -20,6 +20,12 @@ in {
       wait
     '';
 
+    glassLast = pkgs.writeShellApplication {
+      name = "gtk-glass-last";
+      runtimeInputs = [pkgs.gnugrep pkgs.coreutils];
+      text = builtins.readFile ../../../appearance/_gtk-glass-last.sh;
+    };
+
     # GTK glass: redefine Noctalia's surface backgrounds with alpha. Only
     # background colors change, so text, icons and selections stay solid.
     gtkGlass = pkgs.writeText "gtk-glass.css.in" (let
@@ -59,10 +65,12 @@ in {
           gtk3-glass = {
             input_path = "${gtkGlass}";
             output_path = "$XDG_CONFIG_HOME/gtk-3.0/glass.css";
+            post_hook = "${glassLast}/bin/gtk-glass-last";
           };
           gtk4-glass = {
             input_path = "${gtkGlass}";
             output_path = "$XDG_CONFIG_HOME/gtk-4.0/glass.css";
+            post_hook = "${glassLast}/bin/gtk-glass-last";
           };
           zathura = {
             # Backgrounds take the shared glass opacity; pages stay solid.
