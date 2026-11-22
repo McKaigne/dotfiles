@@ -1,0 +1,59 @@
+config_version = 20
+
+[bar.fancy]
+center = ["clock"]
+end = [
+    "tray",
+    "volume",
+    "input_volume",
+    "brightness",
+    "battery",
+    "notifications",
+    "custom_button_3",
+    "custom_button_2",
+    "session",
+]
+start = ["custom_button_4", "workspaces", "cpu", "temp", "ram"]
+
+[wallpaper.default]
+path = "/home/jekyll/Pictures/Wallpapers/Kanagawa-Light.png"
+
+[wallpaper.last]
+path = "/home/jekyll/Pictures/Wallpapers/Kanagawa-Light.png"
+
+[wallpaper.monitors.DP-1]
+path = "/home/jekyll/Pictures/Wallpapers/Kanagawa-Light.png"
+
+[widget.clock]
+anchor = false
+
+[widget.cpu]
+visualization = "none"
+
+[widget.ram]
+show_value = true
+visualization = "none"
+
+[widget.session]
+custom_image = ""
+
+[widget.temp]
+show_value = true
+visualization = "none"
+
+[widget.workspaces]
+anchor = true
+focused_color = "primary"
+style = "minimal"
+
+[widget.custom_button_2]
+glyph = "photo-circle"
+type = "custom_button"
+
+[widget.custom_button_3]
+glyph = "pokeball"
+type = "custom_button"
+
+[widget.custom_button_4]
+glyph = "noctalia"
+type = "custom_button"

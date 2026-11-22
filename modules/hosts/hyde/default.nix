@@ -52,8 +52,5 @@ in {
     environment.sessionVariables.XFT_DPI = "96";
 
     services.displayManager.noctalia-greeter.settings.output.name = "DP-1";
-
-    # nsync: deploy Noctalia GUI tweaks from this machine.
-    home-manager.sharedModules = [m.homeManager.noctalia-gui-sync];
   };
 }
