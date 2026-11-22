@@ -232,21 +232,18 @@ in {
 
     # Noctalia is the Pywalfox host and keeps ~/.mozilla/.../pywalfox.json pointed at
     # its current binary. LibreWolf only looks in ~/.librewolf, so link it there.
-    # The theme palette as CSS variables for userContent.css, so web pages can
-    # use Noctalia's colours (Pywalfox only themes the browser's own UI).
-    # LibreWolf reads it at startup.
+    # The theme's background and text as CSS variables: userChrome.css's
+    # fallback for the moment before Pywalfox connects (Pywalfox itself
+    # provides them live afterwards). LibreWolf reads it at startup.
     xdg.configFile."noctalia/librewolf.toml".source = (pkgs.formats.toml {}).generate "librewolf-template.toml" {
       theme.templates.user.librewolf-colors = {
         input_path = pkgs.writeText "noctalia-colors.css.in" ''
           :root {
             --nc-surface: {{colors.surface.default.hex}};
-            --nc-surface-container: {{colors.surface_container.default.hex}};
             --nc-on-surface: {{colors.on_surface.default.hex}};
-            --nc-on-surface-variant: {{colors.on_surface_variant.default.hex}};
-            --nc-primary: {{colors.primary.default.hex}};
           }
         '';
-        output_path = "$HOME/.librewolf/default/chrome/noctalia-colors.css";
+        output_path = "~/.librewolf/default/chrome/noctalia-colors.css";
       };
     };
 

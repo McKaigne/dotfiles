@@ -1,7 +1,16 @@
-/* Noctalia's palette (--nc-*), written by its theme templates: the same
-   surfaces as the bar and terminals. Pywalfox's toolbar colours are lighter
-   shades of the palette, so backgrounds use these instead. */
+/* Colours come live from Pywalfox, which Noctalia feeds the theme: the
+   window frame gets the theme's exact background (--lwt-accent-color) and
+   the text its exact text colour (--lwt-text-color). Pywalfox's toolbar and
+   popup shade is its own lightened mix, so nothing here uses it. Noctalia's
+   palette file (--nc-*) is only the fallback before Pywalfox connects. */
 @import url("@PALETTE_CSS@");
+
+:root {
+  --theme-bg: var(--lwt-accent-color, var(--nc-surface, #15141b));
+  --theme-fg: var(--lwt-text-color, var(--nc-on-surface, #edecee));
+  /* A step from background toward text, like Noctalia's cards. */
+  --theme-card: color-mix(in srgb, var(--theme-bg) 88%, var(--theme-fg));
+}
 
 #TabsToolbar { display: none !important; }
 #sidebar-panel-header { display: none !important; }
@@ -43,7 +52,8 @@ browser {
    - the window backdrop is painted on body, so the whole chain down to each
      tab's <browser> has to be cleared (bug 2048355);
    - the theme's frame colour (--lwt-accent-color, "known opaque" in
-     browser-shared.css) is painted behind everything;
+     browser-shared.css) is painted behind everything (cleared where it is
+     painted; the variable itself stays, it is the theme background);
    - toolkit's toolbar.css paints every Linux <toolbar> with the GTK headerbar
      colour unless appearance is none, and --toolbar-bgcolor is now
      --toolbar-background-color. */
@@ -61,8 +71,7 @@ browser {
 }
 
 :root {
-  --lwt-accent-color: transparent !important;
-  --lwt-accent-color-inactive: transparent !important;
+  --toolbox-background-color: transparent !important;
   --toolbox-background-color-inactive: transparent !important;
 }
 
@@ -71,7 +80,7 @@ browser {
 #navigator-toolbox,
 #sidebar-box,
 #sidebar-main {
-  background-color: color-mix(in srgb, var(--nc-surface, #15141b) @GLASS_PERCENT@%, transparent) !important;
+  background-color: color-mix(in srgb, var(--theme-bg) @GLASS_PERCENT@%, transparent) !important;
   background-image: none !important;
 }
 
@@ -89,5 +98,25 @@ browser {
 /* The address field: the palette's container shade, like Noctalia's cards. */
 #urlbar-background,
 #searchbar {
-  background-color: color-mix(in srgb, var(--nc-surface-container, #1e1d27) @GLASS_PERCENT@%, transparent) !important;
+  background-color: color-mix(in srgb, var(--theme-card) @GLASS_PERCENT@%, transparent) !important;
+}
+
+/* Text, icons and menus from the same live theme colours (the names
+   LightweightThemeConsumer sets in this Firefox). Accents stay Pywalfox's
+   (the theme's primary). */
+:root {
+  --toolbar-text-color: var(--theme-fg) !important;
+  --toolbar-field-text-color: var(--theme-fg) !important;
+  --toolbar-field-text-color-focus: var(--theme-fg) !important;
+  --toolbarbutton-icon-fill: var(--theme-fg) !important;
+  --sidebar-text-color: var(--theme-fg) !important;
+  --panel-background-color: var(--theme-card) !important;
+  --panel-text-color: var(--theme-fg) !important;
+  --panel-border-color: transparent !important;
+}
+
+/* The find bar sits over the page; glass in the theme background. */
+.browserContainer > findbar {
+  background-color: color-mix(in srgb, var(--theme-bg) @GLASS_PERCENT@%, transparent) !important;
+  background-image: none !important;
 }

@@ -92,6 +92,7 @@ widget_order = [ "lockscreen-login-box@DP-1", "lockscreen-login-box@eDP-1" ]
 transparency_mode = "soft"
 
 [theme]
+builtin = "Nord"
 community_palette = "Aura"
 source = "community"
 
@@ -117,6 +118,12 @@ theme_mode = "dark"
 community_palette = "Aura"
 palette_source = "community"
 path = "/var/lib/wallpapers/isekaiJoucho.jpg"
+theme_mode = "dark"
+
+[[wallpaper.favorite]]
+community_palette = "Zenbones"
+palette_source = "community"
+path = "/var/lib/wallpapers/Pretender.(Oberon).full.3921260.png"
 theme_mode = "dark"
 
 [widget.brightness]
