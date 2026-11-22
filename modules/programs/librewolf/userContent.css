@@ -1,5 +1,5 @@
 /* Noctalia's palette (--nc-*), written by its theme templates. */
-@import url("noctalia-colors.css");
+@import url("@PALETTE_CSS@");
 
 @-moz-document url-prefix("about:") {
   body {
@@ -37,7 +37,7 @@
    boxes a site paints inside the page keep their own background. */
 @-moz-document url-prefix("http://"), url-prefix("https://"), url-prefix("file://"), url-prefix("about:") {
   html {
-    background-color: color-mix(in srgb, var(--nc-surface, Canvas) @GLASS_PERCENT@%, transparent) !important;
+    background-color: color-mix(in srgb, var(--nc-surface, #15141b) @GLASS_PERCENT@%, transparent) !important;
   }
   body {
     background-color: transparent !important;
@@ -57,10 +57,10 @@
     --yt-spec-brand-background-solid: transparent !important;
     --yt-spec-brand-background-primary: transparent !important;
     --yt-spec-brand-background-secondary: transparent !important;
-    --yt-spec-raised-background: color-mix(in srgb, var(--nc-surface-container, Canvas) 60%, transparent) !important;
-    --yt-spec-menu-background: var(--nc-surface-container, Canvas) !important;
-    --yt-spec-text-primary: var(--nc-on-surface, CanvasText) !important;
-    --yt-spec-text-secondary: var(--nc-on-surface-variant, GrayText) !important;
+    --yt-spec-raised-background: color-mix(in srgb, var(--nc-surface-container, #29263c) 60%, transparent) !important;
+    --yt-spec-menu-background: var(--nc-surface-container, #29263c) !important;
+    --yt-spec-text-primary: var(--nc-on-surface, #edecee) !important;
+    --yt-spec-text-secondary: var(--nc-on-surface-variant, #b8b6c0) !important;
   }
   ytd-app,
   ytd-browse,
@@ -74,7 +74,7 @@
   /* The header stays readable over content scrolling under it. */
   #background.ytd-masthead,
   #masthead-container {
-    background: color-mix(in srgb, var(--nc-surface, Canvas) @GLASS_PERCENT@%, transparent) !important;
+    background: color-mix(in srgb, var(--nc-surface, #15141b) @GLASS_PERCENT@%, transparent) !important;
   }
 }
 
@@ -84,9 +84,9 @@
    glass rule above replaces. Variable names follow each site's current CSS
    and may change. Shorthands: */
 :root {
-  --nc-glass: color-mix(in srgb, var(--nc-surface, Canvas) @GLASS_PERCENT@%, transparent);
-  --nc-card: color-mix(in srgb, var(--nc-surface-container, Canvas) 55%, transparent);
-  --nc-inset: color-mix(in srgb, var(--nc-surface, Canvas) 45%, transparent);
+  --nc-glass: color-mix(in srgb, var(--nc-surface, #15141b) @GLASS_PERCENT@%, transparent);
+  --nc-card: color-mix(in srgb, var(--nc-surface-container, #29263c) 55%, transparent);
+  --nc-inset: color-mix(in srgb, var(--nc-surface, #15141b) 45%, transparent);
 }
 
 /* GitHub (Primer) */
@@ -196,6 +196,25 @@
     --gm3-sys-color-surface-container: var(--nc-card) !important;
     --gm3-sys-color-surface-container-high: var(--nc-card) !important;
     --gm3-sys-color-surface-container-highest: var(--nc-card) !important;
+  }
+  html,
+  body {
+    background: transparent !important;
+  }
+}
+
+/* Facebook and Messenger (facebook.com/messages, messenger.com) */
+@-moz-document domain("facebook.com"), domain("messenger.com") {
+  :root,
+  .__fb-dark-mode,
+  .__fb-light-mode {
+    --web-wash: transparent !important;
+    --surface-background: var(--nc-card) !important;
+    --card-background: var(--nc-card) !important;
+    --comment-background: var(--nc-inset) !important;
+    --nav-bar-background: var(--nc-glass) !important;
+    --messenger-card-background: var(--nc-card) !important;
+    --wash: var(--nc-inset) !important;
   }
   html,
   body {

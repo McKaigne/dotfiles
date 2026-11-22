@@ -109,6 +109,21 @@ in {
             Value = true;
             Status = "locked";
           };
+          # LibreWolf's resistFingerprinting tells every site the system is in
+          # light mode. Use Firefox's fingerprinting protection with all the
+          # same protections instead, minus that one, so sites see dark mode.
+          "privacy.resistFingerprinting" = {
+            Value = false;
+            Status = "locked";
+          };
+          "privacy.fingerprintingProtection" = {
+            Value = true;
+            Status = "locked";
+          };
+          "privacy.fingerprintingProtection.overrides" = {
+            Value = "+AllTargets,-CSSPrefersColorScheme";
+            Status = "locked";
+          };
           # Dark browser UI and dark built-in pages (0 = dark), whatever the
           # system says; sites already get prefers-color-scheme: dark above.
           "browser.theme.toolbar-theme" = {
@@ -204,6 +219,14 @@ in {
     ...
   }: let
     ff = inputs.firefox-addons.packages.${pkgs.stdenv.hostPlatform.system};
+    # The chrome sheets are links into the store, so the palette file they
+    # import is named by its full path. Glass percentage comes from the shared
+    # style.
+    fillCss = file:
+      builtins.replaceStrings ["@GLASS_PERCENT@" "@PALETTE_CSS@"] [
+        (toString (builtins.floor ((import ../../appearance/_style.nix).opacity * 100)))
+        "file://${config.home.homeDirectory}/.librewolf/default/chrome/noctalia-colors.css"
+      ] (builtins.readFile file);
   in {
     home.sessionVariables.BROWSER = lib.getExe pkgs.librewolf;
 
@@ -263,15 +286,8 @@ in {
             ff.pywalfox
           ];
         };
-        # Glass percentage comes from the shared style.
-        userChrome =
-          builtins.replaceStrings ["@GLASS_PERCENT@"]
-          [(toString (builtins.floor ((import ../../appearance/_style.nix).opacity * 100)))]
-          (builtins.readFile ./userChrome.css);
-        userContent =
-          builtins.replaceStrings ["@GLASS_PERCENT@"]
-          [(toString (builtins.floor ((import ../../appearance/_style.nix).opacity * 100)))]
-          (builtins.readFile ./userContent.css);
+        userChrome = fillCss ./userChrome.css;
+        userContent = fillCss ./userContent.css;
       };
     };
   };

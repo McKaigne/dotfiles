@@ -1,7 +1,7 @@
 /* Noctalia's palette (--nc-*), written by its theme templates: the same
    surfaces as the bar and terminals. Pywalfox's toolbar colours are lighter
    shades of the palette, so backgrounds use these instead. */
-@import url("noctalia-colors.css");
+@import url("@PALETTE_CSS@");
 
 #TabsToolbar { display: none !important; }
 #sidebar-panel-header { display: none !important; }
