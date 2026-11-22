@@ -2,9 +2,6 @@
   flake.modules.homeManager."fish" = {pkgs, ...}: {
     programs.fish = {
       shellAbbrs = {
-        f = "tv";
-        television = "tv";
-
         ncd = "cd /etc/nixos";
         rnix = "repomix /etc/nixos";
         rcfg = "repomix ~/.config";

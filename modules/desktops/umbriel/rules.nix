@@ -2,22 +2,24 @@ let
   style = import ../../appearance/_style.nix;
 in {
   flake.modules.homeManager."desktop-umbriel" = {pkgs, ...}: let
-    # Darken colors, keep alpha: unfocused windows look dimmer, never more transparent.
+    # Unfocused windows recede: darker and more see-through. Samples are
+    # premultiplied, so fading scales color and alpha together.
+    fade = toString style.unfocusedOpacity;
     darken = pkgs.writeText "unfocused-darken.glsl" ''
       vec4 window(vec2 uv) {
         vec4 c = umbriel_sample(uv);
-        return vec4(c.rgb * ${toString (1.0 - style.unfocusedDim)}, c.a);
+        return vec4(c.rgb * ${toString (1.0 - style.unfocusedDim)}, c.a) * ${fade};
       }
     '';
     # Helium stays solid: undo the translucency it picks up from the GTK glass
     # while keeping its theme colors. Faint pixels (shadows, antialiased
     # corners) are left alone so they don't turn into hard dark edges.
-    solid = dim:
+    solid = dim: alpha:
       pkgs.writeText "solid.glsl" ''
         vec4 window(vec2 uv) {
           vec4 c = umbriel_sample(uv);
-          if (c.a < 0.3) return c;
-          return vec4(c.rgb / c.a * ${toString dim}, 1.0);
+          if (c.a < 0.3) return c * ${alpha};
+          return vec4(c.rgb / c.a * ${toString dim}, 1.0) * ${alpha};
         }
       '';
   in {
@@ -28,11 +30,11 @@ in {
       };
       solid = {
         kind = "window";
-        shader = "${solid "1.0"}";
+        shader = "${solid "1.0" "1.0"}";
       };
       solid-darken = {
         kind = "window";
-        shader = "${solid (toString (1.0 - style.unfocusedDim))}";
+        shader = "${solid (toString (1.0 - style.unfocusedDim)) fade}";
       };
     };
 

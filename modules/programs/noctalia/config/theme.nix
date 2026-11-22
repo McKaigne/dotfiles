@@ -19,7 +19,6 @@
             "umbriel"
           ];
           "community_ids" = [
-            "chromium-based"
             "pywalfox"
             "bat"
             "fzf"

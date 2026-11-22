@@ -1,18 +1,9 @@
 {config, ...}: let
   flakeConfig = config;
 in {
-  flake.modules.nixos.cli = {pkgs, ...}: let
-    televisionWrapped = pkgs.symlinkJoin {
-      name = "television-alias";
-      paths = [pkgs.television];
-      postBuild = ''
-        ln -sf $out/bin/tv $out/bin/television
-      '';
-    };
-  in {
+  flake.modules.nixos.cli = {pkgs, ...}: {
     home-manager.sharedModules = [flakeConfig.flake.modules.homeManager.cli];
     environment.systemPackages = with pkgs; [
-      televisionWrapped
       carapace
       psmisc
       delta

@@ -50,9 +50,43 @@
           side-by-side = false;
         };
         merge.conflictstyle = "zdiff3";
-        diff.colorMoved = "default";
+        diff = {
+          colorMoved = "default";
+          algorithm = "histogram";
+        };
+        push.autoSetupRemote = true;
+        fetch.prune = true;
+        rerere.enabled = true;
+        rebase = {
+          autoStash = true;
+          autoSquash = true;
+        };
+        commit.verbose = true;
+        branch.sort = "-committerdate";
+        tag.sort = "version:refname";
+        column.ui = "auto";
+        help.autocorrect = "prompt";
+        # Syntax-aware diff on demand: git dft.
+        alias.dft = "-c diff.external=difft diff";
       };
     };
-    home.packages = [pkgs.gh pkgs.lazygit pkgs.delta];
+    home.packages = [pkgs.gh pkgs.lazygit pkgs.delta pkgs.difftastic];
+
+    # Noctalia's lazygit template owns config.yml; these settings sit on top.
+    home.sessionVariables.LG_CONFIG_FILE = "${config.xdg.configHome}/lazygit/config.yml,${config.xdg.configHome}/lazygit/nix.yml";
+    xdg.configFile."lazygit/nix.yml".source = (pkgs.formats.yaml {}).generate "lazygit-nix.yml" {
+      gui.nerdFontsVersion = "3";
+      os.editPreset = "helix";
+      git.diffRenderers = [
+        {
+          # Click a line number to open it in Helix.
+          command = "delta --{{colorScheme}} --paging=never --line-numbers --hyperlinks --hyperlinks-file-link-format=\"lazygit-edit://{path}:{line}\"";
+        }
+        {
+          type = "extDiff";
+          command = "difft --color=always";
+        }
+      ];
+    };
   };
 }

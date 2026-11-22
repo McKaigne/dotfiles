@@ -1,12 +1,18 @@
 {
   flake.modules.nixos."helium" = {config, ...}: {
-    # Allow Noctalia's community browser template to update this policy file.
-    # Keep it outside the store and leave the remaining browser policies protected.
-    systemd.tmpfiles.settings."10-noctalia-chromium"."/etc/chromium/policies/managed/noctalia-color.json".f = {
-      user = config.workstation.username;
-      group = config.users.users.${config.workstation.username}.group;
-      mode = "0644";
-      argument = "{}";
+    # Noctalia's theme color for Helium (see home.nix). The file is the user's
+    # so the theme hook can rewrite it in place; the directory and the other
+    # browser policies stay root's. The old community template's file is
+    # removed: Noctalia could never write it (it renames a temp file into the
+    # root-owned directory).
+    systemd.tmpfiles.settings."10-noctalia-chromium" = {
+      "/etc/chromium/policies/managed/helium-theme.json".f = {
+        user = config.workstation.username;
+        group = config.users.users.${config.workstation.username}.group;
+        mode = "0644";
+        argument = "{}";
+      };
+      "/etc/chromium/policies/managed/noctalia-color.json".r = {};
     };
 
     programs.chromium = {

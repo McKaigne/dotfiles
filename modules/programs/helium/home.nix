@@ -20,11 +20,36 @@
     heliumProfileDir = "${config.xdg.configHome}/net.imput.helium/Default";
     heliumPreferences = "${heliumProfileDir}/Preferences";
     heliumSingletonLock = "${config.xdg.configHome}/net.imput.helium/SingletonLock";
+
+    # Noctalia renders the color into the cache; this copies it into the
+    # policy file in place (the directory is root's) and has a running Helium
+    # reload its policies, so the toolbar follows the wallpaper live.
+    themePolicy = "/etc/chromium/policies/managed/helium-theme.json";
+    applyTheme = pkgs.writeShellScript "helium-apply-theme" ''
+      rendered="''${XDG_CACHE_HOME:-$HOME/.cache}/noctalia/helium-theme.json"
+      policy=${lib.escapeShellArg themePolicy}
+      [ -f "$rendered" ] && [ -w "$policy" ] || exit 0
+      ${pkgs.diffutils}/bin/cmp -s "$rendered" "$policy" || cat "$rendered" > "$policy"
+      if [ -L ${lib.escapeShellArg heliumSingletonLock} ]; then
+        ${pkgs.coreutils}/bin/timeout --kill-after=1s 5s ${lib.getExe helium} \
+          --refresh-platform-policy --no-startup-window >/dev/null 2>&1 || true
+      fi
+    '';
   in {
     home = {
       packages = [helium];
       # LibreWolf is the default browser; Helium stays available.
       sessionVariables.BROWSER = lib.mkDefault (lib.getExe helium);
+    };
+
+    xdg.configFile."noctalia/helium.toml".source = (pkgs.formats.toml {}).generate "helium-template.toml" {
+      theme.templates.user.helium = {
+        input_path = pkgs.writeText "helium-theme.json.in" ''
+          { "BrowserThemeColor": "{{colors.surface.default.hex}}" }
+        '';
+        output_path = "$XDG_CACHE_HOME/noctalia/helium-theme.json";
+        post_hook = "${applyTheme}";
+      };
     };
 
     xdg.configFile."net.imput.helium/WidevineCdm/latest-component-updated-widevine-cdm".text =

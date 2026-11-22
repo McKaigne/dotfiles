@@ -22,7 +22,9 @@
   # Gap between windows; the floating bar is inset by the same amount.
   gap = 8;
 
-  # Unfocused windows are darkened by this fraction (colors only, never more
-  # see-through); focus has no border or title bar.
-  unfocusedDim = 0.12;
+  # Unfocused windows are darkened by this fraction and drawn at this opacity,
+  # so the focused window stands out by the others receding; focus has no
+  # border or title bar.
+  unfocusedDim = 0.2;
+  unfocusedOpacity = 0.85;
 }

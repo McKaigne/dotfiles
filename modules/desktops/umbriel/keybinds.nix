@@ -73,6 +73,7 @@
         "Mod+B" = spawn browser; # Browser (LibreWolf)
         "Mod+Shift+B" = spawn "helium"; # alternate Browser (Helium)
         "Mod+C" = inFoot "hx"; # Code (Helix)
+        "Mod+Shift+C" = spawn "zproj"; # Code project: pick a directory, resume its zellij session
         "Mod+E" = spawn pcmanfm; # Explorer
         "Mod+G" = inFoot "lazygit"; # Git
         "Mod+M" = inFoot "btop"; # Monitor

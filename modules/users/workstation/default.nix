@@ -14,7 +14,6 @@ in {
       helix
       fuzzel
       microfetch
-      nitch
       icons
       bitwarden
       btop

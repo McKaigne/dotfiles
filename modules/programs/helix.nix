@@ -22,8 +22,21 @@
         shfmt
         dockerfile-language-server
         docker-compose-language-service
+        # C/C++ debugging (lldb-dap), CMake, JSON/CSS/HTML, just, Python, GLSL.
+        llvmPackages_23.lldb
+        neocmakelsp
+        vscode-langservers-extracted
+        just-lsp
+        ruff
+        ty
+        glsl_analyzer
       ];
       languages = {
+        # Godot's editor serves GDScript completion while it is open.
+        language-server.godot = {
+          command = lib.getExe' pkgs.netcat "nc";
+          args = ["127.0.0.1" "6005"];
+        };
         language-server.nixd = {
           command = "nixd";
           config.nixd = {
@@ -43,6 +56,16 @@
           {
             name = "julia";
             auto-format = true;
+          }
+          {
+            name = "gdscript";
+            language-servers = ["godot"];
+          }
+          {
+            # Subject at 50 columns, body at 72.
+            name = "git-commit";
+            rulers = [51 73];
+            text-width = 72;
           }
         ];
       };

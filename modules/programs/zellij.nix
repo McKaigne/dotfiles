@@ -35,42 +35,11 @@
       '';
     };
 
-    zsessionScript = pkgs.writeShellScriptBin "zsession" ''
-      set -euo pipefail
-      active_sessions=$(${zellijWrapped}/bin/zellij list-sessions -n 2>/dev/null || true)
-      recent_dirs=$(${pkgs.zoxide}/bin/zoxide query -l 2>/dev/null || true)
-      selection=$( (
-        if [ -n "$active_sessions" ]; then
-          echo "$active_sessions" | while read -r s; do [ -n "$s" ] && echo "[session] $s"; done
-        fi
-        if [ -n "$recent_dirs" ]; then
-          echo "$recent_dirs" | head -n 30 | while read -r d; do [ -n "$d" ] && echo "[project] $d"; done
-        fi
-        echo "[new] Start empty session"
-      ) | ${pkgs.fzf}/bin/fzf --prompt="Zellij ➜ " --header="Attach active session or launch project directory")
-      [ -z "$selection" ] && exit 0
-      tag=$(echo "$selection" | ${pkgs.coreutils}/bin/cut -d " " -f 1)
-      val=$(echo "$selection" | ${pkgs.coreutils}/bin/cut -d " " -f 2-)
-      if [ -n "''${ZELLIJ:-}" ]; then
-        if [ "$tag" = "[session]" ]; then
-          exec ${zellijWrapped}/bin/zellij action switch-session "$val"
-        elif [ "$tag" = "[project]" ]; then
-          name=$(${pkgs.coreutils}/bin/basename "$val" | ${pkgs.coreutils}/bin/tr "." "_")
-          exec ${zellijWrapped}/bin/zellij action switch-session "$name" --cwd "$val"
-        else
-          exec ${zellijWrapped}/bin/zellij action switch-session "scratch-$(${pkgs.coreutils}/bin/date +%H%M%S)"
-        fi
-      else
-        if [ "$tag" = "[session]" ]; then
-          exec ${zellijWrapped}/bin/zellij attach "$val"
-        elif [ "$tag" = "[project]" ]; then
-          name=$(${pkgs.coreutils}/bin/basename "$val" | ${pkgs.coreutils}/bin/tr "." "_")
-          exec ${zellijWrapped}/bin/zellij attach -c "$name" options --default-cwd "$val"
-        else
-          exec ${zellijWrapped}/bin/zellij
-        fi
-      fi
-    '';
+    zproj = pkgs.writeShellApplication {
+      name = "zproj";
+      runtimeInputs = [zellijWrapped pkgs.zoxide pkgs.fzf pkgs.fuzzel pkgs.foot pkgs.jq pkgs.libnotify pkgs.util-linux];
+      text = builtins.readFile ./zproj.sh;
+    };
 
     zellijThemeTemplate = pkgs.writeText "zellij-noctalia.kdl.in" ''
       themes {
@@ -171,50 +140,74 @@
       }
     '';
 
-    zellijLayoutTemplate = pkgs.writeText "zellij-default.kdl.in" ''
-      layout {
+    # Status bar and swap layouts, shared by every layout.
+    zellijTabTemplate = ''
         default_tab_template {
           children
-          pane size=1 borderless=true {
-            plugin location="file://${zjstatusWasm}" {
-              pane_frame_style "full"
-              hide_frame_for_single_pane "false"
+          pane size=1 split_direction="vertical" {
+            // Mode strip: its own zjstatus, so only this block changes colour.
+            // Locked (idle) primary, Normal tertiary, layout modes secondary,
+            // reading and typing modes on_surface, Session error.
+            pane size=2 borderless=true {
+              plugin location="file://${zjstatusWasm}" {
+                format_left "{mode}"
+                mode_locked       "#[bg={{colors.primary.default.hex}}] #[default] "
+                mode_normal       "#[bg={{colors.tertiary.default.hex}}] #[default] "
+                mode_pane         "#[bg={{colors.secondary.default.hex}}] #[default] "
+                mode_tab          "#[bg={{colors.secondary.default.hex}}] #[default] "
+                mode_resize       "#[bg={{colors.secondary.default.hex}}] #[default] "
+                mode_move         "#[bg={{colors.secondary.default.hex}}] #[default] "
+                mode_scroll       "#[bg={{colors.on_surface.default.hex}}] #[default] "
+                mode_enter_search "#[bg={{colors.on_surface.default.hex}}] #[default] "
+                mode_search       "#[bg={{colors.on_surface.default.hex}}] #[default] "
+                mode_rename_tab   "#[bg={{colors.on_surface.default.hex}}] #[default] "
+                mode_rename_pane  "#[bg={{colors.on_surface.default.hex}}] #[default] "
+                mode_prompt       "#[bg={{colors.on_surface.default.hex}}] #[default] "
+                mode_session      "#[bg={{colors.error.default.hex}}] #[default] "
+                mode_tmux         "#[bg={{colors.primary.default.hex}}] #[default] "
+              }
+            }
+            pane borderless=true {
+              plugin location="file://${zjstatusWasm}" {
+                pane_frame_style "full"
+                hide_frame_for_single_pane "false"
 
-              format_left   "#[bg={{colors.primary.default.hex}}] #[default] {session}  {tabs}"
-              format_center ""
-              format_right  "{mode} "
-              format_space  ""
+                format_left   "{session}  {tabs}"
+                format_center ""
+                format_right  "{mode} "
+                format_space  ""
 
-              border_enabled "false"
-              border_char "─"
-              border_format "#[fg={{colors.outline_variant.default.hex}}]{char}"
-              border_position "top"
+                border_enabled "false"
+                border_char "─"
+                border_format "#[fg={{colors.outline_variant.default.hex}}]{char}"
+                border_position "top"
 
-              mode_locked       "#[fg={{colors.primary.default.hex}}]^Space #[fg={{colors.on_surface_variant.default.hex}},italic]󰿆 zellij"
-              mode_normal       "#[fg={{colors.primary.default.hex}}]h/j/k/l #[fg={{colors.on_surface_variant.default.hex}},italic]󰈈 focus #[fg={{colors.primary.default.hex}}]⇧←↓↑→ #[fg={{colors.on_surface_variant.default.hex}},italic]󰮴 move #[fg={{colors.primary.default.hex}}]^←↓↑→ #[fg={{colors.on_surface_variant.default.hex}},italic]󰩨 resize #[fg={{colors.primary.default.hex}}]+/- #[fg={{colors.on_surface_variant.default.hex}},italic]󰩬 scale #[fg={{colors.primary.default.hex}}]s/v #[fg={{colors.on_surface_variant.default.hex}},italic]󰕮 split #[fg={{colors.primary.default.hex}}]n #[fg={{colors.on_surface_variant.default.hex}},italic]󰝜 new #[fg={{colors.primary.default.hex}}]x #[fg={{colors.on_surface_variant.default.hex}},italic]󰧻 kill #[fg={{colors.primary.default.hex}}]f #[fg={{colors.on_surface_variant.default.hex}},italic]󰊓 full #[fg={{colors.primary.default.hex}}]w #[fg={{colors.on_surface_variant.default.hex}},italic]󰉈 float #[fg={{colors.primary.default.hex}}]e/Space #[fg={{colors.on_surface_variant.default.hex}},italic]󱂬 embed #[fg={{colors.primary.default.hex}}]0-9 #[fg={{colors.on_surface_variant.default.hex}},italic] jump #[fg={{colors.primary.default.hex}}][/] PgUp/Dn #[fg={{colors.on_surface_variant.default.hex}},italic]󰮸 tab #[fg={{colors.primary.default.hex}}]⇧PgUp/Dn #[fg={{colors.on_surface_variant.default.hex}},italic]󰝜 send #[fg={{colors.primary.default.hex}}]Tab #[fg={{colors.on_surface_variant.default.hex}},italic]󰋚 last #[fg={{colors.primary.default.hex}}]/ #[fg={{colors.on_surface_variant.default.hex}},italic]󰍉 search #[fg={{colors.primary.default.hex}}]u/d #[fg={{colors.on_surface_variant.default.hex}},italic]󰮾 scroll #[fg={{colors.primary.default.hex}}]p #[fg={{colors.on_surface_variant.default.hex}},italic]󱥇 pane #[fg={{colors.primary.default.hex}}]t #[fg={{colors.on_surface_variant.default.hex}},italic]󰓩 tab #[fg={{colors.primary.default.hex}}]r #[fg={{colors.on_surface_variant.default.hex}},italic]󰩨 resize #[fg={{colors.primary.default.hex}}]m #[fg={{colors.on_surface_variant.default.hex}},italic]󰮴 move #[fg={{colors.primary.default.hex}}]o #[fg={{colors.on_surface_variant.default.hex}},italic]󱂬 session #[fg={{colors.primary.default.hex}}]D #[fg={{colors.on_surface_variant.default.hex}},italic]󰈆 detach #[fg={{colors.primary.default.hex}}]q #[fg={{colors.on_surface_variant.default.hex}},italic]󰈆 quit #[fg={{colors.primary.default.hex}}]Esc #[fg={{colors.on_surface_variant.default.hex}},italic]󰌾 lock"
-              mode_move         "#[fg={{colors.primary.default.hex}}]h/j/k/l #[fg={{colors.on_surface_variant.default.hex}},italic]󰮴 move #[fg={{colors.primary.default.hex}}]n/Tab p #[fg={{colors.on_surface_variant.default.hex}},italic]󱎄 reorder #[fg={{colors.primary.default.hex}}]m #[fg={{colors.on_surface_variant.default.hex}},italic]󰌑 back #[fg={{colors.primary.default.hex}}]Esc #[fg={{colors.on_surface_variant.default.hex}},italic]󰌾 lock"
-              mode_pane         "#[fg={{colors.primary.default.hex}}]h/j/k/l #[fg={{colors.on_surface_variant.default.hex}},italic]󰈈 focus #[fg={{colors.primary.default.hex}}]s/v/r #[fg={{colors.on_surface_variant.default.hex}},italic]󰕮 split #[fg={{colors.primary.default.hex}}]n #[fg={{colors.on_surface_variant.default.hex}},italic]󰝜 new #[fg={{colors.primary.default.hex}}]d #[fg={{colors.on_surface_variant.default.hex}},italic]󰜩 stack #[fg={{colors.primary.default.hex}}]x #[fg={{colors.on_surface_variant.default.hex}},italic]󰧻 kill #[fg={{colors.primary.default.hex}}]f #[fg={{colors.on_surface_variant.default.hex}},italic]󰊓 full #[fg={{colors.primary.default.hex}}]w #[fg={{colors.on_surface_variant.default.hex}},italic]󰉈 float #[fg={{colors.primary.default.hex}}]e #[fg={{colors.on_surface_variant.default.hex}},italic]󱂬 embed #[fg={{colors.primary.default.hex}}]c #[fg={{colors.on_surface_variant.default.hex}},italic]󰘙 rename #[fg={{colors.primary.default.hex}}]i #[fg={{colors.on_surface_variant.default.hex}},italic]󰐃 pin #[fg={{colors.primary.default.hex}}]Tab #[fg={{colors.on_surface_variant.default.hex}},italic]󰓡 next #[fg={{colors.primary.default.hex}}]p #[fg={{colors.on_surface_variant.default.hex}},italic]󰌑 back #[fg={{colors.primary.default.hex}}]Esc #[fg={{colors.on_surface_variant.default.hex}},italic]󰌾 lock"
-              mode_tab          "#[fg={{colors.primary.default.hex}}]h/k l/j #[fg={{colors.on_surface_variant.default.hex}},italic]󰮸 prev/next #[fg={{colors.primary.default.hex}}]0-9 #[fg={{colors.on_surface_variant.default.hex}},italic] jump #[fg={{colors.primary.default.hex}}]n #[fg={{colors.on_surface_variant.default.hex}},italic]󰝜 new #[fg={{colors.primary.default.hex}}]x #[fg={{colors.on_surface_variant.default.hex}},italic]󰧻 kill #[fg={{colors.primary.default.hex}}]r #[fg={{colors.on_surface_variant.default.hex}},italic]󰂮 rename #[fg={{colors.primary.default.hex}}]s #[fg={{colors.on_surface_variant.default.hex}},italic]󰓦 sync #[fg={{colors.primary.default.hex}}]b #[fg={{colors.on_surface_variant.default.hex}},italic]󰝜 break #[fg={{colors.primary.default.hex}}][/] #[fg={{colors.on_surface_variant.default.hex}},italic]󰝜 break ←/→ #[fg={{colors.primary.default.hex}}]Tab #[fg={{colors.on_surface_variant.default.hex}},italic]󰋚 last #[fg={{colors.primary.default.hex}}]t #[fg={{colors.on_surface_variant.default.hex}},italic]󰌑 back #[fg={{colors.primary.default.hex}}]Esc #[fg={{colors.on_surface_variant.default.hex}},italic]󰌾 lock"
-              mode_resize       "#[fg={{colors.primary.default.hex}}]h/j/k/l #[fg={{colors.on_surface_variant.default.hex}},italic]󰩨 grow #[fg={{colors.primary.default.hex}}]H/J/K/L #[fg={{colors.on_surface_variant.default.hex}},italic]󰁄 shrink #[fg={{colors.primary.default.hex}}]+/- #[fg={{colors.on_surface_variant.default.hex}},italic]󰩬 scale #[fg={{colors.primary.default.hex}}]r #[fg={{colors.on_surface_variant.default.hex}},italic]󰌑 back #[fg={{colors.primary.default.hex}}]Esc #[fg={{colors.on_surface_variant.default.hex}},italic]󰌾 lock"
-              mode_scroll       "#[fg={{colors.primary.default.hex}}]j/k #[fg={{colors.on_surface_variant.default.hex}},italic]󰮾 scroll #[fg={{colors.primary.default.hex}}]d/u #[fg={{colors.on_surface_variant.default.hex}},italic] half-page #[fg={{colors.primary.default.hex}}]PgDn/Up #[fg={{colors.on_surface_variant.default.hex}},italic]󰮱 page #[fg={{colors.primary.default.hex}}]g/G #[fg={{colors.on_surface_variant.default.hex}},italic]󰹹 top/bottom #[fg={{colors.primary.default.hex}}]s or / #[fg={{colors.on_surface_variant.default.hex}},italic]󰍉 search #[fg={{colors.primary.default.hex}}]e #[fg={{colors.on_surface_variant.default.hex}},italic] edit #[fg={{colors.primary.default.hex}}]^c #[fg={{colors.on_surface_variant.default.hex}},italic]󰹹 bottom + lock #[fg={{colors.primary.default.hex}}]Esc #[fg={{colors.on_surface_variant.default.hex}},italic]󰌾 lock"
-              mode_search       "#[fg={{colors.primary.default.hex}}]n/N #[fg={{colors.on_surface_variant.default.hex}},italic]󰍉 next/prev #[fg={{colors.primary.default.hex}}]j/k #[fg={{colors.on_surface_variant.default.hex}},italic]󰮾 scroll #[fg={{colors.primary.default.hex}}]d/u #[fg={{colors.on_surface_variant.default.hex}},italic] half-page #[fg={{colors.primary.default.hex}}]PgDn/Up #[fg={{colors.on_surface_variant.default.hex}},italic]󰮱 page #[fg={{colors.primary.default.hex}}]c #[fg={{colors.on_surface_variant.default.hex}},italic]󰬲 case #[fg={{colors.primary.default.hex}}]w #[fg={{colors.on_surface_variant.default.hex}},italic]󰑐 wrap #[fg={{colors.primary.default.hex}}]o #[fg={{colors.on_surface_variant.default.hex}},italic]󰬵 word #[fg={{colors.primary.default.hex}}]^c #[fg={{colors.on_surface_variant.default.hex}},italic]󰹹 bottom + lock #[fg={{colors.primary.default.hex}}]Esc #[fg={{colors.on_surface_variant.default.hex}},italic]󰌾 lock"
-              mode_enter_search "#[fg={{colors.primary.default.hex}}]Enter #[fg={{colors.on_surface_variant.default.hex}},italic]󰍉 search #[fg={{colors.primary.default.hex}}]Esc/^c #[fg={{colors.on_surface_variant.default.hex}},italic]󰌑 back"
-              mode_rename_tab   "#[fg={{colors.primary.default.hex}}]Enter #[fg={{colors.on_surface_variant.default.hex}},italic] submit #[fg={{colors.primary.default.hex}}]Esc/^c #[fg={{colors.on_surface_variant.default.hex}},italic]󰕌 undo"
-              mode_rename_pane  "#[fg={{colors.primary.default.hex}}]Enter #[fg={{colors.on_surface_variant.default.hex}},italic] submit #[fg={{colors.primary.default.hex}}]Esc/^c #[fg={{colors.on_surface_variant.default.hex}},italic]󰕌 undo"
-              mode_session      "#[fg={{colors.primary.default.hex}}]d #[fg={{colors.on_surface_variant.default.hex}},italic]󰈆 detach #[fg={{colors.primary.default.hex}}]w #[fg={{colors.on_surface_variant.default.hex}},italic]󰀻 manager #[fg={{colors.primary.default.hex}}]p #[fg={{colors.on_surface_variant.default.hex}},italic]󰚝 project #[fg={{colors.primary.default.hex}}]q #[fg={{colors.on_surface_variant.default.hex}},italic]󰧻 kill #[fg={{colors.primary.default.hex}}]o #[fg={{colors.on_surface_variant.default.hex}},italic]󰌑 back #[fg={{colors.primary.default.hex}}]Esc #[fg={{colors.on_surface_variant.default.hex}},italic]󰌾 lock"
-              mode_tmux         ""
+                mode_locked       "#[fg={{colors.primary.default.hex}}]^Space #[fg={{colors.on_surface_variant.default.hex}},italic]󰿆 zellij"
+                mode_normal       "#[fg={{colors.primary.default.hex}}]h/j/k/l #[fg={{colors.on_surface_variant.default.hex}},italic]󰈈 focus #[fg={{colors.primary.default.hex}}]⇧←↓↑→ #[fg={{colors.on_surface_variant.default.hex}},italic]󰮴 move #[fg={{colors.primary.default.hex}}]^←↓↑→ #[fg={{colors.on_surface_variant.default.hex}},italic]󰩨 resize #[fg={{colors.primary.default.hex}}]+/- #[fg={{colors.on_surface_variant.default.hex}},italic]󰩬 scale #[fg={{colors.primary.default.hex}}]s/v #[fg={{colors.on_surface_variant.default.hex}},italic]󰕮 split #[fg={{colors.primary.default.hex}}]n #[fg={{colors.on_surface_variant.default.hex}},italic]󰝜 new #[fg={{colors.primary.default.hex}}]x #[fg={{colors.on_surface_variant.default.hex}},italic]󰧻 kill #[fg={{colors.primary.default.hex}}]f #[fg={{colors.on_surface_variant.default.hex}},italic]󰊓 full #[fg={{colors.primary.default.hex}}]w #[fg={{colors.on_surface_variant.default.hex}},italic]󰉈 float #[fg={{colors.primary.default.hex}}]e/Space #[fg={{colors.on_surface_variant.default.hex}},italic]󱂬 embed #[fg={{colors.primary.default.hex}}]0-9 #[fg={{colors.on_surface_variant.default.hex}},italic] jump #[fg={{colors.primary.default.hex}}][/] PgUp/Dn #[fg={{colors.on_surface_variant.default.hex}},italic]󰮸 tab #[fg={{colors.primary.default.hex}}]⇧PgUp/Dn #[fg={{colors.on_surface_variant.default.hex}},italic]󰝜 send #[fg={{colors.primary.default.hex}}]Tab #[fg={{colors.on_surface_variant.default.hex}},italic]󰋚 last #[fg={{colors.primary.default.hex}}]/ #[fg={{colors.on_surface_variant.default.hex}},italic]󰍉 search #[fg={{colors.primary.default.hex}}]u/d #[fg={{colors.on_surface_variant.default.hex}},italic]󰮾 scroll #[fg={{colors.primary.default.hex}}]p #[fg={{colors.on_surface_variant.default.hex}},italic]󱥇 pane #[fg={{colors.primary.default.hex}}]t #[fg={{colors.on_surface_variant.default.hex}},italic]󰓩 tab #[fg={{colors.primary.default.hex}}]r #[fg={{colors.on_surface_variant.default.hex}},italic]󰩨 resize #[fg={{colors.primary.default.hex}}]m #[fg={{colors.on_surface_variant.default.hex}},italic]󰮴 move #[fg={{colors.primary.default.hex}}]o #[fg={{colors.on_surface_variant.default.hex}},italic]󱂬 session #[fg={{colors.primary.default.hex}}]D #[fg={{colors.on_surface_variant.default.hex}},italic]󰈆 detach #[fg={{colors.primary.default.hex}}]q #[fg={{colors.on_surface_variant.default.hex}},italic]󰈆 quit #[fg={{colors.primary.default.hex}}]Esc #[fg={{colors.on_surface_variant.default.hex}},italic]󰌾 lock"
+                mode_move         "#[fg={{colors.primary.default.hex}}]h/j/k/l #[fg={{colors.on_surface_variant.default.hex}},italic]󰮴 move #[fg={{colors.primary.default.hex}}]n/Tab p #[fg={{colors.on_surface_variant.default.hex}},italic]󱎄 reorder #[fg={{colors.primary.default.hex}}]m #[fg={{colors.on_surface_variant.default.hex}},italic]󰌑 back #[fg={{colors.primary.default.hex}}]Esc #[fg={{colors.on_surface_variant.default.hex}},italic]󰌾 lock"
+                mode_pane         "#[fg={{colors.primary.default.hex}}]h/j/k/l #[fg={{colors.on_surface_variant.default.hex}},italic]󰈈 focus #[fg={{colors.primary.default.hex}}]s/v/r #[fg={{colors.on_surface_variant.default.hex}},italic]󰕮 split #[fg={{colors.primary.default.hex}}]n #[fg={{colors.on_surface_variant.default.hex}},italic]󰝜 new #[fg={{colors.primary.default.hex}}]d #[fg={{colors.on_surface_variant.default.hex}},italic]󰜩 stack #[fg={{colors.primary.default.hex}}]x #[fg={{colors.on_surface_variant.default.hex}},italic]󰧻 kill #[fg={{colors.primary.default.hex}}]f #[fg={{colors.on_surface_variant.default.hex}},italic]󰊓 full #[fg={{colors.primary.default.hex}}]w #[fg={{colors.on_surface_variant.default.hex}},italic]󰉈 float #[fg={{colors.primary.default.hex}}]e #[fg={{colors.on_surface_variant.default.hex}},italic]󱂬 embed #[fg={{colors.primary.default.hex}}]c #[fg={{colors.on_surface_variant.default.hex}},italic]󰘙 rename #[fg={{colors.primary.default.hex}}]i #[fg={{colors.on_surface_variant.default.hex}},italic]󰐃 pin #[fg={{colors.primary.default.hex}}]Tab #[fg={{colors.on_surface_variant.default.hex}},italic]󰓡 next #[fg={{colors.primary.default.hex}}]p #[fg={{colors.on_surface_variant.default.hex}},italic]󰌑 back #[fg={{colors.primary.default.hex}}]Esc #[fg={{colors.on_surface_variant.default.hex}},italic]󰌾 lock"
+                mode_tab          "#[fg={{colors.primary.default.hex}}]h/k l/j #[fg={{colors.on_surface_variant.default.hex}},italic]󰮸 prev/next #[fg={{colors.primary.default.hex}}]0-9 #[fg={{colors.on_surface_variant.default.hex}},italic] jump #[fg={{colors.primary.default.hex}}]n #[fg={{colors.on_surface_variant.default.hex}},italic]󰝜 new #[fg={{colors.primary.default.hex}}]x #[fg={{colors.on_surface_variant.default.hex}},italic]󰧻 kill #[fg={{colors.primary.default.hex}}]r #[fg={{colors.on_surface_variant.default.hex}},italic]󰂮 rename #[fg={{colors.primary.default.hex}}]s #[fg={{colors.on_surface_variant.default.hex}},italic]󰓦 sync #[fg={{colors.primary.default.hex}}]b #[fg={{colors.on_surface_variant.default.hex}},italic]󰝜 break #[fg={{colors.primary.default.hex}}][/] #[fg={{colors.on_surface_variant.default.hex}},italic]󰝜 break ←/→ #[fg={{colors.primary.default.hex}}]Tab #[fg={{colors.on_surface_variant.default.hex}},italic]󰋚 last #[fg={{colors.primary.default.hex}}]t #[fg={{colors.on_surface_variant.default.hex}},italic]󰌑 back #[fg={{colors.primary.default.hex}}]Esc #[fg={{colors.on_surface_variant.default.hex}},italic]󰌾 lock"
+                mode_resize       "#[fg={{colors.primary.default.hex}}]h/j/k/l #[fg={{colors.on_surface_variant.default.hex}},italic]󰩨 grow #[fg={{colors.primary.default.hex}}]H/J/K/L #[fg={{colors.on_surface_variant.default.hex}},italic]󰁄 shrink #[fg={{colors.primary.default.hex}}]+/- #[fg={{colors.on_surface_variant.default.hex}},italic]󰩬 scale #[fg={{colors.primary.default.hex}}]r #[fg={{colors.on_surface_variant.default.hex}},italic]󰌑 back #[fg={{colors.primary.default.hex}}]Esc #[fg={{colors.on_surface_variant.default.hex}},italic]󰌾 lock"
+                mode_scroll       "#[fg={{colors.primary.default.hex}}]j/k #[fg={{colors.on_surface_variant.default.hex}},italic]󰮾 scroll #[fg={{colors.primary.default.hex}}]d/u #[fg={{colors.on_surface_variant.default.hex}},italic] half-page #[fg={{colors.primary.default.hex}}]PgDn/Up #[fg={{colors.on_surface_variant.default.hex}},italic]󰮱 page #[fg={{colors.primary.default.hex}}]g/G #[fg={{colors.on_surface_variant.default.hex}},italic]󰹹 top/bottom #[fg={{colors.primary.default.hex}}]s or / #[fg={{colors.on_surface_variant.default.hex}},italic]󰍉 search #[fg={{colors.primary.default.hex}}]e #[fg={{colors.on_surface_variant.default.hex}},italic] edit #[fg={{colors.primary.default.hex}}]^c #[fg={{colors.on_surface_variant.default.hex}},italic]󰹹 bottom + lock #[fg={{colors.primary.default.hex}}]Esc #[fg={{colors.on_surface_variant.default.hex}},italic]󰌾 lock"
+                mode_search       "#[fg={{colors.primary.default.hex}}]n/N #[fg={{colors.on_surface_variant.default.hex}},italic]󰍉 next/prev #[fg={{colors.primary.default.hex}}]j/k #[fg={{colors.on_surface_variant.default.hex}},italic]󰮾 scroll #[fg={{colors.primary.default.hex}}]d/u #[fg={{colors.on_surface_variant.default.hex}},italic] half-page #[fg={{colors.primary.default.hex}}]PgDn/Up #[fg={{colors.on_surface_variant.default.hex}},italic]󰮱 page #[fg={{colors.primary.default.hex}}]c #[fg={{colors.on_surface_variant.default.hex}},italic]󰬲 case #[fg={{colors.primary.default.hex}}]w #[fg={{colors.on_surface_variant.default.hex}},italic]󰑐 wrap #[fg={{colors.primary.default.hex}}]o #[fg={{colors.on_surface_variant.default.hex}},italic]󰬵 word #[fg={{colors.primary.default.hex}}]^c #[fg={{colors.on_surface_variant.default.hex}},italic]󰹹 bottom + lock #[fg={{colors.primary.default.hex}}]Esc #[fg={{colors.on_surface_variant.default.hex}},italic]󰌾 lock"
+                mode_enter_search "#[fg={{colors.primary.default.hex}}]Enter #[fg={{colors.on_surface_variant.default.hex}},italic]󰍉 search #[fg={{colors.primary.default.hex}}]Esc/^c #[fg={{colors.on_surface_variant.default.hex}},italic]󰌑 back"
+                mode_rename_tab   "#[fg={{colors.primary.default.hex}}]Enter #[fg={{colors.on_surface_variant.default.hex}},italic] submit #[fg={{colors.primary.default.hex}}]Esc/^c #[fg={{colors.on_surface_variant.default.hex}},italic]󰕌 undo"
+                mode_rename_pane  "#[fg={{colors.primary.default.hex}}]Enter #[fg={{colors.on_surface_variant.default.hex}},italic] submit #[fg={{colors.primary.default.hex}}]Esc/^c #[fg={{colors.on_surface_variant.default.hex}},italic]󰕌 undo"
+                mode_session      "#[fg={{colors.primary.default.hex}}]d #[fg={{colors.on_surface_variant.default.hex}},italic]󰈆 detach #[fg={{colors.primary.default.hex}}]w #[fg={{colors.on_surface_variant.default.hex}},italic]󰀻 manager #[fg={{colors.primary.default.hex}}]p #[fg={{colors.on_surface_variant.default.hex}},italic]󰚝 project #[fg={{colors.primary.default.hex}}]q #[fg={{colors.on_surface_variant.default.hex}},italic]󰧻 kill #[fg={{colors.primary.default.hex}}]o #[fg={{colors.on_surface_variant.default.hex}},italic]󰌑 back #[fg={{colors.primary.default.hex}}]Esc #[fg={{colors.on_surface_variant.default.hex}},italic]󰌾 lock"
+                mode_tmux         ""
 
-              tab_sync_indicator       "󰓦"
-              tab_fullscreen_indicator "󰊓"
-              tab_floating_indicator   "󰉈"
-              tab_separator          " "
+                tab_sync_indicator       "󰓦"
+                tab_fullscreen_indicator "󰊓"
+                tab_floating_indicator   "󰉈"
+                tab_separator          " "
 
-              tab_normal              "#[fg={{colors.on_surface.default.hex}}]{name}  "
-              tab_normal_fullscreen   "#[fg={{colors.on_surface.default.hex}}]{fullscreen_indicator}{name}  "
-              tab_normal_sync         "#[fg={{colors.tertiary.default.hex}},bold,italic]{sync_indicator}#[fg={{colors.on_surface.default.hex}}]{name}  "
-              tab_active              "#[fg={{colors.primary.default.hex}},bold,italic]{name}  "
-              tab_active_fullscreen   "#[fg={{colors.primary.default.hex}},bold,italic]{fullscreen_indicator}{name}  "
-              tab_active_sync         "#[fg={{colors.tertiary.default.hex}},bold,italic]{sync_indicator}#[fg={{colors.primary.default.hex}},bold,italic]{name}  "
+                tab_normal              "#[fg={{colors.on_surface.default.hex}}]{name}  "
+                tab_normal_fullscreen   "#[fg={{colors.on_surface.default.hex}}]{fullscreen_indicator}{name}  "
+                tab_normal_sync         "#[fg={{colors.tertiary.default.hex}},bold,italic]{sync_indicator}#[fg={{colors.on_surface.default.hex}}]{name}  "
+                tab_active              "#[fg={{colors.primary.default.hex}},bold,italic]{name}  "
+                tab_active_fullscreen   "#[fg={{colors.primary.default.hex}},bold,italic]{fullscreen_indicator}{name}  "
+                tab_active_sync         "#[fg={{colors.tertiary.default.hex}},bold,italic]{sync_indicator}#[fg={{colors.primary.default.hex}},bold,italic]{name}  "
+              }
             }
           }
         }
@@ -242,6 +235,30 @@
             }
           }
         }
+    '';
+
+    zellijLayoutTemplate = pkgs.writeText "zellij-default.kdl.in" ''
+      layout {
+      ${zellijTabTemplate}
+      }
+    '';
+
+    # A project session: Helix on the project, a hidden floating shell
+    # (Ctrl+Space w), and lazygit in its own tab.
+    zellijCodeLayoutTemplate = pkgs.writeText "zellij-code.kdl.in" ''
+      layout {
+      ${zellijTabTemplate}
+        tab name="code" focus=true hide_floating_panes=true {
+          pane command="hx" focus=true {
+            args "."
+          }
+          floating_panes {
+            pane name="shell" x="10%" y="10%" width="80%" height="80%"
+          }
+        }
+        tab name="git" {
+          pane command="lazygit"
+        }
       }
     '';
 
@@ -263,7 +280,7 @@
       }
     '';
   in {
-    home.packages = [zsessionScript];
+    home.packages = [zproj];
 
     programs.zellij = {
       enable = true;
@@ -282,6 +299,10 @@
             zellij-layout = {
               input_path = zellijLayoutTemplate;
               output_path = "$XDG_CONFIG_HOME/zellij/layouts/default.kdl";
+            };
+            zellij-code-layout = {
+              input_path = zellijCodeLayoutTemplate;
+              output_path = "$XDG_CONFIG_HOME/zellij/layouts/code.kdl";
             };
           };
         };
@@ -504,7 +525,7 @@
                 SwitchToMode "Locked";
               }
               bind "p" {
-                Run "${zsessionScript}/bin/zsession" {
+                Run "${lib.getExe zproj}" {
                   floating true
                   close_on_exit true
                 };
