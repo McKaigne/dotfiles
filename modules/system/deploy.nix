@@ -30,14 +30,28 @@
       cur="$(hostname)"
       target="''${2:-$cur}"
 
+      reachable() {
+        ssh -o BatchMode=yes -o ConnectTimeout=5 "root@$1" true 2>/dev/null
+      }
+
       if [ "$target" = "$cur" ]; then
         echo "==> Deploying locally to $cur ($verb)..."
         git -C /etc/nixos add -A && nh os "$verb"
+        # A switch on hyde brings castor along when it's online.
+        if [ "$cur" = "hyde" ] && [ "$verb" = "switch" ]; then
+          # Syncthing keeps castor's /etc/nixos mirrored (system/syncthing.nix).
+          if reachable castor; then
+            echo "==> Deploying hyde's build to castor ($verb)..."
+            nh os "$verb" --hostname castor --target-host "root@castor"
+          else
+            echo "==> castor is offline; skipped. Run 'nr castor' once it's back."
+          fi
+        fi
         exit 0
       fi
 
       echo "==> Preflight: Checking reachability of root@$target via Tailscale..."
-      if ! ssh -o BatchMode=yes -o ConnectTimeout=5 "root@$target" true 2>/dev/null; then
+      if ! reachable "$target"; then
         echo "Error: Cannot connect to root@$target via deploy key." >&2
         echo "Ensure Tailscale is connected and ~/.ssh/deploy_ed25519 is loaded." >&2
         exit 1
