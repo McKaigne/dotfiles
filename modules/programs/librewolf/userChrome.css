@@ -36,11 +36,18 @@
 
 /* Glass: translucent toolbars and sidebar over Umbriel's blur. Only
    backgrounds change; text, icons and web pages stay opaque. */
+/* Since Firefox 150 the window backdrop is painted on body, so the whole
+   chain down to each tab's <browser> has to be cleared (bug 2048355). */
 :root,
+body,
 #main-window,
 #browser,
+#appcontent,
 #tabbrowser-tabbox,
-#tabbrowser-tabpanels {
+#tabbrowser-tabpanels,
+.browserContainer,
+.browserStack,
+browser {
   background: transparent !important;
 }
 

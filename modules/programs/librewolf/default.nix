@@ -104,6 +104,11 @@ in {
             Value = true;
             Status = "locked";
           };
+          # Gives the Wayland window an alpha channel for that translucency.
+          "widget.transparent-windows" = {
+            Value = true;
+            Status = "locked";
+          };
           "toolkit.legacyUserProfileCustomizations.stylesheets" = {
             Value = true;
             Status = "locked";

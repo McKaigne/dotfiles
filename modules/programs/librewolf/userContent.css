@@ -19,3 +19,14 @@
     font-family: "Maple Mono NF", monospace !important;
   }
 }
+
+/* Sidebery paints its own panel background; clear it so the glass sidebar shows. */
+@-moz-document regexp("moz-extension://[^/]+/sidebar/sidebar\\.html.*") {
+  :root,
+  body,
+  #root {
+    --frame-bg: transparent !important;
+    --toolbar-bg: transparent !important;
+    background: transparent !important;
+  }
+}
