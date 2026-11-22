@@ -3,59 +3,22 @@
 (add-to-list 'custom-theme-load-path
              (expand-file-name "themes" lysec-config-directory))
 (load-theme 'noctalia t)
-;; Mode line: state, a status dot, the file-type icon and buffer, position;
-;; the git branch and the checker's summary on the right, with nerd-icons.
-;; Every colour is a theme face (or the icon's own), so it follows Noctalia.
-(require 'nerd-icons)
-(defun lysec-mode-line-dot ()
-  "A dot: dim when saved, error-coloured when modified, warning when read-only."
-  (cond (buffer-read-only (propertize "●" 'face 'warning 'help-echo "Read-only"))
-        ((and buffer-file-name (buffer-modified-p))
-         (propertize "●" 'face 'error 'help-echo "Modified"))
-        (t (propertize "●" 'face 'shadow 'help-echo "Saved"))))
+;; Mode line: doom-modeline (nerd-icons, meow state, git, diagnostics, LSP).
+(use-package doom-modeline
+  :demand t
+  :custom
+  (doom-modeline-height 30)
+  (doom-modeline-bar-width 4)
+  (doom-modeline-icon t)
+  (doom-modeline-major-mode-icon t)
+  (doom-modeline-major-mode-color-icon t)
+  (doom-modeline-buffer-state-icon t)
+  (doom-modeline-modal t)
+  (doom-modeline-modal-icon t)
+  (doom-modeline-buffer-file-name-style 'relative-to-project)
+  (doom-modeline-buffer-encoding nil)
+  :config (doom-modeline-mode 1))
 
-(defun lysec-mode-line-icon ()
-  "The file type's icon (nerd-icons, in its own colour)."
-  (let ((icon (nerd-icons-icon-for-buffer)))
-    (when (and (stringp icon) (not (string-empty-p icon)))
-      (concat icon " "))))
-
-(defun lysec-mode-line-branch ()
-  "The current git branch, if any."
-  (when (and vc-mode buffer-file-name)
-    (concat (nerd-icons-octicon "nf-oct-git_branch" :face 'shadow) " "
-            (replace-regexp-in-string "\\`[ ]*[A-Za-z]+[-:@!?]" ""
-                                      (substring-no-properties vc-mode)))))
-
-(defun lysec-mode-line-issues ()
-  "Flymake's error and warning counts, or a quiet all-clear."
-  (when (bound-and-true-p flymake-mode)
-    (let ((errors 0) (warnings 0))
-      (dolist (diagnostic (flymake-diagnostics))
-        (pcase (flymake--lookup-type-property
-                (flymake-diagnostic-type diagnostic) 'flymake-category)
-          ('flymake-error (cl-incf errors))
-          ('flymake-warning (cl-incf warnings))))
-      (if (= 0 errors warnings)
-          (concat (nerd-icons-codicon "nf-cod-pass" :face 'success) " "
-                  (propertize "No issues" 'face 'shadow))
-        (string-join
-         (delq nil (list (when (> errors 0)
-                           (concat (nerd-icons-codicon "nf-cod-error" :face 'error) " "
-                                   (propertize (number-to-string errors) 'face 'error)))
-                         (when (> warnings 0)
-                           (concat (nerd-icons-codicon "nf-cod-warning" :face 'warning) " "
-                                   (propertize (number-to-string warnings) 'face 'warning)))))
-         "  ")))))
-
-(setq-default mode-line-format
-              '("%e" "  " (:eval (meow-indicator)) " " (:eval (lysec-mode-line-dot)) " "
-                (:eval (lysec-mode-line-icon))
-                mode-line-buffer-identification "   %l:%c  "
-                (:propertize "%p" face shadow)
-                mode-line-format-right-align
-                (:eval (lysec-mode-line-branch)) "    "
-                (:eval (lysec-mode-line-issues)) "  "))
 (setq display-time-default-load-average nil)
 
 (require 'disp-table)
@@ -73,14 +36,11 @@
     (set-face-attribute 'vertical-border nil
                         :foreground border
                         :background (face-background 'default nil t))
-    ;; The box is drawn in the bar's own colour: it reads as padding.
     (set-face-attribute 'mode-line-active nil
                         :background active-background
-                        :foreground active-foreground
-                        :box (list :line-width '(1 . 7) :color active-background))
+                        :foreground active-foreground :box nil)
     (set-face-attribute 'mode-line-inactive nil
-                        :background inactive-background
-                        :box (list :line-width '(1 . 7) :color inactive-background))
+                        :background inactive-background :box nil)
     (dolist (face '(window-divider window-divider-first-pixel window-divider-last-pixel))
       (set-face-attribute face nil :foreground border))
     (set-face-attribute 'mode-line-buffer-id nil

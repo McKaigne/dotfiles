@@ -77,6 +77,7 @@
           nerd-icons
           nerd-icons-completion
           nerd-icons-ibuffer
+          doom-modeline
           nerd-icons-corfu
           treemacs
           treemacs-nerd-icons
