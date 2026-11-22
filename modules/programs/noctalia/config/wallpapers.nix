@@ -26,23 +26,6 @@
         "default" = {
           "path" = "${dir}/isekaiJoucho.jpg";
         };
-        "last" = {
-          "path" = "${dir}/isekaiJoucho.jpg";
-        };
-        "favorite" = [
-          {
-            "palette_source" = "wallpaper";
-            "path" = "${dir}/wallhaven-mld9jk.jpg";
-            "theme_mode" = "dark";
-            "wallpaper_scheme" = "vibrant";
-          }
-          {
-            "palette_source" = "wallpaper";
-            "path" = "${dir}/wallhaven-o5rjq9.png";
-            "theme_mode" = "dark";
-            "wallpaper_scheme" = "m3-monochrome";
-          }
-        ];
       };
     };
   };

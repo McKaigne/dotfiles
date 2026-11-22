@@ -2,12 +2,11 @@
   flake.modules.homeManager."noctalia" = {pkgs, ...}: {
     xdg.configFile."noctalia/60-theme.toml".source = (pkgs.formats.toml {}).generate "60-theme.toml" {
       "theme" = {
-        "builtin" = "Gruvbox";
-        "community_palette" = "Everforest";
-        "custom_palette" = "verdant-nocturne";
+        "builtin" = "Kanagawa";
+        "community_palette" = "Vesper";
         "mode" = "dark";
-        "source" = "custom";
-        "wallpaper_scheme" = "vibrant";
+        "source" = "wallpaper";
+        "wallpaper_scheme" = "m3-content";
         "templates" = {
           "builtin_ids" = [
             "btop"

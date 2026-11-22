@@ -3,7 +3,7 @@
     xdg.configFile."noctalia/15-interaction.toml".source = (pkgs.formats.toml {}).generate "15-interaction.toml" {
       "hot_corners" = {
         "delay_ms" = 2000;
-        "enabled" = true;
+        "enabled" = false;
       };
       "keybinds" = {
         "tab_previous" = [
