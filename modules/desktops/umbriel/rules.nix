@@ -9,10 +9,31 @@ in {
         return vec4(c.rgb * ${toString (1.0 - style.unfocusedDim)}, c.a);
       }
     '';
+    # Helium stays solid: undo the translucency it picks up from the GTK glass
+    # while keeping its theme colors. Faint pixels (shadows, antialiased
+    # corners) are left alone so they don't turn into hard dark edges.
+    solid = dim:
+      pkgs.writeText "solid.glsl" ''
+        vec4 window(vec2 uv) {
+          vec4 c = umbriel_sample(uv);
+          if (c.a < 0.3) return c;
+          return vec4(c.rgb / c.a * ${toString dim}, 1.0);
+        }
+      '';
   in {
-    programs.umbriel.settings.effects.preset.unfocused-darken = {
-      kind = "window";
-      shader = "${darken}";
+    programs.umbriel.settings.effects.preset = {
+      unfocused-darken = {
+        kind = "window";
+        shader = "${darken}";
+      };
+      solid = {
+        kind = "window";
+        shader = "${solid "1.0"}";
+      };
+      solid-darken = {
+        kind = "window";
+        shader = "${solid (toString (1.0 - style.unfocusedDim))}";
+      };
     };
 
     programs.umbriel.settings = {
@@ -42,6 +63,17 @@ in {
         {
           match.is_focused = false;
           window_effect = "unfocused-darken";
+        }
+        {
+          match.app_id = "^helium$";
+          window_effect = "solid";
+        }
+        {
+          match = {
+            app_id = "^helium$";
+            is_focused = false;
+          };
+          window_effect = "solid-darken";
         }
         # {
         #   match.app_id = "^(steam_app_[0-9]+|gamescope)$";

@@ -17,7 +17,7 @@ in {
     ...
   }: let
     tideVarsRaw = builtins.readFile ./data/fish_variables;
-    tideVarsHash = builtins.hashString "sha256" (tideVarsRaw + ":v4-fish-lists");
+    tideVarsHash = builtins.hashString "sha256" (tideVarsRaw + ":v5-themed-segments");
 
     setuvarLines = lib.filter (l: lib.hasPrefix "SETUVAR " l) (lib.splitString "\n" tideVarsRaw);
 
@@ -44,9 +44,15 @@ in {
 
     fishSingleQuote = s: "'${lib.replaceStrings ["'"] ["'\\''"] s}'";
 
+    # Segment backgrounds follow the Noctalia theme (see the tide template);
+    # only seed them when the template has not run yet.
+    isSegmentBg = name: builtins.match "tide_.*_bg_color.*" name != null;
+
     setUniversalVar = item:
       if builtins.elem item.name skipVars
       then ""
+      else if isSegmentBg item.name
+      then "set -q ${item.name}; or set -U ${item.name} ${fishSingleQuote item.value}"
       else if builtins.elem item.name listVars
       then "set -U ${item.name} (string split \\x1e -- (printf '%b' ${fishSingleQuote item.value}))"
       else if lib.hasInfix "\\" item.value
