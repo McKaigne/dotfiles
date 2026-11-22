@@ -2,17 +2,35 @@ config_version = 20
 
 [bar.fancy]
 center = [ "workspaces" ]
-end = [ "tray_2", "network", "volume", "input_volume", "brightness", "clock", "session" ]
-start = [ "cpu", "ram", "temp" ]
+end = [ "tray_2", "network", "volume", "input_volume", "brightness", "gap", "clock", "session" ]
+padding = 18
+start = [ "cpu", "ram", "temp", "gap", "media" ]
+widget_spacing = 10
+
+[desktop_widgets]
+schema_version = 2
+widget_order = [ "desktop-widget-0000000000000001" ]
+
+    [desktop_widgets.grid]
+    cell_size = 16
+    major_interval = 4
+    visible = true
+
+    [desktop_widgets.widget.desktop-widget-0000000000000001.settings]
+    color_2 = "primary"
+
+[theme]
+community_palette = "Occult Umbral"
+source = "community"
 
 [wallpaper.default]
-path = "/home/jekyll/Pictures/Wallpapers/Kanagawa-Light.png"
+path = "/home/jekyll/Pictures/Wallpapers/Hatsune.Miku.full.4725448.png"
 
 [wallpaper.last]
-path = "/home/jekyll/Pictures/Wallpapers/Kanagawa-Light.png"
+path = "/home/jekyll/Pictures/Wallpapers/Hatsune.Miku.full.4725448.png"
 
 [wallpaper.monitors.DP-1]
-path = "/home/jekyll/Pictures/Wallpapers/Kanagawa-Light.png"
+path = "/home/jekyll/Pictures/Wallpapers/Hatsune.Miku.full.4725448.png"
 
 [widget.brightness]
 glyph_position = "after"
@@ -25,9 +43,16 @@ format = "{:%H:%M}"
 show_value = false
 visualization = "gauge"
 
+[widget.gap]
+length = 14
+type = "spacer"
+
 [widget.input_volume]
 glyph_position = "after"
 peek = true
+
+[widget.media]
+max_length = 240
 
 [widget.network]
 peek = true
