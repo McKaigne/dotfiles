@@ -31,8 +31,9 @@ in {
           "width" = 670;
         };
         "panel" = {
-          # Translucent panels and cards, blurred by Umbriel like the bar.
-          "transparency_mode" = "glass";
+          # Floating panels at 80% (soft; glass would be 55%), the same as the
+          # bar, terminals and GTK apps (appearance/_style.nix opacity).
+          "transparency_mode" = "soft";
           "borders" = false;
           # Every panel floats free of the bar.
           "clipboard_placement" = "floating";

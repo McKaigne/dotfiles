@@ -3,11 +3,11 @@
 {
   font = "Maple Mono NF";
 
-  # Background translucency for the bar, panels, terminals and GTK apps
-  # (JaKooLit's Hyprland-Dots value). Text and images stay opaque; the
-  # compositor blurs whatever shows through. Noctalia's own settings window
-  # stays at its fixed 80%.
-  opacity = 0.9;
+  # Background translucency for the bar, panels, terminals and GTK apps: the
+  # 80% Noctalia gives floating panels in its "soft" mode (shell.nix), so
+  # everything matches them. Text and images stay opaque; the compositor blurs whatever
+  # shows through.
+  opacity = 0.8;
 
   # Moderate frosted glass (JaKooLit: size 6, 3 passes). Each pass halves the
   # image: much past 4-5 passes the wallpaper collapses into one flat color

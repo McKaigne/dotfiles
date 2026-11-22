@@ -1,6 +1,7 @@
 config_version = 20
 
 [bar.fancy]
+background_opacity = 0.80000000000000004
 center = [ "workspaces" ]
 end = [ "tray_2", "network", "volume", "input_volume", "brightness", "gap", "clock", "session" ]
 padding = 18
@@ -18,6 +19,9 @@ widget_order = [ "desktop-widget-0000000000000001" ]
 
     [desktop_widgets.widget.desktop-widget-0000000000000001.settings]
     color_2 = "primary"
+
+[shell.panel]
+transparency_mode = "soft"
 
 [theme]
 community_palette = "Aura"
