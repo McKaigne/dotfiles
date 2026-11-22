@@ -19,7 +19,6 @@ in {
       "bar" = {
         "order" = [
           "minimal"
-          "minimal-DP2"
           "fancy"
         ];
         "fancy" = {
@@ -88,37 +87,6 @@ in {
             "right_bracket"
           ];
           "thickness" = 27;
-          "monitor" = {
-            "DP-2" = {
-              "enabled" = false;
-            };
-          };
-        };
-        "minimal-DP2" = {
-          "center" = [
-            "cpu_usage_minimal"
-            "separator"
-            "cpu_temp_minimal"
-            "separator"
-            "ram_usage_minimal"
-          ];
-          "color" = "on_surface_variant";
-          "enabled" = false;
-          "end" = [];
-          "font_scale" = 0.8499999884516001;
-          "hover_highlight" = false;
-          "margin_ends" = 0;
-          "padding" = 5;
-          "radius" = 0;
-          "start" = [
-            "clock_minimal"
-          ];
-          "thickness" = 21;
-          "monitor" = {
-            "DP-1" = {
-              "enabled" = false;
-            };
-          };
         };
       };
     };

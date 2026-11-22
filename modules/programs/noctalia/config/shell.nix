@@ -32,11 +32,15 @@ in {
           # Translucent panels and cards, blurred by Umbriel like the bar.
           "transparency_mode" = "glass";
           "borders" = false;
+          # Every panel hangs off the bar, except the wallpaper picker.
           "clipboard_placement" = "attached";
+          "control_center_placement" = "attached";
           "launcher_placement" = "attached";
+          "polkit_placement" = "attached";
+          "session_placement" = "attached";
+          "wallpaper_placement" = "floating";
           "list_item_background" = true;
           "open_near_click_session" = true;
-          "session_placement" = "floating";
           "shadow" = false;
         };
         "screen_corners" = {

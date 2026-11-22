@@ -5,7 +5,7 @@
 
   # Background translucency for the bar, panels, terminals and GTK apps. Text
   # and images stay opaque; the compositor blurs whatever shows through.
-  opacity = 0.6;
+  opacity = 0.5;
 
   # Strong frosted glass, as in popular Hyprland/KDE "strong blur" setups. Each
   # pass halves the image: much past 4-5 passes the wallpaper collapses into

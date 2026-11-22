@@ -4,13 +4,6 @@
   flake.modules.homeManager."noctalia" = {pkgs, ...}: {
     xdg.configFile."noctalia/99-gui.toml".source = (pkgs.formats.toml {}).generate "99-gui.toml" (builtins.fromJSON ''
       {
-        "bar": {
-          "order": [
-            "minimal",
-            "minimal-DP2",
-            "fancy"
-          ]
-        },
         "lockscreen_widgets": {
           "enabled": false,
           "schema_version": 2,

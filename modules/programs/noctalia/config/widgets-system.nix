@@ -97,7 +97,7 @@
         };
         "tray_2" = {
           "colorize_icons" = true;
-          "detached_panel" = true;
+          "detached_panel" = false;
           "drawer" = true;
           "type" = "tray";
         };

@@ -9,7 +9,6 @@
           "lockscreen-login-box@WL-1"
           "lockscreen-widget-0000000000000002"
           "lockscreen-login-box@DP-1"
-          "lockscreen-login-box@DP-2"
           "lockscreen-widget-0000000000000001"
         ];
         "grid" = {
@@ -42,33 +41,6 @@
               "show_media" = true;
               "show_session_buttons" = true;
               "show_unlock_hint" = false;
-              "show_weather" = true;
-            };
-          };
-          "lockscreen-login-box@DP-2" = {
-            "box_height" = 70.0;
-            "box_width" = 336.0;
-            "cx" = 960.0;
-            "cy" = 1000.5;
-            "output" = "DP-2";
-            "placement_height" = 1080.0;
-            "placement_width" = 1920.0;
-            "rotation" = 0.0;
-            "type" = "login_box";
-            "settings" = {
-              "background_color" = "surface_container";
-              "background_opacity" = 0.88;
-              "background_radius" = 12.0;
-              "center_password_text" = false;
-              "input_opacity" = 1.0;
-              "input_radius" = 6.0;
-              "layout" = "compact";
-              "show_caps_lock" = false;
-              "show_keyboard_layout" = true;
-              "show_login_button" = true;
-              "show_media" = true;
-              "show_session_buttons" = true;
-              "show_unlock_hint" = true;
               "show_weather" = true;
             };
           };

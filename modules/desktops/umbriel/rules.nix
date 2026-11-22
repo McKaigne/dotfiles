@@ -23,6 +23,14 @@ in {
           blur_ignore_alpha = 0.5;
           blur_popups = true;
         }
+        # Optimized blur reuses a cached blur of the wallpaper alone, so anything
+        # that opens over windows would show the wallpaper instead of them. Blur
+        # the live content behind panels, notifications and OSDs; the bar only
+        # ever covers the wallpaper and keeps the cheap path.
+        {
+          match.namespace = "^noctalia-(notification|panel|attached-panel|osd)$";
+          blur_optimized = false;
+        }
       ];
 
       window_rule = [
