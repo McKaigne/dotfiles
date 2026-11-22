@@ -3,18 +3,45 @@
 (add-to-list 'custom-theme-load-path
              (expand-file-name "themes" my-config-directory))
 (load-theme 'noctalia t)
-;; Mode line: doom-modeline, kept close to its defaults the way Centaur
-;; Emacs does; minor modes fold into one menu, a scroll HUD replaces the
-;; percentage, and terminals and shells get no mode line at all.
+;; Mode line: doom-modeline with Centaur Emacs's choices (collapsed minor
+;; modes, scroll HUD in the bar, no project name, none in terminals), a
+;; taller bar in the theme's accent, and a layout with real spacing: its own
+;; segments put only half a space between an icon and its text.
 (use-package doom-modeline
   :demand t
   :custom
+  (doom-modeline-height 32)
+  (doom-modeline-bar-width 5)
   (doom-modeline-icon t)
+  (doom-modeline-major-mode-color-icon t)
   (doom-modeline-minor-modes t)
   (doom-modeline-hud t)
   (doom-modeline-project-name nil)
   (doom-modeline-buffer-encoding nil)
-  :config (doom-modeline-mode 1))
+  :config
+  (doom-modeline-def-segment my-gap
+    "Room between segments."
+    (doom-modeline-wspc))
+  (doom-modeline-def-segment my-buffer
+    "File-type icon, save state and name, a full space apart."
+    (let ((icon (or doom-modeline--buffer-file-icon
+                    (doom-modeline-update-buffer-file-icon)))
+          (state doom-modeline--buffer-file-state-icon))
+      (concat (doom-modeline-wspc)
+              (when (and doom-modeline-icon icon (not (string-empty-p icon)))
+                (concat (doom-modeline-display-icon icon) (doom-modeline-wspc)))
+              (when (and doom-modeline-icon state (not (string-empty-p state)))
+                (concat (doom-modeline-display-icon state) (doom-modeline-wspc)))
+              (doom-modeline--buffer-name))))
+  ;; Only what tells you something: state, file, position, matches; build,
+  ;; language server, diagnostics, branch, and the minor-mode menu. The
+  ;; file icon already shows the major mode, so its name is left out.
+  (doom-modeline-def-modeline 'my-main
+    '(bar my-gap modals my-buffer my-gap buffer-position my-gap matches selection-info)
+    '(compilation misc-info my-gap lsp my-gap check my-gap vcs my-gap minor-modes my-gap))
+  (add-hook 'doom-modeline-mode-hook
+            (lambda () (doom-modeline-set-modeline 'my-main 'default)))
+  (doom-modeline-mode 1))
 (setq mode-line-collapse-minor-modes t)
 (dolist (hook '(vterm-mode-hook eshell-mode-hook shell-mode-hook term-mode-hook))
   (add-hook hook #'mode-line-invisible-mode))
@@ -43,6 +70,12 @@
                         :background inactive-background :box nil)
     (dolist (face '(window-divider window-divider-first-pixel window-divider-last-pixel))
       (set-face-attribute face nil :foreground border))
+    ;; The mode line's bar (and its scroll HUD) in the theme's accent.
+    (when (facep 'doom-modeline-bar)
+      (set-face-attribute 'doom-modeline-bar nil
+                          :background (face-foreground 'font-lock-keyword-face nil t))
+      (set-face-attribute 'doom-modeline-bar-inactive nil
+                          :background (face-background 'mode-line-inactive nil t)))
     (set-face-attribute 'mode-line-buffer-id nil
                         :foreground active-foreground :weight 'bold)))
 
@@ -75,6 +108,21 @@
     (face-remap-add-relative (car pair)
                             :foreground (face-foreground (cdr pair) nil t)
                             :weight 'bold)))
+
+;; The Space menu's popup, titled with the menu you are in.
+(defun my-keypad-menu (keymap)
+  "Display KEYMAP with the name of the current Space menu."
+  (let* ((keys (meow--keypad-format-keys))
+         (menu (if (string-empty-p keys)
+                   my-leader-map
+                 (meow--keypad-lookup-key (kbd keys))))
+         (title (and (keymapp menu) (keymap-prompt menu))))
+    (which-key--create-buffer-and-show
+     nil (if (string-empty-p keys) my-leader-map keymap) nil
+     (concat (if (or (string-empty-p keys) meow--keypad-base-keymap)
+                 (concat "SPC" (unless (string-empty-p keys) (concat " " keys)))
+               keys)
+             "  ·  " (or title "Emacs")))))
 
 (use-package which-key
   :demand t

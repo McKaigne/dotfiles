@@ -5,7 +5,7 @@
   "Directory containing the deployed Emacs configuration.")
 (load (expand-file-name "paths.el" my-config-directory) nil t)
 
-(dolist (module '(core editing completion ui files development notes dashboard keys))
+(dolist (module '(core editing completion ui files development notes dashboard extras keys))
   (load (expand-file-name (format "lisp/%s.el" module) my-config-directory) nil t))
 
 (add-hook 'after-init-hook #'envrc-global-mode)

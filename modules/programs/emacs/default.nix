@@ -78,6 +78,29 @@
           nerd-icons-completion
           nerd-icons-ibuffer
           doom-modeline
+          # From Centaur Emacs (lisp/extras.el).
+          avy
+          symbol-overlay
+          goto-chg
+          indent-bars
+          colorful-mode
+          pulsar
+          goggles
+          flyover
+          ace-window
+          popper
+          embark
+          embark-consult
+          consult-dir
+          git-timemachine
+          magit-todos
+          browse-at-remote
+          git-modes
+          quickrun
+          wgrep
+          vundo
+          sudo-edit
+          olivetti
           nerd-icons-corfu
           treemacs
           treemacs-nerd-icons

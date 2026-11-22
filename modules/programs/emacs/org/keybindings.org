@@ -2,134 +2,82 @@
 #+startup: overview
 #+options: toc:nil num:nil
 
-*This guide* ~SPC k~ · *Meow cheatsheet* ~SPC ?~ · *What does this key do* ~SPC /~ · *Fold a section* ~TAB~
+*Open* ~SPC h b~ · *Fold a section* ~TAB~ · *Close this pane* ~SPC w c~
 
-* How keys work
+*Quick start*
 
-Meow, as its docs set it up. *Normal* state edits (selection first, then an
-action), *insert* types (~i~ / ~a~, back with ~Esc~), *motion* is for tool
-buffers (dired, Magit, help: ~j~ / ~k~ move, everything else is theirs).
+| Key       | Action           |
+|-----------+------------------|
+| ~SPC SPC~ | Run a command    |
+| ~SPC .~   | Open a file      |
+| ~SPC ,~   | Switch buffers   |
+| ~SPC f s~ | Save             |
+| ~SPC w v~ | Split right      |
+| ~SPC w s~ | Split below      |
+| ~SPC o f~ | File manager     |
+| ~SPC q q~ | Close the client |
 
-~SPC~ opens the *keypad*: Emacs's own keys without holding Ctrl.
+* Reading the keys
 
-| Type        | Means       | Example                       |
-|-------------+-------------+-------------------------------|
-| ~SPC x …~   | ~C-x …~     | ~SPC x s~ save (~C-x C-s~)    |
-| ~SPC c …~   | ~C-c …~     | ~SPC c c~ in Org (~C-c C-c~)  |
-| ~SPC h …~   | ~C-h …~     | ~SPC h f~ describe function   |
-| ~SPC m …~   | ~M-…~       | ~SPC m x~ run a command (M-x) |
-| ~SPC g …~   | ~C-M-…~     | ~SPC g x~ eval defun          |
-| ~SPC <letter>~ | ~C-c <letter>~ | the leader keys below    |
+Meow uses normal mode for editing commands, insert mode for typing, and motion
+mode for tool buffers. In normal mode, ~i~ starts inserting before point, ~a~
+after point, and ~Esc~ returns to normal mode.
 
-After ~x~ / ~c~ / ~m~ / ~g~ the next keys get Ctrl; press ~SPC~ first for a
-plain key (~SPC x SPC p~ is ~C-x p~). An undefined ~C-x C-k~ falls back to
-~C-x k~, so the short form usually works.
+The text editing layout is US QWERTY (~h/j/k/l~ for left/down/up/right).
+Notes and journals are stored under ~~/Areas/Org/~.
 
-* Everyday Emacs keys (through the keypad)
+* Editing with Meow (US QWERTY)
 
-| Key           | Action                            |
-|---------------+-----------------------------------|
-| ~SPC x f~     | Open file                         |
-| ~SPC x s~     | Save                              |
-| ~SPC x b~     | Switch buffer (consult)           |
-| ~SPC x k~     | Kill buffer                       |
-| ~SPC x 2 / 3~ | Split below / right               |
-| ~SPC x o~     | Next window                       |
-| ~SPC x 0 / 1~ | Close this window / only this one |
-| ~SPC x p p~   | Switch project                    |
-| ~SPC x p f~   | Find file in project              |
-| ~SPC x p g~   | Search project (ripgrep)          |
-| ~SPC x p c~   | Compile (remembers per project)   |
-| ~SPC x g~     | Magit                             |
-| ~SPC x c~     | Close this frame (client)         |
-| ~SPC m x~     | Run any command                   |
-| ~SPC m s l~   | Search lines in this buffer       |
-| ~SPC m g i~   | Jump to a function / heading      |
-| ~SPC m g g~   | Go to line                        |
-| ~SPC m g f~   | Jump to an error                  |
+| Key                   | Action                                      |
+|-----------------------+---------------------------------------------|
+| ~h/j/k/l~             | Move left / down / up / right               |
+| ~H/J/K/L~             | Extend selection left / down / up / right   |
+| ~b/e~                 | Back / next word                            |
+| ~w/W~                 | Mark word / symbol                          |
+| ~x/X~                 | Select line / goto line                     |
+| ~o/O~                 | Select block / to block                     |
+| ~i/a~                 | Insert / append                             |
+| ~I/A~                 | Open line above / below                     |
+| ~c/s/d~               | Change / kill / delete                      |
+| ~y/p~                 | Save (copy) / yank (paste)                  |
+| ~u/U~                 | Undo / undo in selection                    |
+| ~g/G~                 | Cancel selection / grab                     |
+| ~,/./[/]~             | Inner / bounds / beginning / end of thing   |
+| ~SPC h t~             | Interactive Meow tutorial                   |
 
-* Leader keys (~C-c <letter>~, added the way meow's docs say)
+* Apply configuration changes
 
-| Key       | Action                                                    |
-|-----------+-----------------------------------------------------------|
-| ~SPC l a~ | Code actions · ~r~ rename · ~f~ format · ~o~ organize imports |
-| ~SPC l d~ | Declaration · ~i~ implementation · ~t~ type definition      |
-| ~SPC l e~ | Errors · ~s~ start the server · ~q~ stop it                  |
-| ~SPC t~   | Terminal (vterm) · also ~SPC x p t~ for the project        |
-| ~SPC o~   | File tree                                                 |
-| ~SPC d~   | Dashboard                                                 |
-| ~SPC n f~ | Find / create note · ~i~ insert link · ~b~ backlinks         |
-| ~SPC n j~ | Journal · ~c~ capture · ~a~ agenda · ~l~ store link          |
-| ~SPC e a~ | direnv: allow · ~r~ reload                                 |
-| ~SPC b~   | Who changed this line                                     |
-| ~SPC k~   | This guide                                                |
-| ~SPC 0–9~ | Digit argument · ~SPC /~ describe key · ~SPC ?~ cheatsheet  |
+#+begin_example
+nr
+systemctl --user restart emacs
+emacs
+#+end_example
 
-* More keys from Emacs and its packages
+* Added since
 
-| Key           | Action                                      |
-|---------------+---------------------------------------------|
-| ~SPC x C-b~   | Buffer list (ibuffer)                       |
-| ~SPC x w s~   | Hide / show side panels                     |
-| ~SPC x p C~   | Recompile · ~SPC x p E~ set up direnv shell  |
-| ~SPC x p e~   | Eshell in the project                       |
-| ~SPC m .~     | Go to definition · ~SPC m ,~ back           |
-| ~SPC m ?~     | Find references                             |
-| ~SPC m n/p~   | Next / previous error                       |
-| ~SPC c & SPC s~ | Insert a snippet (yasnippet's C-c & C-s)  |
-| ~SPC x v g~   | Blame the whole file (vc-annotate)          |
-| ~SPC c c v~   | Markdown preview (in Markdown buffers)      |
+| Key           | Action                                          |
+|---------------+-------------------------------------------------|
+| ~SPC j / J~   | Jump to any visible spot · to a line (avy)       |
+| ~SPC a~       | Act on what's here (embark) · also ~C-.~         |
+| ~SPC u~       | Undo tree (vundo)                               |
+| ~SPC o t / T~ | Terminal (vterm) · eshell                        |
+| ~SPC b i~     | Buffer list (ibuffer)                           |
+| ~SPC s o / O~ | Highlight symbol everywhere · clear highlights   |
+| ~SPC s c~     | Jump to the last change                         |
+| ~SPC c o~     | Organize imports · ~c i~ implementation · ~c t~ type |
+| ~SPC c n / p~ | Next / previous issue                           |
+| ~SPC c s~     | Insert a snippet · ~SPC c x~ run this file       |
+| ~SPC g t~     | File history (time machine) · ~g o~ open on remote |
+| ~SPC g T~     | Project TODOs                                   |
+| ~SPC p C~     | Recompile                                       |
+| ~SPC w t~     | Hide / show side panels                         |
+| ~SPC w u / r~ | Undo / redo window layout                       |
+| ~SPC w a~     | Pick a pane by letter                           |
+| ~SPC w p / P~ | Toggle / cycle popups (help, compile, messages) |
+| ~SPC t i~     | Indent guides · ~t c~ colour codes · ~t o~ centered writing |
+| ~SPC f S~     | Edit this file as root                          |
+| ~C-h B~       | Every key binding, searchable                   |
 
-* Editing (normal state, QWERTY)
-
-| Key               | Action                                      |
-|-------------------+---------------------------------------------|
-| ~h/j/k/l~         | Move · ~H/J/K/L~ extend the selection        |
-| ~w / W~           | Select word / symbol                        |
-| ~e / b~ · ~E / B~ | Next / previous word · symbol               |
-| ~x~               | Select line (again: one more)               |
-| ~o~               | Select the block around · ~O~ to its end     |
-| ~f / t~           | Find / till a character                     |
-| ~v~               | Select by search (regexp) · ~n~ next match   |
-| ~1–9~             | Extend the selection by the number hint     |
-| ~;~               | Flip the selection's direction              |
-| ~g~               | Drop the selection · ~z~ previous selection  |
-| ~i / a~           | Insert before / after · ~I / A~ new line     |
-| ~c~               | Change · ~d / D~ delete · ~s~ kill           |
-| ~y~               | Copy · ~p~ paste · ~r~ replace with copied   |
-| ~u / U~           | Undo · undo inside the selection            |
-| ~m~               | Join with the line above                    |
-| ~Q / X~           | Go to line                                  |
-| ~'~               | Repeat the last command                     |
-
-* Things (~,~ inner · ~.~ whole · ~[~ start · ~]~ end, then)
-
-| Key | Thing   | Key | Thing     |
-|-----+---------+-----+-----------|
-| ~r~ | ( … )   | ~p~ | paragraph |
-| ~s~ | [ … ]   | ~l~ | line      |
-| ~c~ | { … }   | ~d~ | defun     |
-| ~.~ | sentence |     |           |
-| ~g~ | string  | ~e~ | symbol    |
-| ~w~ | window  | ~b~ | buffer    |
-
-With tree-sitter, functions, classes and arguments are things too (meow-tree-sitter).
-
-* Edit many places at once (beacon)
-
-1. Select the area, press ~G~ (grab).
-2. Inside it, a motion marks every match: ~w~ every word, ~v~ every search
-   match, ~f~ every character, ~x~ every line.
-3. ~c~ / ~i~ / ~a~ and type: leaving insert applies it everywhere. Or ~F3~,
-   do anything, ~F4~ to replay it at every cursor.
-
-* Terminal
-
-~SPC t~ opens vterm in the bottom panel. It starts in normal state like any
-buffer: ~i~ to type into the shell, ~Esc~ back to normal.
-
-* Language support
-
-Language servers start on their own for Nix, C/C++, Python, shell, JSON,
-YAML, CSS/HTML, Lua, TOML and Markdown. Tree-sitter highlighting is used
-wherever a grammar exists. Notes and journals live in ~~/Areas/Org/~.
+In a file prompt, ~C-x C-d~ jumps to a recent or project directory. Search
+results exported with ~SPC a~ (embark) are editable and save across files.
+Errors show inline next to the code; changed lines get a git bar in the fringe.

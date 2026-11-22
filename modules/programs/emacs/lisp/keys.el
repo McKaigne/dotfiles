@@ -1,12 +1,9 @@
 ;;; keys.el -*- lexical-binding: t -*-
 
-;; Keys live in Emacs's own keymaps, reached through meow's keypad as meow
-;; intends (editing.el): SPC x … is C-x …, SPC h … is C-h …, SPC c … is
-;; C-c …, SPC m … is M-…, SPC g … is C-M-…, and SPC <other letter> is the
-;; leader, C-c <letter> (the keys Emacs reserves for the user). So files are
-;; SPC x f / SPC x s, buffers SPC x b, windows SPC x 2 / 3 / 0 / 1 / o,
-;; projects SPC x p …, Magit SPC x g, help SPC h ….  Nothing parallel to
-;; learn: every key here is the real Emacs binding without the chord.
+;; Ly-sec's Space menu: SPC opens a menu of topics (f files, b buffers,
+;; p project, s search, g git, o open, n notes, c code, t toggle, h help,
+;; q quit, w windows); meow's editing keys are unchanged. Press SPC and the
+;; menu shows every key with its name.
 
 ;; Consult's drop-in upgrades of Emacs's own commands.
 (keymap-global-set "<remap> <switch-to-buffer>" #'consult-buffer)
@@ -24,47 +21,148 @@
 (keymap-global-set "M-g e" #'consult-compile-error)
 (keymap-global-set "M-g f" #'consult-flymake)
 
-;; Everything else gets a key too. Meow's docs add your own commands with
-;; meow-leader-define-key: they land on C-c <letter> (the keys Emacs leaves
-;; to the user), reached as SPC <letter>; meow's own keys stay as shipped.
-;; c, x, h, m and g are keypad prefixes, so never leader letters.
-;; Each key carries a label, so the keypad hints read as words.
-(defvar-keymap my-lsp-map
-  :doc "Language server (eglot)."
-  "a" '("code actions" . eglot-code-actions)
-  "r" '("rename" . eglot-rename)
-  "f" '("format" . apheleia-format-buffer)
-  "o" '("organize imports" . eglot-code-action-organize-imports)
-  "d" '("declaration" . eglot-find-declaration)
-  "i" '("implementation" . eglot-find-implementation)
-  "t" '("type definition" . eglot-find-typeDefinition)
-  "e" '("errors" . consult-flymake)
-  "s" '("start server" . eglot)
-  "q" '("stop server" . eglot-shutdown))
+(require 'windmove)
+(defvar my-leader-map (make-sparse-keymap "Commands"))
 
-(defvar-keymap my-notes-map
-  :doc "Notes and Org."
-  "f" '("find note" . org-roam-node-find)
-  "i" '("insert link" . org-roam-node-insert)
-  "b" '("backlinks" . org-roam-buffer-toggle)
-  "j" '("journal" . my-org-journal)
-  "c" '("capture" . org-capture)
-  "a" '("agenda" . org-agenda)
-  "l" '("store link" . org-store-link))
+(dolist (group '(("f" . "files")
+                 ("b" . "buffers")
+                 ("p" . "project")
+                 ("s" . "search")
+                 ("g" . "git")
+                 ("o" . "open")
+                 ("n" . "notes")
+                 ("c" . "code")
+                 ("t" . "toggle")
+                 ("h" . "help")
+                 ("q" . "quit")
+                 ("w" . "windows")))
+  (define-key my-leader-map (kbd (car group))
+              (cons (capitalize (cdr group))
+                    (make-sparse-keymap (capitalize (cdr group))))))
 
-(meow-leader-define-key
- (cons "l" (cons "LSP" my-lsp-map))
- (cons "n" (cons "notes" my-notes-map))
- '("t" . ("terminal" . vterm-toggle-cd))
- '("o" . ("file tree" . treemacs))
- '("d" . ("dashboard" . my-dashboard-open))
- '("b" . ("blame line" . blamer-show-commit-info))
- '("k" . ("key guide" . my-open-keybindings)))
-(with-eval-after-load 'envrc
-  (meow-leader-define-key (cons "e" (cons "direnv" envrc-command-map))))
+(dolist (binding
+         '(("SPC" execute-extended-command "command")
+           ("." find-file "find file")
+           ("," consult-buffer "buffers")
+           ("j" avy-goto-char-timer "jump")
+           ("J" avy-goto-line "jump to line")
+           ("a" embark-act "act on this")
+           ("u" vundo "undo tree")
+           ("f f" find-file "find file")
+           ("f n" my-new-file "new file")
+           ("f s" save-buffer "save")
+           ("f r" consult-recent-file "recent files")
+           ("f S" sudo-edit "edit as root")
+           ("b b" consult-buffer "switch")
+           ("b d" kill-current-buffer "close")
+           ("b n" next-buffer "next")
+           ("b p" previous-buffer "previous")
+           ("b i" ibuffer "buffer list")
+           ("p p" my-project-open "open project")
+           ("p f" project-find-file "find file")
+           ("p s" consult-ripgrep "search project")
+           ("p c" project-compile "compile")
+           ("p C" recompile "recompile")
+           ("p e" my-project-environment-setup "set up Nix shell")
+           ("p r" envrc-reload "reload environment")
+           ("s s" consult-line "buffer text")
+           ("s p" consult-ripgrep "project text")
+           ("s n" org-roam-node-find "notes")
+           ("s o" symbol-overlay-put "highlight symbol")
+           ("s O" symbol-overlay-remove-all "clear highlights")
+           ("s c" goto-last-change "last change")
+           ("g g" magit-status "status")
+           ("g d" magit-dispatch "actions")
+           ("g i" blamer-show-commit-info "line commit info")
+           ("g t" git-timemachine "file history")
+           ("g o" browse-at-remote "open on remote")
+           ("g T" magit-todos-list "project TODOs")
+           ("o d" my-dashboard-open "dashboard")
+           ("o p" treemacs "file tree")
+           ("o f" my-file-manager "file manager")
+           ("o t" vterm-toggle-cd "terminal")
+           ("o T" my-terminal "eshell")
+           ("o n" my-org-open "notes folder")
+           ("o m" my-markdown-preview "Markdown preview")
+           ("n n" org-roam-node-find "find / create note")
+           ("n i" org-roam-node-insert "insert link")
+           ("n b" org-roam-buffer-toggle "backlinks")
+           ("n j" my-org-journal "journal")
+           ("n c" org-capture "capture")
+           ("n a" org-agenda "agenda")
+           ("n e" org-export-dispatch "export")
+           ("c a" eglot-code-actions "actions")
+           ("c r" eglot-rename "rename")
+           ("c d" xref-find-definitions "definition")
+           ("c R" xref-find-references "references")
+           ("c f" apheleia-format-buffer "format")
+           ("c e" flymake-show-buffer-diagnostics "diagnostics")
+           ("c l" eglot "connect LSP")
+           ("c o" eglot-code-action-organize-imports "organize imports")
+           ("c i" eglot-find-implementation "implementation")
+           ("c t" eglot-find-typeDefinition "type definition")
+           ("c n" flymake-goto-next-error "next issue")
+           ("c p" flymake-goto-prev-error "previous issue")
+           ("c s" yas-insert-snippet "snippet")
+           ("c x" quickrun "run this file")
+           ("t l" display-line-numbers-mode "line numbers")
+           ("t b" blamer-mode "line blame")
+           ("t f" hs-toggle-hiding "fold")
+           ("t w" visual-line-mode "wrap")
+           ("t F" apheleia-mode "format on save")
+           ("t i" indent-bars-mode "indent guides")
+           ("t c" colorful-mode "colour codes")
+           ("t o" olivetti-mode "centered writing")
+           ("h b" my-open-keybindings "key reference")
+           ("h k" describe-key "key")
+           ("h f" describe-function "function")
+           ("h v" describe-variable "variable")
+           ("h p" helpful-at-point "thing at point")
+           ("h m" describe-mode "mode")
+           ("q q" save-buffers-kill-terminal "close client")
+           ("b N" my-new-buffer "blank buffer")
+           ("h t" meow-tutor "Meow tutorial")
+           ("h ?" meow-cheatsheet "Meow cheatsheet")
+           ("w v" (lambda () (interactive) (my-split-window 'right)) "split right")
+           ("w s" (lambda () (interactive) (my-split-window 'below)) "split below")
+           ("w n" (lambda () (interactive) (my-split-window 'below t)) "blank below")
+           ("w N" (lambda () (interactive) (my-split-window 'right t)) "blank right")
+           ("w h" windmove-left "focus left")
+           ("w j" windmove-down "focus below")
+           ("w k" windmove-up "focus above")
+           ("w l" windmove-right "focus right")
+           ("w w" other-window "next pane")
+           ("w W" (lambda () (interactive) (other-window -1)) "previous pane")
+           ("w c" delete-window "close pane")
+           ("w o" delete-other-windows "only this pane")
+           ("w t" window-toggle-side-windows "toggle panels")
+           ("w u" winner-undo "undo layout")
+           ("w r" winner-redo "redo layout")
+           ("w a" ace-window "pick pane")
+           ("w p" popper-toggle "toggle popup")
+           ("w P" popper-cycle "next popup")
+           ("w =" balance-windows "balance panes")
+           ("w H" windmove-swap-states-left "swap pane left")
+           ("w J" windmove-swap-states-down "swap pane down")
+           ("w K" windmove-swap-states-up "swap pane up")
+           ("w L" windmove-swap-states-right "swap pane right")
+           ("w >" enlarge-window-horizontally "widen pane")
+           ("w <" shrink-window-horizontally "narrow pane")
+           ("w +" enlarge-window "taller pane")
+           ("w -" shrink-window "shorter pane")))
+  (define-key my-leader-map (kbd (car binding))
+              (cons (nth 2 binding) (nth 1 binding))))
+
+(setq meow-keypad-leader-dispatch my-leader-map
+      meow-keypad-start-keys '((?x . ?x))
+      meow-keypad-ctrl-meta-prefix ?G
+      meow-keypad-describe-keymap-function #'my-keypad-menu
+      meow-keypad-message nil
+      meow-keypad-message-prefix "")
+(define-key meow-insert-state-keymap (kbd "M-SPC") #'meow-keypad)
+(define-key my-dashboard-mode-map (kbd "SPC") #'meow-keypad)
 
 ;; In Emacs's own maps where one fits.
-(keymap-set project-prefix-map "t" #'vterm-toggle-cd)
 (keymap-set project-prefix-map "C" #'recompile)
 (keymap-set project-prefix-map "E" #'my-project-environment-setup)
 (with-eval-after-load 'flymake
