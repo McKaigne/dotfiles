@@ -8,6 +8,7 @@ in {
     avatar = ../../../avatar.jpg;
   in {
     imports = with m.homeManager; [
+      emacs
       development
       foot
       zellij

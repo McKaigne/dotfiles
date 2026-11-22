@@ -16,7 +16,6 @@
       dnsutils
       devenv
       nodejs_22
-      (python3.withPackages (ps: [ps.evdev]))
       evtest
     ];
   };

@@ -3,7 +3,7 @@ config_version = 20
 [bar.fancy]
 background_opacity = 0.80000000000000004
 center = [ "workspaces" ]
-end = [ "tray_2", "network", "volume", "input_volume", "brightness", "gap", "clock", "session" ]
+end = [ "tray_2", "network", "volume", "input_volume", "brightness", "battery", "gap", "clock", "session" ]
 padding = 18
 start = [ "cpu", "ram", "temp", "gap", "media" ]
 widget_spacing = 10
@@ -126,6 +126,17 @@ palette_source = "community"
 path = "/var/lib/wallpapers/Pretender.(Oberon).full.3921260.png"
 theme_mode = "dark"
 
+[[wallpaper.favorite]]
+community_palette = "Zenbones"
+palette_source = "community"
+path = "/var/lib/wallpapers/wallhaven-o5rjq9.png"
+theme_mode = "dark"
+
+[widget.battery]
+display_mode = "graphic"
+scale = 0.65000000000000002
+show_label = false
+
 [widget.brightness]
 glyph_position = "after"
 peek = true
@@ -178,8 +189,3 @@ peek = true
 pill_scale = 0.5
 show_labels = false
 style = "regular"
-[[wallpaper.favorite]]
-community_palette = "Zenbones"
-palette_source = "community"
-path = "/var/lib/wallpapers/wallhaven-o5rjq9.png"
-theme_mode = "dark"

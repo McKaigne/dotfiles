@@ -10,33 +10,20 @@
     programs.helix = {
       enable = true;
       defaultEditor = false;
-      extraPackages = with pkgs; [
-        wl-clipboard
-        nixd
-        nixfmt
-        marksman
-        taplo
-        yaml-language-server
-        bash-language-server
-        shellcheck
-        shfmt
-        dockerfile-language-server
-        docker-compose-language-service
-        # C/C++ debugging (lldb-dap), CMake, JSON/CSS/HTML, just, Python, GLSL.
-        llvmPackages_23.lldb
-        neocmakelsp
-        vscode-langservers-extracted
-        just-lsp
-        ruff
-        ty
-        glsl_analyzer
-      ];
+      # Language servers and formatters are on PATH (development/languages.nix).
+      extraPackages = [pkgs.wl-clipboard];
       languages = {
         # Godot's editor serves GDScript completion while it is open.
         language-server.godot = {
           command = lib.getExe' pkgs.netcat "nc";
           args = ["127.0.0.1" "6005"];
         };
+        language-server.vtsls = {
+          command = "vtsls";
+          args = ["--stdio"];
+        };
+        language-server.htmx-lsp.command = "htmx-lsp";
+        language-server.sqls.command = "sqls";
         language-server.nixd = {
           command = "nixd";
           config.nixd = {
@@ -56,6 +43,31 @@
           {
             name = "julia";
             auto-format = true;
+          }
+          {
+            name = "python";
+            language-servers = ["basedpyright" "ruff"];
+          }
+          {
+            name = "typescript";
+            language-servers = ["vtsls"];
+          }
+          {
+            name = "tsx";
+            language-servers = ["vtsls"];
+          }
+          {
+            name = "javascript";
+            language-servers = ["vtsls"];
+          }
+          {
+            # htmx attributes (hx-*) alongside the usual HTML servers.
+            name = "html";
+            language-servers = ["vscode-html-language-server" "superhtml" "htmx-lsp"];
+          }
+          {
+            name = "sql";
+            language-servers = ["sqls"];
           }
           {
             name = "gdscript";
