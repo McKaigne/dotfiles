@@ -1,10 +1,5 @@
 config_version = 20
 
-[bar.fancy]
-center = [ "clock" ]
-end = [ "tray", "notifications", "input_volume", "volume", "brightness", "battery", "session" ]
-start = [ "workspaces" ]
-
 [wallpaper.default]
 path = "/home/jekyll/Pictures/Wallpapers/Kanagawa-Light.png"
 
@@ -13,28 +8,3 @@ path = "/home/jekyll/Pictures/Wallpapers/Kanagawa-Light.png"
 
 [wallpaper.monitors.DP-1]
 path = "/home/jekyll/Pictures/Wallpapers/Kanagawa-Light.png"
-
-[widget.clock]
-anchor = false
-
-[widget.cpu]
-visualization = "none"
-
-[widget.notifications]
-hide_when_no_unread = true
-
-[widget.ram]
-show_value = true
-visualization = "none"
-
-[widget.session]
-custom_image = ""
-
-[widget.temp]
-show_value = true
-visualization = "none"
-
-[widget.workspaces]
-anchor = true
-focused_color = "primary"
-style = "minimal"

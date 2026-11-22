@@ -21,15 +21,18 @@ in {
           "fancy"
         ];
         "fancy" = {
+          # Plain glyphs and text, no capsules: where you are on the left,
+          # the time in the middle, what's playing and the controls on the right.
           "center" = [
-            "notifications"
             "clock"
-            "media"
           ];
           "end" = [
+            "media"
             "tray"
             "volume"
-            "input_volume"
+            "brightness"
+            "battery"
+            "notifications"
             "session"
           ];
           "hover_highlight" = false;
@@ -42,7 +45,9 @@ in {
           "background_opacity" = style.opacity;
           "compositor_blur" = true;
           "start" = [
+            "launcher"
             "workspaces"
+            "active_window"
           ];
           "widget_spacing" = 8;
         };

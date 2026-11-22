@@ -4,6 +4,8 @@
       "widget" = {
         "active_window" = {
           "colorize_icons" = true;
+          "max_length" = 220;
+          "title_scroll" = "on_hover";
         };
         "brightness" = {
           "glyph_position" = "after";
@@ -12,7 +14,12 @@
         };
         "clock" = {
           "anchor" = true;
-          "tooltip_format" = "{:%m/%d/%Y}";
+          "format" = "{:%a %d %b  %H:%M}";
+          "tooltip_format" = "{:%A, %B %d, %Y}";
+        };
+        "launcher" = {
+          "custom_image" = "${../../../../assets/icons/nix-lavender.png}";
+          "custom_image_colorize" = true;
         };
         "launcher_2" = {
           "type" = "launcher";
@@ -22,13 +29,6 @@
           "peek" = true;
           "peek_delay_ms" = 350;
         };
-        "ram" = {
-          "show_value" = false;
-        };
-        "session" = {
-          "custom_image" = "${../../../../assets/icons/nix-lavender.png}";
-          "custom_image_colorize" = true;
-        };
         "taskbar" = {
           "colorize_icons" = true;
           "group_single_icon_per_app" = true;
@@ -37,9 +37,6 @@
             "pcmanfm"
           ];
           "workspace_label_placement" = "inside";
-        };
-        "temp" = {
-          "show_value" = false;
         };
         "tray" = {
           "colorize_icons" = true;
@@ -58,16 +55,20 @@
             "right" = "wallpaper-random";
           };
         };
+        "notifications" = {
+          "hide_when_no_unread" = true;
+        };
         "weather" = {
           "show_condition" = false;
         };
+        # Plain numbers, no pills: the current one in the accent colour,
+        # occupied ones in the text colour, empty ones faded.
         "workspaces" = {
-          "colorize_icons" = true;
-          "empty_color" = "hover";
-          "enabled" = true;
-          "focused_color" = "surface_container";
-          "max_label_chars" = 19;
-          "style" = "focus_hint";
+          "style" = "minimal";
+          "focused_color" = "primary";
+          "occupied_color" = "on_surface";
+          "empty_color" = "outline_variant";
+          "anchor" = true;
         };
       };
     };
