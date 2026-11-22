@@ -1,17 +1,9 @@
 config_version = 20
 
 [bar.fancy]
-center = ["clock"]
-end = [
-    "tray",
-    "notifications",
-    "brightness",
-    "input_volume",
-    "volume",
-    "battery",
-    "session",
-]
-start = ["workspaces"]
+center = [ "clock" ]
+end = [ "tray", "notifications", "input_volume", "volume", "brightness", "battery", "session" ]
+start = [ "workspaces" ]
 
 [wallpaper.default]
 path = "/home/jekyll/Pictures/Wallpapers/Kanagawa-Light.png"
@@ -28,6 +20,9 @@ anchor = false
 [widget.cpu]
 visualization = "none"
 
+[widget.notifications]
+hide_when_no_unread = true
+
 [widget.ram]
 show_value = true
 visualization = "none"
@@ -43,6 +38,3 @@ visualization = "none"
 anchor = true
 focused_color = "primary"
 style = "minimal"
-
-[widget.notifications]
-hide_when_no_unread = true
