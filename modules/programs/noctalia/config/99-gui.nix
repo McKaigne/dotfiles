@@ -3,59 +3,343 @@
 {
   flake.modules.homeManager."noctalia" = {pkgs, ...}: {
     xdg.configFile."noctalia/99-gui.toml".source = (pkgs.formats.toml {}).generate "99-gui.toml" (builtins.fromJSON ''
-      {
-        "lockscreen_widgets": {
-          "enabled": false,
-          "schema_version": 2,
-          "widget_order": [
-            "lockscreen-login-box@DP-1"
-          ],
-          "grid": {
-            "cell_size": 16,
-            "major_interval": 4,
-            "visible": true
-          },
-          "widget": {
-            "lockscreen-login-box@DP-1": {
-              "box_height": 196.0,
-              "box_width": 810.0,
-              "cx": 960.0,
-              "cy": 898.0,
-              "output": "DP-1",
-              "placement_height": 1080.0,
-              "placement_width": 1920.0,
-              "rotation": 0.0,
-              "type": "login_box",
-              "settings": {
-                "background_color": "surface_container",
-                "background_opacity": 0.88,
-                "background_radius": 12.0,
-                "center_password_text": false,
-                "input_opacity": 1.0,
-                "input_radius": 6.0,
-                "layout": "regular",
-                "show_caps_lock": true,
-                "show_keyboard_layout": true,
-                "show_login_button": true,
-                "show_media": true,
-                "show_session_buttons": true,
-                "show_unlock_hint": true,
-                "show_weather": true
-              }
-            }
-          }
-        },
-        "shell": {
-          "avatar_path": "/etc/nixos/avatar.jpg"
-        },
-        "theme": {
-          "builtin": "Noctalia",
-          "community_palette": "Kemuri Susu",
-          "mode": "dark",
-          "source": "community",
-          "wallpaper_scheme": "m3-content"
+{
+  "lockscreen_widgets": {
+    "enabled": false,
+    "schema_version": 2,
+    "widget_order": [
+      "lockscreen-login-box@DP-1"
+    ],
+    "grid": {
+      "cell_size": 16,
+      "major_interval": 4,
+      "visible": true
+    },
+    "widget": {
+      "lockscreen-login-box@DP-1": {
+        "box_height": 196.0,
+        "box_width": 810.0,
+        "cx": 960.0,
+        "cy": 898.0,
+        "output": "DP-1",
+        "placement_height": 1080.0,
+        "placement_width": 1920.0,
+        "rotation": 0.0,
+        "type": "login_box",
+        "settings": {
+          "background_color": "surface_container",
+          "background_opacity": 0.88,
+          "background_radius": 12.0,
+          "center_password_text": false,
+          "input_opacity": 1.0,
+          "input_radius": 6.0,
+          "layout": "regular",
+          "show_caps_lock": true,
+          "show_keyboard_layout": true,
+          "show_login_button": true,
+          "show_media": true,
+          "show_session_buttons": true,
+          "show_unlock_hint": true,
+          "show_weather": true
         }
       }
+    }
+  },
+  "shell": {
+    "avatar_path": "/etc/nixos/avatar.jpg",
+    "settings_window_translucent": true
+  },
+  "theme": {
+    "builtin": "Kanagawa",
+    "community_palette": "Vesper",
+    "mode": "dark",
+    "source": "wallpaper",
+    "wallpaper_scheme": "m3-content"
+  },
+  "bar": {
+    "order": [
+      "minimal",
+      "minimal-DP2",
+      "fancy"
+    ]
+  },
+  "desktop_widgets": {
+    "schema_version": 2,
+    "widget_order": [
+      "desktop-widget-0000000000000015",
+      "desktop-widget-0000000000000014",
+      "desktop-widget-0000000000000013",
+      "desktop-widget-0000000000000012",
+      "desktop-widget-0000000000000010",
+      "desktop-widget-0000000000000001",
+      "desktop-widget-0000000000000004",
+      "desktop-widget-000000000000000f",
+      "desktop-widget-0000000000000011",
+      "desktop-widget-0000000000000016",
+      "desktop-widget-0000000000000017",
+      "desktop-widget-0000000000000009",
+      "desktop-widget-000000000000000a",
+      "desktop-widget-000000000000000c"
+    ],
+    "grid": {
+      "cell_size": 16,
+      "major_interval": 4,
+      "visible": true
+    },
+    "widget": {
+      "desktop-widget-0000000000000001": {
+        "box_height": 128.0,
+        "box_width": 720.0,
+        "cx": 960.0,
+        "cy": 59.999977111816406,
+        "output": "DP-1",
+        "placement_height": 1080.0,
+        "placement_width": 1920.0,
+        "rotation": -3.1415927410125732,
+        "type": "audio_visualizer",
+        "settings": {
+          "background": false,
+          "bands": 60,
+          "centered": false,
+          "show_when_idle": false
+        }
+      },
+      "desktop-widget-0000000000000004": {
+        "box_height": 128.0,
+        "box_width": 720.0,
+        "cx": 960.0,
+        "cy": 1033.6494140625,
+        "enabled": false,
+        "flip_y": true,
+        "output": "DP-1",
+        "placement_height": 1080.0,
+        "placement_width": 1920.0,
+        "rotation": -3.1415927410125732,
+        "type": "audio_visualizer",
+        "settings": {
+          "background": false,
+          "bands": 60,
+          "centered": false,
+          "show_when_idle": false
+        }
+      },
+      "desktop-widget-0000000000000009": {
+        "box_height": 76.06231689453125,
+        "box_width": 130.9400634765625,
+        "cx": 868.201171875,
+        "cy": 924.3983154296875,
+        "output": "DP-1",
+        "placement_height": 1080.0,
+        "placement_width": 1920.0,
+        "rotation": 0.0,
+        "type": "clock",
+        "settings": {
+          "background": false,
+          "clock_style": "digital"
+        }
+      },
+      "desktop-widget-000000000000000a": {
+        "box_height": 44.796875,
+        "box_width": 90.00390625,
+        "cx": 925.5029296875,
+        "cy": 924.6005859375,
+        "output": "DP-1",
+        "placement_height": 1080.0,
+        "placement_width": 1920.0,
+        "rotation": 0.0,
+        "type": "clock",
+        "settings": {
+          "background": false,
+          "format": "{:%d\\n%m}"
+        }
+      },
+      "desktop-widget-000000000000000c": {
+        "box_height": 80.0,
+        "box_width": 160.0,
+        "cx": 1042.1982421875,
+        "cy": 926.1005859375,
+        "output": "DP-1",
+        "placement_height": 1080.0,
+        "placement_width": 1920.0,
+        "rotation": 0.0,
+        "type": "weather",
+        "settings": {
+          "background": false,
+          "background_opacity": 1.0,
+          "forecast_days": 3,
+          "shadow": false,
+          "show_forecast": false
+        }
+      },
+      "desktop-widget-000000000000000f": {
+        "box_height": 201.29296875,
+        "box_width": 111.7998046875,
+        "cx": 1173.8243408203125,
+        "cy": 971.13427734375,
+        "output": "DP-1",
+        "placement_height": 1080.0,
+        "placement_width": 1920.0,
+        "rotation": 0.0,
+        "type": "media_player",
+        "settings": {
+          "album_art_background": true,
+          "album_art_blur": 8,
+          "audio_visualizer": true,
+          "background": true,
+          "background_opacity": 0.0
+        }
+      },
+      "desktop-widget-0000000000000010": {
+        "box_height": 217.0,
+        "box_width": 125.599609375,
+        "cx": 1173.8994140625,
+        "cy": 971.5458984375,
+        "output": "DP-1",
+        "placement_height": 1080.0,
+        "placement_width": 1920.0,
+        "rotation": 0.0,
+        "type": "label",
+        "settings": {
+          "background_opacity": 1.0,
+          "opacity": 1.0,
+          "title": ""
+        }
+      },
+      "desktop-widget-0000000000000011": {
+        "box_height": 111.89940643310547,
+        "box_width": 203.0,
+        "cx": 745.4622802734375,
+        "cy": 972.0,
+        "output": "DP-1",
+        "placement_height": 1080.0,
+        "placement_width": 1920.0,
+        "rotation": 1.5707963705062866,
+        "type": "audio_visualizer",
+        "settings": {
+          "background": false,
+          "background_opacity": 1.0,
+          "bands": 68,
+          "reversed": false,
+          "show_wave": false,
+          "show_when_idle": true
+        }
+      },
+      "desktop-widget-0000000000000012": {
+        "box_height": 217.60546875,
+        "box_width": 124.201171875,
+        "cx": 745.424560546875,
+        "cy": 972.22412109375,
+        "output": "DP-1",
+        "placement_height": 1080.0,
+        "placement_width": 1920.0,
+        "rotation": 0.0,
+        "type": "label",
+        "settings": {
+          "background_opacity": 1.0,
+          "opacity": 1.0,
+          "title": ""
+        }
+      },
+      "desktop-widget-0000000000000013": {
+        "box_height": 240.0,
+        "box_width": 720.0,
+        "cx": 960.0,
+        "cy": 972.0,
+        "output": "DP-1",
+        "placement_height": 1080.0,
+        "placement_width": 1920.0,
+        "rotation": 0.0,
+        "type": "label",
+        "settings": {
+          "background_color": "primary",
+          "background_opacity": 1.0,
+          "opacity": 1.0,
+          "title": ""
+        }
+      },
+      "desktop-widget-0000000000000014": {
+        "box_height": 256.0,
+        "box_width": 736.0,
+        "cx": 960.0,
+        "cy": 971.77294921875,
+        "output": "DP-1",
+        "placement_height": 1080.0,
+        "placement_width": 1920.0,
+        "rotation": 0.0,
+        "type": "label",
+        "settings": {
+          "background_opacity": 1.0,
+          "opacity": 1.0,
+          "title": ""
+        }
+      },
+      "desktop-widget-0000000000000015": {
+        "box_height": 94.40625,
+        "box_width": 200.19921875,
+        "cx": 1041.375,
+        "cy": 926.4959716796875,
+        "output": "DP-1",
+        "placement_height": 1080.0,
+        "placement_width": 1920.0,
+        "rotation": 0.0,
+        "type": "label",
+        "settings": {
+          "background_opacity": 1.0,
+          "opacity": 1.0,
+          "title": ""
+        }
+      },
+      "desktop-widget-0000000000000016": {
+        "box_height": 95.9500732421875,
+        "box_width": 200.203125,
+        "cx": 1042.42529296875,
+        "cy": 925.9171142578125,
+        "output": "DP-1",
+        "placement_height": 1080.0,
+        "placement_width": 1920.0,
+        "rotation": 0.0,
+        "type": "label",
+        "settings": {
+          "background_opacity": 1.0,
+          "opacity": 1.0,
+          "title": ""
+        }
+      },
+      "desktop-widget-0000000000000017": {
+        "box_height": 95.0477294921875,
+        "box_width": 205.796875,
+        "cx": 878.7744140625,
+        "cy": 925.8138427734375,
+        "output": "DP-1",
+        "placement_height": 1080.0,
+        "placement_width": 1920.0,
+        "rotation": 0.0,
+        "type": "label",
+        "settings": {
+          "background_opacity": 1.0,
+          "opacity": 1.0,
+          "title": ""
+        }
+      }
+    }
+  },
+  "hot_corners": {
+    "enabled": false
+  },
+  "wallpaper": {
+    "default": {
+      "path": "/home/jekyll/Pictures/Wallpapers/Pretender.(Oberon).full.3921260.png"
+    },
+    "last": {
+      "path": "/home/jekyll/Pictures/Wallpapers/Pretender.(Oberon).full.3921260.png"
+    },
+    "monitors": {
+      "DP-1": {
+        "path": "/home/jekyll/Pictures/Wallpapers/Pretender.(Oberon).full.3921260.png"
+      }
+    }
+  }
+}
     '');
   };
 }

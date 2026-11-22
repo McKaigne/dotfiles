@@ -20,6 +20,9 @@ in {
         font = "Maple Mono NF 10";
         recolor = "true";
         recolor-keephue = "true";
+        # Recolored pages take the glass background from the theme; pictures
+        # keep their real colors and stay solid.
+        recolor-reverse-video = "true";
         selection-clipboard = "clipboard";
         window-title-basename = "true";
       };
