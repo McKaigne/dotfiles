@@ -1,3 +1,8 @@
+/* Noctalia's palette (--nc-*), written by its theme templates: the same
+   surfaces as the bar and terminals. Pywalfox's toolbar colours are lighter
+   shades of the palette, so backgrounds use these instead. */
+@import url("noctalia-colors.css");
+
 #TabsToolbar { display: none !important; }
 #sidebar-panel-header { display: none !important; }
 
@@ -66,7 +71,7 @@ browser {
 #navigator-toolbox,
 #sidebar-box,
 #sidebar-main {
-  background-color: color-mix(in srgb, var(--toolbar-background-color, var(--toolbar-bgcolor, #15141b)) @GLASS_PERCENT@%, transparent) !important;
+  background-color: color-mix(in srgb, var(--nc-surface, #15141b) @GLASS_PERCENT@%, transparent) !important;
   background-image: none !important;
 }
 
@@ -79,4 +84,10 @@ browser {
   background: transparent !important;
   background-image: none !important;
   box-shadow: none !important;
+}
+
+/* The address field: the palette's container shade, like Noctalia's cards. */
+#urlbar-background,
+#searchbar {
+  background-color: color-mix(in srgb, var(--nc-surface-container, #1e1d27) @GLASS_PERCENT@%, transparent) !important;
 }

@@ -1,3 +1,6 @@
+/* Noctalia's palette (--nc-*), written by its theme templates. */
+@import url("noctalia-colors.css");
+
 @-moz-document url-prefix("about:") {
   body {
     font-family: "Maple Mono NF", monospace !important;
@@ -27,16 +30,175 @@
   }
 }
 
-/* Glass pages: each page's own base background becomes the same tint as the
-   toolbars, over Umbriel's blur (needs browser.tabs.allow_transparent_browser
-   and the cleared .browserContainer in userChrome.css). User-sheet !important
-   beats both the site and Dark Reader; boxes a site paints inside the page
-   keep their own background. Canvas is the dark page colour in dark mode. */
+/* Glass pages: each page's own base background becomes the theme surface at
+   the shared glass opacity, over Umbriel's blur (needs
+   browser.tabs.allow_transparent_browser and the cleared .browserContainer in
+   userChrome.css). User-sheet !important beats both the site and Dark Reader;
+   boxes a site paints inside the page keep their own background. */
 @-moz-document url-prefix("http://"), url-prefix("https://"), url-prefix("file://"), url-prefix("about:") {
   html {
-    background-color: color-mix(in srgb, Canvas @GLASS_PERCENT@%, transparent) !important;
+    background-color: color-mix(in srgb, var(--nc-surface, Canvas) @GLASS_PERCENT@%, transparent) !important;
   }
   body {
     background-color: transparent !important;
+  }
+}
+
+/* YouTube paints its dark theme on inner containers through these variables,
+   so the glass above never shows; point them at the theme instead. The video
+   player stays solid. */
+@-moz-document domain("youtube.com") {
+  html,
+  html[dark] {
+    --yt-spec-base-background: transparent !important;
+    --yt-spec-general-background-a: transparent !important;
+    --yt-spec-general-background-b: transparent !important;
+    --yt-spec-general-background-c: transparent !important;
+    --yt-spec-brand-background-solid: transparent !important;
+    --yt-spec-brand-background-primary: transparent !important;
+    --yt-spec-brand-background-secondary: transparent !important;
+    --yt-spec-raised-background: color-mix(in srgb, var(--nc-surface-container, Canvas) 60%, transparent) !important;
+    --yt-spec-menu-background: var(--nc-surface-container, Canvas) !important;
+    --yt-spec-text-primary: var(--nc-on-surface, CanvasText) !important;
+    --yt-spec-text-secondary: var(--nc-on-surface-variant, GrayText) !important;
+  }
+  ytd-app,
+  ytd-browse,
+  ytd-watch-flexy,
+  ytd-page-manager,
+  #page-manager,
+  #columns,
+  #content.ytd-app {
+    background: transparent !important;
+  }
+  /* The header stays readable over content scrolling under it. */
+  #background.ytd-masthead,
+  #masthead-container {
+    background: color-mix(in srgb, var(--nc-surface, Canvas) @GLASS_PERCENT@%, transparent) !important;
+  }
+}
+
+/* Sites that are dark on their own are skipped by Dark Reader, so their own
+   solid paint stays; these point each site's background variables at the
+   theme. Light sites need nothing: Dark Reader's page colour is what the
+   glass rule above replaces. Variable names follow each site's current CSS
+   and may change. Shorthands: */
+:root {
+  --nc-glass: color-mix(in srgb, var(--nc-surface, Canvas) @GLASS_PERCENT@%, transparent);
+  --nc-card: color-mix(in srgb, var(--nc-surface-container, Canvas) 55%, transparent);
+  --nc-inset: color-mix(in srgb, var(--nc-surface, Canvas) 45%, transparent);
+}
+
+/* GitHub (Primer) */
+@-moz-document domain("github.com") {
+  :root,
+  [data-color-mode] {
+    --bgColor-default: transparent !important;
+    --bgColor-muted: var(--nc-card) !important;
+    --bgColor-inset: var(--nc-inset) !important;
+    --color-canvas-default: transparent !important;
+    --color-canvas-subtle: var(--nc-card) !important;
+    --color-canvas-inset: var(--nc-inset) !important;
+    --header-bgColor: var(--nc-glass) !important;
+    --color-header-bg: var(--nc-glass) !important;
+  }
+  body,
+  .application-main {
+    background: transparent !important;
+  }
+}
+
+/* Reddit (shreddit) */
+@-moz-document domain("reddit.com") {
+  :root,
+  .theme-dark,
+  html.theme-dark {
+    --color-neutral-background: transparent !important;
+    --color-neutral-background-weak: var(--nc-card) !important;
+    --color-neutral-background-strong: var(--nc-card) !important;
+    --color-neutral-background-container: var(--nc-card) !important;
+    --shreddit-content-background: transparent !important;
+  }
+  body,
+  shreddit-app,
+  .grid-container {
+    background: transparent !important;
+  }
+  reddit-header-large,
+  header {
+    background: var(--nc-glass) !important;
+  }
+}
+
+/* MDN */
+@-moz-document domain("developer.mozilla.org") {
+  :root,
+  .dark {
+    --background-primary: transparent !important;
+    --background-secondary: var(--nc-card) !important;
+    --background-tertiary: var(--nc-inset) !important;
+  }
+}
+
+/* Rust docs (docs.rs, doc.rust-lang.org) */
+@-moz-document domain("docs.rs"), domain("doc.rust-lang.org") {
+  :root,
+  :root[data-theme] {
+    --main-background-color: transparent !important;
+    --sidebar-background-color: var(--nc-card) !important;
+    --code-block-background-color: var(--nc-inset) !important;
+  }
+}
+
+/* Read the Docs / Furo and Material for MkDocs sites */
+@-moz-document regexp("https://.*\\.readthedocs\\.io/.*"), regexp("https://.*\\.readthedocs\\.org/.*") {
+  :root,
+  body[data-theme] {
+    --color-background-primary: transparent !important;
+    --color-background-secondary: var(--nc-card) !important;
+    --md-default-bg-color: transparent !important;
+  }
+}
+
+/* NixOS wiki and other MediaWiki sites in dark mode */
+@-moz-document domain("wiki.nixos.org"), domain("wiki.archlinux.org"), domain("wikipedia.org") {
+  :root,
+  html.skin-theme-clientpref-night {
+    --background-color-base: transparent !important;
+    --background-color-neutral-subtle: var(--nc-card) !important;
+  }
+  body,
+  .mw-page-container {
+    background: transparent !important;
+  }
+}
+
+/* NixOS manuals and search */
+@-moz-document domain("nixos.org") {
+  body,
+  .page {
+    background: transparent !important;
+  }
+}
+
+/* Google (Gmail, Classroom, Drive, Docs, Calendar, Search): its Material 3
+   colour tokens, shared across the apps. Document pages in Docs and Sheets
+   draw on their own canvas and stay solid. */
+@-moz-document domain("google.com") {
+  :root,
+  body {
+    --gm3-sys-color-background: transparent !important;
+    --gm3-sys-color-surface: transparent !important;
+    --gm3-sys-color-surface-dim: transparent !important;
+    --gm3-sys-color-surface-bright: var(--nc-card) !important;
+    --gm3-sys-color-surface-container-lowest: var(--nc-inset) !important;
+    --gm3-sys-color-surface-container-low: var(--nc-card) !important;
+    --gm3-sys-color-surface-container: var(--nc-card) !important;
+    --gm3-sys-color-surface-container-high: var(--nc-card) !important;
+    --gm3-sys-color-surface-container-highest: var(--nc-card) !important;
+  }
+  html,
+  body {
+    background: transparent !important;
   }
 }
