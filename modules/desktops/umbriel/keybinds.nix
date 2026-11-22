@@ -49,7 +49,7 @@
         "Mod+O" = spawn "obs"; # OBS (hyde)
 
         # --- Shell (Noctalia)
-        "Mod" = msg "panel-toggle launcher"; # tap Super
+        "Mod+D" = msg "panel-toggle launcher"; # app launcher (niri/sway/i3 key)
         "Alt+Tab" = msg "window-switcher";
         "Mod+A" = msg "panel-toggle control-center"; # quick settings
         "Mod+N" = msg "panel-toggle control-center notifications";
