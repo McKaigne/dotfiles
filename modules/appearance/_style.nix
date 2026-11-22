@@ -3,9 +3,10 @@
 {
   font = "Maple Mono NF";
 
-  # Background translucency for the bar, panels, terminals and GTK apps. Text
+  # Background translucency for the bar, panels, terminals and GTK apps, the
+  # same 80% Noctalia uses for its own windows so everything matches. Text
   # and images stay opaque; the compositor blurs whatever shows through.
-  opacity = 0.5;
+  opacity = 0.8;
 
   # Strong frosted glass, as in popular Hyprland/KDE "strong blur" setups. Each
   # pass halves the image: much past 4-5 passes the wallpaper collapses into
