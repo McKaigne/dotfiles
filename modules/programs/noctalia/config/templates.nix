@@ -20,13 +20,6 @@ in {
       wait
     '';
 
-    # Tide paints its segments in ANSI black, which the theme makes the exact
-    # terminal background, so foot's glass would make them see-through too.
-    # Give them their own theme color; universal variables reach every open shell.
-    applyTideColors = pkgs.writeShellScript "apply-tide-colors" ''
-      ${pkgs.fish}/bin/fish "''${XDG_CACHE_HOME:-$HOME/.cache}/noctalia/tide.fish"
-    '';
-
     # GTK glass: redefine Noctalia's surface backgrounds with alpha. Only
     # background colors change, so text, icons and selections stay solid.
     gtkGlass = pkgs.writeText "gtk-glass.css.in" (let
@@ -70,11 +63,6 @@ in {
           gtk4-glass = {
             input_path = "${gtkGlass}";
             output_path = "$XDG_CONFIG_HOME/gtk-4.0/glass.css";
-          };
-          tide = {
-            input_path = "${../templates/tide.fish}";
-            output_path = "$XDG_CACHE_HOME/noctalia/tide.fish";
-            post_hook = "${applyTideColors}";
           };
           zathura = {
             input_path = "${../templates/zathura}";

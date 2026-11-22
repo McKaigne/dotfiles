@@ -19,10 +19,10 @@
         };
         scrollback.lines = 10000;
         # After the theme include, so it applies on top of Noctalia's colors.
-        # "matching" also covers apps that paint the default background color.
+        # Glass only where nothing set a color: the default background. Colors an
+        # app picks on purpose (Tide's segments, status bars) stay solid.
         colors-dark = {
           alpha = (import ../appearance/_style.nix).opacity;
-          alpha-mode = "matching";
         };
         cursor.style = "block";
       };

@@ -198,9 +198,9 @@
               mode_resize       "#[fg={{colors.primary.default.hex}}]h/j/k/l #[fg={{colors.on_surface_variant.default.hex}},italic]󰩨 resize #[fg={{colors.primary.default.hex}}]+/- #[fg={{colors.on_surface_variant.default.hex}},italic]󰩬 scale"
               mode_scroll       "#[fg={{colors.primary.default.hex}}]j/k #[fg={{colors.on_surface_variant.default.hex}},italic]󰮾 scroll #[fg={{colors.primary.default.hex}}]d/u #[fg={{colors.on_surface_variant.default.hex}},italic] half-page #[fg={{colors.primary.default.hex}}]/ #[fg={{colors.on_surface_variant.default.hex}},italic]󰍉 search #[fg={{colors.primary.default.hex}}]e #[fg={{colors.on_surface_variant.default.hex}},italic] edit"
               mode_search       "#[fg={{colors.primary.default.hex}}]n/N #[fg={{colors.on_surface_variant.default.hex}},italic]󰍉 next/prev #[fg={{colors.primary.default.hex}}]c #[fg={{colors.on_surface_variant.default.hex}},italic]󰬲 case #[fg={{colors.primary.default.hex}}]w #[fg={{colors.on_surface_variant.default.hex}},italic]󰑐 wrap #[fg={{colors.primary.default.hex}}]o #[fg={{colors.on_surface_variant.default.hex}},italic]󰬵 word"
-              mode_entersearch  "#[fg={{colors.primary.default.hex}}]Enter #[fg={{colors.on_surface_variant.default.hex}},italic]󰍉 search"
-              mode_renametab    "#[fg={{colors.primary.default.hex}}]Enter #[fg={{colors.on_surface_variant.default.hex}},italic] submit"
-              mode_renamepane   "#[fg={{colors.primary.default.hex}}]Enter #[fg={{colors.on_surface_variant.default.hex}},italic] submit"
+              mode_enter_search "#[fg={{colors.primary.default.hex}}]Enter #[fg={{colors.on_surface_variant.default.hex}},italic]󰍉 search"
+              mode_rename_tab   "#[fg={{colors.primary.default.hex}}]Enter #[fg={{colors.on_surface_variant.default.hex}},italic] submit"
+              mode_rename_pane  "#[fg={{colors.primary.default.hex}}]Enter #[fg={{colors.on_surface_variant.default.hex}},italic] submit"
               mode_session      "#[fg={{colors.primary.default.hex}}]d #[fg={{colors.on_surface_variant.default.hex}},italic]󰈆 detach #[fg={{colors.primary.default.hex}}]w #[fg={{colors.on_surface_variant.default.hex}},italic]󰀻 manager #[fg={{colors.primary.default.hex}}]p #[fg={{colors.on_surface_variant.default.hex}},italic]󰚝 project #[fg={{colors.primary.default.hex}}]q #[fg={{colors.on_surface_variant.default.hex}},italic]󰧻 kill"
               mode_tmux         ""
 
@@ -374,6 +374,22 @@
 
               bind "D" { Detach; }
               bind "q" { Quit; }
+
+              // Same keys as Umbriel (Shift moves, Ctrl resizes, PgUp/PgDn
+              // switch workspaces); added on keys the binds above leave free.
+              bind "Shift Left" { MovePane "Left"; SwitchToMode "Locked"; }
+              bind "Shift Right" { MovePane "Right"; SwitchToMode "Locked"; }
+              bind "Shift Up" { MovePane "Up"; SwitchToMode "Locked"; }
+              bind "Shift Down" { MovePane "Down"; SwitchToMode "Locked"; }
+              bind "Ctrl Left" { Resize "Increase Left"; SwitchToMode "Locked"; }
+              bind "Ctrl Right" { Resize "Increase Right"; SwitchToMode "Locked"; }
+              bind "Ctrl Up" { Resize "Increase Up"; SwitchToMode "Locked"; }
+              bind "Ctrl Down" { Resize "Increase Down"; SwitchToMode "Locked"; }
+              bind "PageUp" { GoToPreviousTab; SwitchToMode "Locked"; }
+              bind "PageDown" { GoToNextTab; SwitchToMode "Locked"; }
+              bind "Shift PageUp" { BreakPaneLeft; SwitchToMode "Locked"; }
+              bind "Shift PageDown" { BreakPaneRight; SwitchToMode "Locked"; }
+              bind "space" { TogglePaneEmbedOrFloating; SwitchToMode "Locked"; }
             }
 
             pane {
