@@ -93,20 +93,20 @@ transparency_mode = "soft"
 
 [theme]
 builtin = "Nord"
-community_palette = "Aura"
+community_palette = "Zenbones"
 source = "community"
 
 [wallpaper.default]
-path = "/var/lib/wallpapers/isekaiJoucho.jpg"
+path = "/var/lib/wallpapers/Pretender.(Oberon).full.3921260.png"
 
 [wallpaper.last]
-path = "/var/lib/wallpapers/isekaiJoucho.jpg"
+path = "/var/lib/wallpapers/Pretender.(Oberon).full.3921260.png"
 
 [wallpaper.monitors.DP-1]
-path = "/var/lib/wallpapers/isekaiJoucho.jpg"
+path = "/var/lib/wallpapers/Pretender.(Oberon).full.3921260.png"
 
 [wallpaper.monitors.eDP-1]
-path = "/var/lib/wallpapers/isekaiJoucho.jpg"
+path = "/var/lib/wallpapers/Pretender.(Oberon).full.3921260.png"
 
 [[wallpaper.favorite]]
 community_palette = "Occult Umbral"
@@ -178,3 +178,8 @@ peek = true
 pill_scale = 0.5
 show_labels = false
 style = "regular"
+[[wallpaper.favorite]]
+community_palette = "Zenbones"
+palette_source = "community"
+path = "/var/lib/wallpapers/wallhaven-o5rjq9.png"
+theme_mode = "dark"
