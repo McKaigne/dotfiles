@@ -9,7 +9,7 @@
       transform = "normal";
       vrr = "disabled";
       hdr = "auto";
-      workspaces = 3;
+      workspaces = 5;
     };
   };
 }
