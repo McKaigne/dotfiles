@@ -13,7 +13,7 @@
   #
   #   Keys keep their meaning under every modifier: Left/Right are columns,
   #   Up/Down move within a column and on into the next workspace, PgUp/PgDn
-  #   and 1-9 are workspaces, Home/End the first and last column. H/J/K/L
+  #   and 1-3 are workspaces, Home/End the first and last column. H/J/K/L
   #   always mirror the arrows. Plain letters are apps and panels, named
   #   mnemonically; Q (close) and F (fullscreen) are the only window verbs.
   #
@@ -191,6 +191,6 @@
       in [
         (lib.nameValuePair "Mod+${i}" "workspace-switch ${i}")
         (lib.nameValuePair "Mod+Shift+${i}" "window-move-to-workspace ${i}")
-      ]) (lib.range 1 9));
+      ]) (lib.range 1 3));
   };
 }
