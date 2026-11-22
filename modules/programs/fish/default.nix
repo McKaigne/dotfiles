@@ -44,9 +44,9 @@ in {
 
     fishSingleQuote = s: "'${lib.replaceStrings ["'"] ["'\\''"] s}'";
 
-    # Segment backgrounds follow the Noctalia theme (see the tide template);
+    # Segment backgrounds and the clock color follow the Noctalia theme (see the tide template);
     # only seed them when the template has not run yet.
-    isSegmentBg = name: builtins.match "tide_.*_bg_color.*" name != null;
+    isSegmentBg = name: builtins.match "tide_.*_bg_color.*|tide_time_color" name != null;
 
     setUniversalVar = item:
       if builtins.elem item.name skipVars
