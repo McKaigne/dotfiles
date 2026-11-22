@@ -13,7 +13,12 @@
       KERNEL=="hidraw*", SUBSYSTEM=="hidraw", ATTRS{idVendor}=="369b", MODE="0660", GROUP="users", TAG+="uaccess"
     '';
 
+    # Helix for root, sudoedit and anything outside a user session too
+    # (NixOS would default to nano).
+    environment.systemPackages = [pkgs.helix];
     environment.variables = {
+      EDITOR = "hx";
+      VISUAL = "hx";
       XCURSOR_SIZE = "24";
       QT_QPA_PLATFORM = "wayland";
     };

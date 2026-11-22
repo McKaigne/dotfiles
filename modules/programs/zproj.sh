@@ -22,7 +22,7 @@ while read -r line; do
 done < <(zellij list-sessions --no-formatting 2>/dev/null || true)
 
 # Directories, most used first: git repositories zoxide knows under $HOME,
-# then /etc/nixos and every directory in ~/Projects.
+# then /etc/nixos, the notes vault and every directory in ~/Projects.
 declare -A seen
 dirs=()
 add_dir() {
@@ -34,6 +34,7 @@ while read -r dir; do
   [[ $dir == "$HOME"/* && -e $dir/.git ]] && add_dir "$dir"
 done < <(zoxide query --list 2>/dev/null | head -n 300)
 add_dir /etc/nixos
+add_dir "$HOME/Areas/Notes"
 for dir in "$HOME"/Projects/*/; do add_dir "${dir%/}"; done
 
 mark() {

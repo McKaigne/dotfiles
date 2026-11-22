@@ -86,6 +86,7 @@
         "Mod+Space" = msg "panel-toggle launcher";
         "Mod+A" = msg "panel-toggle control-center"; # quick settings (Win+A)
         "Mod+N" = msg "panel-toggle control-center notifications";
+        "Mod+Shift+N" = spawn "${foot} -e notes"; # today's Note in Helix
         "Mod+V" = msg "panel-toggle clipboard"; # clipboard history (Win+V)
         "Mod+I" = msg "settings-toggle"; # settings (Win+I)
         "Mod+W" = msg "panel-toggle wallpaper";

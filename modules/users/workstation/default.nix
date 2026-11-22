@@ -40,6 +40,11 @@ in {
         };
       };
     };
+    # Also for apps started by systemd or the compositor, not only shells.
+    systemd.user.sessionVariables = {
+      EDITOR = "hx";
+      VISUAL = "hx";
+    };
     programs.home-manager.enable = true;
   };
 }

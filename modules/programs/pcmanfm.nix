@@ -78,6 +78,18 @@ in {
         "text/x-c++" = "helix.desktop";
         "text/x-python" = "helix.desktop";
         "text/x-shellscript" = "helix.desktop";
+        # The standard names (the three above are not what file managers report).
+        "text/x-csrc" = "helix.desktop";
+        "text/x-chdr" = "helix.desktop";
+        "text/x-c++src" = "helix.desktop";
+        "text/x-c++hdr" = "helix.desktop";
+        "application/x-shellscript" = "helix.desktop";
+        "text/x-cmake" = "helix.desktop";
+        "text/x-makefile" = "helix.desktop";
+        "text/x-log" = "helix.desktop";
+        "text/x-org" = "helix.desktop";
+        "text/csv" = "helix.desktop";
+        "application/xml" = "helix.desktop";
         "application/json" = "helix.desktop";
         "application/toml" = "helix.desktop";
         "application/yaml" = "helix.desktop";
