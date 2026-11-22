@@ -134,7 +134,6 @@
           eglot-jl
           kotlin-ts-mode
           dart-mode
-          templ-ts-mode
           typst-ts-mode
         ];
     };
