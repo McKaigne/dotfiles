@@ -65,7 +65,8 @@ in {
             output_path = "$XDG_CONFIG_HOME/gtk-4.0/glass.css";
           };
           zathura = {
-            input_path = "${../templates/zathura}";
+            # Backgrounds take the shared glass opacity; pages stay solid.
+            input_path = pkgs.writeText "zathura.in" (builtins.replaceStrings ["@GLASS@"] [(toString style.opacity)] (builtins.readFile ../templates/zathura));
             output_path = "$XDG_CONFIG_HOME/zathura/noctalia";
             post_hook = "${reloadZathura}";
           };
