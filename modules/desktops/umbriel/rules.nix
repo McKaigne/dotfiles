@@ -20,8 +20,33 @@ in {
           return vec4(c.rgb / c.a * ${toString dim}, 1.0);
         }
       '';
+    # Noctalia's settings window draws its background at a fixed 80%. Map
+    # that onto the shared glass opacity: alpha 0.8 becomes style.opacity,
+    # fully opaque pixels (text, icons) stay 1.0, and everything in between
+    # scales smoothly so antialiased edges don't fringe.
+    noctaliaGlass = dim:
+      pkgs.writeText "noctalia-glass.glsl" ''
+        vec4 window(vec2 uv) {
+          vec4 c = umbriel_sample(uv);
+          if (c.a <= 0.0) return c;
+          float from = 0.8;
+          float to = ${toString style.opacity};
+          float a = c.a < from
+            ? c.a * to / from
+            : to + (c.a - from) * (1.0 - to) / (1.0 - from);
+          return vec4(c.rgb * (a / c.a) * ${toString dim}, a);
+        }
+      '';
   in {
     programs.umbriel.settings.effects.preset = {
+      noctalia-glass = {
+        kind = "window";
+        shader = "${noctaliaGlass "1.0"}";
+      };
+      noctalia-glass-darken = {
+        kind = "window";
+        shader = "${noctaliaGlass (toString (1.0 - style.unfocusedDim))}";
+      };
       unfocused-darken = {
         kind = "window";
         shader = "${darken}";
@@ -63,6 +88,17 @@ in {
         {
           match.is_focused = false;
           window_effect = "unfocused-darken";
+        }
+        {
+          match.app_id = "^dev\\.noctalia\\.Noctalia$";
+          window_effect = "noctalia-glass";
+        }
+        {
+          match = {
+            app_id = "^dev\\.noctalia\\.Noctalia$";
+            is_focused = false;
+          };
+          window_effect = "noctalia-glass-darken";
         }
         {
           match.app_id = "^helium$";
