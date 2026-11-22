@@ -131,7 +131,6 @@
             ]))
           haskell-ts-mode
           julia-ts-mode
-          eglot-jl
           kotlin-ts-mode
           dart-mode
           typst-ts-mode

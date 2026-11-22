@@ -115,10 +115,11 @@
 (add-to-list 'eglot-server-programs '(kotlin-ts-mode . ("kotlin-language-server")))
 (add-to-list 'eglot-server-programs
              '(haskell-ts-mode . ("haskell-language-server-wrapper" "--lsp")))
-;; Julia's server (LanguageServer.jl) is installed by eglot-jl on first use.
-(with-eval-after-load 'eglot
-  (require 'eglot-jl)
-  (eglot-jl-init))
+;; Julia: LanguageServer.jl from the default Julia environment, started the
+;; same way Helix does (installed once with Pkg.add, see languages.nix).
+(add-to-list 'eglot-server-programs
+             '(julia-ts-mode . ("julia" "--startup-file=no" "--history-file=no" "--quiet"
+                                "-e" "using LanguageServer; runserver()")))
 (add-to-list 'eglot-server-programs
              '((c-mode c++-mode c-ts-mode c++-ts-mode)
                . ("clangd" "--background-index" "--clang-tidy")))

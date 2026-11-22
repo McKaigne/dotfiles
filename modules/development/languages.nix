@@ -17,6 +17,8 @@
         ]))
       basedpyright
       ruff
+      # Its language server is a Julia package, installed once per machine:
+      #   julia -e 'using Pkg; Pkg.add(["LanguageServer", "SymbolServer"])'
       julia-bin
       ghc
       cabal-install
