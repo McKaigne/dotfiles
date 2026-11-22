@@ -10,39 +10,12 @@
           "peek" = true;
           "peek_delay_ms" = 350;
         };
-        "brightness_minimal" = {
-          "type" = "brightness";
-        };
         "clock" = {
           "anchor" = true;
           "tooltip_format" = "{:%m/%d/%Y}";
         };
-        "clock_minimal" = {
-          "type" = "clock";
-        };
-        "cpu_temp_minimal" = {
-          "anchor" = true;
-          "show_glyph" = false;
-          "show_value" = true;
-          "stat" = "cpu_temp";
-          "type" = "sysmon";
-          "visualization" = "none";
-        };
-        "cpu_usage_minimal" = {
-          "anchor" = true;
-          "show_glyph" = false;
-          "show_value" = true;
-          "type" = "sysmon";
-          "visualization" = "none";
-        };
         "launcher_2" = {
           "type" = "launcher";
-        };
-        "left_bracket" = {
-          "color" = "primary";
-          "enabled" = false;
-          "text" = "「";
-          "type" = "text";
         };
         "network" = {
           "glyph_position" = "after";
@@ -51,27 +24,6 @@
         };
         "ram" = {
           "show_value" = false;
-        };
-        "ram_usage_minimal" = {
-          "anchor" = true;
-          "show_glyph" = false;
-          "show_value" = true;
-          "stat" = "ram_used";
-          "type" = "sysmon";
-          "visualization" = "none";
-        };
-        "right_bracket" = {
-          "color" = "primary";
-          "enabled" = false;
-          "text" = "」";
-          "type" = "text";
-        };
-        "separator" = {
-          "color" = "primary";
-          "enabled" = false;
-          "font_scale" = 0.2;
-          "text" = " ";
-          "type" = "text";
         };
         "session" = {
           "custom_image" = "${../../../../assets/icons/nix-lavender.png}";
@@ -101,11 +53,6 @@
           "drawer" = true;
           "type" = "tray";
         };
-        "tray_minimal" = {
-          "colorize_icons" = true;
-          "match_adjacent_spacing" = true;
-          "type" = "tray";
-        };
         "wallpaper" = {
           "actions" = {
             "right" = "wallpaper-random";
@@ -113,16 +60,6 @@
         };
         "weather" = {
           "show_condition" = false;
-        };
-        "workspace_minimal" = {
-          "active_pill_size" = 0.35;
-          "colorize_icons" = true;
-          "empty_color" = "on_surface_variant";
-          "occupied_color" = "outline_variant";
-          "show_tooltip" = false;
-          "style" = "minimal";
-          "type" = "workspaces";
-          "urgent_color" = "surface";
         };
         "workspaces" = {
           "colorize_icons" = true;

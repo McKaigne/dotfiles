@@ -18,13 +18,6 @@
           "peek" = true;
           "peek_delay_ms" = 350;
         };
-        "volume_input_minimal" = {
-          "device" = "input";
-          "type" = "volume";
-        };
-        "volume_minimal" = {
-          "type" = "volume";
-        };
       };
     };
   };
