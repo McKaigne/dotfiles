@@ -1,5 +1,10 @@
 config_version = 20
 
+[bar.fancy]
+center = [ "workspaces" ]
+end = [ "tray_2", "network", "volume", "input_volume", "brightness", "clock", "session" ]
+start = [ "cpu", "ram", "temp" ]
+
 [wallpaper.default]
 path = "/home/jekyll/Pictures/Wallpapers/Kanagawa-Light.png"
 
@@ -8,3 +13,49 @@ path = "/home/jekyll/Pictures/Wallpapers/Kanagawa-Light.png"
 
 [wallpaper.monitors.DP-1]
 path = "/home/jekyll/Pictures/Wallpapers/Kanagawa-Light.png"
+
+[widget.brightness]
+glyph_position = "after"
+peek = true
+
+[widget.clock]
+format = "{:%H:%M}"
+
+[widget.cpu]
+show_value = false
+visualization = "gauge"
+
+[widget.input_volume]
+glyph_position = "after"
+peek = true
+
+[widget.network]
+peek = true
+show_label = true
+
+[widget.network_rx]
+network_speed_compact = true
+show_value = true
+visualization = "none"
+
+[widget.network_tx]
+network_speed_compact = true
+show_value = true
+visualization = "none"
+
+[widget.ram]
+show_value = false
+visualization = "gauge"
+
+[widget.temp]
+show_value = false
+visualization = "gauge"
+
+[widget.volume]
+glyph_position = "after"
+peek = true
+
+[widget.workspaces]
+pill_scale = 0.5
+show_labels = false
+style = "regular"
