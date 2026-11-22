@@ -11,7 +11,6 @@
           "builtin_ids" = [
             "btop"
             "cava"
-            "emacs"
             "gtk3"
             "gtk4"
             "kcolorscheme"

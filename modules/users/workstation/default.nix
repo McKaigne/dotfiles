@@ -8,7 +8,6 @@ in {
     avatar = ../../../avatar.jpg;
   in {
     imports = with m.homeManager; [
-      emacs
       development
       foot
       zellij
@@ -27,8 +26,8 @@ in {
       homeDirectory = "/home/${config.workstation.username}";
       stateVersion = config.workstation.stateVersion;
       sessionVariables = {
-        EDITOR = "emacs";
-        VISUAL = "emacs";
+        EDITOR = "hx";
+        VISUAL = "hx";
         TERMINAL = "foot";
       };
       file = {

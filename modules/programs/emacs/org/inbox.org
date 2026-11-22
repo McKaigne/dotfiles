@@ -1,4 +1,0 @@
-#+title: Inbox
-
-* Notes
-* Tasks

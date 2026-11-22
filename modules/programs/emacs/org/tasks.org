@@ -1,5 +1,0 @@
-#+title: Tasks
-
-* Active
-* Someday
-* Archive

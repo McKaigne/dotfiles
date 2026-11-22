@@ -10,7 +10,7 @@ config built around [Umbriel](modules/desktops/umbriel) and
 | [castor](modules/hosts/castor) | `pollux` | Intel laptop, eDP-1 |
 
 **Apps** · [Foot](modules/programs/foot.nix) + [Zellij](modules/programs/zellij.nix)
-· [Fish + Tide](modules/programs/fish) · [Emacs](modules/programs/emacs)
+· [Fish + Tide](modules/programs/fish)
 · [Helix](modules/programs/helix.nix) · [LibreWolf](modules/programs/librewolf)
 · [Helium](modules/programs/helium)
 

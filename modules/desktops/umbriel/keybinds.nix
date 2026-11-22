@@ -72,8 +72,7 @@
         "Mod+Return" = spawn foot; # terminal
         "Mod+B" = spawn browser; # Browser (LibreWolf)
         "Mod+Shift+B" = spawn "helium"; # alternate Browser (Helium)
-        "Mod+C" = inFoot "emacs"; # Code (Emacs)
-        "Mod+Shift+C" = inFoot "hx"; # alternate Code editor (Helix)
+        "Mod+C" = inFoot "hx"; # Code (Helix)
         "Mod+E" = spawn pcmanfm; # Explorer
         "Mod+G" = inFoot "lazygit"; # Git
         "Mod+M" = inFoot "btop"; # Monitor
