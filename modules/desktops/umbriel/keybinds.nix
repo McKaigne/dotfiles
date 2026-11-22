@@ -31,9 +31,29 @@
       allow_when_locked = true;
     };
     noctaliaKey = args: whenLocked "spawn ${noctalia} msg ${args}";
+
+    # H/J/K/L do whatever the arrows do, with the same modifiers.
+    vimKeys = {
+      Left = "H";
+      Down = "J";
+      Up = "K";
+      Right = "L";
+    };
+    withVimKeys = binds:
+      binds
+      // lib.concatMapAttrs (arrow: letter:
+        lib.concatMapAttrs (prefix: _:
+          lib.optionalAttrs (binds ? "${prefix}${arrow}") {
+            "${prefix}${letter}" = binds."${prefix}${arrow}";
+          }) {
+          "Mod+" = null;
+          "Mod+Shift+" = null;
+          "Mod+Ctrl+" = null;
+        })
+      vimKeys;
   in {
     programs.umbriel.settings.keybinds =
-      {
+      withVimKeys {
         # --- Apps (mnemonic)
         "Mod+Return" = spawn foot; # terminal
         "Mod+T" = spawn foot; # Terminal
@@ -42,7 +62,7 @@
         "Mod+Shift+B" = spawn "helium"; # second Browser (Helium)
         "Mod+E" = spawn pcmanfm; # Explorer
         "Mod+C" = inFoot "emacs"; # Code (Emacs)
-        "Mod+H" = inFoot "hx"; # Helix
+        "Mod+Shift+C" = inFoot "hx"; # second Code editor (Helix)
         "Mod+G" = inFoot "lazygit"; # Git
         "Mod+M" = inFoot "btop"; # Monitor
         "Mod+P" = spawn "bitwarden"; # Passwords
@@ -56,7 +76,7 @@
         "Mod+V" = msg "panel-toggle clipboard";
         "Mod+I" = msg "settings-toggle";
         "Mod+W" = msg "panel-toggle wallpaper";
-        "Mod+L" = msg "session lock"; # Lock
+        "Ctrl+Alt+L" = msg "session lock"; # Lock
         "Mod+X" = msg "panel-toggle session"; # power menu
         "Ctrl+Alt+Delete" = msg "panel-toggle session";
         "Mod+slash" = "cheatsheet-toggle";
