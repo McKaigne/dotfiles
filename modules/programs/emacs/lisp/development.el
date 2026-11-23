@@ -29,7 +29,6 @@
 (use-package nix-mode :mode "\\.nix\\'")
 ;; Language modes from packages. templ has none: templ-ts-mode does not
 ;; work with Emacs 31's Go mode.
-(use-package haskell-ts-mode :mode "\\.hs\\'")
 (use-package julia-ts-mode :mode "\\.jl\\'")
 (use-package kotlin-ts-mode :mode "\\.kts?\\'")
 (use-package dart-mode :mode "\\.dart\\'")
@@ -48,8 +47,6 @@
 (add-to-list 'eglot-server-programs '(typst-ts-mode . ("tinymist")))
 (add-to-list 'eglot-server-programs '(web-mode . ("vscode-html-language-server" "--stdio")))
 (add-to-list 'eglot-server-programs '(kotlin-ts-mode . ("kotlin-language-server")))
-(add-to-list 'eglot-server-programs
-             '(haskell-ts-mode . ("haskell-language-server-wrapper" "--lsp")))
 ;; Julia: LanguageServer.jl from the default Julia environment (installed
 ;; once with Pkg.add, see languages.nix).
 (add-to-list 'eglot-server-programs
@@ -69,7 +66,7 @@
                              'html-ts-mode 'toml-ts-mode 'markdown-mode 'markdown-ts-mode
                              'rust-ts-mode 'rust-mode 'go-ts-mode 'go-mod-ts-mode
                              'js-ts-mode 'typescript-ts-mode 'tsx-ts-mode
-                             'haskell-ts-mode 'julia-ts-mode 'kotlin-ts-mode
+                             'julia-ts-mode 'kotlin-ts-mode
                              'dart-mode 'typst-ts-mode 'web-mode 'fish-mode
                              'ruby-ts-mode 'elixir-ts-mode 'lua-mode 'php-mode))
     (envrc-mode 1)
@@ -101,7 +98,6 @@
                    (go-ts-mode . gofumpt)
                    (rust-ts-mode . rustfmt)
                    (rust-mode . rustfmt)
-                   (haskell-ts-mode . ormolu)
                    (dart-mode . dart-format)
                    (typst-ts-mode . typstyle)))
     (setf (alist-get (car entry) apheleia-mode-alist) (cdr entry)))

@@ -25,8 +25,6 @@ in {
     imports = with m.nixos; [
       hyde-hardware
       development
-      android
-      haskell
       containers
       onlyoffice
       krita

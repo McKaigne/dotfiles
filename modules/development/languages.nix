@@ -5,8 +5,7 @@
 {
   flake.modules.homeManager.development = {pkgs, ...}: {
     home.packages = with pkgs; [
-      # Math: Python (with the usual numeric stack), Julia (Haskell is in
-      # haskell.nix).
+      # Math: Python (with the usual numeric stack), Julia.
       (python3.withPackages (ps:
         with ps; [
           numpy

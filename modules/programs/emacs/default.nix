@@ -216,7 +216,6 @@
           highlight-defined
           macrostep
           nix-mode
-          haskell-ts-mode
           julia-ts-mode
           kotlin-ts-mode
           dart-mode
@@ -301,7 +300,6 @@
               tree-sitter-rust
               tree-sitter-python
               tree-sitter-julia
-              tree-sitter-haskell
               tree-sitter-html
               tree-sitter-css
               tree-sitter-json
