@@ -2,6 +2,9 @@
   m = config.flake.modules;
   base = config.nixos.base;
 in {
+  # What every host gets: the base system, the user, the desktop and its
+  # everyday apps. Heavier features (development, creative apps) are opt-in
+  # in each host's own imports.
   flake.modules.nixos.host-common = {config, ...}: {
     imports = with m.nixos; [
       m.generic.workstation-options
@@ -21,9 +24,6 @@ in {
       media-tools
       pcmanfm
       zathura
-      onlyoffice
-      krita
-      kdenlive
     ];
     # Per-host monitor layout for the active desktop.
     home-manager.sharedModules = [

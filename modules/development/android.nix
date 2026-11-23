@@ -6,7 +6,7 @@
 #   avdmanager create avd -n pixel -k "system-images;android-36;google_apis;x86_64"
 # then `flutter emulators --launch pixel`.
 {
-  nixos.base = {config, ...}: {
+  flake.modules.nixos.development = {config, ...}: {
     nixpkgs.config.android_sdk.accept_license = true;
     # Hardware acceleration for the emulator.
     users.users.${config.workstation.username}.extraGroups = ["kvm"];

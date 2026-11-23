@@ -24,10 +24,14 @@ in {
   flake.modules.nixos.host-hyde = {pkgs, ...}: {
     imports = with m.nixos; [
       hyde-hardware
+      development
+      containers
+      onlyoffice
+      krita
+      kdenlive
       blender
       obs
       godot
-      containers
       openrgb
     ];
 

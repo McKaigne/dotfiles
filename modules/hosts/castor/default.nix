@@ -21,7 +21,13 @@ in {
   };
 
   flake.modules.nixos.host-castor = {pkgs, ...}: {
-    imports = [m.nixos.castor-hardware];
+    imports = with m.nixos; [
+      castor-hardware
+      development
+      onlyoffice
+      krita
+      kdenlive
+    ];
 
     boot.kernelParams = [
       "nowatchdog"

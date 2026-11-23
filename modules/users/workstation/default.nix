@@ -9,7 +9,6 @@ in {
   in {
     imports = with m.homeManager; [
       emacs
-      development
       foot
       microfetch
       icons
