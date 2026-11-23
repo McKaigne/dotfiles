@@ -16,32 +16,6 @@ in {
   };
 
   flake.modules.homeManager.pcmanfm = {
-    xdg.desktopEntries.helix = {
-      name = "Helix";
-      genericName = "Text Editor";
-      comment = "Modal text editor";
-      exec = "foot -e hx %F";
-      icon = "helix";
-      terminal = false;
-      categories = [
-        "Utility"
-        "TextEditor"
-        "Development"
-      ];
-      mimeType = [
-        "text/plain"
-        "text/markdown"
-        "text/x-nix"
-        "text/x-c"
-        "text/x-c++"
-        "text/x-python"
-        "text/x-shellscript"
-        "application/json"
-        "application/toml"
-        "application/yaml"
-      ];
-    };
-
     xdg.mimeApps = {
       enable = true;
       defaultApplications = {

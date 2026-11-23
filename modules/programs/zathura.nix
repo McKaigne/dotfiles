@@ -1,9 +1,8 @@
 {config, ...}: let
   flakeConfig = config;
 in {
-  flake.modules.nixos.zathura = {pkgs, ...}: {
+  flake.modules.nixos.zathura = {
     home-manager.sharedModules = [flakeConfig.flake.modules.homeManager.zathura];
-    environment.systemPackages = [pkgs.zathura];
   };
 
   flake.modules.homeManager.zathura = {

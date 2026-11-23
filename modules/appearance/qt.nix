@@ -1,15 +1,11 @@
 {config, ...}: {
-  flake.modules.nixos.qt = {pkgs, ...}: {
+  flake.modules.nixos.qt = {
     home-manager.sharedModules = [config.flake.modules.homeManager.qt];
     qt = {
       enable = true;
       platformTheme = "qt5ct";
       style = "adwaita-dark";
     };
-    environment.systemPackages = with pkgs; [
-      kdePackages.qt6ct
-      libsForQt5.qt5ct
-    ];
   };
 
   flake.modules.homeManager.qt = {

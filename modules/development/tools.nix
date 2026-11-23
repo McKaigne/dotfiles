@@ -4,7 +4,6 @@
       just
       hyperfine
       tokei
-      glow
       lazydocker
       ast-grep
       lazyrsync

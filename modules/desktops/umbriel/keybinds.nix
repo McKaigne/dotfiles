@@ -74,20 +74,17 @@
         "Mod+Return" = spawn foot; # terminal
         "Mod+B" = spawn browser; # Browser (LibreWolf)
         "Mod+Shift+B" = spawn "helium"; # alternate Browser (Helium)
-        "Mod+C" = inFoot "hx"; # Code (Helix)
-        "Mod+Shift+C" = spawn "zproj"; # Code project: pick a directory, resume its zellij session
         "Mod+D" = spawn "emacs"; # Emacs (GUI frame on the daemon)
         "Mod+E" = spawn pcmanfm; # Explorer
         "Mod+G" = spawn "emacs --eval (my-magit-repository)"; # Git (Magit, pick a repository)
         "Mod+M" = inFoot "btop"; # Monitor
         "Mod+O" = spawn "obs"; # OBS (hyde)
         "Mod+P" = spawn "bitwarden"; # Passwords
-        "Mod+Z" = inFoot "zellij attach --create main"; # Zellij session
 
         "Mod+Space" = msg "panel-toggle launcher";
         "Mod+A" = msg "panel-toggle control-center"; # quick settings (Win+A)
         "Mod+N" = msg "panel-toggle control-center notifications";
-        "Mod+Shift+N" = spawn "${foot} -e notes"; # today's Note in Helix
+        "Mod+Shift+N" = spawn "emacs --eval (my-org-journal)"; # today's journal Note in Emacs
         "Mod+V" = msg "panel-toggle clipboard"; # clipboard history (Win+V)
         "Mod+I" = msg "settings-toggle"; # settings (Win+I)
         "Mod+W" = msg "panel-toggle wallpaper";

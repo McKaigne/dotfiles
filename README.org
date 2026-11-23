@@ -9,9 +9,9 @@ config built around [[file:modules/desktops/umbriel][Umbriel]] and
 | [[file:modules/hosts/hyde][hyde]]   | =jekyll= | AMD desktop, DP-1 1920x1080@240 |
 | [[file:modules/hosts/castor][castor]] | =pollux= | Intel laptop, eDP-1             |
 
-*Apps* · [[file:modules/programs/foot.nix][Foot]] + [[file:modules/programs/zellij.nix][Zellij]]
+*Apps* · [[file:modules/programs/foot.nix][Foot]]
 · [[file:modules/programs/fish][Fish + Tide]]
-· [[file:modules/programs/emacs][Emacs]] · [[file:modules/programs/helix.nix][Helix]]
+· [[file:modules/programs/emacs][Emacs]]
 · [[file:modules/programs/librewolf][LibreWolf]] · [[file:modules/programs/helium][Helium]]
 
 ** Build

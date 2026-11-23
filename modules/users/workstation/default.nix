@@ -11,9 +11,6 @@ in {
       emacs
       development
       foot
-      zellij
-      helix
-      fuzzel
       microfetch
       icons
       bitwarden

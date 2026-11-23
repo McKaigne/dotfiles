@@ -4,12 +4,8 @@ in {
   flake.modules.nixos.cli = {pkgs, ...}: {
     home-manager.sharedModules = [flakeConfig.flake.modules.homeManager.cli];
     environment.systemPackages = with pkgs; [
-      carapace
       psmisc
-      delta
-      gh
       tree
-      bat
       eza
       dysk
       silicon
@@ -18,20 +14,16 @@ in {
       procs
       ripgrep
       fd
-      findutils
       jq
       jnv
       sd
       xh
-      curl
       nnn
-      gawk
       vivid
       repomix
       aria2
       p7zip
       unrar
-      rsync
       unzip
       wget
     ];
@@ -50,8 +42,14 @@ in {
         enableBashIntegration = true;
         enableFishIntegration = true;
         defaultCommand = "${pkgs.fd}/bin/fd --type f --strip-cwd-prefix --hidden --follow --exclude .git";
-        fileWidget.command = "${pkgs.fd}/bin/fd --type f --strip-cwd-prefix --hidden --follow --exclude .git";
-        changeDirWidget.command = "${pkgs.fd}/bin/fd --type d --strip-cwd-prefix --hidden --follow --exclude .git";
+        fileWidget = {
+          command = "${pkgs.fd}/bin/fd --type f --strip-cwd-prefix --hidden --follow --exclude .git";
+          options = ["--preview '${pkgs.bat}/bin/bat -n --color=always --line-range :500 {}'" "--preview-window=right:60%:wrap"];
+        };
+        changeDirWidget = {
+          command = "${pkgs.fd}/bin/fd --type d --strip-cwd-prefix --hidden --follow --exclude .git";
+          options = ["--preview '${pkgs.eza}/bin/eza --tree --level=2 --color=always {} | head -200'" "--preview-window=right:60%:wrap"];
+        };
         historyWidget.command = "";
       };
 

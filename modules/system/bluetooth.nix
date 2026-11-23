@@ -1,16 +1,11 @@
 {
-  nixos.base = {pkgs, ...}: {
+  nixos.base = {
     hardware.bluetooth = {
       enable = true;
       settings.General.Experimental = true;
     };
     # Blueman manager for advanced pairing; Noctalia's panel stays the agent.
     services.blueman.enable = true;
-    services.dbus = {
-      enable = true;
-      packages = [pkgs.bluez];
-    };
-    environment.systemPackages = [pkgs.bluez];
   };
 
   homeManager.base = {

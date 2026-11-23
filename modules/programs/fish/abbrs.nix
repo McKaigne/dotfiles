@@ -43,33 +43,15 @@
         nwork = "umbriel msg workspaces";
         nmon = "umbriel msg outputs";
 
-        zj = "zellij";
-        zja = "zellij attach";
-        zjls = "zellij list-sessions";
-        zjkill = "zellij kill-session";
-        zjkilla = "zellij kill-all-sessions";
-
         zq = "zoxide query";
         zql = "zoxide query -l";
         za = "zoxide add";
         zr = "zoxide remove";
 
-        h = "hx";
-        v = "hx";
-        vi = "hx";
-        vim = "hx";
-        nv = "hx";
         bottom = "btop";
         btm = "btop";
         n = "nnn";
         g = "git";
-
-        hxf = "hx /etc/nixos/flake.nix";
-        hxh = "hx /etc/nixos/modules/hosts/hyde/default.nix";
-        hxc = "hx /etc/nixos/modules/system/environment.nix";
-        hxfish = "hx /etc/nixos/modules/programs/fish/default.nix";
-        hxi = "hx /etc/nixos/modules/desktops/umbriel/keybinds.nix";
-        hxz = "hx /etc/nixos/modules/programs/zellij.nix";
       };
 
       interactiveShellInit = ''

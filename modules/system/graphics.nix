@@ -1,6 +1,5 @@
 {
-  nixos.base = {pkgs, ...}: {
+  nixos.base = {
     hardware.graphics.enable = true;
-    environment.systemPackages = [pkgs.mesa pkgs.libva];
   };
 }

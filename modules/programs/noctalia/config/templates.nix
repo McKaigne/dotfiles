@@ -59,15 +59,6 @@ in {
       (pkgs.formats.toml {}).generate "70-templates.toml"
       {
         theme.templates.user = {
-          helix = {
-            input_path = "${../templates/helix.toml}";
-            output_path = "$XDG_CONFIG_HOME/helix/themes/noctalia.toml";
-            post_hook = "pkill -USR1 hx >/dev/null 2>&1 || true";
-          };
-          fuzzel = {
-            input_path = "${../templates/fuzzel.ini}";
-            output_path = "$XDG_CONFIG_HOME/fuzzel/noctalia.ini";
-          };
           terminal-colors = {
             input_path = "${../templates/terminal-colors.sh}";
             output_path = "$XDG_CACHE_HOME/noctalia/terminal-colors.sh";

@@ -27,8 +27,8 @@
 (setq treesit-font-lock-level 4)
 
 (use-package nix-mode :mode "\\.nix\\'")
-;; Language modes from packages. templ is edited in Helix: templ-ts-mode
-;; does not work with Emacs 31's Go mode.
+;; Language modes from packages. templ has none: templ-ts-mode does not
+;; work with Emacs 31's Go mode.
 (use-package haskell-ts-mode :mode "\\.hs\\'")
 (use-package julia-ts-mode :mode "\\.jl\\'")
 (use-package kotlin-ts-mode :mode "\\.kts?\\'")
@@ -50,8 +50,8 @@
 (add-to-list 'eglot-server-programs '(kotlin-ts-mode . ("kotlin-language-server")))
 (add-to-list 'eglot-server-programs
              '(haskell-ts-mode . ("haskell-language-server-wrapper" "--lsp")))
-;; Julia: LanguageServer.jl from the default Julia environment, started the
-;; same way Helix does (installed once with Pkg.add, see languages.nix).
+;; Julia: LanguageServer.jl from the default Julia environment (installed
+;; once with Pkg.add, see languages.nix).
 (add-to-list 'eglot-server-programs
              '(julia-ts-mode . ("julia" "--startup-file=no" "--history-file=no" "--quiet"
                                 "-e" "using LanguageServer; runserver()")))

@@ -1,5 +1,5 @@
 # Languages: toolchains, language servers and formatters on the normal PATH,
-# so Helix and Emacs (and the shell) all use the same ones. Grouped by what
+# so Emacs and the shell use the same ones. Grouped by what
 # they are for; per-project versions still come from each project's flake /
 # devShell (direnv), which take precedence inside the project.
 {
@@ -35,7 +35,7 @@
       clippy
       rustfmt
       rust-analyzer
-      llvmPackages_23.lldb # lldb-dap: Helix and Emacs debugging
+      llvmPackages_23.lldb # lldb-dap: Emacs debugging
       neocmakelsp
 
       # Web: Go + htmx (templ templates), HTML/CSS/JSON, TypeScript, SQL.
