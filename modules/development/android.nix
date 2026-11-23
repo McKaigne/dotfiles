@@ -4,15 +4,18 @@
 # download into the read-only SDK; the emulator with an Android 36 image; and
 # JDK 17 for the Android Gradle plugin. Create an emulator once with
 #   avdmanager create avd -n pixel -k "system-images;android-36;google_apis;x86_64"
-# then `flutter emulators --launch pixel`.
-{
-  flake.modules.nixos.development = {config, ...}: {
+# then `flutter emulators --launch pixel`. Its own feature, since it is ~6 GiB.
+{config, ...}: let
+  flakeConfig = config;
+in {
+  flake.modules.nixos.android = {config, ...}: {
+    home-manager.sharedModules = [flakeConfig.flake.modules.homeManager.android];
     nixpkgs.config.android_sdk.accept_license = true;
     # Hardware acceleration for the emulator.
     users.users.${config.workstation.username}.extraGroups = ["kvm"];
   };
 
-  flake.modules.homeManager.development = {pkgs, ...}: let
+  flake.modules.homeManager.android = {pkgs, ...}: let
     android = pkgs.androidenv.composeAndroidPackages {
       minPlatformVersion = "36";
       maxPlatformVersion = "36";

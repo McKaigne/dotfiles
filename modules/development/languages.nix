@@ -5,7 +5,8 @@
 {
   flake.modules.homeManager.development = {pkgs, ...}: {
     home.packages = with pkgs; [
-      # Math: Python (with the usual numeric stack), Julia, Haskell.
+      # Math: Python (with the usual numeric stack), Julia (Haskell is in
+      # haskell.nix).
       (python3.withPackages (ps:
         with ps; [
           numpy
@@ -20,10 +21,6 @@
       # Its language server is a Julia package, installed once per machine:
       #   julia -e 'using Pkg; Pkg.add(["LanguageServer", "SymbolServer"])'
       julia-bin
-      ghc
-      cabal-install
-      haskell-language-server
-      ormolu
       # Writing math up: Typst (LaTeX-like output, instant preview).
       typst
       tinymist
