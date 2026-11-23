@@ -133,7 +133,8 @@
          ("C-'"   . avy-goto-char-2)
          ("M-g l" . avy-goto-line)
          ("M-g w" . avy-goto-word-1)
-         ("M-g e" . avy-goto-word-0))
+         ;; Centaur also puts this on M-g e, where consult-compile-error wins
+         ("M-g W" . avy-goto-word-0))
   :hook (after-init . avy-setup-default)
   :config (setq avy-all-windows nil
                 avy-all-windows-alt t

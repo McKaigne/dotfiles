@@ -76,10 +76,10 @@
     home.sessionVariables.LG_CONFIG_FILE = "${config.xdg.configHome}/lazygit/config.yml,${config.xdg.configHome}/lazygit/nix.yml";
     xdg.configFile."lazygit/nix.yml".source = (pkgs.formats.yaml {}).generate "lazygit-nix.yml" {
       gui.nerdFontsVersion = "3";
-      os.editPreset = "helix";
+      os.editPreset = "emacs";
       git.diffRenderers = [
         {
-          # Click a line number to open it in Helix.
+          # Click a line number to open it in the editor.
           command = "delta --{{colorScheme}} --paging=never --line-numbers --hyperlinks --hyperlinks-file-link-format=\"lazygit-edit://{path}:{line}\"";
         }
         {

@@ -75,7 +75,7 @@ other key closes them.
 | ~SPC z~ / ~Z~ | Folds… (kirigami, also =C-~=) · hideshow…                |
 | ~SPC d~       | Debugger… (dape; ~F5~ starts one)                         |
 | ~SPC M~       | Mode line… (also ~C-F6~)                                  |
-| ~SPC A~       | AI: agent shell, gptel                                   |
+| ~SPC A~       | AI: Claude Code (c), Codex (x), gptel, ChatGPT login     |
 | ~SPC D~       | Dictionary and translation                               |
 | ~SPC T~       | TODO keywords: list, next, search                        |
 | ~SPC B~       | Open a URL, this file or region in the browser           |

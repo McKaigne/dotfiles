@@ -11,7 +11,12 @@
       lazyssh
       usbtree
       linecast
+      # AI coding agents, and the adapters that let Emacs's agent-shell
+      # drive them
       claude-code
+      codex
+      claude-agent-acp
+      codex-acp
       whois
       dnsutils
       devenv

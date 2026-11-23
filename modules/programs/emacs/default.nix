@@ -330,7 +330,28 @@
         exec = "${lib.getExe launcher} %F";
         icon = "emacs";
         categories = ["Development" "TextEditor"];
-        mimeType = ["text/plain"];
+        # The text types it opens by default (pcmanfm.nix).
+        mimeType = [
+          "text/plain"
+          "text/markdown"
+          "text/x-org"
+          "text/x-nix"
+          "text/x-csrc"
+          "text/x-chdr"
+          "text/x-c++src"
+          "text/x-c++hdr"
+          "text/x-python"
+          "text/x-shellscript"
+          "application/x-shellscript"
+          "text/x-cmake"
+          "text/x-makefile"
+          "text/x-log"
+          "text/csv"
+          "application/xml"
+          "application/json"
+          "application/toml"
+          "application/yaml"
+        ];
       };
       emacsclient = {
         name = "Emacs (Client)";

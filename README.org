@@ -1,0 +1,23 @@
+* nixos — hyde & castor
+
+Based on [[https://github.com/Ly-sec/nixos][Ly-sec/nixos]]: a dendritic flake-parts
+config built around [[file:modules/desktops/umbriel][Umbriel]] and
+[[file:modules/programs/noctalia][Noctalia]].
+
+| Host   | User     | Hardware                        |
+|--------+----------+---------------------------------|
+| [[file:modules/hosts/hyde][hyde]]   | =jekyll= | AMD desktop, DP-1 1920x1080@240 |
+| [[file:modules/hosts/castor][castor]] | =pollux= | Intel laptop, eDP-1             |
+
+*Apps* · [[file:modules/programs/foot.nix][Foot]] + [[file:modules/programs/zellij.nix][Zellij]]
+· [[file:modules/programs/fish][Fish + Tide]]
+· [[file:modules/programs/emacs][Emacs]] · [[file:modules/programs/helix.nix][Helix]]
+· [[file:modules/programs/librewolf][LibreWolf]] · [[file:modules/programs/helium][Helium]]
+
+** Build
+
+#+begin_src sh
+nr              # switch this host (ndeploy switch)
+ntest           # activate until reboot
+nr castor       # build on hyde, activate on castor over Tailscale
+#+end_src

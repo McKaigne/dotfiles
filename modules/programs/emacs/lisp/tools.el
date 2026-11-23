@@ -416,90 +416,59 @@
 (use-package reveal-in-folder
   :bind ("C-c C-r" . reveal-in-folder))
 
-;; Interact with ChatGPT or other LLMs
-;;
-;; API Key management via authinfo (no plain-text secrets):
-;;   machine api.deepseek.com               login api-key password <ds_key>
-;;   machine api.anthropic.com              login api-key password <claude_key>
-;;
+;; Chat with ChatGPT or Claude. ChatGPT signs in with your subscription
+;; (SPC A l, once). Claude's API has no
+;; account login in gptel, so it needs an API key in authinfo:
+;;   machine api.anthropic.com login apikey password <key>
 (use-package gptel
-  :functions (gptel-make-openai gptel-make-deepseek
-               gptel-make-anthropic gptel-make-gemini)
-  :autoload gptel-get-backend
+  :functions (gptel-make-anthropic gptel-make-openai-oauth)
   :bind (("C-<f12>"   . gptel)
          ("C-M-<f12>" . gptel-menu)
          ("C-c a g"   . gptel)
          ("C-c a G"   . gptel-menu))
   :hook (gptel-mode . gptel-highlight-mode)
+  :init
+  ;; Keep the login token with Emacs's other state, not in the config.
+  (setq gptel--openai-oauth-token-file (my-state-file "gptel-openai-oauth-token"))
   :config
-  ;; DeepSeek
-  (gptel-make-deepseek "DeepSeek"
-    :stream t
-    :key 'gptel-api-key)
-
-  ;; GLM
-  (gptel-make-openai "GLM"
-    :host "open.bigmodel.cn"
-    :endpoint "/api/paas/v4/chat/completions"
-    :stream t
-    :key 'gptel-api-key
-    :models '(glm-5.3 glm-5.3-flash))
-
-  ;; Qwen (Alibaba Cloud)
-  (gptel-make-openai "Qwen"
-    :host "dashscope.aliyuncs.com"
-    :endpoint "/compatible-mode/v1/chat/completions"
-    :stream t
-    :key 'gptel-api-key
-    :models '(qwen3.8-max qwen3.8-flash))
-
-  ;; Kimi (Moonshot)
-  (gptel-make-openai "Kimi"
-    :host "api.moonshot.cn" ;; or "api.moonshot.ai" for the global site
-    :key 'gptel-api-key
-    :stream t
-    :models '(kimi-k3.1-pro kimi-k3 kimi-k2.7-code))
-
-  ;; Gemini (Google)
-  (gptel-make-gemini "Gemini"
-    :key 'gptel-api-key
-    :stream t)
-
-  ;; Claude (Anthropic)
   (gptel-make-anthropic "Claude"
     :stream t
     :key 'gptel-api-key)
+  (setq gptel-model 'gpt-5.5
+        gptel-backend (gptel-make-openai-oauth "ChatGPT")))
 
-  ;; Set default model and backend
-  (setq gptel-model 'deepseek-flash
-        gptel-backend (gptel-get-backend "DeepSeek")))
+(defun my-chatgpt-login ()
+  "Sign gptel in to ChatGPT with your subscription."
+  (interactive)
+  (require 'gptel)
+  (call-interactively #'gptel-openai-oauth-login))
 
 (when emacs/>=29p
   ;; Generate commit messages for magit
   (use-package gptel-magit
     :hook (magit-mode . gptel-magit-install))
 
-  ;; A native shell experience to interact with ACP agents
+  ;; Claude Code and Codex in Emacs (agent-shell talks to them through
+  ;; claude-agent-acp and codex-acp). Both use your account: sign in once
+  ;; with `claude' and `codex login' in a terminal. Claude Code comes
+  ;; preselected when it asks which one.
   (use-package agent-shell
     :custom
     (agent-shell-display-action '(display-buffer-reuse-window))
+    (agent-shell-agent-configs
+     (list #'agent-shell-anthropic-make-claude-code-config
+           #'agent-shell-openai-make-codex-config))
+    (agent-shell-preferred-agent-config '(preselect . claude-code))
     :bind (("<f12>"      . agent-shell)
            ("<f13>"      . agent-shell)
            ("C-c a a"    . agent-shell)
            ("C-c a A"    . agent-shell-new-shell)
+           ("C-c a c"    . agent-shell-anthropic-start-claude-code)
+           ("C-c a x"    . agent-shell-openai-start-codex)
            :map agent-shell-mode-map
            ("C-h ?"      . agent-shell-help-menu)
            ("C-<return>" . agent-shell-help-menu))
     :config
-    ;; Read the key when agent-shell first loads, not at startup (an
-    ;; encrypted authinfo would ask for its passphrase while starting).
-    ;; nixpkgs' agent-shell may predate its DeepSeek agent.
-    (when (fboundp 'agent-shell-deepseek-make-authentication)
-      (setq agent-shell-deepseek-authentication
-            (agent-shell-deepseek-make-authentication
-             :api-key (or (getenv "DEEPSEEK_API_KEY")
-                          (auth-source-pick-first-password
-                           :host "api.deepseek.com" :user "apikey")))))
     (with-no-warnings
       ;; Integrate into magit
       (with-eval-after-load 'magit

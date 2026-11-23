@@ -339,9 +339,12 @@ Lisp function does not specify a special indentation."
   :ensure nil
   :defines eglot-server-programs
   :functions exec-path-from-shell-copy-env
+  ;; Don't ask about the Python shell when quitting. (Centaur's version
+  ;; looked up a process named "Python", which broke Org's named sessions.)
   :hook (inferior-python-mode . (lambda ()
-                                  (process-query-on-exit-flag
-                                   (get-process "Python"))))
+                                  (when-let* ((process (get-buffer-process
+                                                        (current-buffer))))
+                                    (set-process-query-on-exit-flag process nil))))
   :init
   ;; Disable readline based native completion
   (setq python-shell-completion-native-enable nil)

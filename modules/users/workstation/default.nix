@@ -25,9 +25,11 @@ in {
       username = config.workstation.username;
       homeDirectory = "/home/${config.workstation.username}";
       stateVersion = config.workstation.stateVersion;
+      # Emacs: a new window on the daemon that closes when you finish the
+      # file (C-x #, or C-c C-c in a commit message).
       sessionVariables = {
-        EDITOR = "hx";
-        VISUAL = "hx";
+        EDITOR = "emacsclient";
+        VISUAL = "emacsclient";
         TERMINAL = "foot";
       };
       file = {
@@ -43,8 +45,8 @@ in {
     };
     # Also for apps started by systemd or the compositor, not only shells.
     systemd.user.sessionVariables = {
-      EDITOR = "hx";
-      VISUAL = "hx";
+      EDITOR = "emacsclient";
+      VISUAL = "emacsclient";
     };
     programs.home-manager.enable = true;
   };
