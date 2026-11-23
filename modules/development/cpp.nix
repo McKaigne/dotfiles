@@ -43,7 +43,7 @@
       '';
     };
   in {
-    home.packages = [pkgs.gcc16 pkgs.llvmPackages_23.clang-tools pkgs.ccache pkgs.ninja pkgs.gdb withCcache];
+    home.packages = [pkgs.gcc16 pkgs.llvmPackages_23.clang-tools pkgs.ccache pkgs.cmake pkgs.ninja pkgs.gdb withCcache];
 
     xdg.configFile = {
       "environment.d/50-toolchain.conf".text =
