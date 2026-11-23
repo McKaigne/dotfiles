@@ -17,7 +17,8 @@ config built around [[file:modules/desktops/umbriel][Umbriel]] and
 ** Build
 
 #+begin_src sh
-nr              # switch this host (ndeploy switch)
-ntest           # activate until reboot
-nr castor       # build on hyde, activate on castor over Tailscale
+nr              # git add, nh os switch (fish abbreviation, expands in place)
+ntest           # nh os test: activate until reboot
+nboot           # nh os boot: use from the next boot
+nrc             # build castor on hyde, activate it over Tailscale
 #+end_src

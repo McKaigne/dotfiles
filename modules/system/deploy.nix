@@ -2,7 +2,6 @@
   nixos.base = {
     config,
     lib,
-    pkgs,
     ...
   }: let
     keys = import ./_deploy_keys.nix;
@@ -12,98 +11,6 @@
         _name: key: ''from="${tailscaleCidr}" ${key}''
       )
       keys.deployKeys;
-
-    ndeployScript = pkgs.writeShellScriptBin "ndeploy" ''
-      set -euo pipefail
-
-      if [ $# -lt 1 ]; then
-        echo "Usage: ndeploy <switch|test|boot> [host]" >&2
-        exit 1
-      fi
-
-      verb="$1"
-      if [ "$verb" != "switch" ] && [ "$verb" != "test" ] && [ "$verb" != "boot" ]; then
-        echo "Error: Unknown verb '$verb'. Must be switch, test, or boot." >&2
-        exit 1
-      fi
-
-      cur="$(hostname)"
-      target="''${2:-$cur}"
-
-      reachable() {
-        ssh -o BatchMode=yes -o ConnectTimeout=5 "root@$1" true 2>/dev/null
-      }
-
-      if [ "$target" = "$cur" ]; then
-        echo "==> Deploying locally to $cur ($verb)..."
-        git -C /etc/nixos add -A && nh os "$verb"
-        # A switch on hyde brings castor along when it's online.
-        if [ "$cur" = "hyde" ] && [ "$verb" = "switch" ]; then
-          # Syncthing keeps castor's /etc/nixos mirrored (system/syncthing.nix).
-          if reachable castor; then
-            echo "==> Deploying hyde's build to castor ($verb)..."
-            nh os "$verb" --hostname castor --target-host "root@castor"
-          else
-            echo "==> castor is offline; skipped. Run 'nr castor' once it's back."
-          fi
-        fi
-        exit 0
-      fi
-
-      echo "==> Preflight: Checking reachability of root@$target via Tailscale..."
-      if ! reachable "$target"; then
-        echo "Error: Cannot connect to root@$target via deploy key." >&2
-        echo "Ensure Tailscale is connected and ~/.ssh/deploy_ed25519 is loaded." >&2
-        exit 1
-      fi
-
-      if [ -n "$(git -C /etc/nixos status --porcelain 2>/dev/null)" ]; then
-        echo "Warning: /etc/nixos has uncommitted changes." >&2
-      fi
-
-      if [ "$cur" = "hyde" ]; then
-        echo "==> Deploying from hyde to $target (building on hyde, activating on $target)..."
-        git -C /etc/nixos add -A && nh os "$verb" --hostname "$target" --target-host "root@$target"
-      elif [ "$target" = "hyde" ]; then
-        echo "==> Deploying from $cur to hyde (building and activating on hyde)..."
-        git -C /etc/nixos add -A && nh os "$verb" --hostname hyde --build-host "root@hyde" --target-host "root@hyde"
-      else
-        echo "Error: Unsupported target host $target from $cur. Hyde is the build host." >&2
-        exit 1
-      fi
-    '';
-
-    nrScript = pkgs.writeShellScriptBin "nr" ''
-      exec ${ndeployScript}/bin/ndeploy switch "$@"
-    '';
-    nbootScript = pkgs.writeShellScriptBin "nboot" ''
-      exec ${ndeployScript}/bin/ndeploy boot "$@"
-    '';
-    ntestScript = pkgs.writeShellScriptBin "ntest" ''
-      exec ${ndeployScript}/bin/ndeploy test "$@"
-    '';
-    ntryScript = pkgs.writeShellScriptBin "ntry" ''
-      set -euo pipefail
-      if [ $# -lt 1 ]; then
-        echo "Usage: ntry <package> [args...]" >&2
-        exit 1
-      fi
-      pkg="$1"
-      shift
-      exec nix run "nixpkgs#$pkg" -- "$@"
-    '';
-    nshellScript = pkgs.writeShellScriptBin "nshell" ''
-      set -euo pipefail
-      if [ $# -lt 1 ]; then
-        echo "Usage: nshell <packages...>" >&2
-        exit 1
-      fi
-      args=()
-      for p in "$@"; do
-        args+=("nixpkgs#$p")
-      done
-      exec nix shell "''${args[@]}"
-    '';
   in {
     assertions = [
       {
@@ -164,14 +71,5 @@
           IdentitiesOnly yes
       '';
     };
-
-    environment.systemPackages = [
-      ndeployScript
-      nrScript
-      nbootScript
-      ntestScript
-      ntryScript
-      nshellScript
-    ];
   };
 }

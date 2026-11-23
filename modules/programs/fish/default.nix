@@ -3,11 +3,15 @@
 in {
   flake.modules.nixos.fish = {
     config,
+    lib,
     pkgs,
     ...
   }: {
     home-manager.sharedModules = [flakeConfig.flake.modules.homeManager.fish];
     programs.fish.enable = true;
+    # NixOS's default l/ll/ls aliases hide the real command in history; they
+    # are abbreviations instead (abbrs.nix), and fish's own ls adds colour.
+    environment.shellAliases = lib.mkForce {};
     users.users.${config.workstation.username}.shell = pkgs.fish;
   };
   flake.modules.homeManager."fish" = {

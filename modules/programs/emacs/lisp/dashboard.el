@@ -2,7 +2,7 @@
 
 ;; Centaur Emacs's dashboard (lisp/init-dashboard.el in seagle0128/.emacs.d),
 ;; with this config's splash art and its own versions of Centaur's buttons:
-;; H the dotfiles repo, O the last project session, S this Emacs config, U `nr',
+;; H the dotfiles repo, O the last project session, S this Emacs config, U rebuild,
 ;; ? or h the key reference, g refresh, q close; r / m / p jump to recent
 ;; files, bookmarks, projects. SPC is the menu, as everywhere.
 
@@ -90,7 +90,7 @@
             "Settings" "Open this Emacs config (S)"
             (lambda (&rest _) (open-setting-files)))
            (,(nerd-icons-mdicon "nf-md-update" :height 1.3)
-            "Update" "Rebuild the system with nr (U)"
+            "Update" "Rebuild the system: nh os switch (U)"
             (lambda (&rest _) (update-config-and-packages)))
            (,(nerd-icons-mdicon "nf-md-help" :height 1.2)
             "" "Key reference (?)"
@@ -117,11 +117,11 @@
                 (directory-file-name (file-name-directory my-keybindings-file)))))
 
   (defun update-config-and-packages ()
-    "Rebuild and switch the system with `nr', in a terminal for sudo."
+    "Rebuild and switch the system, in a terminal for sudo."
     (interactive)
     (require 'ghostel)
-    (let ((ghostel-shell "nr"))
-      (ghostel)))
+    (ghostel)
+    (ghostel-send-string "git -C /etc/nixos add -A && nh os switch\n"))
 
   (defvar dashboard-recover-layout-p nil)
   (defun open-dashboard ()

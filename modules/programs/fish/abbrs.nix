@@ -2,11 +2,62 @@
   flake.modules.homeManager."fish" = {pkgs, ...}: {
     programs.fish = {
       shellAbbrs = {
-        ncd = "cd /etc/nixos";
+        ncd = "z /etc/nixos";
+        # Rebuild (git add first: flakes ignore files git doesn't track).
+        # nrc builds castor's system here on hyde and activates it there;
+        # nrh, from castor, builds and activates hyde on hyde.
+        nr = "git -C /etc/nixos add -A && nh os switch";
+        ntest = "git -C /etc/nixos add -A && nh os test";
+        nboot = "git -C /etc/nixos add -A && nh os boot";
+        nrc = "git -C /etc/nixos add -A && nh os switch --hostname castor --target-host root@castor";
+        nrh = "git -C /etc/nixos add -A && nh os switch --hostname hyde --build-host root@hyde --target-host root@hyde";
+        # A package without installing it; the cursor lands after nixpkgs#.
+        ntry = {
+          expansion = "nix run nixpkgs#%";
+          setCursor = true;
+        };
+        nshell = {
+          expansion = "nix shell nixpkgs#%";
+          setCursor = true;
+        };
         rnix = "repomix /etc/nixos";
         rcfg = "repomix ~/.config";
         nupdate = "nix flake update --flake /etc/nixos";
         nclean = "sudo nix-collect-garbage -d && nix-collect-garbage -d";
+        nsearch = "nh search";
+
+        # Emacs: open in a new frame without tying up the terminal.
+        e = "emacsclient -n";
+        erestart = "systemctl --user restart emacs";
+
+        # CMake, the way your projects build (build/, Ninja). cmb configures
+        # and builds in one go: with Ninja the build type is set when
+        # configuring, and re-configuring an unchanged build/ is instant.
+        # Edit Release to Debug when you need a debug build.
+        cmb = "cmake -B build -G Ninja -DCMAKE_BUILD_TYPE=Release && cmake --build build";
+        cmt = "ctest --test-dir build --output-on-failure";
+
+        # Services and logs.
+        scu = "systemctl --user";
+        jfu = "journalctl --user -f -u";
+        jf = "journalctl -f -u";
+
+        # Clipboard: paste into a file, or (anywhere on the line) pipe into
+        # the clipboard, a pager or a search.
+        wp = "wl-paste >";
+        C = {
+          position = "anywhere";
+          expansion = "| wl-copy";
+        };
+        L = {
+          position = "anywhere";
+          expansion = "| less";
+        };
+        G = {
+          position = "anywhere";
+          expansion = "| rg";
+        };
+        mkd = "mkdir -p";
 
         ga = "git add -A";
         gstage = "git add -A";
@@ -48,6 +99,8 @@
         za = "zoxide add";
         zr = "zoxide remove";
 
+        l = "ls -alh";
+        ll = "ls -l";
         bottom = "btop";
         btm = "btop";
         n = "nnn";
