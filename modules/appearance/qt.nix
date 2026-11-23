@@ -24,7 +24,7 @@
       [Appearance]
       color_scheme_path=${colorPath}
       custom_palette=true
-      icon_theme=Gruvbox-Plus-Dark
+      icon_theme=Noctalia-Gruvbox
       standard_dialogs=default
       style=Adwaita-Dark
 

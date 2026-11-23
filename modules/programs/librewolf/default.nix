@@ -109,6 +109,13 @@ in {
             Value = true;
             Status = "locked";
           };
+          # Open files through the desktop portal's picker, which follows the
+          # Noctalia palette (noctalia/config/templates.nix restarts it on a
+          # change), instead of a GTK dialog fixed at LibreWolf's start.
+          "widget.use-xdg-desktop-portal.file-picker" = {
+            Value = 1;
+            Status = "locked";
+          };
           # LibreWolf's resistFingerprinting tells every site the system is in
           # light mode. Use Firefox's fingerprinting protection with all the
           # same protections instead, minus that one, so sites see dark mode.

@@ -1,8 +1,9 @@
 # Ly-sec's Emacs (meow, vertico/corfu, eglot, magit, org-roam) as a GUI:
 # pgtk for a real translucent background (Umbriel blurs behind it), themed
 # live by Noctalia's emacs template (themes/ is where it writes and the
-# fallback seed). `emacs`, `emacsclient` and Super+D all open a GUI frame on
-# one daemon, started on first use so it inherits the Wayland session.
+# fallback seed). The daemon is Home Manager's services.emacs, started with
+# the graphical session (and by its socket if it was stopped); `emacs`,
+# `emacsclient` and Super+D all open a GUI frame on it.
 {
   flake.modules.homeManager.emacs = {
     config,
@@ -28,12 +29,15 @@
         cmark-gfm
         wl-clipboard
         emacs-lsp-booster
+        # Centaur's spell checking, GitHub preview and fish language server.
+        (aspellWithDicts (d: [d.en]))
+        python3Packages.grip
+        fish-lsp
       ];
     };
-    # Every way in opens a GUI frame on the one daemon (started on first use,
-    # inheriting the Wayland session); the terminal versions are not used.
-    # Batch/daemon/info flags reach real Emacs; `emacsclient -e` (Noctalia's
-    # theme reload) passes through without opening a frame.
+    # Every way in opens a GUI frame on the daemon; the terminal versions are
+    # not used. Batch/daemon/info flags reach real Emacs; `emacsclient -e`
+    # (Noctalia's theme reload) passes through without opening a frame.
     launcher = pkgs.writeShellScriptBin "emacs" ''
       args=()
       for arg in "$@"; do
@@ -45,7 +49,7 @@
           *) args+=("$arg") ;;
         esac
       done
-      exec ${emacs}/bin/emacsclient --create-frame --alternate-editor="" "''${args[@]}"
+      exec ${emacs}/bin/emacsclient --create-frame "''${args[@]}"
     '';
     client = pkgs.writeShellScriptBin "emacsclient" ''
       args=()
@@ -58,7 +62,7 @@
           *) args+=("$arg") ;;
         esac
       done
-      exec ${emacs}/bin/emacsclient --create-frame --alternate-editor="" "''${args[@]}"
+      exec ${emacs}/bin/emacsclient --create-frame "''${args[@]}"
     '';
   in {
     programs.emacs = {
@@ -68,63 +72,190 @@
         with epkgs; [
           meow
           undo-fu-session
+          meow-tree-sitter
+          # The look: mode line, dashboard, icons, floating menus.
+          doom-modeline
+          doom-themes # only its visual bell (ui.el); the theme is Noctalia's
+          dashboard
+          page-break-lines
+          nerd-icons
+          nerd-icons-completion
+          nerd-icons-corfu
+          nerd-icons-ibuffer
+          posframe
+          vertico-posframe
+          which-key-posframe
+          transient-posframe
+          ultra-scroll
+          default-text-scale
+          mixed-pitch
+          ligature
+          transwin
+          gcmh
+          helpful
+          # Completion (completion.el)
           vertico
           orderless
           marginalia
           consult
-          corfu
-          cape
-          nerd-icons
-          nerd-icons-completion
-          nerd-icons-ibuffer
-          doom-modeline
-          # From Centaur Emacs (lisp/extras.el).
-          avy
-          symbol-overlay
-          goto-chg
-          indent-bars
-          colorful-mode
-          pulsar
-          goggles
-          flyover
-          ace-window
-          popper
+          consult-dir
+          consult-flyspell
+          consult-yasnippet
           embark
           embark-consult
-          consult-dir
-          git-timemachine
-          magit-todos
-          browse-at-remote
-          git-modes
-          quickrun
-          wgrep
+          corfu
+          cape
+          yasnippet
+          yasnippet-snippets
+          yasnippet-capf
+          # Editing (editing.el)
+          avy
+          avy-zap
+          link-hint
+          anzu
+          beginend
+          drag-stuff
+          ialign
+          iedit
+          expand-region
+          multiple-cursors
+          smart-region
+          hungry-delete
+          mwim
           vundo
+          goto-chg
+          kirigami
           sudo-edit
-          olivetti
-          nerd-icons-corfu
+          easy-kill
+          browse-kill-ring
+          wgrep
+          # Highlighting (highlight.el)
+          symbol-overlay
+          region-occurrences-highlighter
+          indent-bars
+          colorful-mode
+          rainbow-delimiters
+          hl-todo
+          consult-todo
+          diff-hl
+          pulsar
+          goggles
+          # Windows (window.el)
+          ace-window
+          popper
+          # Files, buffers, projects (files.el)
+          dirvish
+          dired-quick-sort
+          dired-gitignore
+          dired-rsync
+          diredfl
+          ibuffer-vc
           treemacs
           treemacs-nerd-icons
-          dirvish
-          envrc
-          nix-mode
-          apheleia
+          treemacs-magit
+          treemacs-tab-bar
+          project-x
+          # Git (vc.el)
           magit
+          magit-todos
+          git-timemachine
+          git-messenger
+          browse-at-remote
+          git-modes
           blamer
-          diff-hl
-          hl-todo
-          rainbow-delimiters
-          markdown-mode
+          # Shells (shell.el)
+          eshell-prompt-extras
+          xterm-color
+          ghostel
+          popterm
+          # Development (development.el, langs.el)
+          envrc
+          apheleia
+          eglot-booster
+          consult-eglot
+          flyover
+          dape
+          eldoc-mouse
+          quickrun
+          highlight-defined
+          macrostep
+          nix-mode
+          haskell-ts-mode
+          julia-ts-mode
+          kotlin-ts-mode
+          dart-mode
+          typst-ts-mode
+          go-gen-test
+          go-fill-struct
+          gotest
+          rust-mode
+          ron-mode
+          flymake-ruff
+          inf-ruby
+          yard-mode
+          ruby-refactor
+          yari
+          rspec-mode
+          alchemist
+          elixir-ts-mode
+          scss-mode
+          coffee-mode
+          web-mode
+          add-node-modules-path
+          haml-mode
+          php-mode
+          restclient
+          cask-mode
+          cmake-mode
+          csv-mode
+          cue-sheet-mode
+          lua-mode
+          v-mode
+          vimrc-mode
+          powershell
+          mermaid-ts-mode
+          scala-ts-mode
+          swift-ts-mode
+          protobuf-mode
+          fish-mode
+          # Notes (notes.el)
           org-modern
           org-appear
           org-roam
-          ligature
-          meow-tree-sitter
-          vterm
-          vterm-toggle
-          yasnippet
-          yasnippet-snippets
-          eglot-booster
-          helpful
+          org-roam-ui
+          org-rich-yank
+          toc-org
+          org-preview-html
+          dslide
+          ox-gfm
+          ob-go
+          ob-powershell
+          ob-rust
+          ob-mermaid
+          markdown-mode
+          markdown-mermaid
+          markdown-toc
+          grip-mode
+          # Tools (tools.el)
+          pdf-tools
+          saveplace-pdf-view
+          # MELPA's nov is fetched from a host whose certificate has expired.
+          nongnuPackages.nov
+          elfeed
+          fanyi
+          gt
+          docker
+          persistent-scratch
+          rg
+          pomidor
+          olivetti
+          atomic-chrome
+          ztree
+          file-info
+          reveal-in-folder
+          gptel
+          gptel-magit
+          agent-shell
           # Tree-sitter grammars for the languages in use (see
           # development/languages.nix); Emacs has modes for each of these.
           (treesit-grammars.with-grammars (g:
@@ -152,16 +283,39 @@
               tree-sitter-cmake
               tree-sitter-dockerfile
               tree-sitter-typst
+              # For Centaur's modes (markdown-ts-mode, langs.el).
+              tree-sitter-markdown
+              tree-sitter-markdown-inline
+              tree-sitter-ruby
+              tree-sitter-elixir
+              tree-sitter-heex
+              tree-sitter-lua
+              tree-sitter-scala
+              tree-sitter-swift
+              tree-sitter-php
+              tree-sitter-java
+              tree-sitter-proto
+              tree-sitter-mermaid
+              tree-sitter-scss
+              tree-sitter-fish
             ]))
-          haskell-ts-mode
-          julia-ts-mode
-          kotlin-ts-mode
-          dart-mode
-          typst-ts-mode
         ];
     };
 
+    # The daemon as a systemd user service, the way Home Manager documents
+    # it: it starts once the graphical session is up (so it has the Wayland
+    # display), and its socket starts it again on demand after a stop. A
+    # switch doesn't restart it; `systemctl --user restart emacs` does.
+    services.emacs = {
+      enable = true;
+      package = emacs;
+      startWithUserSession = "graphical";
+      socketActivation.enable = true;
+    };
+
     home.packages = [
+      # ghostel's TERM is xterm-ghostty; programs in it need its terminfo.
+      pkgs.ghostty.terminfo
       (lib.hiPrio launcher)
       (lib.hiPrio client)
       tools
@@ -209,6 +363,8 @@
         recursive = true;
         force = true;
       };
+      # The start page's art (lisp/dashboard.el).
+      "emacs/splash.png".source = ./splash.png;
       "emacs/paths.el".text = ''
         ;;; paths.el -*- lexical-binding: t -*-
         (defvar my-tools-directory "${tools}/bin")

@@ -16,6 +16,7 @@ from pathlib import Path
 PREFIX = "Noctalia-Gruvbox-"
 MARKER = ".noctalia-gruvbox"
 CACHE_SIZE = 4
+STABLE_NAME = "Noctalia-Gruvbox"
 GRUVBOX_HUES = {
     "red": ("#9d0006", "#cc241d", "#fb4934"),
     "green": ("#79740e", "#98971a", "#b8bb26"),
@@ -226,6 +227,13 @@ def generate(source, palette_path):
         )
         if previous != name:
             subprocess.run([SETTINGS[0], "set", *SETTINGS[1:], name], check=True)
+        # Qt and settings.ini only read a theme name at startup, so they use a
+        # fixed name that always points at the current palette.
+        link = icons / STABLE_NAME
+        tmp_link = icons / f".{STABLE_NAME}.tmp"
+        tmp_link.unlink(missing_ok=True)
+        os.symlink(name, tmp_link)
+        os.replace(tmp_link, link)
         (target / MARKER).touch()
         prune(icons, name, previous)
         print(target)

@@ -4,7 +4,13 @@
 (setq gc-cons-threshold most-positive-fixnum)
 (add-hook 'emacs-startup-hook (lambda () (setq gc-cons-threshold (* 32 1024 1024))))
 
-(setq package-enable-at-startup nil
+;; Packages come from Nix (programs.emacs.extraPackages). package.el only
+;; activates them, so their autoloads work; with no archives it never
+;; downloads anything.
+;; typst-ts-mode's autoloads use this macro before compile.el is loaded.
+(autoload 'define-compilation-mode "compile" nil nil 'macro)
+(setq package-archives nil
+      package-quickstart nil
       inhibit-startup-message t
       inhibit-startup-echo-area-message user-login-name
       frame-inhibit-implied-resize t)

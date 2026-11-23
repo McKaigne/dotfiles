@@ -37,6 +37,18 @@
       };
       # Match the post-26.05 default; Noctalia themes GTK4 itself.
       gtk4.theme = null;
+      # adw-gtk3 has no GTK2 version; Adwaita-dark does, so the odd GTK2 app
+      # is dark too, with the same recoloured icons (icons/default.nix).
+      gtk2 = {
+        theme = {
+          name = "Adwaita-dark";
+          package = pkgs.gnome-themes-extra;
+        };
+        iconTheme = {
+          name = "Noctalia-Gruvbox";
+          package = pkgs.gruvbox-plus-icons;
+        };
+      };
       iconTheme = {
         name = "Gruvbox-Plus-Dark";
         package = pkgs.gruvbox-plus-icons;

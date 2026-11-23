@@ -19,11 +19,20 @@
     home.packages = [generateIcons];
 
     # Keep the GTK fallback without resetting Noctalia's live GSettings selection
-    # whenever Home Manager activates a generation.
+    # whenever Home Manager activates a generation. The fallback (and Qt, see
+    # qt.nix) uses Noctalia-Gruvbox, a link the generator keeps pointing at the
+    # current palette; until it has run, it points at the plain theme.
     gtk.gtk3 = {
       iconTheme = null;
-      extraConfig.gtk-icon-theme-name = config.gtk.iconTheme.name;
+      extraConfig.gtk-icon-theme-name = "Noctalia-Gruvbox";
     };
+    home.activation.seedNoctaliaIcons = lib.hm.dag.entryAfter ["writeBoundary"] ''
+      icons="''${XDG_DATA_HOME:-$HOME/.local/share}/icons"
+      if [ ! -e "$icons/Noctalia-Gruvbox" ]; then
+        $DRY_RUN_CMD mkdir -p "$icons"
+        $DRY_RUN_CMD ln -sfn ${pkgs.gruvbox-plus-icons}/share/icons/${config.gtk.iconTheme.name} "$icons/Noctalia-Gruvbox"
+      fi
+    '';
 
     xdg.configFile."noctalia/gruvbox-icons.toml".source = (pkgs.formats.toml {}).generate "gruvbox-icons.toml" {
       theme.templates.user.gruvbox-icons = {

@@ -3,107 +3,41 @@
 (require 'envrc)
 (require 'eglot)
 
-;; Tree-sitter: grammars come from Nix (treesit-grammars.with-all-grammars),
-;; so prefer the -ts- mode wherever its grammar is present.
+;; Tree-sitter: grammars come from Nix (default.nix), so prefer the -ts-
+;; mode wherever its grammar is present, as Centaur does (except Rust, which
+;; uses rust-mode on top of tree-sitter). Listed rather than set with
+;; `treesit-enabled-modes', which at startup drops these remaps.
 (dolist (entry '((c-mode c-ts-mode c) (c++-mode c++-ts-mode cpp)
                  (c-or-c++-mode c-or-c++-ts-mode cpp)
                  (python-mode python-ts-mode python) (sh-mode bash-ts-mode bash)
                  (js-mode js-ts-mode javascript) (javascript-mode js-ts-mode javascript)
                  (js-json-mode json-ts-mode json) (css-mode css-ts-mode css)
                  (conf-toml-mode toml-ts-mode toml)
-                 (mhtml-mode html-ts-mode html) (html-mode html-ts-mode html)))
+                 (mhtml-mode html-ts-mode html) (html-mode html-ts-mode html)
+                 ;; Centaur's other languages (langs.el).
+                 (elixir-mode elixir-ts-mode elixir) (lua-mode lua-ts-mode lua)
+                 (java-mode java-ts-mode java)))
   (when (treesit-language-available-p (nth 2 entry))
     (add-to-list 'major-mode-remap-alist (cons (nth 0 entry) (nth 1 entry)))))
 (dolist (entry '(("\\.ya?ml\\'" . yaml-ts-mode) ("\\.ts\\'" . typescript-ts-mode)
-                 ("\\.tsx\\'" . tsx-ts-mode) ("\\.rs\\'" . rust-ts-mode)
+                 ("\\.tsx\\'" . tsx-ts-mode)
                  ("\\.go\\'" . go-ts-mode) ("/go\\.mod\\'" . go-mod-ts-mode)
                  ("CMakeLists\\.txt\\'" . cmake-ts-mode) ("Dockerfile\\'" . dockerfile-ts-mode)))
   (add-to-list 'auto-mode-alist entry))
 (setq treesit-font-lock-level 4)
 
 (use-package nix-mode :mode "\\.nix\\'")
-;; Language modes from packages (autoloads are off in this config, so each
-;; mode is declared with the files it handles). templ is edited in Helix:
-;; templ-ts-mode does not work with Emacs 31's Go mode.
+;; Language modes from packages. templ is edited in Helix: templ-ts-mode
+;; does not work with Emacs 31's Go mode.
 (use-package haskell-ts-mode :mode "\\.hs\\'")
 (use-package julia-ts-mode :mode "\\.jl\\'")
 (use-package kotlin-ts-mode :mode "\\.kts?\\'")
 (use-package dart-mode :mode "\\.dart\\'")
 (use-package typst-ts-mode :mode "\\.typ\\'")
-(use-package markdown-mode
-  :mode (("\\.md\\'" . markdown-mode) ("\\.markdown\\'" . markdown-mode))
-  :custom
-  (markdown-command '("cmark-gfm" "--unsafe" "--extension" "table"
-                       "--extension" "strikethrough" "--extension" "autolink"
-                       "--extension" "tasklist")))
-
-(defvar-local my-markdown-preview-source nil)
-
-(defun my-markdown-render-code (dom)
-  "Render DOM as code with terminal-visible styling."
-  (shr-fontize-dom dom 'org-code))
-
-(defun my-markdown-render-code-block (dom)
-  "Render DOM as a code block, preserving whitespace."
-  (let ((start (point)))
-    (shr-tag-pre dom)
-    (shr-add-font start (point) 'org-block)))
-
-(defun my-markdown-preview ()
-  "Render Markdown in a reading pane, or refresh its existing preview."
-  (interactive)
-  (require 'eww)
-  (let* ((source (or my-markdown-preview-source (current-buffer)))
-         (html (generate-new-buffer " *Markdown HTML*"))
-         preview)
-    (unwind-protect
-        (with-current-buffer source
-          (unless (derived-mode-p 'markdown-mode)
-            (user-error "Open a Markdown buffer first"))
-          (let* ((name (buffer-name))
-                 (directory default-directory)
-                 (url (url-encode-url (concat "file://" (or buffer-file-name directory)))))
-            (save-excursion
-              (save-restriction
-                (widen)
-                (let ((mark-active nil))
-                  (markdown-standalone (buffer-name html) name))))
-            (setq preview (get-buffer-create (format "*Markdown: %s*" name)))
-            (with-current-buffer preview
-              (eww-mode)
-              (setq-local my-markdown-preview-source source
-                          default-directory directory
-                          shr-use-fonts nil
-                          shr-use-colors nil
-                          shr-inhibit-images t
-                          shr-table-horizontal-line ?─
-                          shr-table-vertical-line ?│
-                          shr-table-corner ?┼
-                          shr-external-rendering-functions
-                          '((code . my-markdown-render-code)
-                            (pre . my-markdown-render-code-block))
-                          eww-data (list :url url))
-              (dotimes (index 6)
-                (face-remap-add-relative
-                 (intern (format "shr-h%d" (1+ index)))
-                 :inherit (intern (format "org-level-%d" (1+ index)))
-                 :height 1.0 :weight 'bold :slant 'normal))
-              (let ((map (copy-keymap eww-mode-map)))
-                (define-key map (kbd "g") #'my-markdown-preview)
-                (use-local-map map)))
-            (pop-to-buffer preview
-                           '((display-buffer-reuse-window display-buffer-in-side-window)
-                             (side . right) (slot . 0) (window-width . 0.5)))
-            (with-current-buffer html
-              (goto-char (point-min))
-              (eww-display-html 'utf-8 url nil nil preview))
-            (with-current-buffer preview (set-buffer-modified-p nil))))
-      (kill-buffer html))
-    (set-buffer preview)))
-
 (setq c-basic-offset 4
       eglot-autoshutdown t
-      eglot-events-buffer-config '(:size 0 :format full)
+      eglot-events-buffer-config '(:size 0 :format short)
+      eglot-send-changes-idle-time 0.5
       eglot-connect-timeout 30)
 (add-to-list 'eglot-server-programs '(nix-mode . ("nixd")))
 (add-to-list 'eglot-server-programs
@@ -112,6 +46,7 @@
 (add-to-list 'eglot-server-programs
              '((js-ts-mode typescript-ts-mode tsx-ts-mode) . ("vtsls" "--stdio")))
 (add-to-list 'eglot-server-programs '(typst-ts-mode . ("tinymist")))
+(add-to-list 'eglot-server-programs '(web-mode . ("vscode-html-language-server" "--stdio")))
 (add-to-list 'eglot-server-programs '(kotlin-ts-mode . ("kotlin-language-server")))
 (add-to-list 'eglot-server-programs
              '(haskell-ts-mode . ("haskell-language-server-wrapper" "--lsp")))
@@ -131,11 +66,12 @@
              (derived-mode-p 'nix-mode 'c-mode 'c++-mode 'c-ts-mode 'c++-ts-mode
                              'python-ts-mode 'python-mode 'bash-ts-mode 'sh-mode
                              'json-ts-mode 'yaml-ts-mode 'css-ts-mode 'html-mode
-                             'html-ts-mode 'toml-ts-mode 'markdown-mode
-                             'rust-ts-mode 'go-ts-mode 'go-mod-ts-mode
+                             'html-ts-mode 'toml-ts-mode 'markdown-mode 'markdown-ts-mode
+                             'rust-ts-mode 'rust-mode 'go-ts-mode 'go-mod-ts-mode
                              'js-ts-mode 'typescript-ts-mode 'tsx-ts-mode
                              'haskell-ts-mode 'julia-ts-mode 'kotlin-ts-mode
-                             'dart-mode 'typst-ts-mode))
+                             'dart-mode 'typst-ts-mode 'web-mode 'fish-mode
+                             'ruby-ts-mode 'elixir-ts-mode 'lua-mode 'php-mode))
     (envrc-mode 1)
     (setq-local exec-path (append exec-path (list my-tools-directory)))
     (eglot-ensure)))
@@ -164,6 +100,7 @@
                    (python-ts-mode . ruff)
                    (go-ts-mode . gofumpt)
                    (rust-ts-mode . rustfmt)
+                   (rust-mode . rustfmt)
                    (haskell-ts-mode . ormolu)
                    (dart-mode . dart-format)
                    (typst-ts-mode . typstyle)))
@@ -206,18 +143,6 @@
     (apply fn args)
     (puthash root compile-command my-compile-history)))
 
-;; A real terminal in the bottom panel (vterm is prebuilt by Nix).
-(use-package vterm
-  :commands vterm
-  :custom (vterm-max-scrollback 10000))
-(use-package vterm-toggle
-  :commands (vterm-toggle vterm-toggle-cd)
-  :custom (vterm-toggle-scope 'project))
-(add-to-list 'display-buffer-alist
-             '((major-mode . vterm-mode)
-               (display-buffer-reuse-window display-buffer-in-side-window)
-               (side . bottom) (slot . 1) (window-height . 0.3)))
-
 ;; Snippets: type a snippet's key and TAB, or pick one with SPC c s. eglot
 ;; uses yasnippet too, so language-server completions expand into fields.
 (use-package yasnippet
@@ -236,3 +161,151 @@
 (use-package meow-tree-sitter
   :after meow
   :config (meow-tree-sitter-register-defaults))
+
+;; Centaur Emacs's check, LSP, debugger and programming modules
+;; (lisp/init-check.el, init-lsp.el, init-dap.el, init-prog.el). Language
+;; servers still start through `my-start-language-server' above, which
+;; loads each project's Nix environment first.
+
+(use-package flymake
+  :functions my/elisp-flymake-byte-compile
+  :bind ("C-c f" . flymake-show-buffer-diagnostics)
+  :hook (prog-mode . flymake-mode)
+  :custom
+  (flymake-no-changes-timeout 0.15)
+  (flymake-fringe-indicator-position 'right-fringe)
+  (flymake-margin-indicator-position 'right-margin)
+  :config
+  (defun my/elisp-flymake-byte-compile (fn &rest args)
+    "Advice function to make Flymake inherit `load-path' and packages."
+    (let ((elisp-flymake-byte-compile-load-path
+           (append elisp-flymake-byte-compile-load-path load-path)))
+      (apply fn args)))
+  (advice-add 'elisp-flymake-byte-compile :around #'my/elisp-flymake-byte-compile))
+
+;; Display Flymake errors with overlays
+(use-package flyover
+  :custom
+  (flyover-checkers '(flymake))
+  (flyover-background-lightness (if (centaur-dark-theme-p) 35 75))
+  (flyover-icon-background-tint-percent 50)
+  :hook (flymake-mode . flyover-mode))
+
+;; Jump to any symbol in the workspace
+(use-package consult-eglot
+  :after eglot
+  :bind (:map eglot-mode-map
+         ("C-M-." . consult-eglot-symbols)))
+
+;; Language servers in Org source blocks (C-c ' edits them)
+(cl-defmacro lsp-org-babel-enable (lang)
+  "Support LANG in org source code block."
+  (cl-check-type lang string)
+  (let* ((edit-pre (intern (format "org-babel-edit-prep:%s" lang)))
+         (intern-pre (intern (format "lsp--%s" (symbol-name edit-pre)))))
+    `(progn
+       (defun ,intern-pre (info)
+         (setq buffer-file-name (or (alist-get :file (caddr info))
+                                    "org-src-babel.tmp"))
+         (when (fboundp 'eglot-ensure)
+           (eglot-ensure)))
+       (put ',intern-pre 'function-documentation
+            (format "Enable LSP in the buffer of org source block (%s)." (upcase ,lang)))
+       (if (fboundp ',edit-pre)
+           (advice-add ',edit-pre :after ',intern-pre)
+         (progn
+           (defun ,edit-pre (info)
+             (,intern-pre info))
+           (put ',edit-pre 'function-documentation
+                (format "Prepare local buffer environment for org source block (%s)."
+                        (upcase ,lang))))))))
+
+(defconst org-babel-lang-list
+  '("go" "python" "ipython" "ruby" "js" "css" "sass" "c" "rust" "java" "cpp" "c++" "shell")
+  "The supported programming languages for interactive Babel.")
+(dolist (lang org-babel-lang-list)
+  (eval `(lsp-org-babel-enable ,lang)))
+
+;; Debug Adapter Protocol: F5 starts, M-F5 (or SPC d) is the debug menu.
+(use-package dape
+  :bind (("<f5>" . dape)
+         ("M-<f5>" . my-dape-menu))
+  :custom (dape-buffer-window-arrangement 'right)
+  :config
+  ;; Save buffers on startup, useful for interpreted languages
+  (add-hook 'dape-start-hook
+            (defun dape--save-on-start ()
+              (save-some-buffers t t))))
+(my-define-menu my-dape-menu "Debug"
+  :pre (require 'dape)
+  ("n" #'dape-next "next")
+  ("s" #'dape-step-in "step in")
+  ("o" #'dape-step-out "step out")
+  ("c" #'dape-continue "continue")
+  ("p" #'dape-pause "pause")
+  ("k" #'dape-kill "kill")
+  ("r" #'dape-restart "restart")
+  ("D" #'dape-disconnect-quit "disconnect")
+  ("m" #'dape-memory "memory")
+  ("t" #'dape-select-thread "thread")
+  ("w" #'dape-watch-dwim "watch")
+  ("S" #'dape-select-stack "stack")
+  ("i" #'dape-info "info")
+  ("R" #'dape-repl "repl")
+  ("b" #'dape-breakpoint-toggle "toggle breakpoint")
+  ("l" #'dape-breakpoint-log "log breakpoint")
+  ("e" #'dape-breakpoint-expression "expression breakpoint")
+  ("B" #'dape-breakpoint-remove-all "clear breakpoints")
+  ("d" #'dape "dape")
+  ("Q" #'dape-quit "quit" :exit t))
+
+;; Prettify symbols (lambda → λ, -> → →, ...) in code.
+(use-package prog-mode
+  :ensure nil
+  :hook (prog-mode . prettify-symbols-mode)
+  :init
+  (setq-default prettify-symbols-alist
+                '(("lambda" . ?λ)
+                  ("<-"     . ?←)
+                  ("->"     . ?→)
+                  ("->>"    . ?↠)
+                  ("=>"     . ?⇒)
+                  ("map"    . ?↦)
+                  ("/="     . ?≠)
+                  ("!="     . ?≠)
+                  ("=="     . ?≡)
+                  ("<="     . ?≤)
+                  (">="     . ?≥)
+                  ("=<<"    . (?= (Br . Bl) ?≪))
+                  (">>="    . (?≫ (Br . Bl) ?=))
+                  ("<=<"    . ?↢)
+                  (">=>"    . ?↣)
+                  ("&&"     . ?∧)
+                  ("||"     . ?∨)
+                  ("not"    . ?¬)))
+  (setq prettify-symbols-unprettify-at-point 'right-edge))
+
+;; Documentation for the symbol at point in a floating box (C-h .)
+(use-package eldoc-mouse
+  :bind (:map emacs-lisp-mode-map
+         ("C-h ." . eldoc-mouse-pop-doc-at-cursor)
+         :map eglot-mode-map
+         ("C-h ." . eldoc-mouse-pop-doc-at-cursor))
+  :hook (eglot-managed-mode . eldoc-mouse-mode))
+
+;; Cross-referencing commands
+(use-package xref
+  :bind (("M-g ." . xref-find-definitions)
+         ("M-g ," . xref-go-back))
+  :custom
+  (xref-search-program (if (executable-find "rg") 'ripgrep 'grep))
+  (xref-show-definitions-function #'xref-show-definitions-completing-read)
+  (xref-show-xrefs-function #'xref-show-definitions-completing-read))
+
+(use-package editorconfig
+  :hook (after-init . editorconfig-mode))
+
+;; Run any code
+(use-package quickrun
+  :bind (("C-<f5>" . quickrun)
+         ("C-c x"  . quickrun)))

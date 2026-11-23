@@ -2,7 +2,7 @@
 #+startup: overview
 #+options: toc:nil num:nil
 
-*Open* ~SPC h b~ · *Fold a section* ~TAB~ · *Close this pane* ~SPC w c~
+*Open* ~SPC h b~ · *Fold a section* ~TAB~ · *Close this pane* ~SPC w x~
 
 *Quick start*
 
@@ -12,8 +12,8 @@
 | ~SPC .~   | Open a file      |
 | ~SPC ,~   | Switch buffers   |
 | ~SPC f s~ | Save             |
-| ~SPC w v~ | Split right      |
-| ~SPC w s~ | Split below      |
+| ~SPC w r~ | Split right      |
+| ~SPC w v~ | Split below      |
 | ~SPC o f~ | File manager     |
 | ~SPC q q~ | Close the client |
 
@@ -53,31 +53,71 @@ systemctl --user restart emacs
 emacs
 #+end_example
 
-* Added since
+* The Space menu
 
-| Key           | Action                                          |
-|---------------+-------------------------------------------------|
-| ~SPC j / J~   | Jump to any visible spot · to a line (avy)       |
-| ~SPC a~       | Act on what's here (embark) · also ~C-.~         |
-| ~SPC u~       | Undo tree (vundo)                               |
-| ~SPC o t / T~ | Terminal (vterm) · eshell                        |
-| ~SPC b i~     | Buffer list (ibuffer)                           |
-| ~SPC s o / O~ | Highlight symbol everywhere · clear highlights   |
-| ~SPC s c~     | Jump to the last change                         |
-| ~SPC c o~     | Organize imports · ~c i~ implementation · ~c t~ type |
-| ~SPC c n / p~ | Next / previous issue                           |
-| ~SPC c s~     | Insert a snippet · ~SPC c x~ run this file       |
-| ~SPC g t~     | File history (time machine) · ~g o~ open on remote |
-| ~SPC g T~     | Project TODOs                                   |
-| ~SPC p C~     | Recompile                                       |
-| ~SPC w t~     | Hide / show side panels                         |
-| ~SPC w u / r~ | Undo / redo window layout                       |
-| ~SPC w a~     | Pick a pane by letter                           |
-| ~SPC w p / P~ | Toggle / cycle popups (help, compile, messages) |
-| ~SPC t i~     | Indent guides · ~t c~ colour codes · ~t o~ centered writing |
-| ~SPC f S~     | Edit this file as root                          |
-| ~C-h B~       | Every key binding, searchable                   |
+~SPC~ shows every key with its name. Menus marked … stay open like
+Centaur Emacs's hydras: press their keys again and again; ~q~, ~C-g~ or any
+other key closes them.
+
+| Key           | Menu                                                     |
+|---------------+----------------------------------------------------------|
+| ~SPC f~       | Files: find, new, save, recent, rename, delete, as root  |
+| ~SPC b~       | Buffers: switch, close, list, scratch, revert            |
+| ~SPC p~       | Project: open, files, search, compile, Nix shell, session |
+| ~SPC s~       | Search: text, symbols, marks, rg, web; highlight symbol  |
+| ~SPC g~       | Git: status, line info, history, merge conflicts…, hunks |
+| ~SPC o~       | Open: dashboard, file tree, terminal, feeds, docker, …   |
+| ~SPC n~       | Notes: find / insert notes, journal, capture, agenda     |
+| ~SPC c~       | Code: actions, rename, definitions, format, diagnostics  |
+| ~SPC e~       | Edit: rectangle…, multiple cursors…, iedit, expand, zap  |
+| ~SPC t~       | Toggles… (also ~F6~)                                      |
+| ~SPC w~       | Windows… (also ~C-c w~): resize ~h j k l~, split ~r v~   |
+| ~SPC z~ / ~Z~ | Folds… (kirigami, also =C-~=) · hideshow…                |
+| ~SPC d~       | Debugger… (dape; ~F5~ starts one)                         |
+| ~SPC M~       | Mode line… (also ~C-F6~)                                  |
+| ~SPC A~       | AI: agent shell, gptel                                   |
+| ~SPC D~       | Dictionary and translation                               |
+| ~SPC T~       | TODO keywords: list, next, search                        |
+| ~SPC B~       | Open a URL, this file or region in the browser           |
+| ~SPC C~       | Colours, faces, libraries, file info                     |
+| ~SPC h~       | Help, this guide, Meow tutorial                          |
+| ~SPC m …~     | The major mode's ~C-c~ keys (~SPC m c~ = ~C-c C-c~)      |
+| ~SPC 4 …~     | Numeric prefix: repeat the next command 4 times          |
+| ~M-SPC~       | The Space menu while typing (outside completion)         |
+
+* Centaur Emacs's keys
+
+These work as they do in Centaur Emacs, in every Meow state.
+
+| Key                 | Action                                           |
+|---------------------+--------------------------------------------------|
+| ~F2~                | Dashboard (~q~ closes it)                         |
+| ~F5~ · ~M-F5~       | Start debugging · debug menu                     |
+| ~C-F5~ / ~C-c x~    | Run this file (quickrun)                         |
+| ~F7~ · ~M-F7~       | Centered writing · reading mode                  |
+| ~F8~ · ~M-0~        | File tree · focus it                             |
+| ~C-`~ · ~F9~        | Drop-down terminal (ghostel) · in a window       |
+| ~F12~ · ~C-F12~     | Agent shell · gptel                              |
+| ~M-i~ · ~M-n~ / ~M-p~ | Highlight symbol · next / previous occurrence  |
+| ~C-=~               | Expand the selection                             |
+| ~C-;~               | Edit all occurrences (iedit)                     |
+| ~C->~ / ~C-<~       | Add a cursor at the next / previous match        |
+| ~C-:~ · ~C-'~       | Jump to a character (avy)                        |
+| ~M-o~               | Open a link by letter                            |
+| ~C-,~               | Jump to the last change                          |
+| ~C-.~ · ~s-.~       | Symbols in this file · act on what's here        |
+| ~M-.~               | Do the obvious thing here (embark)               |
+| ~M-s ...~           | Search: ~l~ lines, ~r~ ripgrep, ~g~ grep, ~d~ find |
+| ~M-g ...~           | Go to: ~g~ line, ~i~ symbol, ~e~ error, ~f~ issue |
+| ~M-y~ · ~C-c k~     | Paste from history · kill ring                   |
+| ~TAB~               | Indent, then complete                            |
+| ~M-m~ (in popup)    | Move the completion list to the minibuffer       |
+| ~M-.~ (in a picker) | Preview the candidate                            |
+| ~C-c C-o~ (picker)  | Export the list to an editable buffer            |
+| ~<~ (Org, line start) | Insert a block template                        |
+| ~C-x u~             | Undo tree                                        |
+| ~C-h b~             | Every key binding, searchable                    |
 
 In a file prompt, ~C-x C-d~ jumps to a recent or project directory. Search
-results exported with ~SPC a~ (embark) are editable and save across files.
+results exported with ~C-c C-o~ are editable and save across files.
 Errors show inline next to the code; changed lines get a git bar in the fringe.

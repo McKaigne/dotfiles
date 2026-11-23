@@ -26,6 +26,17 @@ in {
       text = builtins.readFile ../../../appearance/_gtk-glass-last.sh;
     };
 
+    # The file picker is drawn by xdg-desktop-portal-gtk, which, like any GTK
+    # app, reads gtk.css once at startup. Restart it so the next picker has
+    # the new colours; a couple of seconds later, so Noctalia's own gtk3
+    # template has written noctalia.css by then.
+    gtk3Changed = pkgs.writeShellScript "gtk3-theme-changed" ''
+      ${glassLast}/bin/gtk-glass-last
+      ${pkgs.systemd}/bin/systemd-run --user --quiet --on-active=2 \
+        ${pkgs.systemd}/bin/systemctl --user try-restart xdg-desktop-portal-gtk.service \
+        || true
+    '';
+
     # GTK glass: redefine Noctalia's surface backgrounds with alpha. Only
     # background colors change, so text, icons and selections stay solid.
     gtkGlass = pkgs.writeText "gtk-glass.css.in" (let
@@ -65,7 +76,7 @@ in {
           gtk3-glass = {
             input_path = "${gtkGlass}";
             output_path = "$XDG_CONFIG_HOME/gtk-3.0/glass.css";
-            post_hook = "${glassLast}/bin/gtk-glass-last";
+            post_hook = "${gtk3Changed}";
           };
           gtk4-glass = {
             input_path = "${gtkGlass}";
