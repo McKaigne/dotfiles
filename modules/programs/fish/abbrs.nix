@@ -30,11 +30,12 @@
         e = "emacsclient -n";
         erestart = "systemctl --user restart emacs";
 
-        # CMake, the way your projects build (build/, Ninja). cmb configures
-        # and builds in one go: with Ninja the build type is set when
-        # configuring, and re-configuring an unchanged build/ is instant.
-        # Edit Release to Debug when you need a debug build.
-        cmb = "cmake -B build -G Ninja -DCMAKE_BUILD_TYPE=Release && cmake --build build";
+        # CMake in build/. cmb configures and builds in one go (the build type
+        # is set when configuring; re-configuring an unchanged build/ is
+        # instant). It works with any generator: an existing build/ keeps its
+        # own, a new one gets CMAKE_GENERATOR (Ninja, cpp.nix). Edit Release
+        # to Debug when you need a debug build.
+        cmb = "cmake -B build -DCMAKE_BUILD_TYPE=Release && cmake --build build";
         cmt = "ctest --test-dir build --output-on-failure";
 
         # Services and logs.

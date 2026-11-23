@@ -7,6 +7,9 @@
     toolchain = {
       CC = "ccache gcc";
       CXX = "ccache g++";
+      # New build folders use Ninja; existing ones keep the generator they
+      # were configured with, so `cmb` works in either.
+      CMAKE_GENERATOR = "Ninja";
     };
     # Run after nix develop has selected the project's compiler.
     withCcache = pkgs.writeShellApplication {
@@ -40,7 +43,7 @@
       '';
     };
   in {
-    home.packages = [pkgs.gcc16 pkgs.llvmPackages_23.clang-tools pkgs.ccache withCcache];
+    home.packages = [pkgs.gcc16 pkgs.llvmPackages_23.clang-tools pkgs.ccache pkgs.ninja withCcache];
 
     xdg.configFile = {
       "environment.d/50-toolchain.conf".text =
