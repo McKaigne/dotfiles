@@ -48,7 +48,7 @@
       sqls
       sqlfluff
 
-      # Android: Kotlin and Flutter (Dart ships with Flutter).
+      # Kotlin and Flutter (Dart ships with Flutter); no Android SDK.
       kotlin
       kotlin-language-server
       ktfmt
