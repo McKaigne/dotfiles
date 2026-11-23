@@ -139,7 +139,7 @@
     (apply fn args)
     (puthash root compile-command my-compile-history)))
 
-;; Snippets: type a snippet's key and TAB, or pick one with SPC c s. eglot
+;; Snippets: type a snippet's key and TAB, or pick one with SPC i s. eglot
 ;; uses yasnippet too, so language-server completions expand into fields.
 (use-package yasnippet
   :demand t

@@ -19,14 +19,7 @@
   :custom-face (org-ellipsis ((t (:foreground unspecified))))
   :bind (("C-c o a" . org-agenda)
          ("C-c o b" . org-switchb)
-         ("C-c o x" . org-capture)
-         :map org-mode-map
-         ("<" . (lambda ()
-                  "Insert org template."
-                  (interactive)
-                  (if (or (region-active-p) (looking-back "^\s*" 1))
-                      (my-org-template-menu)
-                    (self-insert-command 1)))))
+         ("C-c o x" . org-capture))
   :hook (((org-babel-after-execute org-mode) . org-redisplay-inline-images) ; display image
          (org-indent-mode . (lambda()
                               (make-variable-buffer-local 'show-paren-mode)
@@ -134,41 +127,28 @@ structure element."
       (when mod (insert mod) (forward-line))
       (when text (insert text)))))
 
-;; Centaur's Org template hydra: < at the start of a line in Org.
-(my-define-menu my-org-template-menu "Org Template"
-  ("a" (lambda () (interactive) (hot-expand "<a")) "ascii" :exit t)
-  ("c" (lambda () (interactive) (hot-expand "<c")) "center" :exit t)
-  ("C" (lambda () (interactive) (hot-expand "<C")) "comment" :exit t)
-  ("x" (lambda () (interactive) (hot-expand "<e")) "example" :exit t)
-  ("E" (lambda () (interactive) (hot-expand "<E")) "export" :exit t)
-  ("h" (lambda () (interactive) (hot-expand "<h")) "html" :exit t)
-  ("l" (lambda () (interactive) (hot-expand "<l")) "latex" :exit t)
-  ("n" (lambda () (interactive) (hot-expand "<n")) "note" :exit t)
-  ("o" (lambda () (interactive) (hot-expand "<q")) "quote" :exit t)
-  ("v" (lambda () (interactive) (hot-expand "<v")) "verse" :exit t)
-  ("i" (lambda () (interactive) (hot-expand "<i")) "index" :exit t)
-  ("A" (lambda () (interactive) (hot-expand "<A")) "ASCII" :exit t)
-  ("I" (lambda () (interactive) (hot-expand "<I")) "INCLUDE" :exit t)
-  ("H" (lambda () (interactive) (hot-expand "<H")) "HTML" :exit t)
-  ("L" (lambda () (interactive) (hot-expand "<L")) "LaTeX" :exit t)
-  ("s" (lambda () (interactive) (hot-expand "<s")) "src" :exit t)
-  ("e" (lambda () (interactive) (hot-expand "<s" "emacs-lisp")) "emacs-lisp" :exit t)
-  ("y" (lambda () (interactive) (hot-expand "<s" "python :results output")) "python" :exit t)
-  ("p" (lambda () (interactive) (hot-expand "<s" "perl")) "perl" :exit t)
-  ("w" (lambda () (interactive) (hot-expand "<s" "powershell")) "powershell" :exit t)
-  ("r" (lambda () (interactive) (hot-expand "<s" "ruby")) "ruby" :exit t)
-  ("S" (lambda () (interactive) (hot-expand "<s" "sh")) "sh" :exit t)
-  ("g" (lambda () (interactive) (hot-expand "<s" "go :imports '\(\"fmt\"\)")) "golang" :exit t)
-  ("m" (lambda () (interactive) (hot-expand "<s" "mermaid :file chart.png")) "mermaid" :exit t)
-  ("u" (lambda () (interactive) (hot-expand "<s" "plantuml :file chart.png")) "plantuml" :exit t)
-  ("Y" (lambda () (interactive)
-         (hot-expand "<s" "ipython :session :exports both :results raw drawer\n$0"))
-   "ipython" :exit t)
-  ("P" (lambda () (interactive)
-         (insert "#+HEADERS: :results output :exports both :shebang \"#!/usr/bin/env perl\"\n")
-         (hot-expand "<s" "perl"))
-   "Perl tangled" :exit t)
-  ("<" #'self-insert-command "ins" :exit t))
+;; A source block language picker. Org's own list has C but not cpp, and a
+;; C++ block marked C is compiled as C.
+(defconst my-org-src-languages
+  '("cpp" "sh" "python" "emacs-lisp" "C" "java" "js" "css" "go" "rust" "ruby"
+    "perl" "powershell" "plantuml" "mermaid")
+  "Languages the source block picker offers, in the order shown.")
+
+(defun my-org-insert-src-block (language)
+  "Insert a source block in LANGUAGE and start typing inside it."
+  (interactive
+   (list (completing-read
+          "Language: "
+          (lambda (string predicate action)
+            (if (eq action 'metadata)
+                '(metadata (display-sort-function . identity)
+                           (cycle-sort-function . identity))
+              (complete-with-action action my-org-src-languages string predicate)))
+          nil nil nil nil (car my-org-src-languages))))
+  (hot-expand "<s" language)
+  (when (bound-and-true-p meow-normal-mode)
+    (meow-insert)))
+
 (use-package org-modern
   :autoload org-modern-mode org-modern-agenda
   :custom

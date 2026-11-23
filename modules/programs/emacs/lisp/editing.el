@@ -316,7 +316,6 @@
   (kirigami-show-context-menu t)
   :bind (:map kirigami-mode-map
          ("C-~" . my-kirigami-menu)
-         ("M-RET" . my-kirigami-menu)
          ("C-c z o" . kirigami-open-fold)
          ("C-c z O" . kirigami-open-fold-rec)
          ("C-c z r" . kirigami-open-folds)

@@ -6,13 +6,16 @@
 
 (use-package magit
   :commands (magit-status magit-dispatch)
+  ;; Meow's motion state keeps k for moving up.
+  :bind (:map magit-mode-map
+         ("C-k" . magit-delete-thing))
   :custom
   (magit-diff-refine-hunk t)
   ;; The repositories `my-magit-repository' offers.
   (magit-repository-directories '(("~/Projects" . 2) ("/etc/nixos" . 0))))
 
 (defun my-magit-repository ()
-  "Pick a repository and show its Magit status (Super+G)."
+  "Pick a repository and show its Magit status."
   (interactive)
   (require 'magit)
   (magit-status (magit-read-repository)))

@@ -2,22 +2,17 @@
   # Umbriel binds, built on a few rules so every key is predictable:
   #
   #   Super belongs to the compositor; Ctrl and Alt belong to apps. The only
-  #   exceptions are OS-wide conventions: Alt+Tab, Alt+F4, Print, Ctrl+Alt+...
+  #   exceptions are OS-wide conventions: Alt+Tab, Print, Ctrl+Alt+Delete.
   #
   #   One meaning per modifier:
   #     Super          go there / open it
   #     Super+Shift    take the window along, or the alternate of the same thing
-  #     Super+Ctrl     size and position
-  #     Super+Alt      structure: floating, tabs, stacking, layout mode
-  #     Ctrl+Alt       session: lock, power, reload
+  #     Super+Ctrl     rarer: columns, workspaces, system, the region grid
   #
   #   Keys keep their meaning under every modifier: Left/Right are columns,
-  #   Up/Down move within a column and on into the next workspace, 1-5 are
-  #   workspaces. H/J/K/L always mirror the arrows. Plain letters are apps and
-  #   panels, named mnemonically; Q (close), F (maximize) and R (cycle width)
-  #   are the window verbs. The everyday action gets plain Super; its rarer
-  #   sibling takes a second modifier (Super+F maximizes, Super+Shift+F goes
-  #   fullscreen).
+  #   Up/Down move within a column and on into the next workspace, 1-6 are
+  #   workspaces, - and = are size, [ and ] are neighbors. Letters are
+  #   mnemonic: T float (Tile), Shift+T Tabs, G layout (Grid), L Lock, X power.
   #
   #   One action, one bind, and nothing Kanata already provides: arrows come
   #   from its ext layer, media keys from its fun layer, and no bind relies on
@@ -40,144 +35,186 @@
     spawn = cmd: once "spawn ${cmd}";
     # Terminal tools open in their own foot window.
     inFoot = cmd: spawn "${foot} -e ${cmd}";
-    msg = args: once "spawn ${noctalia} msg ${args}";
+    noctaliaAction = args: "spawn ${noctalia} msg ${args}";
+    msg = args: once (noctaliaAction args);
     whenLocked = action: {
       inherit action;
       allow_when_locked = true;
     };
-    noctaliaKey = args: whenLocked "spawn ${noctalia} msg ${args}";
-
-    # H/J/K/L do whatever the arrows do, with the same modifiers.
-    vimKeys = {
-      Left = "H";
-      Down = "J";
-      Up = "K";
-      Right = "L";
+    noctaliaKey = args: whenLocked (noctaliaAction args);
+    # Toggles must not flip back and forth while the key is held.
+    noctaliaToggleKey = args: noctaliaKey args // {repeat = false;};
+    # On while held, undone on release.
+    peek = action: release: {
+      inherit action release;
+      repeat = false;
     };
-    withVimKeys = binds:
-      binds
-      // lib.concatMapAttrs (arrow: letter:
-        lib.concatMapAttrs (prefix: _:
-          lib.optionalAttrs (binds ? "${prefix}${arrow}") {
-            "${prefix}${letter}" = binds."${prefix}${arrow}";
-          }) {
-          "Mod+" = null;
-          "Mod+Shift+" = null;
-          "Mod+Ctrl+" = null;
-          "Mod+Alt+" = null;
-        })
-      vimKeys;
+
+    copy = "--copy-to-clipboard --no-save-to-file";
+    copyAndSave = "--copy-to-clipboard --save-to-file";
   in {
     programs.umbriel.settings.keybinds =
-      withVimKeys {
+      {
         # --- Super: open (apps and panels, mnemonic)
         "Mod+Return" = spawn foot; # terminal
         "Mod+B" = spawn browser; # Browser (LibreWolf)
         "Mod+Shift+B" = spawn "helium"; # alternate Browser (Helium)
         "Mod+D" = spawn "emacs"; # Emacs (GUI frame on the daemon)
         "Mod+E" = spawn pcmanfm; # Explorer
-        "Mod+G" = spawn "emacs --eval (my-magit-repository)"; # Git (Magit, pick a repository)
         "Mod+M" = inFoot "btop"; # Monitor
-        "Mod+O" = spawn "obs"; # OBS (hyde)
         "Mod+P" = spawn "bitwarden"; # Passwords
 
         "Mod+Space" = msg "panel-toggle launcher";
         "Mod+A" = msg "panel-toggle control-center"; # quick settings (Win+A)
         "Mod+N" = msg "panel-toggle control-center notifications";
-        "Mod+Shift+N" = spawn "emacs --eval (my-org-journal)"; # today's journal Note in Emacs
         "Mod+V" = msg "panel-toggle clipboard"; # clipboard history (Win+V)
-        "Mod+I" = msg "settings-toggle"; # settings (Win+I)
+        "Mod+comma" = msg "settings-toggle";
+        "Mod+period" = msg "panel-toggle launcher /emo"; # emoji (Win+.)
         "Mod+W" = msg "panel-toggle wallpaper";
-        "Mod+slash" = "cheatsheet-toggle";
-        "Mod+Shift+S" = msg "screenshot-region --annotate --copy-to-clipboard --no-save-to-file";
+        "Mod+X" = msg "panel-toggle session"; # power menu (Win+X)
+        "Mod+slash" = peek "cheatsheet-open" "cheatsheet-close";
+        "Mod+semicolon" = once "workspace-toggle-show-desktop";
 
         # --- Super: go
         "Mod+Left" = "window-focus-left";
         "Mod+Right" = "window-focus-right";
         "Mod+Up" = "window-focus-or-workspace-up";
         "Mod+Down" = "window-focus-or-workspace-down";
+        "Mod+Page_Up" = "workspace-previous";
+        "Mod+Page_Down" = "workspace-next";
         "Mod+Escape" = once "workspace-focus-last";
         "Mod+Tab" = once "overview-toggle";
         "Mod+grave" = "scratchpad-toggle terminal";
 
         # --- Window verbs
         "Mod+Q" = once "window-close";
+        "Mod+Shift+Q" = once "window-kill";
         "Mod+F" = once "window-toggle-maximize"; # column to full width
         "Mod+Shift+F" = once "window-toggle-fullscreen";
         "Mod+R" = "window-cycle-primary-extent"; # 1/3, 1/2, 2/3
+        "Mod+Shift+R" = "window-cycle-secondary-extent"; # the same for height
+        "Mod+C" = once "column-center";
+        "Mod+Shift+C" = once "window-center"; # floating window
+        "Mod+T" = once "window-toggle-floating"; # Tile or float
+        "Mod+Shift+T" = once "column-toggle-tabbed";
+        "Mod+Ctrl+P" = once "window-toggle-pinned";
+
+        # --- Size: - and = are width, Shift for height
+        "Mod+minus" = "window-modify-primary-extent -0.05";
+        "Mod+equal" = "window-modify-primary-extent +0.05";
+        "Mod+Shift+minus" = "window-modify-secondary-extent -0.05";
+        "Mod+Shift+equal" = "window-modify-secondary-extent +0.05";
+
+        # --- Layout: G cycles it, [ and ] trade windows with the neighbors
+        "Mod+G" = once "workspace-set-layout toggle scrolling dwindle master stacking";
+        "Mod+Shift+G" = once "layout-toggle-split"; # dwindle
+        "Mod+Ctrl+minus" = "layout-master-count-decrease";
+        "Mod+Ctrl+equal" = "layout-master-count-increase";
+        "Mod+bracketleft" = "window-consume-or-expel-left";
+        "Mod+bracketright" = "window-consume-or-expel-right";
+        "Mod+Shift+bracketleft" = "column-focus-tab-previous";
+        "Mod+Shift+bracketright" = "column-focus-tab-next";
+
+        # --- Region grid (stacking layout): the left hand is the screen.
+        #   Q W E    corners and top
+        #   A S D    left, bottom, right
+        #   Z X C    corners; X restores the window
+        "Mod+Ctrl+Q" = once "window-set-region top_left";
+        "Mod+Ctrl+W" = once "window-set-region top";
+        "Mod+Ctrl+E" = once "window-set-region top_right";
+        "Mod+Ctrl+A" = once "window-set-region left";
+        "Mod+Ctrl+S" = once "window-set-region bottom";
+        "Mod+Ctrl+D" = once "window-set-region right";
+        "Mod+Ctrl+Z" = once "window-set-region bottom_left";
+        "Mod+Ctrl+X" = once "window-clear-region";
+        "Mod+Ctrl+C" = once "window-set-region bottom_right";
 
         # --- Super+Shift: take the window along
         "Mod+Shift+Left" = "column-move-left";
         "Mod+Shift+Right" = "column-move-right";
         "Mod+Shift+Up" = "window-move-or-workspace-up";
         "Mod+Shift+Down" = "window-move-or-workspace-down";
-        "Mod+Shift+grave" = once "window-move-to-scratchpad terminal";
+        "Mod+Shift+Home" = once "column-move-to-first";
+        "Mod+Shift+End" = once "column-move-to-last";
+        "Mod+Shift+Page_Up" = "window-move-to-workspace-previous";
+        "Mod+Shift+Page_Down" = "window-move-to-workspace-next";
+        "Mod+Shift+grave" = once "window-toggle-scratchpad terminal";
         "Mod+Shift+Escape" = {
           action = "shortcuts-inhibit-toggle"; # pass shortcuts through to games/VMs
           allow_when_inhibited = true;
           repeat = false;
         };
 
-        # --- Super+Ctrl: size and position
-        "Mod+Ctrl+Left" = "window-modify-primary-extent -0.05";
-        "Mod+Ctrl+Right" = "window-modify-primary-extent +0.05";
-        "Mod+Ctrl+Up" = "window-modify-secondary-extent -0.05";
-        "Mod+Ctrl+Down" = "window-modify-secondary-extent +0.05";
-        "Mod+Ctrl+C" = once "column-center";
+        # --- Super+Ctrl: whole workspaces
+        "Mod+Ctrl+Page_Up" = "workspace-move-up";
+        "Mod+Ctrl+Page_Down" = "workspace-move-down";
+        # Reserved for a second monitor:
+        # "Mod+Ctrl+Left" = "output-focus-left";
+        # "Mod+Ctrl+Right" = "output-focus-right";
+        # "Mod+Ctrl+Up" = "output-focus-up";
+        # "Mod+Ctrl+Down" = "output-focus-down";
+        # "Mod+Ctrl+Shift+Left" = "column-move-to-output-left";
+        # "Mod+Ctrl+Shift+Right" = "column-move-to-output-right";
+        # "Mod+Ctrl+Shift+Up" = "column-move-to-output-up";
+        # "Mod+Ctrl+Shift+Down" = "column-move-to-output-down";
 
-        # --- Super+Alt: structure
-        "Mod+Alt+Space" = once "window-toggle-floating";
-        "Mod+Alt+Left" = "column-focus-tab-previous";
-        "Mod+Alt+Right" = "column-focus-tab-next";
-        "Mod+Alt+T" = once "column-toggle-tabbed";
-        "Mod+Alt+bracketleft" = "window-consume-or-expel-left";
-        "Mod+Alt+bracketright" = "window-consume-or-expel-right";
-        "Mod+Alt+P" = once "window-toggle-pinned";
-        "Mod+Alt+grave" = once "window-restore-from-scratchpad terminal";
-        "Mod+Alt+Tab" = once "workspace-set-layout toggle scrolling dwindle master stacking"; # cycle layouts
+        # --- Capture: clipboard by default, Shift+Print also saves a file
+        "Mod+S" = msg "screenshot-region ${copy}";
+        "Mod+Shift+S" = msg "screenshot-region --annotate ${copy}";
+        "Mod+Shift+A" = msg "annotate ${copy}"; # draw on the live screen
+        "Print" = msg "screenshot-fullscreen ${copy}";
+        "Mod+Print" = msg "screenshot-window ${copy}";
+        "Shift+Print" = msg "screenshot-fullscreen ${copyAndSave}";
+        "Mod+Shift+Print" = msg "screenshot-window ${copyAndSave}";
 
-        # --- Ctrl+Alt: session
-        "Ctrl+Alt+L" = msg "session lock";
-        "Ctrl+Alt+Delete" = msg "panel-toggle session"; # power menu
-        "Ctrl+Alt+R" = once "config-reload"; # reload the compositor config
+        # --- System toggles
+        "Mod+Shift+W" = msg "wifi-toggle";
+        "Mod+Ctrl+B" = msg "bluetooth-toggle";
+        "Mod+Ctrl+N" = msg "network-toggle";
+        "Mod+Shift+P" = msg "power-cycle"; # Power profile
+        "Mod+H" = msg "bar-toggle"; # Hide the bar
+        "Mod+Shift+H" = msg "desktop-widgets-toggle"; # Hide the widgets
+        "Mod+Shift+D" = msg "theme-mode-toggle"; # Dark or light
+        "Mod+Shift+N" = msg "nightlight-force-toggle"; # Night light
+
+        # --- Session
+        "Mod+L" = msg "session lock";
+        "Mod+Shift+L" = msg "session lock-and-suspend";
+        "Mod+Shift+O" = once "dpms-off"; # screens Off
+        "Mod+Ctrl+R" = once "config-reload";
 
         # --- OS-wide conventions
+        "Ctrl+Alt+Delete" = msg "panel-toggle session"; # power menu
         "Alt+Tab" = msg "window-switcher";
-        "Print" = msg "screenshot-fullscreen --copy-to-clipboard --no-save-to-file";
-        "Alt+Print" = msg "screenshot-window --copy-to-clipboard --no-save-to-file";
 
-        # --- Mouse: wheel through workspaces, Shift+wheel along the columns,
+        # --- Mouse: wheel through windows, side buttons through workspaces,
         # middle-drag to pan the strip.
-        "Mod+WheelUp" = {
-          action = "workspace-previous";
-          cooldown_ms = 150;
-        };
-        "Mod+WheelDown" = {
-          action = "workspace-next";
-          cooldown_ms = 150;
-        };
-        "Mod+Shift+WheelUp" = "window-focus-left";
-        "Mod+Shift+WheelDown" = "window-focus-right";
+        "Mod+WheelUp" = "window-focus-left";
+        "Mod+WheelDown" = "window-focus-right";
+        "Mod+MouseBack" = "workspace-previous";
+        "Mod+MouseForward" = "workspace-next";
         "Mod+MouseMiddle" = "layout-scroll-drag";
 
         # --- Media keys (sent by the Kanata fun layer), usable when locked
         "XF86AudioRaiseVolume" = noctaliaKey "volume-up";
         "XF86AudioLowerVolume" = noctaliaKey "volume-down";
-        "XF86AudioMute" = noctaliaKey "volume-mute";
-        "XF86AudioMicMute" = noctaliaKey "mic-mute";
-        "XF86AudioPlay" = noctaliaKey "media toggle";
-        "XF86AudioStop" = noctaliaKey "media stop";
+        "XF86AudioMute" = noctaliaToggleKey "volume-mute";
+        "XF86AudioMicMute" = noctaliaToggleKey "mic-mute";
+        "XF86AudioPlay" = noctaliaToggleKey "media toggle";
+        "XF86AudioStop" = noctaliaToggleKey "media stop";
         "XF86AudioNext" = noctaliaKey "media next";
         "XF86AudioPrev" = noctaliaKey "media previous";
         "XF86MonBrightnessUp" = noctaliaKey "brightness-up";
         "XF86MonBrightnessDown" = noctaliaKey "brightness-down";
       }
-      # Super+N goes to workspace N, Super+Shift+N takes the window there.
+      # Super+N goes to workspace N, Super+Shift+N takes the window there,
+      # Super+Ctrl+N takes the whole column.
       // lib.listToAttrs (lib.concatMap (n: let
         i = toString n;
       in [
         (lib.nameValuePair "Mod+${i}" "workspace-switch ${i}")
         (lib.nameValuePair "Mod+Shift+${i}" "window-move-to-workspace ${i}")
-      ]) (lib.range 1 5));
+        (lib.nameValuePair "Mod+Ctrl+${i}" "column-move-to-workspace ${i}")
+      ]) (lib.range 1 6));
   };
 }

@@ -2,20 +2,22 @@
 #+startup: overview
 #+options: toc:nil num:nil
 
-*Open* ~SPC h b~ · *Fold a section* ~TAB~ · *Close this pane* ~SPC w x~
+*Open* ~SPC h b g~ · *Fold a section* ~TAB~ · *Close this pane* ~SPC w c~
 
-*Quick start*
+*Quick start* (Doom Emacs's ~SPC~ layout, with Meow for editing)
 
-| Key       | Action           |
-|-----------+------------------|
-| ~SPC SPC~ | Run a command    |
-| ~SPC .~   | Open a file      |
-| ~SPC ,~   | Switch buffers   |
-| ~SPC f s~ | Save             |
-| ~SPC w r~ | Split right      |
-| ~SPC w v~ | Split below      |
-| ~SPC o f~ | File manager     |
-| ~SPC q q~ | Close the client |
+| Key       | Action               |
+|-----------+----------------------|
+| ~SPC SPC~ | Find file in project |
+| ~SPC :~   | Run a command        |
+| ~SPC .~   | Open a file          |
+| ~SPC ,~   | Switch buffers       |
+| ~SPC /~   | Search the project   |
+| ~SPC f s~ | Save                 |
+| ~SPC w v~ | Split right          |
+| ~SPC w s~ | Split below          |
+| ~SPC o -~ | File manager         |
+| ~SPC q q~ | Close the client     |
 
 * Reading the keys
 
@@ -43,7 +45,7 @@ Notes and journals are stored under ~~/Areas/Org/~.
 | ~u/U~                 | Undo / undo in selection                    |
 | ~g/G~                 | Cancel selection / grab                     |
 | ~,/./[/]~             | Inner / bounds / beginning / end of thing   |
-| ~SPC h t~             | Interactive Meow tutorial                   |
+| ~SPC h T~             | Interactive Meow tutorial                   |
 
 * Apply configuration changes
 
@@ -61,17 +63,30 @@ other key closes them.
 
 | Key           | Menu                                                     |
 |---------------+----------------------------------------------------------|
-| ~SPC f~       | Files: find, new, save, recent, rename, delete, as root  |
-| ~SPC b~       | Buffers: switch, close, list, scratch, revert            |
-| ~SPC p~       | Project: open, files, search, compile, Nix shell, session |
-| ~SPC s~       | Search: text, symbols, marks, rg, web; highlight symbol  |
-| ~SPC g~       | Git: status, line info, history, merge conflicts…, hunks |
-| ~SPC o~       | Open: dashboard, file tree, terminal, feeds, docker, …   |
-| ~SPC n~       | Notes: find / insert notes, journal, capture, agenda     |
-| ~SPC c~       | Code: actions, rename, definitions, format, diagnostics  |
+| ~SPC SPC~     | Find a file in this project                              |
+| ~SPC .~ / ~,~ | Find file · switch buffer (~<~ for all buffers)          |
+| ~SPC :~ / ~;~ | Run a command · evaluate an expression                   |
+| ~SPC /~ / ~*~ | Search the project · for the symbol at point             |
+| ~SPC '~       | Resume the last search                                   |
+| ~SPC `~       | Last buffer                                              |
+| ~SPC x~ / ~X~ | Scratch buffer · capture                                 |
+| ~SPC u~       | Universal argument (~C-u~)                               |
+| ~SPC RET~     | Jump to a bookmark                                       |
+| =SPC ~=       | Toggle the last popup                                    |
+| ~SPC TAB~     | Workspaces: switch, new, close, ~1~-~9~, save, load      |
+| ~SPC f~       | File: find, save, recent, rename, delete, copy path      |
+| ~SPC b~       | Buffer: switch, close, list, scratch, revert, bookmark   |
+| ~SPC p~       | Project: open, files, compile, Nix shell, run command    |
+| ~SPC s~       | Search: buffer, project, symbols, marks, undo history    |
+| ~SPC g~       | Git: status, blame, commit, stage, history, ~[~ ~]~ hunks |
+| ~SPC i~       | Insert: snippet, emoji, unicode, kill ring, file name    |
+| ~SPC o~       | Open: file manager, file tree, terminal, agenda, docker  |
+| ~SPC n~       | Notes: capture, agenda, journal, search; ~n r~ org-roam  |
+| ~SPC c~       | Code: actions, rename, definitions, format, errors       |
 | ~SPC e~       | Edit: rectangle…, multiple cursors…, iedit, expand, zap  |
 | ~SPC t~       | Toggles… (also ~F6~)                                      |
-| ~SPC w~       | Windows… (also ~C-c w~): resize ~h j k l~, split ~r v~   |
+| ~SPC w~       | Windows… (also ~C-c w~): focus ~h j k l~, split ~s v~    |
+| ~SPC q~       | Quit: close client, frame, restore session, stop daemon  |
 | ~SPC z~ / ~Z~ | Folds… (kirigami, also =C-~=) · hideshow…                |
 | ~SPC d~       | Debugger… (dape; ~F5~ starts one)                         |
 | ~SPC M~       | Mode line… (also ~C-F6~)                                  |
@@ -82,6 +97,7 @@ other key closes them.
 | ~SPC C~       | Colours, faces, libraries, file info                     |
 | ~SPC h~       | Help, this guide, Meow tutorial                          |
 | ~SPC m …~     | The major mode's ~C-c~ keys (~SPC m c~ = ~C-c C-c~)      |
+| ~SPC \ …~     | Meta (~SPC \ x~ = ~M-x~)                                 |
 | ~SPC 4 …~     | Numeric prefix: repeat the next command 4 times          |
 | ~M-SPC~       | The Space menu while typing (outside completion)         |
 
@@ -114,7 +130,7 @@ These work as they do in Centaur Emacs, in every Meow state.
 | ~M-m~ (in popup)    | Move the completion list to the minibuffer       |
 | ~M-.~ (in a picker) | Preview the candidate                            |
 | ~C-c C-o~ (picker)  | Export the list to an editable buffer            |
-| ~<~ (Org, line start) | Insert a block template                        |
+| ~C-c C-,~ (Org)     | Insert a block template                          |
 | ~C-x u~             | Undo tree                                        |
 | ~C-h b~             | Every key binding, searchable                    |
 

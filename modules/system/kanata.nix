@@ -73,16 +73,16 @@
         if isWide
         then ''
           _    _    _    _    _    _    _    _    _    _    _    _    _    _    _
-          _    @pl  [    @lb  @lp  @lt  _    @gt  @rp  @rb  ]    @tld _    _
-          _    -    @st  @und =    @at  _    @hs  @os  @om  @oc  @oa  _
-          _    @cr  @cln scln /    @pc  grv  @dl  \    @am  @pip _
+          _    @tld [    @lb  @lp  @lt  _    @gt  @rp  @rb  ]    @pl  _    _
+          _    @oa  @oc  @om  @os  @hs  _    @at  =    @und @st  -    _
+          _    grv  @pip @am  \    @dl  @cr  @pc  /    scln @cln _
           _    _    @fun           @snum               _    _    _
         ''
         else ''
           _    _    _    _    _    _    _    _    _    _    _    _    _    _    _
-          _    @pl  [    @lb  @lp  @lt  @gt  @rp  @rb  ]    @tld _    _    _
-          _    -    @st  @und =    @at  @hs  @os  @om  @oc  @oa  _    _
-          _    @cr  @cln scln /    @pc  @dl  \    @am  @pip grv  _
+          _    @tld [    @lb  @lp  @lt  @gt  @rp  @rb  ]    @pl  _    _    _
+          _    @oa  @oc  @om  @os  @hs  @at  =    @und @st  -    _    _
+          _    grv  @pip @am  \    @dl  @pc  /    scln @cln @cr  _
           _    _    @fun           @snum               _    _    _
         '';
 
@@ -90,37 +90,37 @@
         if isWide
         then ''
           _    _    _    _    _    _    _    _    _    _    _    _    _    _    _
-          _    @pl  9    8    7    =    _    nlck _    _    _    _    _    _
-          _    -    6    5    4    @st  _    ralt @os  @om  @oc  @oa  _
-          _    /    3    2    1    0    _    ret  bspc tab  menu _
+          _    _    _    _    _    nlck _    =    7    8    9    @pl  _    _
+          _    @oa  @oc  @om  @os  ralt _    @st  4    5    6    -    _
+          _    _    menu tab  bspc ret  /    0    1    2    3    _
           _    _    @fun           _                   _    _    _
         ''
         else ''
           _    _    _    _    _    _    _    _    _    _    _    _    _    _    _
-          _    @pl  9    8    7    =    nlck _    _    _    _    _    _    _
-          _    -    6    5    4    @st  ralt @os  @om  @oc  @oa  _    _
-          _    /    3    2    1    0    ret  bspc tab  menu _    _
+          _    _    _    _    _    nlck =    7    8    9    @pl  _    _    _
+          _    @oa  @oc  @om  @os  ralt @st  4    5    6    -    _    _
+          _    _    menu tab  bspc ret  0    1    2    3    /    _
           _    _    @fun           _                   _    _    _
         '';
 
       symChords =
         if isWide
         then ''
-          (w e) @neq  55 first-release (base gaming ext fun num mouse)
+          (o p) @neq  55 first-release (base gaming ext fun num mouse)
           (e r) @lte  55 first-release (base gaming ext fun num mouse)
-          (r t) grv   55 first-release (base gaming ext fun num mouse)
-          (s d) @arw  55 first-release (base gaming ext fun num mouse)
-          (d f) @dotb 55 first-release (base gaming ext fun num mouse)
-          (u i) '     55 first-release (base gaming ext fun num mouse)
+          (u i) grv   55 first-release (base gaming ext fun num mouse)
+          (l scln) @arw 55 first-release (base gaming ext fun num mouse)
+          (k l) @dotb 55 first-release (base gaming ext fun num mouse)
+          (r t) '     55 first-release (base gaming ext fun num mouse)
           (i o) @gte  55 first-release (base gaming ext fun num mouse)
         ''
         else ''
-          (w e) @neq  55 first-release (base gaming ext fun num mouse)
+          (i o) @neq  55 first-release (base gaming ext fun num mouse)
           (e r) @lte  55 first-release (base gaming ext fun num mouse)
-          (r t) grv   55 first-release (base gaming ext fun num mouse)
-          (s d) @arw  55 first-release (base gaming ext fun num mouse)
-          (d f) @dotb 55 first-release (base gaming ext fun num mouse)
-          (y u) '     55 first-release (base gaming ext fun num mouse)
+          (y u) grv   55 first-release (base gaming ext fun num mouse)
+          (k l) @arw  55 first-release (base gaming ext fun num mouse)
+          (j k) @dotb 55 first-release (base gaming ext fun num mouse)
+          (r t) '     55 first-release (base gaming ext fun num mouse)
           (u i) @gte  55 first-release (base gaming ext fun num mouse)
         '';
     in ''

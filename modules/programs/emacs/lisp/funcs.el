@@ -229,7 +229,7 @@ lines, or more than 2,000 bytes in one line."
 
 ;; Centaur's hydras as Meow menus. `my-define-menu' makes a command that
 ;; shows its keys (in which-key's popup) and keeps them live, the way a hydra
-;; stays open: SPC w, then h h h keeps shrinking the window. An :exit entry,
+;; stays open: SPC w, then + + + keeps growing the window. An :exit entry,
 ;; q, C-g or any key not in the menu closes it. The keys only exist while
 ;; the menu is open, so they never change editing elsewhere.
 (defmacro my-define-menu (name title &rest body)
