@@ -70,23 +70,6 @@
         alias.dft = "-c diff.external=difft diff";
       };
     };
-    home.packages = [pkgs.gh pkgs.lazygit pkgs.delta pkgs.difftastic];
-
-    # Noctalia's lazygit template owns config.yml; these settings sit on top.
-    home.sessionVariables.LG_CONFIG_FILE = "${config.xdg.configHome}/lazygit/config.yml,${config.xdg.configHome}/lazygit/nix.yml";
-    xdg.configFile."lazygit/nix.yml".source = (pkgs.formats.yaml {}).generate "lazygit-nix.yml" {
-      gui.nerdFontsVersion = "3";
-      os.editPreset = "emacs";
-      git.diffRenderers = [
-        {
-          # Click a line number to open it in the editor.
-          command = "delta --{{colorScheme}} --paging=never --line-numbers --hyperlinks --hyperlinks-file-link-format=\"lazygit-edit://{path}:{line}\"";
-        }
-        {
-          type = "extDiff";
-          command = "difft --color=always";
-        }
-      ];
-    };
+    home.packages = [pkgs.gh pkgs.delta pkgs.difftastic];
   };
 }

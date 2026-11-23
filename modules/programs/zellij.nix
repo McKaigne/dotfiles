@@ -244,7 +244,7 @@
     '';
 
     # A project session: Helix on the project, a hidden floating shell
-    # (Ctrl+Space w), and lazygit in its own tab.
+    # (Ctrl+Space w).
     zellijCodeLayoutTemplate = pkgs.writeText "zellij-code.kdl.in" ''
       layout {
       ${zellijTabTemplate}
@@ -255,9 +255,6 @@
           floating_panes {
             pane name="shell" x="10%" y="10%" width="80%" height="80%"
           }
-        }
-        tab name="git" {
-          pane command="lazygit"
         }
       }
     '';

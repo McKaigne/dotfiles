@@ -23,7 +23,6 @@
             "pywalfox"
             "bat"
             "fzf"
-            "lazygit"
           ];
         };
       };

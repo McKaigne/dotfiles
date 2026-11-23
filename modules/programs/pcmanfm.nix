@@ -70,29 +70,6 @@ in {
         "audio/mpeg" = "mpv.desktop";
         "audio/flac" = "mpv.desktop";
         "audio/ogg" = "mpv.desktop";
-
-        "text/plain" = "emacs.desktop";
-        "text/markdown" = "emacs.desktop";
-        "text/x-nix" = "emacs.desktop";
-        "text/x-c" = "emacs.desktop";
-        "text/x-c++" = "emacs.desktop";
-        "text/x-python" = "emacs.desktop";
-        "text/x-shellscript" = "emacs.desktop";
-        # The standard names (the three above are not what file managers report).
-        "text/x-csrc" = "emacs.desktop";
-        "text/x-chdr" = "emacs.desktop";
-        "text/x-c++src" = "emacs.desktop";
-        "text/x-c++hdr" = "emacs.desktop";
-        "application/x-shellscript" = "emacs.desktop";
-        "text/x-cmake" = "emacs.desktop";
-        "text/x-makefile" = "emacs.desktop";
-        "text/x-log" = "emacs.desktop";
-        "text/x-org" = "emacs.desktop";
-        "text/csv" = "emacs.desktop";
-        "application/xml" = "emacs.desktop";
-        "application/json" = "emacs.desktop";
-        "application/toml" = "emacs.desktop";
-        "application/yaml" = "emacs.desktop";
       };
     };
 

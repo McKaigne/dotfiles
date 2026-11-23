@@ -33,11 +33,45 @@
         (aspellWithDicts (d: [d.en]))
         python3Packages.grip
         fish-lsp
+        # agent-shell drives Claude Code and Codex through these.
+        claude-agent-acp
+        codex-acp
       ];
     };
+    # The text types Emacs opens by default (the names shared-mime-info reports).
+    textTypes = [
+      "text/plain"
+      "text/markdown"
+      "text/org"
+      "text/x-nix"
+      "text/x-csrc"
+      "text/x-chdr"
+      "text/x-c++src"
+      "text/x-c++hdr"
+      "text/x-python"
+      "text/x-shellscript"
+      "application/x-shellscript"
+      "text/x-cmake"
+      "text/x-makefile"
+      "text/x-log"
+      "text/csv"
+      "application/xml"
+      "application/json"
+      "application/toml"
+      "application/yaml"
+    ];
     # Every way in opens a GUI frame on the daemon; the terminal versions are
     # not used. Batch/daemon/info flags reach real Emacs; `emacsclient -e`
     # (Noctalia's theme reload) passes through without opening a frame.
+    # A program Emacs itself started without a terminal (M-! git commit) is
+    # refused: Emacs is waiting on it, so it would wait on Emacs forever.
+    # Terminals inside Emacs (ghostel, shell, eshell) set INSIDE_EMACS.
+    guard = ''
+      if [ -n "''${EMACS_DAEMON_CHILD-}" ] && [ -z "''${INSIDE_EMACS-}" ]; then
+        echo "''${0##*/}: run from inside Emacs without a terminal, so it would wait on itself; use M-& or a terminal" >&2
+        exit 1
+      fi
+    '';
     launcher = pkgs.writeShellScriptBin "emacs" ''
       args=()
       for arg in "$@"; do
@@ -49,6 +83,7 @@
           *) args+=("$arg") ;;
         esac
       done
+      ${guard}
       exec ${emacs}/bin/emacsclient --create-frame "''${args[@]}"
     '';
     client = pkgs.writeShellScriptBin "emacsclient" ''
@@ -62,6 +97,7 @@
           *) args+=("$arg") ;;
         esac
       done
+      ${guard}
       exec ${emacs}/bin/emacsclient --create-frame "''${args[@]}"
     '';
   in {
@@ -330,28 +366,7 @@
         exec = "${lib.getExe launcher} %F";
         icon = "emacs";
         categories = ["Development" "TextEditor"];
-        # The text types it opens by default (pcmanfm.nix).
-        mimeType = [
-          "text/plain"
-          "text/markdown"
-          "text/x-org"
-          "text/x-nix"
-          "text/x-csrc"
-          "text/x-chdr"
-          "text/x-c++src"
-          "text/x-c++hdr"
-          "text/x-python"
-          "text/x-shellscript"
-          "application/x-shellscript"
-          "text/x-cmake"
-          "text/x-makefile"
-          "text/x-log"
-          "text/csv"
-          "application/xml"
-          "application/json"
-          "application/toml"
-          "application/yaml"
-        ];
+        mimeType = textTypes;
       };
       emacsclient = {
         name = "Emacs (Client)";
@@ -369,6 +384,7 @@
         noDisplay = true;
       };
     };
+    xdg.mimeApps.defaultApplications = lib.genAttrs textTypes (_: "emacs.desktop");
 
     xdg.configFile = {
       "emacs/init.el" = {

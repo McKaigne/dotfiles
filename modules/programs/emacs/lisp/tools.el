@@ -442,11 +442,29 @@
   (interactive)
   (require 'gptel)
   (call-interactively #'gptel-openai-oauth-login))
+(bind-key "C-c a l" #'my-chatgpt-login)
+
+;; The login token (with its long-lived refresh token) is for your eyes only.
+(defun my-gptel-private-token (fn file &rest args)
+  "Write the gptel login token FILE readable only by you."
+  (prog1 (with-file-modes #o600 (apply fn file args))
+    (set-file-modes file #o600)))
+(advice-add 'gptel-oauth--write-token :around #'my-gptel-private-token)
 
 (when emacs/>=29p
   ;; Generate commit messages for magit
   (use-package gptel-magit
-    :hook (magit-mode . gptel-magit-install))
+    :hook (magit-mode . gptel-magit-install)
+    :config
+    ;; Ask for SPC A l instead of starting a browser login mid-commit.
+    (defun my-gptel-magit-signed-in (&rest _)
+      "Stop gptel-magit when ChatGPT has not been signed in to yet."
+      (let ((backend (or gptel-magit-backend gptel-backend)))
+        (when (and (gptel-openai-oauth-p backend)
+                   (not (gptel-openai-oauth-token backend))
+                   (not (file-exists-p gptel--openai-oauth-token-file)))
+          (user-error "Sign in to ChatGPT first: SPC A l"))))
+    (advice-add 'gptel-magit--request :before #'my-gptel-magit-signed-in))
 
   ;; Claude Code and Codex in Emacs (agent-shell talks to them through
   ;; claude-agent-acp and codex-acp). Both use your account: sign in once

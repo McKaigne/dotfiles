@@ -8,7 +8,26 @@
   :commands (magit-status magit-dispatch)
   :custom
   (magit-diff-refine-hunk t)
+  ;; The repositories `my-magit-repository' offers.
+  (magit-repository-directories '(("~/Projects" . 2) ("/etc/nixos" . 0))))
+
+(defun my-magit-repository ()
+  "Pick a repository and show its Magit status (Super+G)."
+  (interactive)
+  (require 'magit)
+  (magit-status (magit-read-repository)))
+
+;; A terminal `git commit' reaches Emacs through emacsclient; loading this now
+;; makes its message a commit buffer (C-c C-c / C-c C-k) before magit is opened.
+(use-package git-commit
+  :demand t
+  :custom
   (git-commit-major-mode 'git-commit-elisp-text-mode))
+
+;; M-& commands that open $EDITOR (git commit, crontab -e) edit in this Emacs.
+;; A synchronous M-! one is refused by the emacsclient wrapper instead of
+;; waiting on this Emacs forever (EMACS_DAEMON_CHILD, core.el).
+(shell-command-with-editor-mode 1)
 
 ;; Show TODOs in magit
 (use-package magit-todos

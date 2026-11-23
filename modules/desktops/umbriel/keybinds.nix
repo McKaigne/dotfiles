@@ -78,7 +78,7 @@
         "Mod+Shift+C" = spawn "zproj"; # Code project: pick a directory, resume its zellij session
         "Mod+D" = spawn "emacs"; # Emacs (GUI frame on the daemon)
         "Mod+E" = spawn pcmanfm; # Explorer
-        "Mod+G" = inFoot "lazygit"; # Git
+        "Mod+G" = spawn "emacs --eval (my-magit-repository)"; # Git (Magit, pick a repository)
         "Mod+M" = inFoot "btop"; # Monitor
         "Mod+O" = spawn "obs"; # OBS (hyde)
         "Mod+P" = spawn "bitwarden"; # Passwords

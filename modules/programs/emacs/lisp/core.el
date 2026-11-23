@@ -17,6 +17,9 @@
 
 (add-to-list 'exec-path my-tools-directory t)
 (setenv "PATH" (concat (getenv "PATH") path-separator my-tools-directory))
+;; Marks programs this Emacs starts, so the emacsclient wrapper can refuse to
+;; wait on the Emacs that is waiting on it (default.nix).
+(setenv "EMACS_DAEMON_CHILD" "1")
 (setq custom-file (my-state-file "custom.el")
       backup-directory-alist `(("." . ,(my-state-file "backups/")))
       auto-save-file-name-transforms `((".*" ,(my-state-file "auto-save/") t))

@@ -7,7 +7,6 @@ in {
       carapace
       psmisc
       delta
-      lazygit
       gh
       tree
       bat

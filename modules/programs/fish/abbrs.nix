@@ -63,7 +63,6 @@
         btm = "btop";
         n = "nnn";
         g = "git";
-        lg = "lazygit";
 
         hxf = "hx /etc/nixos/flake.nix";
         hxh = "hx /etc/nixos/modules/hosts/hyde/default.nix";
