@@ -214,10 +214,22 @@
       '(center t)))
   (setq diff-hl-fringe-bmp-function #'my/diff-hl-fringe-bmp-function)
 
-  (defun my/diff-hl-delete-frame ()
-    "Close the hunk popup without stranding keyboard focus."
-    (my/delete-focused-child-frame diff-hl-show-hunk--frame))
-  (advice-add 'diff-hl-show-hunk--posframe-hide :before #'my/diff-hl-delete-frame)
+  ;; `diff-hl-show-hunk-hide' moves to the original window before hiding
+  ;; the popup, so whether the popup had the keys is lost by then; always
+  ;; delete it (funcs.el). `posframe-show' makes a new one each time.
+  (advice-add 'diff-hl-show-hunk--posframe-hide :around #'my/delete-child-frames)
+
+  ;; Stepping hunks from inside the popup deletes it and shows a new one,
+  ;; which posframe doesn't focus; hand it the keys back.
+  (defun my/diff-hl-keep-popup-focus (step &rest args)
+    "Call STEP with ARGS, refocusing the hunk popup if it had the keys."
+    (let ((focused (and (frame-live-p diff-hl-show-hunk--frame)
+                        (eq diff-hl-show-hunk--frame (selected-frame)))))
+      (apply step args)
+      (when (and focused (frame-live-p diff-hl-show-hunk--frame))
+        (select-frame-set-input-focus diff-hl-show-hunk--frame))))
+  (dolist (step '(diff-hl-show-hunk-next diff-hl-show-hunk-previous))
+    (advice-add step :around #'my/diff-hl-keep-popup-focus))
 
   ;; Update diff-hl in time.
   (diff-hl-flydiff-mode 1))

@@ -200,9 +200,8 @@ Like normal Emacs `C-k'.  Kill to end of line and put content in kill-ring."
     :init (setq popterm-backend 'ghostel
                 popterm-scope 'project)
     :config
-    (defun my/popterm-delete-frame ()
-      "Close the popup frame without stranding keyboard focus."
-      (popterm--remove-focus-guard)
-      (my/delete-focused-child-frame popterm--frame))
-    (advice-add 'popterm--posframe-hide :before #'my/popterm-delete-frame)))
+    ;; Popterm can hide its popup before Emacs has seen it gain focus, so
+    ;; unlike other popups (funcs.el) it is always deleted, focused or not.
+    ;; Popterm itself then drops its focus guards and refocuses the parent.
+    (advice-add 'popterm--posframe-hide :around #'my/delete-child-frames)))
 

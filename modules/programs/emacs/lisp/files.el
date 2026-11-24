@@ -222,12 +222,6 @@
   (treemacs-persist-file (my-state-file "treemacs-persist"))
   (treemacs-last-error-persist-file (my-state-file "treemacs-errors"))
   :config
-  (defun my/cfrs-delete-frame ()
-    "Close the name prompt without stranding keyboard focus."
-    (when (eq major-mode 'cfrs-input-mode)
-      (my/delete-focused-child-frame (selected-frame))))
-  (advice-add 'cfrs--hide :before #'my/cfrs-delete-frame)
-
   (setq treemacs-collapse-dirs           (if treemacs-python-executable 3 0)
         treemacs-missing-project-action  'remove
         treemacs-user-mode-line-format   'none
@@ -285,9 +279,8 @@
     (setq-local default-directory directory)))
 
 (defun my-project-open ()
-  "Choose a project and open its file tree beside the editor."
+  "Choose a project and find a file in it."
   (interactive)
   (let ((default-directory (project-prompt-project-dir)))
-    (project-find-file)
-    (save-selected-window (treemacs-select-window))))
+    (project-find-file)))
 

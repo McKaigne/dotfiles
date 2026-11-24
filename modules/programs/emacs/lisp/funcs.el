@@ -196,16 +196,42 @@ lines, or more than 2,000 bytes in one line."
   (childframe-workable-p))
 
 ;; On Wayland, Emacs only returns focus to the parent when a focused child
-;; frame is deleted. Hiding one first leaves keys going nowhere.
-(defun my/delete-focused-child-frame (frame)
-  "Delete child FRAME if it has keyboard focus, so its parent regains it."
-  (when-let* (((frame-live-p frame))
+;; frame is deleted. Hiding one leaves keys going nowhere, so any popup
+;; (treemacs prompt, diff-hl hunk, ...) the keys are in is deleted instead.
+;; Selected counts as focused: the focus-in event can still be queued.
+;; The caller's buffer stays current, e.g. cfrs reads its answer from it.
+;; Like `posframe-delete-frame', global `delete-frame-functions' (server,
+;; desktop, ...) are skipped for these throwaway popups; buffer-local ones,
+;; such as cfrs's focus handoff, still run.
+(defvar my/delete-child-frame-always nil
+  "Non-nil deletes any child frame being hidden, focused or not.")
+
+(defun my/delete-focused-child-frame (hide &optional frame &rest args)
+  "Call HIDE on FRAME and ARGS, or delete FRAME if it is a focused child."
+  (let ((frame (or frame (selected-frame))))
+    (if-let* (((frame-live-p frame))
               (parent (frame-parent frame))
-              ((eq (frame-focus-state frame) t)))
-    (let ((selected (eq frame (selected-frame))))
-      (save-current-buffer
-        (delete-frame frame)
-        (when selected (select-frame parent))))))
+              ((or my/delete-child-frame-always
+                   (eq frame (selected-frame))
+                   (eq (frame-focus-state frame) t))))
+        (let ((selected (eq frame (selected-frame)))
+              (global-hooks (default-value 'delete-frame-functions)))
+          (save-current-buffer
+            (unwind-protect
+                (progn
+                  (set-default 'delete-frame-functions nil)
+                  (delete-frame frame))
+              (set-default 'delete-frame-functions global-hooks))
+            (when (and selected (frame-live-p parent))
+              (select-frame parent))))
+      (apply hide frame args))))
+(advice-add 'make-frame-invisible :around #'my/delete-focused-child-frame)
+
+;; For popups whose focus Emacs may not have seen yet when they close.
+(defun my/delete-child-frames (fn &rest args)
+  "Call FN with ARGS, deleting any child frame it hides, focused or not."
+  (let ((my/delete-child-frame-always t))
+    (apply fn args)))
 
 (defun centaur-dark-theme-p ()
   "Check if the current theme is a dark theme."

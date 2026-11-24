@@ -63,9 +63,7 @@
                                     dashboard-insert-navigator
                                     dashboard-insert-newline
                                     dashboard-insert-init-info
-                                    dashboard-insert-items
-                                    dashboard-insert-newline
-                                    dashboard-insert-footer)
+                                    dashboard-insert-items)
 
         dashboard-icon-type 'nerd-icons
         dashboard-set-file-icons t
@@ -94,9 +92,7 @@
             (lambda (&rest _) (update-config-and-packages)))
            (,(nerd-icons-mdicon "nf-md-help" :height 1.2)
             "" "Key reference (?)"
-            (lambda (&rest _) (my-open-keybindings)))))
-        dashboard-footer-icon
-        (nerd-icons-octicon "nf-oct-heart" :height 1.2 :face 'nerd-icons-lred))
+            (lambda (&rest _) (my-open-keybindings))))))
 
   (defun browse-homepage ()
     "Visit the dotfiles repository."
