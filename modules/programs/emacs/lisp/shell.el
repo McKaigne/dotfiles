@@ -198,5 +198,17 @@ Like normal Emacs `C-k'.  Kill to end of line and put content in kill-ring."
            ([f9]    . popterm-window-toggle))
     :hook (after-init . popterm-global-mode)
     :init (setq popterm-backend 'ghostel
-                popterm-scope 'project)))
+                popterm-scope 'project)
+    :config
+    ;; On Wayland, Emacs only returns focus to the parent when a focused child
+    ;; frame is deleted. Popterm hides it first, which leaves keys going nowhere.
+    (defun my/popterm-delete-frame ()
+      "Delete the popup frame while it has focus, so its parent regains it."
+      (when-let* ((frame popterm--frame)
+                  ((frame-live-p frame))
+                  (parent (frame-parent frame)))
+        (popterm--remove-focus-guard)
+        (delete-frame frame)
+        (select-frame parent)))
+    (advice-add 'popterm--posframe-hide :before #'my/popterm-delete-frame)))
 
