@@ -119,7 +119,7 @@
 
           gnus-article-mode devdocs-mode
           grep-mode occur-mode rg-mode
-          osx-dictionary-mode fanyi-mode
+          fanyi-mode
           "^\\*gt-result\\*$" "^\\*gt-log\\*$"
 
           "^\\*Process List\\*$" process-menu-mode

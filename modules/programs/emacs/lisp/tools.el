@@ -127,19 +127,7 @@
                   (propertize feed-title 'face 'elfeed-search-feed-face) " "))
         (when tags (insert "(" tags-str ")"))))
 
-    (setq  elfeed-search-print-entry-function #'my/elfeed-search-print-entry))
-
-  ;; Use xwidget if possible
-  (when (xwidget-workable-p)
-    (use-package elfeed-webkit
-      :bind (:map elfeed-show-mode-map
-             ("%" . elfeed-webkit-toggle))
-      :config
-      ;; Fix incorrect keymap after disabling webkit
-      (defun my/elfeed-webkit-reset-keymap ()
-        "Reset local keymap."
-        (use-local-map elfeed-show-mode-map))
-      (advice-add #'elfeed-webkit--disable :after #'my/elfeed-webkit-reset-keymap))))
+    (setq  elfeed-search-print-entry-function #'my/elfeed-search-print-entry)))
 
 ;; Another Atom/RSS reader
 (use-package newsticker
@@ -251,26 +239,11 @@
       (interactive)
       (gt--translate 'Text-Utility))))
 
-;; OSX dictionary
-(when sys/macp
-  (use-package osx-dictionary
-    :bind (("C-c d i" . osx-dictionary-search-input)
-           ("C-c d x" . osx-dictionary-search-pointer))))
-
 ;; Docker
 (unless sys/win32p
   (use-package docker
     :custom (docker-container-shell-file-name "/bin/bash")
-    :bind ("C-c D" . docker))
-
-  ;;`tramp-container' is builtin since 29
-  (unless emacs/>=29p
-    (use-package docker-tramp)))
-
-(unless (and (centaur-treesit-available-p)
-             (fboundp 'dockerfile-ts-mode))
-  (use-package dockerfile-mode
-    :functions centaur-treesit-available-p))
+    :bind ("C-c D" . docker)))
 
 ;; Display available keybindings in popup
 (use-package persistent-scratch
@@ -515,11 +488,11 @@
 (my-define-menu my-elfeed-menu "Elfeed"
   :pre (require 'elfeed)
   ("c" #'elfeed-db-compact "compact db")
-  ("g" #'elfeed-search-update--force "refresh")
+  ("g" #'revert-buffer "refresh")
   ("G" #'elfeed-search-fetch "update")
-  ("y" #'elfeed-search-yank "copy URL")
-  ("+" #'elfeed-search-tag-all "tag all")
-  ("-" #'elfeed-search-untag-all "untag all")
+  ("y" #'elfeed-search-copy-link "copy URL")
+  ("+" #'elfeed-search-tag "tag")
+  ("-" #'elfeed-search-untag "untag")
   ("<" #'elfeed-search-first-entry "first entry")
   (">" #'elfeed-search-last-entry "last entry")
   ("l" #'elfeed-search-live-filter "live filter")
@@ -530,8 +503,8 @@
   ("b" #'elfeed-search-browse-url "browse")
   ("n" #'next-line "next")
   ("p" #'previous-line "previous")
-  ("u" #'elfeed-search-tag-all-unread "mark unread")
-  ("r" #'elfeed-search-untag-all-unread "mark read")
+  ("u" #'elfeed-search-tag-unread "mark unread")
+  ("r" #'elfeed-search-untag-unread "mark read")
   ("RET" #'elfeed-search-show-entry "show"))
 
 (my-define-menu my-ztree-menu "Ztree"

@@ -230,7 +230,7 @@ Lisp function does not specify a special indentation."
   (use-package c-ts-mode
     :functions centaur-treesit-available-p
     :init
-    (setq c-ts-mode-indent-offset 4)
+    (setq c-ts-indent-offset 4)
 
     (when (boundp 'major-mode-remap-alist)
       (add-to-list 'major-mode-remap-alist '(c-mode . c-ts-mode))
@@ -238,51 +238,12 @@ Lisp function does not specify a special indentation."
       (add-to-list 'major-mode-remap-alist
                    '(c-or-c++-mode . c-or-c++-ts-mode)))))
 
-;; Install tools
-(defvar go-tools
-  '("golang.org/x/tools/gopls"
-    "golang.org/x/tools/cmd/goimports"
-    "honnef.co/go/tools/cmd/staticcheck"
-    "github.com/go-delve/delve/cmd/dlv"
-    "github.com/zmb3/gogetdoc"
-    "github.com/josharian/impl"
-    "github.com/cweill/gotests/..."
-    "github.com/fatih/gomodifytags"
-    "github.com/davidrjenni/reftools/cmd/fillstruct")
-  "All necessary go tools.")
-
-(defun go-install-tools ()
-  "Install or update go tools."
-  (interactive)
-  (unless (executable-find "go")
-    (user-error "Unable to find `go' in `exec-path'!"))
-
-  (message "Installing go tools...")
-  (dolist (pkg go-tools)
-    (set-process-sentinel
-     (start-process "go-tools" "*Go Tools*" "go" "install" "-v" "-x" (concat pkg "@latest"))
-     (lambda (proc _)
-       (let ((status (process-exit-status proc)))
-         (if (= 0 status)
-             (message "Installed %s" pkg)
-           (message "Failed to install %s: %d" pkg status)))))))
-
-;; Configure Golang automatically
-(defvar go-keymap (if (centaur-treesit-available-p)
-                      'go-ts-mode-map
-                    'go-mode-map)
-  "The keymap for Golang.")
-
+;; Golang. Its tools (gopls, dlv, ...) come from Nix (development/languages.nix).
 (defun go-auto-config ()
   "Configure Golang automatically."
   ;; Env vars
   (with-eval-after-load 'exec-path-from-shell
     (exec-path-from-shell-copy-envs '("GOPATH" "GO111MODULE" "GOPROXY")))
-
-  ;; Try to install go tools if `gopls' is not found
-  (when (and (executable-find "go")
-             (not (executable-find "gopls")))
-    (go-install-tools))
 
   ;; Misc. tools
   (use-package go-fill-struct)
@@ -300,33 +261,15 @@ Lisp function does not specify a special indentation."
            ("C-c t c" . go-test-current-coverage)
            ("C-c t x" . go-run))))
 
-;; Golang
-(if (centaur-treesit-available-p)
-    (use-package go-ts-mode
-      :functions (centaur-treesit-available-p exec-path-from-shell-copy-envs)
-      :custom (go-ts-mode-indent-offset 4)
-      :config (go-auto-config))
-  (use-package go-mode
-    :defines go-mode-map
-    :autoload godoc-gogetdoc
-    :bind (:map go-mode-map
-           ("<f1>" . godoc))
-    :custom (godoc-at-point-function #'godoc-gogetdoc)
-    :config
-    (go-auto-config)
-
-    ;; Misc.
-    (use-package go-dlv)
-    (use-package go-impl)
-
-    (use-package go-tag
-      :bind (:map go-mode-map
-             ("C-c t a" . go-tag-add)
-             ("C-c t r" . go-tag-remove))
-      :custom (go-tag-args (list "-transform" "camelcase")))))
+(use-package go-ts-mode
+  :defer t
+  :functions exec-path-from-shell-copy-envs
+  :custom (go-ts-mode-indent-offset 4)
+  :config (go-auto-config))
 
 ;; Rust
 (use-package rust-mode
+  :defer t
   :functions centaur-treesit-available-p
   :init (setq rust-format-on-save t
               rust-mode-treesitter-derive (centaur-treesit-available-p)))
@@ -400,8 +343,8 @@ Fast\\|Vagrant\\|Guard\\|Pod\\)file\\)\\'")
 
 ;; RSpec
 (use-package rspec-mode
+  :defer t
   :autoload rspec-install-snippets
-  :hook (dired-mode . rspec-dired-mode)
   :config (rspec-install-snippets))
 
 (defun elixir-auto-config ()
@@ -410,12 +353,9 @@ Fast\\|Vagrant\\|Guard\\|Pod\\)file\\)\\'")
     :hook ((elixir-mode elixir-ts-mode)
            (alchemist-mode . alchemist-phoenix-mode))))
 
-(if (centaur-treesit-available-p)
-    (use-package elixir-ts-mode
-      :functions centaur-treesit-available-p
-      :config (elixir-auto-config))
-  (use-package elixir-mode
-    :config (elixir-auto-config)))
+(use-package elixir-ts-mode
+  :defer t
+  :config (elixir-auto-config))
 
 ;; eww
 (use-package eww
@@ -437,28 +377,16 @@ Fast\\|Vagrant\\|Guard\\|Pod\\)file\\)\\'")
 (defvar flymake-allowed-file-name-masks nil)
 (defvar flymake-err-line-patterns nil)
 (use-package scss-mode
+  :defer t
   :init (setq scss-compile-at-save nil))
-
-;; LESS
-(unless (fboundp 'less-css-mode)
-  (use-package less-css-mode))
 
 ;; JavaScript
 (use-package js
   :init (setq js-indent-level 2))
 
-;; JSON
-(unless (fboundp 'js-json-mode)
-  (use-package json-mode))
-
-;; Typescript
-(unless (and (centaur-treesit-available-p)
-             (fboundp 'typescript-ts-mode))
-  (use-package typescript-mode
-    :functions centaur-treesit-available-p))
-
 ;; Major mode for CoffeeScript code
 (use-package coffee-mode
+  :defer t
   :config (setq coffee-tab-width 2))
 
 ;; Major mode for editing web templates
@@ -474,27 +402,28 @@ hbs\\|ejs\\|jade\\|swig\\|tm?pl\\|vue\\)$"
 (use-package add-node-modules-path
   :hook ((web-mode js-base-mode) . add-node-modules-path))
 
-(use-package haml-mode)
-(use-package php-mode)
+(use-package haml-mode :defer t)
+(use-package php-mode :defer t)
 
 ;; REST
 (use-package restclient
   :mode ("\\.http\\'" . restclient-mode))
 
 
-;; More major modes (init-prog.el)
-(use-package cask-mode)
-(use-package cmake-mode)
-(use-package csv-mode)
-(use-package cue-sheet-mode)
-(use-package lua-mode)
-(use-package v-mode)
-(use-package vimrc-mode)
+;; More major modes (init-prog.el); each loads with its first file.
+(use-package cask-mode :defer t)
+(use-package cmake-mode :defer t)
+(use-package csv-mode :defer t)
+(use-package cue-sheet-mode :defer t)
+(use-package lua-mode :defer t)
+(use-package v-mode :defer t)
+(use-package vimrc-mode :defer t)
 (use-package powershell
+  :defer t
   :custom (explicit-pwsh.exe-args explicit-powershell.exe-args))
 (use-package mermaid-ts-mode
   :mode ("\\.mmd\\'"))
-(use-package scala-ts-mode)
+(use-package scala-ts-mode :defer t)
 (use-package swift-ts-mode
   :mode ("\\.swift\\'"))
 (use-package protobuf-mode

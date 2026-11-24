@@ -20,7 +20,7 @@
   :bind (("C-c o a" . org-agenda)
          ("C-c o b" . org-switchb)
          ("C-c o x" . org-capture))
-  :hook (((org-babel-after-execute org-mode) . org-redisplay-inline-images) ; display image
+  :hook (((org-babel-after-execute org-mode) . org-link-preview-refresh) ; display image
          (org-indent-mode . (lambda()
                               (make-variable-buffer-local 'show-paren-mode)
                               (setq show-paren-mode nil))))
@@ -98,16 +98,16 @@
     "Alist of org ob languages.")
 
   (use-package ob-go
-    :init (cl-pushnew '(go . t) load-language-alist))
+    :init (cl-pushnew '(go . t) load-language-alist :test #'equal))
 
   (use-package ob-powershell
-    :init (cl-pushnew '(powershell . t) load-language-alist))
+    :init (cl-pushnew '(powershell . t) load-language-alist :test #'equal))
 
   (use-package ob-rust
-    :init (cl-pushnew '(rust . t) load-language-alist))
+    :init (cl-pushnew '(rust . t) load-language-alist :test #'equal))
 
   (use-package ob-mermaid
-    :init (cl-pushnew '(mermaid . t) load-language-alist))
+    :init (cl-pushnew '(mermaid . t) load-language-alist :test #'equal))
 
   (org-babel-do-load-languages 'org-babel-load-languages
                                load-language-alist)
