@@ -65,8 +65,8 @@
     (add-to-list 'meow-mode-state-list entry))
   (meow-global-mode 1))
 ;; Centaur Emacs's editing and kill-ring modules (lisp/init-edit.el,
-;; lisp/init-kill-ring.el). Its hydras (rectangle, multiple cursors,
-;; folding) are Meow menus here, opened from the Space menu (keys.el);
+;; lisp/init-kill-ring.el). Its hydras (rectangle, folding) are Meow menus
+;; here, opened from the Space menu (keys.el);
 ;; its global keys are kept as they are, and work in every Meow state.
 ;; Left out: ace-pinyin (Chinese input) and xclip (core.el already talks to
 ;; the Wayland clipboard).
@@ -140,10 +140,6 @@
                 avy-all-windows-alt t
                 avy-background t
                 avy-style 'pre))
-
-(use-package avy-zap
-  :bind (("M-z" . avy-zap-to-char-dwim)
-         ("M-Z" . avy-zap-up-to-char-dwim)))
 
 (use-package link-hint
   :bind (("M-o"     . link-hint-open-link)
@@ -221,53 +217,9 @@
          :map esc-map ("C-;" . iedit-execute-last-modification)
          :map help-map ("C-;" . iedit-mode-toggle-on-function)))
 
-(use-package expand-region
-  :bind ("C-=" . er/expand-region)
-  :config
-  (when (centaur-treesit-available-p)
-    (defun treesit-mark-bigger-node ()
-      "Use tree-sitter to mark regions."
-      (let* ((root (treesit-buffer-root-node))
-             (node (treesit-node-descendant-for-range root (region-beginning) (region-end)))
-             (node-start (treesit-node-start node))
-             (node-end (treesit-node-end node)))
-        (when (and (= (region-beginning) node-start) (= (region-end) node-end))
-          (when-let* ((node (treesit-node-parent node)))
-            (setq node-start (treesit-node-start node)
-                  node-end (treesit-node-end node))))
-        (set-mark node-end)
-        (goto-char node-start)))
-    (add-to-list 'er/try-expand-list 'treesit-mark-bigger-node)))
-
-(use-package multiple-cursors
-  :bind (("C-c m"         . my-multiple-cursors-menu)
-         ("C-S-c C-S-c"   . mc/edit-lines)
-         ("C->"           . mc/mark-next-like-this)
-         ("C-<"           . mc/mark-previous-like-this)
-         ("C-c C-<"       . mc/mark-all-like-this)
-         ("C-M->"         . mc/skip-to-next-like-this)
-         ("C-M-<"         . mc/skip-to-previous-like-this)
-         ("s-<mouse-1>"   . mc/add-cursor-on-click)
-         ("C-S-<mouse-1>" . mc/add-cursor-on-click)
-         :map mc/keymap
-         ("C-|" . mc/vertical-align-with-space))
-  :custom (mc/list-file (my-state-file "mc-lists.el")))
-(my-define-menu my-multiple-cursors-menu "Multiple Cursors"
-  ("p" #'mc/mark-previous-like-this "prev")
-  ("P" #'mc/skip-to-previous-like-this "skip prev")
-  ("M-p" #'mc/unmark-previous-like-this "unmark prev")
-  ("|" #'mc/vertical-align "align with input CHAR")
-  ("n" #'mc/mark-next-like-this "next")
-  ("N" #'mc/skip-to-next-like-this "skip next")
-  ("M-n" #'mc/unmark-next-like-this "unmark next")
-  ("l" #'mc/edit-lines "edit lines" :exit t)
-  ("a" #'mc/mark-all-like-this "mark all" :exit t)
-  ("s" #'mc/mark-all-in-region-regexp "search" :exit t)
-  ("0" #'mc/insert-numbers "insert numbers" :exit t)
-  ("A" #'mc/insert-letters "insert letters" :exit t))
-
-(use-package smart-region
-  :hook (after-init . smart-region-on))
+;; Left out of Centaur's editing tools: expand-region, multiple-cursors,
+;; smart-region and avy-zap. Meow covers them: numbers and , . expand a
+;; selection, G and beacon state give many cursors, f/t then s zap.
 
 ;; Spell checking (aspell is on PATH, default.nix).
 (use-package flyspell
@@ -309,7 +261,8 @@
   :hook ((prog-mode minibuffer-setup) . subword-mode))
 
 ;; Folding: kirigami works the same over hideshow, outline, Org and
-;; tree-sitter; the hideshow menu is hideshow's own commands.
+;; tree-sitter, and its menu carries hideshow's extras, so it is the only
+;; fold menu (Centaur's hideshow key, C-S-<escape>, opens it too).
 (use-package kirigami
   :custom
   (kirigami-show-menu-bar t)
@@ -323,6 +276,27 @@
          ("C-c z m" . kirigami-close-folds)
          ("C-c z a" . kirigami-toggle-fold))
   :hook (after-init . kirigami-global-mode))
+;; Hideshow only folds code; elsewhere these say so instead of failing.
+(defun my-hs-run (command)
+  "Run hideshow's COMMAND interactively, if this buffer folds with hideshow."
+  (require 'hideshow)
+  (unless (bound-and-true-p hs-minor-mode)
+    (user-error "Hideshow folds code buffers only"))
+  (call-interactively command))
+
+(defun my-hs-hide-level ()
+  "Hide the blocks one level below point (hideshow)."
+  (interactive)
+  (my-hs-run #'hs-hide-level))
+
+(defun my-hs-cycle ()
+  "Cycle the block at point through hidden, children and shown (hideshow)."
+  (interactive)
+  ;; hs-cycle picks its next step from `last-command', so this press is
+  ;; recorded as hs-cycle's own.
+  (setq this-command 'hs-cycle)
+  (my-hs-run #'hs-cycle))
+
 (my-define-menu my-kirigami-menu "Kirigami"
   ("o" #'kirigami-open-fold "open fold at point")
   ("O" #'kirigami-open-fold-rec "open fold recursively")
@@ -330,6 +304,9 @@
   ("c" #'kirigami-close-fold "close fold at point")
   ("m" #'kirigami-close-folds "close all folds")
   ("a" #'kirigami-toggle-fold "toggle fold at point")
+  ;; Hideshow's own extras, so one fold menu is enough.
+  ("l" #'my-hs-hide-level "hide level (code)")
+  ("C" #'my-hs-cycle "cycle block (code)")
   ("C-a" #'mwim-beginning-of-code-or-line "⭰")
   ("C-e" #'mwim-end-of-code-or-line "⭲")
   ("C-b" #'backward-char "←")
@@ -344,7 +321,7 @@
 (use-package hideshow
   :ensure nil
   :bind (:map hs-minor-mode-map
-         ("C-S-<escape>" . my-hideshow-menu))
+         ("C-S-<escape>" . my-kirigami-menu))
   :hook (prog-mode . hs-minor-mode)
   :config
   (defun hs-cycle (&optional level)
@@ -369,15 +346,6 @@
         (hs-hide-level level)
         (setq this-command 'hs-hide-level))))
 
-  (defun hs-toggle-all ()
-    "Toggle hide/show all."
-    (interactive)
-    (pcase last-command
-      ('hs-toggle-all
-       (save-excursion (hs-show-all))
-       (setq this-command 'hs-global-show))
-      (_ (hs-hide-all))))
-
   ;; Display line counts
   (defun hs-display-code-line-counts (ov)
     "Display line counts when hiding codes."
@@ -397,25 +365,6 @@
                                   map))
                     " "))))
   (setq hs-set-up-overlay #'hs-display-code-line-counts))
-(my-define-menu my-hideshow-menu "HideShow"
-  ("t" #'hs-toggle-all "toggle all")
-  ("a" #'hs-show-all "show all")
-  ("i" #'hs-hide-all "hide all")
-  ("g" #'hs-toggle-hiding "toggle hiding")
-  ("c" #'hs-cycle "cycle block")
-  ("s" #'hs-show-block "show block")
-  ("h" #'hs-hide-block "hide block")
-  ("l" #'hs-hide-level "hide level")
-  ("C-a" #'mwim-beginning-of-code-or-line "⭰")
-  ("C-e" #'mwim-end-of-code-or-line "⭲")
-  ("C-b" #'backward-char "←")
-  ("C-n" #'next-line "↓")
-  ("C-p" #'previous-line "↑")
-  ("C-f" #'forward-char "→")
-  ("C-v" #'scroll-up-command "↘")
-  ("M-v" #'scroll-down-command "↖")
-  ("M-<" #'beginning-of-buffer "⭶")
-  ("M->" #'end-of-buffer "⭸"))
 
 (use-package sudo-edit :commands sudo-edit)
 

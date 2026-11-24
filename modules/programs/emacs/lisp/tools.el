@@ -417,7 +417,7 @@
   :bind ("C-c C-r" . reveal-in-folder))
 
 ;; Chat with ChatGPT or Claude. ChatGPT signs in with your subscription
-;; (SPC A l, once). Claude's API has no
+;; (SPC l l, once). Claude's API has no
 ;; account login in gptel, so it needs an API key in authinfo:
 ;;   machine api.anthropic.com login apikey password <key>
 (use-package gptel
@@ -456,14 +456,14 @@
   (use-package gptel-magit
     :hook (magit-mode . gptel-magit-install)
     :config
-    ;; Ask for SPC A l instead of starting a browser login mid-commit.
+    ;; Ask for SPC l l instead of starting a browser login mid-commit.
     (defun my-gptel-magit-signed-in (&rest _)
       "Stop gptel-magit when ChatGPT has not been signed in to yet."
       (let ((backend (or gptel-magit-backend gptel-backend)))
         (when (and (gptel-openai-oauth-p backend)
                    (not (gptel-openai-oauth-token backend))
                    (not (file-exists-p gptel--openai-oauth-token-file)))
-          (user-error "Sign in to ChatGPT first: SPC A l"))))
+          (user-error "Sign in to ChatGPT first: SPC l l"))))
     (advice-add 'gptel-magit--request :before #'my-gptel-magit-signed-in))
 
   ;; Claude Code and Codex in Emacs (agent-shell talks to them through

@@ -73,29 +73,29 @@ other key closes them.
 | ~SPC u~       | Universal argument (~C-u~)                               |
 | ~SPC RET~     | Jump to a bookmark                                       |
 | =SPC ~=       | Toggle the last popup                                    |
-| ~SPC TAB~     | Workspaces: switch, new, close, ~1~-~9~, save, load      |
+| ~SPC TAB~     | Workspaces: switch, new, close, ~1~-~9~, save, restore   |
 | ~SPC f~       | File: find, save, recent, rename, delete, copy path      |
-| ~SPC b~       | Buffer: switch, close, list, scratch, revert, bookmark   |
-| ~SPC p~       | Project: open, files, compile, Nix shell, run command    |
+| ~SPC b~       | Buffer: switch, close, close the project's other files (~O~) or all of them (~K~), list, scratch |
+| ~SPC p~       | Project: open, files, header ↔ source (~o~), compile, Nix shell |
 | ~SPC s~       | Search: buffer, project, symbols, marks, undo history    |
+| ~SPC s t~     | Dictionary: look up a word                               |
+| ~SPC s w~     | Words: dictionary history, translation (also ~C-c d~)    |
+| ~SPC s x~     | TODO keywords: list, next, search (also ~C-c t~)         |
 | ~SPC g~       | Git: status, blame, commit, stage, history, ~[~ ~]~ hunks |
-| ~SPC i~       | Insert: snippet, emoji, unicode, kill ring, file name    |
+| ~SPC i~       | Insert: snippet, emoji, unicode, kill ring, TODO, colour, file name |
 | ~SPC o~       | Open: file manager, file tree, terminal, agenda, docker  |
-| ~SPC n~       | Notes: capture, agenda, journal, search; ~n r~ org-roam  |
+| ~SPC o u~     | Open a URL, this buffer or region in the browser         |
+| ~SPC n~       | Notes: capture, agenda, journal, store link (~l~), search headings (~S~); ~n r~ org-roam |
 | ~SPC c~       | Code: actions, rename, definitions, format, errors       |
-| ~SPC e~       | Edit: rectangle…, multiple cursors…, iedit, expand, zap  |
-| ~SPC t~       | Toggles… (also ~F6~)                                      |
+| ~SPC e~       | Edit: rectangle…, iedit, align, links, kill ring, macros, spelling |
+| ~SPC l~       | LLM: Claude Code (~c~), Codex (~x~), agent shell, gptel  |
+| ~SPC t~       | Toggles… (also ~F6~); ~t M~ mode line…, ~t g~ git gutter  |
 | ~SPC w~       | Windows… (also ~C-c w~): focus ~h j k l~, split ~s v~    |
-| ~SPC q~       | Quit: close client, frame, restore session, stop daemon  |
-| ~SPC z~ / ~Z~ | Folds… (kirigami, also =C-~=) · hideshow…                |
+| ~SPC q~       | Quit: close client, frame, restore session, restart (~r~), stop daemon (~K~), quit without saving (~Q~) |
+| ~SPC z~       | Folds… (kirigami, also =C-~=; hideshow's level and cycle) |
 | ~SPC d~       | Debugger… (dape; ~F5~ starts one)                         |
-| ~SPC M~       | Mode line… (also ~C-F6~)                                  |
-| ~SPC A~       | AI: Claude Code (c), Codex (x), gptel, ChatGPT login     |
-| ~SPC D~       | Dictionary and translation                               |
-| ~SPC T~       | TODO keywords: list, next, search                        |
-| ~SPC B~       | Open a URL, this file or region in the browser           |
-| ~SPC C~       | Colours, faces, libraries, file info                     |
-| ~SPC h~       | Help, this guide, Meow tutorial                          |
+| ~SPC j~ / ~J~ | Jump to a character · line (avy)                         |
+| ~SPC h~       | Help, this guide, libraries, manuals, Meow tutorial      |
 | ~SPC m …~     | The major mode's ~C-c~ keys (~SPC m c~ = ~C-c C-c~)      |
 | ~SPC \ …~     | Meta (~SPC \ x~ = ~M-x~)                                 |
 | ~SPC 4 …~     | Numeric prefix: repeat the next command 4 times          |
@@ -115,9 +115,7 @@ These work as they do in Centaur Emacs, in every Meow state.
 | ~C-`~ · ~F9~        | Drop-down terminal (ghostel) · in a window       |
 | ~F12~ · ~C-F12~     | Agent shell · gptel                              |
 | ~M-i~ · ~M-n~ / ~M-p~ | Highlight symbol · next / previous occurrence  |
-| ~C-=~               | Expand the selection                             |
 | ~C-;~               | Edit all occurrences (iedit)                     |
-| ~C->~ / ~C-<~       | Add a cursor at the next / previous match        |
 | ~C-:~ · ~C-'~       | Jump to a character (avy)                        |
 | ~M-o~               | Open a link by letter                            |
 | ~C-,~               | Jump to the last change                          |

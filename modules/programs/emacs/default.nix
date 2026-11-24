@@ -145,16 +145,12 @@
           yasnippet-capf
           # Editing (editing.el)
           avy
-          avy-zap
           link-hint
           anzu
           beginend
           drag-stuff
           ialign
           iedit
-          expand-region
-          multiple-cursors
-          smart-region
           hungry-delete
           mwim
           vundo
