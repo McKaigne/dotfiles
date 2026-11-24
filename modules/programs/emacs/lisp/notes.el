@@ -287,10 +287,6 @@ structure element."
            ("C-c M" . markdown-mermaid-preview)))
 
   (with-no-warnings
-    ;; Use `which-key' instead
-    (advice-add #'markdown--command-map-prompt :override #'ignore)
-    (advice-add #'markdown--style-map-prompt   :override #'ignore)
-
     ;; Preview with built-in webkit
     (defun my/markdown-export-and-preview ()
       "Preview with `xwidget' if applicable, otherwise with the default browser."

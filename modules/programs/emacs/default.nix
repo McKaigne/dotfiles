@@ -120,7 +120,6 @@
           nerd-icons-ibuffer
           posframe
           vertico-posframe
-          which-key-posframe
           transient-posframe
           ultra-scroll
           default-text-scale

@@ -228,10 +228,58 @@ lines, or more than 2,000 bytes in one line."
     (user-error "`split-window-toggle' needs Emacs 31")))
 
 ;; Centaur's hydras as Meow menus. `my-define-menu' makes a command that
-;; shows its keys (in which-key's popup) and keeps them live, the way a hydra
-;; stays open: SPC w, then + + + keeps growing the window. An :exit entry,
-;; q, C-g or any key not in the menu closes it. The keys only exist while
-;; the menu is open, so they never change editing elsewhere.
+;; shows its keys (in the echo area, laid out like Meow's popup) and keeps them
+;; live, the way a hydra stays open: SPC w, then + + + keeps growing the
+;; window. An :exit entry, q, C-g or any key not in the menu closes it. The
+;; keys only exist while the menu is open, so they never change editing
+;; elsewhere.
+(defvar my-menu--height nil "`max-mini-window-height' from before a menu opened.")
+(defvar my-menu--text nil "What the open menu last showed.")
+
+(defun my-menu--pairs (map &optional prefix)
+  "MAP's keys as (KEY . DESCRIPTION) strings, in the order they were defined.
+PREFIX goes before each key."
+  (let (pairs)
+    (map-keymap
+     (lambda (event binding)
+       (let ((key (concat prefix (key-description (vector event)))))
+         (if (keymapp binding)
+             (setq pairs (append (my-menu--pairs binding (concat key " ")) pairs))
+           (push (cons (propertize key 'face 'font-lock-constant-face)
+                       (propertize (car binding) 'face 'font-lock-function-name-face))
+                 pairs))))
+     map)
+    pairs))
+
+(defun my-menu-open ()
+  "Make room in the echo area for a menu."
+  (unless my-menu--height
+    (setq my-menu--height max-mini-window-height
+          max-mini-window-height 1.0))
+  (setq my-menu--text nil)
+  (message nil))
+
+(defun my-menu-show (map title)
+  "Show MAP's keys under TITLE, below any message from the last command."
+  (unless (active-minibuffer-window)
+    (let ((note (current-message))
+          (message-log-max nil))
+      (setq my-menu--text
+            (message "%s"
+                     (concat (and note (not (equal note my-menu--text))
+                                  (concat note "\n"))
+                             (meow--describe-keymap-format (my-menu--pairs map))
+                             "\n"
+                             (propertize title 'face 'font-lock-keyword-face)))))))
+
+(defun my-menu-close ()
+  "Clear the menu and give the echo area its size back."
+  (when my-menu--height
+    (setq max-mini-window-height my-menu--height
+          my-menu--height nil))
+  (when (equal (current-message) my-menu--text)
+    (message nil)))
+
 (defmacro my-define-menu (name title &rest body)
   "Define NAME, a command that opens a menu titled TITLE.
 BODY starts with optional :pre FORM (run on opening) and :post FORM (run
@@ -267,19 +315,20 @@ on closing), then entries (KEY COMMAND DESCRIPTION [:exit t])."
              map))
          (defun ,show ()
            (if ,exit
-               (which-key--create-buffer-and-show nil ,map nil ,title)
+               (my-menu-show ,map ,title)
              (remove-hook 'post-command-hook #',show)))
          (defun ,name ()
            ,(format "Open the %s menu." title)
            (interactive)
            ,pre
+           (my-menu-open)
            (setq ,exit
                  (set-transient-map
                   ,map t
                   (lambda ()
                     (setq ,exit nil)
                     (remove-hook 'post-command-hook #',show)
-                    (which-key--hide-popup)
+                    (my-menu-close)
                     ,post)))
            (add-hook 'post-command-hook #',show)
            (,show))))))

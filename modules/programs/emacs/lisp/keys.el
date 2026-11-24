@@ -350,7 +350,6 @@
            ("h a" apropos "apropos")
            ("h b b" embark-bindings "all keys (search)")
            ("h b g" my-open-keybindings "key guide")
-           ("h b m" which-key-show-major-mode "mode keys")
            ("h e" view-echo-area-messages "messages")
            ("h f" describe-function "function")
            ("h F" describe-face "face")
@@ -526,8 +525,6 @@
   (define-key my-leader-map (kbd (format "TAB %d" tab))
               (cons (format "workspace %d" tab)
                     (lambda () (interactive) (tab-bar-select-tab tab)))))
-;; Only a label for the menu: meow reads m as C-c first.
-(define-key my-leader-map "m" '("mode keys (C-c)" . ignore))
 
 ;; Centaur's hydra keys outside the Space menu.
 (bind-keys ("<f6>"   . my-toggles-menu)
@@ -537,17 +534,35 @@
 (setq meow-keypad-leader-dispatch my-leader-map
       meow-keypad-start-keys '((?m . ?c))
       meow-keypad-meta-prefix ?\\
-      meow-keypad-ctrl-meta-prefix ?G
-      meow-keypad-message nil
-      meow-keypad-message-prefix "")
+      meow-keypad-ctrl-meta-prefix ?G)
 
-;; Meow puts its own popup back each time which-key-mode turns on, so the
-;; titled Space menu is set after it, every time.
-(defun my-use-keypad-menu ()
-  "Show the Space menu with `my-keypad-menu'."
-  (setq meow-keypad-describe-keymap-function #'my-keypad-menu))
-(add-hook 'which-key-mode-hook #'my-use-keypad-menu 90)
-(my-use-keypad-menu)
+;; Meow's own popup shows the keys. It would call every labelled entry
+;; "+prefix", so it gets the label, and it would list the <remap> row that
+;; its display keymap carries.
+(defun my-keypad-title (def)
+  "The name Meow's popup shows for DEF: its label, if it has one."
+  (pcase def
+    (`(,(and (pred stringp) label) . ,target)
+     (let ((title (make-symbol label)))
+       ;; Meow shows a command as its name and anything else as +name.
+       (unless (keymapp target) (fset title #'ignore))
+       title))
+    (_ (meow-keypad-get-title def))))
+
+(defun my-keypad-popup (keymap)
+  "Show KEYMAP in Meow's popup, without its <remap> row.
+Meow leaves SPC, TAB, RET and m out of the top menu, so they go back in."
+  (when keymap
+    (setq keymap (assq-delete-all 'remap keymap))
+    (unless meow--keypad-keys
+      (dolist (key '(?\s ?\t ?\r))
+        (define-key keymap (vector key)
+                    (my-keypad-title (alist-get key my-leader-map))))
+      (define-key keymap "m" (my-keypad-title '("mode keys (C-c)" . ignore)))))
+  (meow-describe-keymap keymap))
+
+(setq meow-keypad-get-title-function #'my-keypad-title
+      meow-keypad-describe-keymap-function #'my-keypad-popup)
 
 ;; M-SPC opens the menu while typing, except in a completion popup, where it
 ;; stays corfu's separator for multi-word filtering.
