@@ -7,12 +7,15 @@
   #   One meaning per modifier:
   #     Super          go there / open it
   #     Super+Shift    take the window along, or the alternate of the same thing
-  #     Super+Ctrl     rarer: columns, workspaces, system, the region grid
+  #     Super+Ctrl     the rarer relative: columns, workspaces, floating
+  #     Super+Alt      the strongest form: edge to edge, all networking
   #
-  #   Keys keep their meaning under every modifier: Left/Right are columns,
-  #   Up/Down move within a column and on into the next workspace, 1-6 are
-  #   workspaces, - and = are size, [ and ] are neighbors. Letters are
-  #   mnemonic: T float (Tile), Shift+T Tabs, G layout (Grid), L Lock, X power.
+  #   Every modifier keeps the key's meaning; a key never does two unrelated
+  #   things. Left/Right are columns, Up/Down move within a column and on into
+  #   the next workspace, 1-6 are workspaces, - and = are size, [ and ] are
+  #   neighbors. Letters are mnemonic: F window size and floating, T Tabs,
+  #   G layout (Grid), A quick settings, W the look, X power, L Lock, Z the
+  #   region grid (a submap, so its letters keep their own meaning).
   #
   #   One action, one bind, and nothing Kanata already provides: arrows come
   #   from its ext layer, media keys from its fun layer, and no bind relies on
@@ -49,6 +52,11 @@
       inherit action release;
       repeat = false;
     };
+    # Region grid keys act once, then leave the submap.
+    inRegion = key: action: {
+      name = "submap[region],${key}";
+      value = once action // {submap = "reset";};
+    };
 
     copy = "--copy-to-clipboard --no-save-to-file";
     copyAndSave = "--copy-to-clipboard --save-to-file";
@@ -65,13 +73,10 @@
         "Mod+P" = spawn "bitwarden"; # Passwords
 
         "Mod+Space" = msg "panel-toggle launcher";
-        "Mod+A" = msg "panel-toggle control-center"; # quick settings (Win+A)
-        "Mod+N" = msg "panel-toggle control-center notifications";
         "Mod+V" = msg "panel-toggle clipboard"; # clipboard history (Win+V)
         "Mod+comma" = msg "settings-toggle";
+        "Mod+Shift+comma" = once "config-reload"; # Umbriel's settings
         "Mod+period" = msg "panel-toggle launcher /emo"; # emoji (Win+.)
-        "Mod+W" = msg "panel-toggle wallpaper";
-        "Mod+X" = msg "panel-toggle session"; # power menu (Win+X)
         "Mod+slash" = peek "cheatsheet-open" "cheatsheet-close";
         "Mod+semicolon" = once "workspace-toggle-show-desktop";
 
@@ -89,15 +94,18 @@
         # --- Window verbs
         "Mod+Q" = once "window-close";
         "Mod+Shift+Q" = once "window-kill";
-        "Mod+F" = once "window-toggle-maximize"; # column to full width
-        "Mod+Shift+F" = once "window-toggle-fullscreen";
         "Mod+R" = "window-cycle-primary-extent"; # 1/3, 1/2, 2/3
         "Mod+Shift+R" = "window-cycle-secondary-extent"; # the same for height
         "Mod+C" = once "column-center";
         "Mod+Shift+C" = once "window-center"; # floating window
-        "Mod+T" = once "window-toggle-floating"; # Tile or float
-        "Mod+Shift+T" = once "column-toggle-tabbed";
-        "Mod+Ctrl+P" = once "window-toggle-pinned";
+        "Mod+T" = once "column-toggle-tabbed"; # Tabs
+
+        # --- F: how the window fills the screen
+        "Mod+F" = once "window-toggle-maximize"; # column to full width
+        "Mod+Shift+F" = once "window-toggle-fullscreen";
+        "Mod+Ctrl+F" = once "window-toggle-floating"; # tile or float
+        "Mod+Ctrl+Shift+F" = once "window-toggle-pinned"; # float on every workspace
+        "Mod+Alt+F" = once "window-toggle-maximize-to-edges"; # no gaps or borders
 
         # --- Size: - and = are width, Shift for height
         "Mod+minus" = "window-modify-primary-extent -0.05";
@@ -115,19 +123,13 @@
         "Mod+Shift+bracketleft" = "column-focus-tab-previous";
         "Mod+Shift+bracketright" = "column-focus-tab-next";
 
-        # --- Region grid (stacking layout): the left hand is the screen.
+        # --- Region grid (stacking layout): Super+Z, then one key, where the
+        # left hand is the screen. Escape leaves without moving anything.
         #   Q W E    corners and top
         #   A S D    left, bottom, right
         #   Z X C    corners; X restores the window
-        "Mod+Ctrl+Q" = once "window-set-region top_left";
-        "Mod+Ctrl+W" = once "window-set-region top";
-        "Mod+Ctrl+E" = once "window-set-region top_right";
-        "Mod+Ctrl+A" = once "window-set-region left";
-        "Mod+Ctrl+S" = once "window-set-region bottom";
-        "Mod+Ctrl+D" = once "window-set-region right";
-        "Mod+Ctrl+Z" = once "window-set-region bottom_left";
-        "Mod+Ctrl+X" = once "window-clear-region";
-        "Mod+Ctrl+C" = once "window-set-region bottom_right";
+        "Mod+Z" = once "submap region"; # Zones
+        "submap[region],Escape" = "submap reset";
 
         # --- Super+Shift: take the window along
         "Mod+Shift+Left" = "column-move-left";
@@ -139,8 +141,10 @@
         "Mod+Shift+Page_Up" = "window-move-to-workspace-previous";
         "Mod+Shift+Page_Down" = "window-move-to-workspace-next";
         "Mod+Shift+grave" = once "window-toggle-scratchpad terminal";
-        "Mod+Shift+Escape" = {
-          action = "shortcuts-inhibit-toggle"; # pass shortcuts through to games/VMs
+
+        # --- Keys: pass shortcuts through to games/VMs, and take them back
+        "Mod+K" = {
+          action = "shortcuts-inhibit-toggle";
           allow_when_inhibited = true;
           repeat = false;
         };
@@ -161,27 +165,37 @@
         # --- Capture: clipboard by default, Shift+Print also saves a file
         "Mod+S" = msg "screenshot-region ${copy}";
         "Mod+Shift+S" = msg "screenshot-region --annotate ${copy}";
-        "Mod+Shift+A" = msg "annotate ${copy}"; # draw on the live screen
+        "Mod+Ctrl+S" = msg "annotate ${copy}"; # draw on the live screen
         "Print" = msg "screenshot-fullscreen ${copy}";
         "Mod+Print" = msg "screenshot-window ${copy}";
         "Shift+Print" = msg "screenshot-fullscreen ${copyAndSave}";
         "Mod+Shift+Print" = msg "screenshot-window ${copyAndSave}";
 
-        # --- System toggles
-        "Mod+Shift+W" = msg "wifi-toggle";
-        "Mod+Ctrl+B" = msg "bluetooth-toggle";
-        "Mod+Ctrl+N" = msg "network-toggle";
-        "Mod+Shift+P" = msg "power-cycle"; # Power profile
-        "Mod+H" = msg "bar-toggle"; # Hide the bar
-        "Mod+Shift+H" = msg "desktop-widgets-toggle"; # Hide the widgets
-        "Mod+Shift+D" = msg "theme-mode-toggle"; # Dark or light
-        "Mod+Shift+N" = msg "nightlight-force-toggle"; # Night light
+        # --- A: quick settings and the radios in them
+        "Mod+A" = msg "panel-toggle control-center"; # (Win+A)
+        "Mod+Shift+A" = msg "wifi-toggle";
+        "Mod+Ctrl+A" = msg "bluetooth-toggle";
+        "Mod+Alt+A" = msg "network-toggle"; # all networking
 
-        # --- Session
+        # --- N: notifications
+        "Mod+N" = msg "panel-toggle control-center notifications";
+        "Mod+Shift+N" = msg "notification-dnd-toggle"; # do not disturb
+
+        # --- W: the look of the screen
+        "Mod+W" = msg "panel-toggle wallpaper";
+        "Mod+Shift+W" = msg "theme-mode-toggle"; # dark or light
+        "Mod+Ctrl+W" = msg "nightlight-force-toggle";
+
+        # --- H: hide the shell
+        "Mod+H" = msg "bar-toggle";
+        "Mod+Shift+H" = msg "desktop-widgets-toggle";
+
+        # --- X and L: power and session
+        "Mod+X" = msg "panel-toggle session"; # power menu (Win+X)
+        "Mod+Shift+X" = msg "power-cycle"; # power profile
+        "Mod+Ctrl+X" = once "dpms-off"; # screens off
         "Mod+L" = msg "session lock";
         "Mod+Shift+L" = msg "session lock-and-suspend";
-        "Mod+Shift+O" = once "dpms-off"; # screens Off
-        "Mod+Ctrl+R" = once "config-reload";
 
         # --- OS-wide conventions
         "Ctrl+Alt+Delete" = msg "panel-toggle session"; # power menu
@@ -215,6 +229,17 @@
         (lib.nameValuePair "Mod+${i}" "workspace-switch ${i}")
         (lib.nameValuePair "Mod+Shift+${i}" "window-move-to-workspace ${i}")
         (lib.nameValuePair "Mod+Ctrl+${i}" "column-move-to-workspace ${i}")
-      ]) (lib.range 1 6));
+      ]) (lib.range 1 6))
+      // lib.listToAttrs [
+        (inRegion "Q" "window-set-region top_left")
+        (inRegion "W" "window-set-region top")
+        (inRegion "E" "window-set-region top_right")
+        (inRegion "A" "window-set-region left")
+        (inRegion "S" "window-set-region bottom")
+        (inRegion "D" "window-set-region right")
+        (inRegion "Z" "window-set-region bottom_left")
+        (inRegion "X" "window-clear-region")
+        (inRegion "C" "window-set-region bottom_right")
+      ];
   };
 }
