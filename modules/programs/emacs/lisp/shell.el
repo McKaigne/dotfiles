@@ -203,5 +203,21 @@ Like normal Emacs `C-k'.  Kill to end of line and put content in kill-ring."
     ;; Popterm can hide its popup before Emacs has seen it gain focus, so
     ;; unlike other popups (funcs.el) it is always deleted, focused or not.
     ;; Popterm itself then drops its focus guards and refocuses the parent.
-    (advice-add 'popterm--posframe-hide :around #'my/delete-child-frames)))
+    (advice-add 'popterm--posframe-hide :around #'my/delete-child-frames)
+
+    ;; Popterm starts Ghostel in the current window, then shows it smaller.
+    ;; Fish redraws its two-line prompt on that resize, leaving the reflowed
+    ;; top line behind; clear once, right after Ghostel's own resize.
+    (declare-function ghostel-clear "ghostel" ())
+    (defun my/popterm-clear-once (window)
+      "Clear the new terminal in WINDOW now that it has its popup size."
+      (with-current-buffer (window-buffer window)
+        (remove-hook 'window-size-change-functions #'my/popterm-clear-once t)
+        (ghostel-clear)))
+    (defun my/popterm-clear-when-shown (buffer)
+      "Clear Ghostel BUFFER the first time it is shown, and return it."
+      (with-current-buffer buffer
+        (add-hook 'window-size-change-functions #'my/popterm-clear-once t t))
+      buffer)
+    (advice-add 'popterm--ghostel-create :filter-return #'my/popterm-clear-when-shown)))
 
