@@ -14,8 +14,12 @@
     '';
 
     # The user session's editor is Emacs (users/workstation); root and anything
-    # outside a session keep NixOS's nano. The cursor size and Qt's Wayland
-    # platform are set per session too (cursor/home.nix, wayland-home.nix).
+    # outside a session keep NixOS's nano.
+    environment.variables = {
+      XCURSOR_SIZE = "24";
+      QT_QPA_PLATFORM = "wayland";
+    };
+
     environment.sessionVariables = {
       NIXOS_OZONE_WL = "1";
       BAT_THEME = "noctalia";

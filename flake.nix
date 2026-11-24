@@ -25,7 +25,8 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
-    # Not following nixpkgs keeps hits on noctalia.cachix.org.
+    # Only its source is used: the package is built against this nixpkgs
+    # (programs/noctalia/default.nix).
     noctalia.url = "github:noctalia-dev/noctalia";
 
     noctalia-plymouth = {

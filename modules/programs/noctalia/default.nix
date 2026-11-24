@@ -5,11 +5,12 @@
 }: {
   flake.modules.nixos."noctalia" = {
     home-manager.sharedModules = [config.flake.modules.homeManager."noctalia"];
-    # The flake's own build, against its own nixpkgs (flake.nix), so it comes
-    # from noctalia.cachix.org instead of compiling here.
+    # Built against this system's nixpkgs, not the flake's own: Noctalia loads
+    # the system's PAM modules (lock screen) and graphics driver at runtime, and
+    # they need the same glibc. That rules out noctalia.cachix.org's build.
     nixpkgs.overlays = [
       (final: _: {
-        noctalia = inputs.noctalia.packages.${final.stdenv.hostPlatform.system}.default;
+        noctalia = final.callPackage (inputs.noctalia.outPath + "/nix/package.nix") {rev = "local";};
       })
     ];
   };
