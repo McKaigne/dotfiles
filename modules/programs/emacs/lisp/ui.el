@@ -4,8 +4,8 @@
              (expand-file-name "themes" my-config-directory))
 (load-theme 'noctalia t)
 ;; Mode line: doom-modeline set up as in Centaur Emacs (icons, the minor
-;; modes collapsed into one menu, a scroll HUD in the bar, none in terminals
-;; or the dashboard), taller, with the bar in the theme's accent. Its own
+;; modes collapsed into one menu, a scroll HUD in the bar; none in terminals,
+;; a short one on the dashboard), taller, with the bar in the theme's accent. Its own
 ;; segments pad themselves, so they are listed without extra spacers; only
 ;; the right edge gets a margin.
 (use-package doom-modeline
@@ -165,8 +165,8 @@ With STATE, the buffer-state icon too."
 (my-style-panes)
 
 ;; Glass: translucent background, solid text, blurred by the compositor
-;; (pgtk). In a terminal frame (emacs -nw) the terminal's own translucency
-;; shows through instead.
+;; (pgtk). In a terminal frame the terminal's own translucency shows through
+;; instead (the emacs/emacsclient wrappers in default.nix never make one).
 (add-to-list 'default-frame-alist `(alpha-background . ,my-glass))
 
 (defun my-transparent-background (&rest _)
@@ -273,7 +273,6 @@ With STATE, the buffer-state icon too."
 ;; Proportional fonts for prose where wanted (centaur-read-mode uses it).
 (use-package mixed-pitch :commands mixed-pitch-mode)
 
-;; Repeatable window/buffer commands (and the Space menus that stay open,
-;; see funcs.el), a match counter.
+;; Repeatable window/buffer commands, a match counter.
 (repeat-mode 1)
 (setq isearch-lazy-count t)

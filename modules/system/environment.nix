@@ -13,8 +13,8 @@
       KERNEL=="hidraw*", SUBSYSTEM=="hidraw", ATTRS{idVendor}=="369b", MODE="0660", GROUP="users", TAG+="uaccess"
     '';
 
-    # The user session's editor is Emacs (users/workstation); root and anything
-    # outside a session keep NixOS's nano.
+    # No EDITOR here: the user session's is Emacs (users/workstation); root
+    # and anything outside a session keep NixOS's nano.
     environment.variables = {
       XCURSOR_SIZE = "24";
       QT_QPA_PLATFORM = "wayland";

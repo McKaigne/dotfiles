@@ -11,7 +11,7 @@ in {
       maple-mono.NF
     ];
 
-    # Maple Mono for every generic family, so apps without their own font follow it.
+    # Maple Mono for sans, serif and monospace, so apps without their own font follow it.
     fonts.fontconfig.defaultFonts = {
       sansSerif = [style.font "Noto Sans"];
       serif = [style.font "Noto Serif"];

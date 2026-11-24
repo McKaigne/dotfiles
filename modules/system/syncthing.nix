@@ -1,6 +1,6 @@
-# Syncthing keeps the PARA folders identical on hyde and castor, continuously,
-# whenever both are on Tailscale (an offline machine catches up when it comes
-# back). From /etc/nixos only gui.toml syncs (the settings window's live state:
+# Syncthing keeps the PARA folders and /var/lib/wallpapers identical on hyde
+# and castor, continuously, whenever both are on Tailscale (an offline machine
+# catches up when it comes back). From /etc/nixos only gui.toml syncs (the settings window's live state:
 # theme, wallpapers, favorites); the repo itself moves by git push/pull, since
 # syncing a live .git can corrupt it. Change gui.toml on one machine at a time,
 # or Syncthing keeps both versions as .sync-conflict files. Files the other

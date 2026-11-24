@@ -611,4 +611,7 @@ Meow leaves SPC, TAB, RET and m out of the top menu, so they go back in."
 (keymap-set project-prefix-map "C" #'recompile)
 (keymap-set project-prefix-map "E" #'my-project-environment-setup)
 (with-eval-after-load 'markdown-mode
-  (keymap-set markdown-mode-map "C-c C-c v" #'my-markdown-preview))
+  (keymap-set markdown-mode-map "C-c C-c v" #'my-markdown-preview)
+  (keymap-set markdown-mode-map "C-c v" #'my-markdown-preview))
+(with-eval-after-load 'markdown-ts-mode
+  (keymap-set markdown-ts-mode-map "C-c v" #'my-markdown-preview))

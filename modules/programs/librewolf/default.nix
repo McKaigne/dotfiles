@@ -237,8 +237,6 @@ in {
   in {
     home.sessionVariables.BROWSER = lib.getExe pkgs.librewolf;
 
-    # Noctalia is the Pywalfox host and keeps ~/.mozilla/.../pywalfox.json pointed at
-    # its current binary. LibreWolf only looks in ~/.librewolf, so link it there.
     # The theme's background and text as CSS variables: userChrome.css's
     # fallback for the moment before Pywalfox connects (Pywalfox itself
     # provides them live afterwards). LibreWolf reads it at startup.
@@ -254,6 +252,8 @@ in {
       };
     };
 
+    # Noctalia is the Pywalfox host and keeps ~/.mozilla/.../pywalfox.json pointed at
+    # its current binary. LibreWolf only looks in ~/.librewolf, so link it there.
     home.file.".librewolf/native-messaging-hosts/pywalfox.json".source =
       config.lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/.mozilla/native-messaging-hosts/pywalfox.json";
 

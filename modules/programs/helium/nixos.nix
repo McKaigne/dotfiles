@@ -23,9 +23,10 @@
       defaultSearchProviderEnabled = true;
       defaultSearchProviderSearchURL = "https://www.google.com/search?q={searchTerms}";
 
-      # Kept barebones (Akko web driver, VIA). Helium ships uBlock Origin
-      # built in, and Noctalia themes it through the policy file above, so
-      # Pywalfox (Firefox-only anyway) is not needed.
+      # Kept barebones: Helium is here for the Akko web driver and VIA, so
+      # Dark Reader is its only extension. It ships uBlock Origin built in,
+      # and Noctalia themes it through the policy file above, so Pywalfox
+      # (Firefox-only anyway) is not needed.
       extensions = [
         "eimadpbcbfnmbkopoojfekhnkhdbieeh" # Dark Reader
       ];

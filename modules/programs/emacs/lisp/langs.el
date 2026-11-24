@@ -238,7 +238,7 @@ Lisp function does not specify a special indentation."
       (add-to-list 'major-mode-remap-alist
                    '(c-or-c++-mode . c-or-c++-ts-mode)))))
 
-;; Golang. Its tools (gopls, dlv, ...) come from Nix (development/languages.nix).
+;; Golang. Its tools (gopls, gofumpt, ...) come from Nix (development/languages.nix).
 (defun go-auto-config ()
   "Configure Golang automatically."
   ;; Env vars
@@ -364,7 +364,7 @@ Fast\\|Vagrant\\|Guard\\|Pod\\)file\\)\\'")
   (when (executable-find "readable")
     (setq eww-retrieve-command '("readable"))))
 
-;; Webkit browser
+;; Centaur's xwidget browser is left out: this Emacs has no WebKit.
 
 ;; CSS
 (use-package css-mode
@@ -372,8 +372,7 @@ Fast\\|Vagrant\\|Guard\\|Pod\\)file\\)\\'")
 
 ;; SCSS
 ;; scss-mode still registers with Flymake's old backend, whose variables
-;; are gone from Emacs 31. (Centaur's xwidget browser is left out: this
-;; Emacs has no WebKit.)
+;; are gone from Emacs 31.
 (defvar flymake-allowed-file-name-masks nil)
 (defvar flymake-err-line-patterns nil)
 (use-package scss-mode

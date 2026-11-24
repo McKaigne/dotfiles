@@ -245,7 +245,7 @@
     :custom (docker-container-shell-file-name "/bin/bash")
     :bind ("C-c D" . docker)))
 
-;; Display available keybindings in popup
+;; Keep the scratch buffer across restarts
 (use-package persistent-scratch
   :custom
   (persistent-scratch-backup-file-name-format "%Y-%m-%d")

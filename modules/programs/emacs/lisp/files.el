@@ -25,7 +25,7 @@
   ;; Show directory first
   (setq dired-listing-switches "-alh --group-directories-first"))
 
-;; Quick sort dired buffers via hydra
+;; Quick sort dired buffers via a transient menu
 (use-package dired-quick-sort
   :after dired
   :bind (:map dired-mode-map

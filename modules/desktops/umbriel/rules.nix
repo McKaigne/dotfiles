@@ -2,8 +2,9 @@ let
   style = import ../../appearance/_style.nix;
 in {
   flake.modules.homeManager."desktop-umbriel" = {pkgs, ...}: let
-    # Unfocused windows recede: darker and more see-through. Samples are
-    # premultiplied, so fading scales color and alpha together.
+    # Unfocused windows recede: darker, and faded by unfocusedOpacity (1.0,
+    # no fade, in _style.nix). Samples are premultiplied, so fading scales
+    # color and alpha together.
     fade = toString style.unfocusedOpacity;
     darken = pkgs.writeText "unfocused-darken.glsl" ''
       vec4 window(vec2 uv) {

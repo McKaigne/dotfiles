@@ -13,7 +13,7 @@
           sympy
           matplotlib
           ipython
-          evdev # tools/evtest scripts
+          evdev # input-device scripts, alongside evtest (tools.nix)
         ]))
       basedpyright
       ruff

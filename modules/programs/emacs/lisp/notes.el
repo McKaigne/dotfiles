@@ -265,6 +265,14 @@ structure element."
     (goto-char (point-min))))
 
 ;; Markdown (Centaur): markdown-ts-mode for .md files, gfm-mode for READMEs.
+;; Each :mode rule goes to the front of `auto-mode-alist', so the README one
+;; comes after the general .md one to be checked first.
+(use-package markdown-ts-mode
+  :ensure nil
+  :mode ("\\.md\\'" "\\.mdx\\'" "\\.markdown\\'")
+  :custom (markdown-ts-ellipsis " ⌄")
+  :config (require 'markdown-ts-mode-x))
+
 (use-package markdown-mode
   :mode (("README\\.md\\'" . gfm-mode))
   :init
@@ -313,12 +321,6 @@ structure element."
          (t
           (apply fn args)))))))
 
-(use-package markdown-ts-mode
-  :ensure nil
-  :mode ("\\.md\\'" "\\.mdx\\'" "\\.markdown\\'")
-  :custom (markdown-ts-ellipsis " ⌄")
-  :config (require 'markdown-ts-mode-x))
-
 ;; GitHub-flavoured preview served by grip (C-c C-g)
 (use-package grip-mode
   :commands grip-mode
@@ -331,7 +333,8 @@ structure element."
     (bind-key "C-c C-g" #'grip-mode org-mode-map)))
 
 ;; This config's own preview: the rendered page in a reading pane beside
-;; the source (C-c C-c v, SPC o m); g in the pane refreshes it.
+;; the source (SPC o m or C-c v; also C-c C-c v in markdown-mode, which
+;; markdown-ts-mode keeps for checkboxes); g in the pane refreshes it.
 (defvar-local my-markdown-preview-source nil)
 
 (defun my-markdown-render-code (dom)
