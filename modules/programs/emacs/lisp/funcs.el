@@ -195,6 +195,18 @@ lines, or more than 2,000 bytes in one line."
   "Whether childframe completion is workable."
   (childframe-workable-p))
 
+;; On Wayland, Emacs only returns focus to the parent when a focused child
+;; frame is deleted. Hiding one first leaves keys going nowhere.
+(defun my/delete-focused-child-frame (frame)
+  "Delete child FRAME if it has keyboard focus, so its parent regains it."
+  (when-let* (((frame-live-p frame))
+              (parent (frame-parent frame))
+              ((eq (frame-focus-state frame) t)))
+    (let ((selected (eq frame (selected-frame))))
+      (save-current-buffer
+        (delete-frame frame)
+        (when selected (select-frame parent))))))
+
 (defun centaur-dark-theme-p ()
   "Check if the current theme is a dark theme."
   (eq (frame-parameter nil 'background-mode) 'dark))

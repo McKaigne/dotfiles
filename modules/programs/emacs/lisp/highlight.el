@@ -214,6 +214,11 @@
       '(center t)))
   (setq diff-hl-fringe-bmp-function #'my/diff-hl-fringe-bmp-function)
 
+  (defun my/diff-hl-delete-frame ()
+    "Close the hunk popup without stranding keyboard focus."
+    (my/delete-focused-child-frame diff-hl-show-hunk--frame))
+  (advice-add 'diff-hl-show-hunk--posframe-hide :before #'my/diff-hl-delete-frame)
+
   ;; Update diff-hl in time.
   (diff-hl-flydiff-mode 1))
 
