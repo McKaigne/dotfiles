@@ -1,13 +1,5 @@
 config_version = 20
 
-[bar.fancy]
-background_opacity = 0.80000000000000004
-center = [ "workspaces" ]
-end = [ "tray_2", "network", "volume", "input_volume", "brightness", "battery", "gap", "clock", "session" ]
-padding = 18
-start = [ "cpu", "ram", "temp", "gap", "media" ]
-widget_spacing = 10
-
 [desktop_widgets]
 schema_version = 2
 widget_order = [ "desktop-widget-0000000000000001" ]
@@ -88,9 +80,6 @@ widget_order = [ "lockscreen-login-box@DP-1", "lockscreen-login-box@eDP-1" ]
         show_unlock_hint = true
         show_weather = true
 
-[shell.panel]
-transparency_mode = "soft"
-
 [theme]
 builtin = "Nord"
 community_palette = "Zenbones"
@@ -131,61 +120,3 @@ community_palette = "Zenbones"
 palette_source = "community"
 path = "/var/lib/wallpapers/wallhaven-o5rjq9.png"
 theme_mode = "dark"
-
-[widget.battery]
-display_mode = "graphic"
-scale = 0.65000000000000002
-show_label = false
-
-[widget.brightness]
-glyph_position = "after"
-peek = true
-
-[widget.clock]
-format = "{:%H:%M}"
-
-[widget.cpu]
-show_value = false
-visualization = "gauge"
-
-[widget.gap]
-length = 14
-type = "spacer"
-
-[widget.input_volume]
-glyph_position = "after"
-peek = true
-
-[widget.media]
-max_length = 240
-
-[widget.network]
-peek = true
-show_label = true
-
-[widget.network_rx]
-network_speed_compact = true
-show_value = true
-visualization = "none"
-
-[widget.network_tx]
-network_speed_compact = true
-show_value = true
-visualization = "none"
-
-[widget.ram]
-show_value = false
-visualization = "gauge"
-
-[widget.temp]
-show_value = false
-visualization = "gauge"
-
-[widget.volume]
-glyph_position = "after"
-peek = true
-
-[widget.workspaces]
-pill_scale = 0.5
-show_labels = false
-style = "regular"

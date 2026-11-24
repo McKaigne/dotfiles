@@ -4,7 +4,7 @@
 
     security.sudo.extraConfig = ''
       Defaults passwd_timeout=0
-      Defaults timestamp_timeout=30
+      Defaults timestamp_timeout=5
     '';
 
     hardware.keyboard.qmk.enable = true;

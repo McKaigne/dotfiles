@@ -21,18 +21,27 @@ in {
           "fancy"
         ];
         "fancy" = {
-          # Plain glyphs and text, no capsules: where you are on the left,
-          # the time in the middle, what's playing and the controls on the right.
+          # System gauges and what's playing on the left, workspaces in the
+          # middle, tray, controls and the time on the right.
+          "start" = [
+            "cpu"
+            "ram"
+            "temp"
+            "gap"
+            "media"
+          ];
           "center" = [
-            "clock"
+            "workspaces"
           ];
           "end" = [
-            "media"
-            "tray"
+            "tray_2"
+            "network"
             "volume"
+            "input_volume"
             "brightness"
             "battery"
-            "notifications"
+            "gap"
+            "clock"
             "session"
           ];
           "hover_highlight" = false;
@@ -44,12 +53,8 @@ in {
           "radius" = style.radius;
           "background_opacity" = style.opacity;
           "compositor_blur" = true;
-          "start" = [
-            "launcher"
-            "workspaces"
-            "active_window"
-          ];
-          "widget_spacing" = 8;
+          "padding" = 18;
+          "widget_spacing" = 10;
         };
       };
     };

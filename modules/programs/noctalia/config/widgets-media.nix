@@ -10,7 +10,7 @@
         "media" = {
           "show_glyph" = false;
           "hide_when_no_media" = true;
-          "max_length" = 180;
+          "max_length" = 240;
           "title_scroll" = "on_hover";
         };
         "volume" = {

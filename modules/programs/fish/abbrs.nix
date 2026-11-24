@@ -21,9 +21,11 @@
           setCursor = true;
         };
         rnix = "repomix /etc/nixos";
+        # Review before pasting: ~/.config holds tokens and session files.
         rcfg = "repomix ~/.config";
         nupdate = "nix flake update --flake /etc/nixos";
-        nclean = "sudo nix-collect-garbage -d && nix-collect-garbage -d";
+        # Same rule as the weekly nh clean (nix.nix): keeps 14 days of rollbacks.
+        nclean = "nh clean all --keep-since 14d";
         nsearch = "nh search";
 
         # Emacs: open in a new frame without tying up the terminal.

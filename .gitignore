@@ -5,4 +5,5 @@ __pycache__/
 /result-*
 .stversions/
 .stfolder/
+.stignore
 *.sync-conflict-*

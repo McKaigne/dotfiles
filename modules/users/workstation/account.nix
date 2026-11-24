@@ -14,8 +14,6 @@
         "video"
         "audio"
         "render"
-        "input"
-        "uinput"
         "i2c"
         "bluetooth"
       ];

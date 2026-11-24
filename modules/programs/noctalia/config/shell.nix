@@ -17,7 +17,7 @@ in {
         "screen_time_enabled" = true;
         "settings_show_advanced" = true;
         "show_location" = false;
-        "telemetry_enabled" = true;
+        "telemetry_enabled" = false;
         # Glass settings window over Umbriel's blur (Noctalia fixes it at 80%).
         "settings_window_translucent" = true;
         "umbriel_overview_type_to_launch_enabled" = true;

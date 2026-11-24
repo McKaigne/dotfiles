@@ -1,9 +1,11 @@
 # Syncthing keeps the PARA folders identical on hyde and castor, continuously,
 # whenever both are on Tailscale (an offline machine catches up when it comes
-# back). /etc/nixos syncs both ways too, git history included, so work done
-# on either machine is kept; work on one machine at a time, or Syncthing keeps
-# both versions as .sync-conflict files. Files the other machine replaces or
-# deletes are kept 14 days in each folder's .stversions (trash can).
+# back). From /etc/nixos only gui.toml syncs (the settings window's live state:
+# theme, wallpapers, favorites); the repo itself moves by git push/pull, since
+# syncing a live .git can corrupt it. Change gui.toml on one machine at a time,
+# or Syncthing keeps both versions as .sync-conflict files. Files the other
+# machine replaces or deletes are kept 14 days in each folder's .stversions
+# (trash can).
 # Peer to peer over Tailscale only: no global discovery, no relays.
 # Each machine's identity key lives in ~/.local/state/syncthing (not in the
 # store); the IDs below are their public halves.
@@ -26,10 +28,18 @@ let
     (?d)target
     (?d)__pycache__
   '';
+
+  # Include patterns make Syncthing walk the whole tree, so the file is found
+  # under otherwise ignored directories.
+  nixosIgnores = ''
+    !/modules/programs/noctalia/config/gui.toml
+    *
+  '';
 in {
   nixos.base = {
     config,
     lib,
+    pkgs,
     ...
   }: let
     user = config.workstation.username;
@@ -84,6 +94,10 @@ in {
       };
     };
     networking.firewall.interfaces."tailscale0".allowedTCPPorts = [22000];
+
+    systemd.tmpfiles.rules = [
+      "L+ /etc/nixos/.stignore - - - - ${pkgs.writeText "nixos.stignore" nixosIgnores}"
+    ];
 
     home-manager.sharedModules = [
       {

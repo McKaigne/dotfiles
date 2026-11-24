@@ -20,10 +20,8 @@
       # IDs make Helium route installation and updates through its extension proxy.
       enable = true;
 
-      homepageLocation = "https://api.noctalia.dev/repos/dashboard";
       defaultSearchProviderEnabled = true;
       defaultSearchProviderSearchURL = "https://www.google.com/search?q={searchTerms}";
-      defaultSearchProviderSuggestURL = "https://suggestqueries.google.com/complete/search?output=chrome&q={searchTerms}";
 
       # Kept barebones (Akko web driver, VIA). Helium ships uBlock Origin
       # built in, and Noctalia themes it through the policy file above, so
@@ -33,9 +31,10 @@
       ];
 
       extraOpts = {
-        HomepageIsNewTabPage = false;
+        HomepageIsNewTabPage = true;
         RestoreOnStartup = 1;
-        SearchSuggestEnabled = true;
+        # Nothing typed in the address bar leaves the machine before Enter.
+        SearchSuggestEnabled = false;
         DefaultSearchProviderName = "Google";
         DefaultSearchProviderKeyword = "google.com";
 
