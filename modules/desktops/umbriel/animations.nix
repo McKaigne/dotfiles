@@ -1,6 +1,4 @@
-let
-  style = import ../../appearance/_style.nix;
-in {
+{
   flake.modules.homeManager."desktop-umbriel" = {
     programs.umbriel.settings = {
       effects = {

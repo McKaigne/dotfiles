@@ -5,7 +5,6 @@
     environment.systemPackages = [pkgs.gnome-themes-extra];
   };
   flake.modules.homeManager."gtk" = {
-    config,
     lib,
     pkgs,
     ...

@@ -5,9 +5,11 @@
 }: {
   flake.modules.nixos."noctalia" = {
     home-manager.sharedModules = [config.flake.modules.homeManager."noctalia"];
+    # The flake's own build, against its own nixpkgs (flake.nix), so it comes
+    # from noctalia.cachix.org instead of compiling here.
     nixpkgs.overlays = [
       (final: _: {
-        noctalia = final.callPackage (inputs.noctalia.outPath + "/nix/package.nix") {rev = "local";};
+        noctalia = inputs.noctalia.packages.${final.stdenv.hostPlatform.system}.default;
       })
     ];
   };
