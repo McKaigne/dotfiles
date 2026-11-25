@@ -90,6 +90,12 @@ in {
           match.app_id = "^helium$";
           default_maximize = true;
         }
+        # Visible locally, absent from screenshots and screen shares: the
+        # personal browser, the password vault and the keyring unlock prompt.
+        {
+          match.app_id = ["^librewolf$" "^[Bb]itwarden$" "^gcr-prompter$"];
+          block_capture = true;
+        }
         {
           match.title = "^(Picture-in-Picture|Picture in picture)$";
           default_floating = true;
