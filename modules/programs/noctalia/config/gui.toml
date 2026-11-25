@@ -81,32 +81,26 @@ widget_order = [ "lockscreen-login-box@DP-1", "lockscreen-login-box@eDP-1" ]
         show_weather = true
 
 [theme]
-builtin = "Nord"
+builtin = "Catppuccin"
 community_palette = "Zenbones"
-source = "community"
+source = "builtin"
 
 [wallpaper.default]
-path = "/var/lib/wallpapers/Pretender.(Oberon).full.3921260.png"
+path = "/var/lib/wallpapers/isekaiJoucho.jpg"
 
 [wallpaper.last]
-path = "/var/lib/wallpapers/Pretender.(Oberon).full.3921260.png"
+path = "/var/lib/wallpapers/isekaiJoucho.jpg"
 
 [wallpaper.monitors.DP-1]
-path = "/var/lib/wallpapers/Pretender.(Oberon).full.3921260.png"
+path = "/var/lib/wallpapers/isekaiJoucho.jpg"
 
 [wallpaper.monitors.eDP-1]
-path = "/var/lib/wallpapers/Pretender.(Oberon).full.3921260.png"
+path = "/var/lib/wallpapers/isekaiJoucho.jpg"
 
 [[wallpaper.favorite]]
 community_palette = "Occult Umbral"
 palette_source = "community"
 path = "/var/lib/wallpapers/Hatsune.Miku.full.4725448.png"
-theme_mode = "dark"
-
-[[wallpaper.favorite]]
-community_palette = "Aura"
-palette_source = "community"
-path = "/var/lib/wallpapers/isekaiJoucho.jpg"
 theme_mode = "dark"
 
 [[wallpaper.favorite]]
@@ -119,4 +113,10 @@ theme_mode = "dark"
 community_palette = "Zenbones"
 palette_source = "community"
 path = "/var/lib/wallpapers/wallhaven-o5rjq9.png"
+theme_mode = "dark"
+
+[[wallpaper.favorite]]
+builtin_palette = "Catppuccin"
+palette_source = "builtin"
+path = "/var/lib/wallpapers/isekaiJoucho.jpg"
 theme_mode = "dark"

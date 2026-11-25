@@ -111,6 +111,8 @@ With HERE, open it in `default-directory' instead."
   :config
   (require 'dirvish-side)
   (require 'dirvish-subtree)
+  (keymap-set dirvish-mode-map "DEL" #'dired-up-directory)
+  (keymap-set dirvish-mode-map "TAB" #'dirvish-subtree-toggle)
   (dirvish-override-dired-mode 1)
   (dirvish-side-follow-mode 1))
 

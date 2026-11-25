@@ -40,6 +40,7 @@
       recentf-max-saved-items 300
       history-length 1000
       kill-do-not-save-duplicates t
+      project-switch-commands #'project-find-file
       sentence-end-double-space nil)
 (make-directory (my-state-file "desktop/") t)
 (load custom-file t t)
@@ -51,8 +52,11 @@
 (setq select-enable-clipboard t
       select-enable-primary t)
 
+(defvar my-clipboard-last nil)
+
 (defun my-copy-to-clipboard (text)
   "Send TEXT to the Wayland clipboard without blocking Emacs."
+  (setq my-clipboard-last text)
   (let ((process-environment (append (frame-parameter nil 'environment)
                                      process-environment)))
     (if (and (getenv "WAYLAND_DISPLAY") (executable-find "wl-copy"))
@@ -64,14 +68,16 @@
       (gui-select-text text))))
 
 (defun my-paste-from-clipboard ()
-  "Return the Wayland clipboard's text."
-  (let ((process-environment (append (frame-parameter nil 'environment)
-                                     process-environment)))
-    (if (and (getenv "WAYLAND_DISPLAY") (executable-find "wl-paste"))
-        (with-temp-buffer
-          (when (zerop (call-process "wl-paste" nil t nil "--no-newline" "--type" "text"))
-            (buffer-string)))
-      (gui-selection-value))))
+  "Return the Wayland clipboard's text when another program set it."
+  (let* ((process-environment (append (frame-parameter nil 'environment)
+                                      process-environment))
+         (text (if (and (getenv "WAYLAND_DISPLAY") (executable-find "wl-paste"))
+                   (with-temp-buffer
+                     (when (zerop (call-process "wl-paste" nil t nil "--no-newline" "--type" "text"))
+                       (buffer-string)))
+                 (gui-selection-value))))
+    (unless (or (null text) (string-empty-p text) (equal text my-clipboard-last))
+      (setq my-clipboard-last text))))
 
 (setq interprogram-cut-function #'my-copy-to-clipboard
       interprogram-paste-function #'my-paste-from-clipboard)

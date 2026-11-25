@@ -15,6 +15,13 @@
      (defvar ,name (make-sparse-keymap))
      (my-define-keys ,name ,@(mapcar (lambda (b) `'(,@b)) bindings))))
 
+(defun my-code-actions (beg &optional end)
+  "Pick a code action from a list, even when only one applies."
+  (interactive (eglot--code-action-bounds))
+  (eglot-server-capable-or-lose :codeActionProvider)
+  (eglot--read-execute-code-action (eglot-code-actions beg end)
+                                   (eglot--current-server-or-lose)))
+
 (defun my-search-project-symbol ()
   "Search the project for the symbol at point."
   (interactive)
@@ -264,9 +271,11 @@
   (switch-to-buffer (generate-new-buffer "untitled")))
 
 (defun my-window-quit ()
-  "Close this window, or the frame when it is the last one."
+  "Close this window, or the frame when it is the last ordinary one."
   (interactive)
-  (if (one-window-p) (delete-frame) (delete-window)))
+  (if (or (one-window-p) (eq (selected-window) (window-main-window)))
+      (delete-frame)
+    (delete-window)))
 
 (defun my-window-full-height ()
   "Make this window as tall as it can be."
@@ -286,14 +295,11 @@
 
 (my-define-menu my-buffer-map
   ("-" "toggle narrowing" my-toggle-narrow)
-  ("[" "previous buffer" previous-buffer)
-  ("]" "next buffer" next-buffer)
   ("b" "switch buffer" consult-buffer)
   ("c" "clone buffer" clone-indirect-buffer)
   ("C" "clone buffer other window" clone-indirect-buffer-other-window)
   ("d" "kill buffer" kill-current-buffer)
   ("i" "ibuffer" ibuffer)
-  ("k" "kill buffer" kill-current-buffer)
   ("K" "kill all buffers" my-kill-all-buffers)
   ("l" "last buffer" meow-last-buffer)
   ("m" "set bookmark" bookmark-set)
@@ -308,7 +314,6 @@
   ("S" "save all buffers" my-save-all-buffers)
   ("u" "save buffer as root" my-sudo-save-buffer)
   ("x" "scratch buffer" scratch-buffer)
-  ("X" "switch to scratch buffer" scratch-buffer)
   ("y" "copy buffer" my-copy-buffer)
   ("z" "bury buffer" bury-buffer)
   ("Z" "kill old buffers" clean-buffer-list))
@@ -363,7 +368,6 @@
   ("n" "name macro" kmacro-name-last-macro))
 
 (my-define-menu my-code-map
-  ("a" "code actions" eglot-code-actions)
   ("b" "go back" xref-go-back)
   ("c" "compile" compile)
   ("C" "recompile" recompile)
@@ -373,12 +377,10 @@
   ("f" "format buffer" apheleia-format-buffer)
   ("i" "find implementations" eglot-find-implementation)
   ("j" "find workspace symbol" xref-find-apropos)
-  ("k" "documentation at point" eldoc-box-help-at-point)
   ("o" "organize imports" eglot-code-action-organize-imports)
   ("r" "rename" eglot-rename)
   ("t" "find type definition" eglot-find-typeDefinition)
-  ("w" "delete trailing whitespace" delete-trailing-whitespace)
-  ("x" "list errors" flymake-show-buffer-diagnostics))
+  ("w" "delete trailing whitespace" delete-trailing-whitespace))
 
 (my-define-menu my-roam-map
   ("a" "random node" org-roam-node-random)
@@ -414,7 +416,6 @@
 
 (my-define-menu my-open-map
   ("-" "dirvish" dirvish)
-  ("a" "org agenda" org-agenda)
   ("b" "default browser" browse-url-of-file)
   ("f" "new frame" make-frame)
   ("F" "select frame" select-frame-by-name)
@@ -453,16 +454,11 @@
   ("s" "save session" desktop-save-in-desktop-dir)
   ("S" "save session to" desktop-save))
 
-(my-define-menu my-ring-map
-  ("y" "yank from kill ring" consult-yank-pop))
-
 (my-define-menu my-search-map
-  ("b" "search buffer" consult-line)
   ("B" "search open buffers" consult-line-multi)
   ("d" "search directory" my-search-directory)
   ("D" "search other directory" my-search-other-directory)
   ("e" "search config" my-search-config)
-  ("f" "locate file" consult-locate)
   ("i" "jump to symbol" consult-imenu)
   ("I" "jump to symbol in buffers" consult-imenu-multi)
   ("j" "jump list" consult-global-mark)
@@ -474,8 +470,7 @@
   ("r" "jump to mark" consult-mark)
   ("s" "search buffer" consult-line)
   ("S" "search buffer for symbol" my-search-buffer-symbol)
-  ("t" "dictionary" dictionary-lookup-definition)
-  ("u" "undo history" vundo))
+  ("t" "dictionary" dictionary-lookup-definition))
 
 (my-define-menu my-toggle-map
   ("b" "big text" global-text-scale-adjust)
@@ -517,7 +512,6 @@
   ("b" "switch branch" magit-branch-checkout)
   ("B" "blame" magit-blame-addition)
   ("c" "create" my-git-create-map)
-  ("C" "clone" magit-clone)
   ("D" "delete file" magit-file-delete)
   ("f" "find" my-git-find-map)
   ("F" "fetch" magit-fetch)
@@ -539,12 +533,7 @@
   ("=" "balance" balance-windows)
   ("_" "full height" my-window-full-height)
   ("|" "full width" my-window-full-width)
-  ("<left>" "window left" windmove-left)
-  ("<down>" "window below" windmove-down)
-  ("<up>" "window above" windmove-up)
-  ("<right>" "window right" windmove-right)
   ("b" "bottom-right window" my-window-bottom-right)
-  ("c" "close window" delete-window)
   ("d" "close window" delete-window)
   ("f" "file at point in window" ffap-other-window)
   ("h" "window left" windmove-left)
@@ -589,19 +578,15 @@
  '("*" "search project for symbol" my-search-project-symbol)
  '("`" "last buffer" meow-last-buffer)
  '("'" "resume last search" vertico-repeat)
- '("RET" "jump to bookmark" consult-bookmark)
  '(";" "eval expression" pp-eval-expression)
  '(":" "M-x" execute-extended-command)
  '("~" "toggle side windows" window-toggle-side-windows)
  '("?" "meow cheatsheet" meow-cheatsheet)
- '("a" "code actions" eglot-code-actions)
+ '("a" "code actions" my-code-actions)
  '("j" "jump to characters" avy-goto-char-timer)
  '("J" "jump to line" avy-goto-line)
  '("S" "correct spelling" jinx-correct)
- '("u" "undo tree" vundo)
- '("X" "org capture" org-capture)
- '("y" "copy to clipboard" clipboard-kill-ring-save)
- '("Y" "paste from clipboard" clipboard-yank))
+ '("u" "undo tree" vundo))
 
 (my-define-keys
  mode-specific-map
@@ -616,7 +601,6 @@
  '("o" "open" my-open-map)
  '("p" "project" my-project-map)
  '("q" "quit" my-quit-map)
- '("r" "rings" my-ring-map)
  '("s" "search" my-search-map)
  '("t" "toggle" my-toggle-map)
  '("v" "git" my-git-map)
@@ -629,6 +613,8 @@
 (keymap-global-set "<remap> <describe-key>" #'helpful-key)
 (keymap-global-set "<remap> <describe-command>" #'helpful-command)
 (keymap-set meow-keymap "<remap> <describe-key>" #'helpful-key)
+
+(setq windmove-allow-all-windows t)
 
 (dolist (map (list global-map meow-normal-state-keymap meow-insert-state-keymap
                    meow-motion-state-keymap))

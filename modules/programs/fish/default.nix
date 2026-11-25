@@ -63,6 +63,8 @@ in {
   in {
     programs.fish = {
       enable = true;
+      # A function, so `cl` stays `cl` on the command line (no expansion).
+      shellAliases.cl = "claude";
       plugins = [
         {
           name = "tide";

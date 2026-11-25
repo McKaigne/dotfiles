@@ -49,6 +49,24 @@ Opens in insert state; keys go to the program. ~Esc~ leaves insert state
 popup from inside it. ~C-q Esc~ sends a real
 Escape to the program. ~C-.~, ~M-h~ ~M-j~ ~M-k~ ~M-l~ stay with Emacs.
 
+* Files (dirvish)
+
+~SPC o p~ opens the project sidebar, ~SPC o -~ a full dirvish, ~SPC f d~ any
+folder. ~M-h~ / ~M-l~ move into and out of the sidebar.
+
+| Key           | Action                                       |
+|---------------+----------------------------------------------|
+| ~j~ ~k~       | down / up (the arrow keys too)               |
+| ~RET~         | open the folder or file                      |
+| ~Backspace~   | up a folder                                  |
+| ~TAB~         | fold a folder open in place                  |
+| ~m~ ~u~ ~U~   | mark / unmark / unmark all                   |
+| ~C~ ~R~ ~D~   | copy / rename or move / delete (to trash)    |
+| ~+~           | new folder                                   |
+| ~(~           | toggle details                               |
+| ~g~           | refresh                                      |
+| ~Esc~         | close                                        |
+
 * Leader (SPC)
 
 | Key | Action | Command |
@@ -62,7 +80,7 @@ Escape to the program. ~C-.~, ~M-h~ ~M-j~ ~M-k~ ~M-l~ stay with Emacs.
 | ~SPC ;~ | eval expression | ~pp-eval-expression~ |
 | ~SPC ?~ | meow cheatsheet | ~meow-cheatsheet~ |
 | ~SPC `~ | last buffer | ~meow-last-buffer~ |
-| ~SPC a~ | code actions | ~eglot-code-actions~ |
+| ~SPC a~ | code actions | ~my-code-actions~ |
 | ~SPC b~ | +buffer | |
 | ~SPC d~ | +docs | |
 | ~SPC e~ | +errors | |
@@ -76,8 +94,6 @@ Escape to the program. ~C-.~, ~M-h~ ~M-j~ ~M-k~ ~M-l~ stay with Emacs.
 | ~SPC o~ | +open | |
 | ~SPC p~ | +project | |
 | ~SPC q~ | +quit | |
-| ~SPC r~ | +rings | |
-| ~SPC RET~ | jump to bookmark | ~consult-bookmark~ |
 | ~SPC S~ | correct spelling | ~jinx-correct~ |
 | ~SPC s~ | +search | |
 | ~SPC SPC~ | find file in project | ~project-find-file~ |
@@ -85,9 +101,6 @@ Escape to the program. ~C-.~, ~M-h~ ~M-j~ ~M-k~ ~M-l~ stay with Emacs.
 | ~SPC u~ | undo tree | ~vundo~ |
 | ~SPC v~ | +git | |
 | ~SPC w~ | +window | |
-| ~SPC X~ | org capture | ~org-capture~ |
-| ~SPC y~ | copy to clipboard | ~clipboard-kill-ring-save~ |
-| ~SPC Y~ | paste from clipboard | ~clipboard-yank~ |
 | ~SPC z~ | +folds and zoom | |
 | =SPC ~= | toggle side windows | ~window-toggle-side-windows~ |
 
@@ -96,14 +109,11 @@ Escape to the program. ~C-.~, ~M-h~ ~M-j~ ~M-k~ ~M-l~ stay with Emacs.
 | Key | Action | Command |
 |-----+--------+---------|
 | ~SPC b -~ | toggle narrowing | ~my-toggle-narrow~ |
-| ~SPC b [~ | previous buffer | ~previous-buffer~ |
-| ~SPC b ]~ | next buffer | ~next-buffer~ |
 | ~SPC b b~ | switch buffer | ~consult-buffer~ |
 | ~SPC b c~ | clone buffer | ~clone-indirect-buffer~ |
 | ~SPC b C~ | clone buffer other window | ~clone-indirect-buffer-other-window~ |
 | ~SPC b d~ | kill buffer | ~kill-current-buffer~ |
 | ~SPC b i~ | ibuffer | ~ibuffer~ |
-| ~SPC b k~ | kill buffer | ~kill-current-buffer~ |
 | ~SPC b K~ | kill all buffers | ~my-kill-all-buffers~ |
 | ~SPC b l~ | last buffer | ~meow-last-buffer~ |
 | ~SPC b m~ | set bookmark | ~bookmark-set~ |
@@ -118,7 +128,6 @@ Escape to the program. ~C-.~, ~M-h~ ~M-j~ ~M-k~ ~M-l~ stay with Emacs.
 | ~SPC b S~ | save all buffers | ~my-save-all-buffers~ |
 | ~SPC b u~ | save buffer as root | ~my-sudo-save-buffer~ |
 | ~SPC b x~ | scratch buffer | ~scratch-buffer~ |
-| ~SPC b X~ | switch to scratch buffer | ~scratch-buffer~ |
 | ~SPC b y~ | copy buffer | ~my-copy-buffer~ |
 | ~SPC b z~ | bury buffer | ~bury-buffer~ |
 | ~SPC b Z~ | kill old buffers | ~clean-buffer-list~ |
@@ -191,7 +200,6 @@ Escape to the program. ~C-.~, ~M-h~ ~M-j~ ~M-k~ ~M-l~ stay with Emacs.
 
 | Key | Action | Command |
 |-----+--------+---------|
-| ~SPC l a~ | code actions | ~eglot-code-actions~ |
 | ~SPC l b~ | go back | ~xref-go-back~ |
 | ~SPC l c~ | compile | ~compile~ |
 | ~SPC l C~ | recompile | ~recompile~ |
@@ -201,12 +209,10 @@ Escape to the program. ~C-.~, ~M-h~ ~M-j~ ~M-k~ ~M-l~ stay with Emacs.
 | ~SPC l f~ | format buffer | ~apheleia-format-buffer~ |
 | ~SPC l i~ | find implementations | ~eglot-find-implementation~ |
 | ~SPC l j~ | find workspace symbol | ~xref-find-apropos~ |
-| ~SPC l k~ | documentation at point | ~eldoc-box-help-at-point~ |
 | ~SPC l o~ | organize imports | ~eglot-code-action-organize-imports~ |
 | ~SPC l r~ | rename | ~eglot-rename~ |
 | ~SPC l t~ | find type definition | ~eglot-find-typeDefinition~ |
 | ~SPC l w~ | delete trailing whitespace | ~delete-trailing-whitespace~ |
-| ~SPC l x~ | list errors | ~flymake-show-buffer-diagnostics~ |
 
 ** ~SPC n~ notes
 
@@ -251,7 +257,6 @@ Escape to the program. ~C-.~, ~M-h~ ~M-j~ ~M-k~ ~M-l~ stay with Emacs.
 | Key | Action | Command |
 |-----+--------+---------|
 | ~SPC o -~ | dirvish | ~dirvish~ |
-| ~SPC o a~ | org agenda | ~org-agenda~ |
 | ~SPC o b~ | default browser | ~browse-url-of-file~ |
 | ~SPC o f~ | new frame | ~make-frame~ |
 | ~SPC o F~ | select frame | ~select-frame-by-name~ |
@@ -296,22 +301,14 @@ Escape to the program. ~C-.~, ~M-h~ ~M-j~ ~M-k~ ~M-l~ stay with Emacs.
 | ~SPC q s~ | save session | ~desktop-save-in-desktop-dir~ |
 | ~SPC q S~ | save session to | ~desktop-save~ |
 
-** ~SPC r~ rings
-
-| Key | Action | Command |
-|-----+--------+---------|
-| ~SPC r y~ | yank from kill ring | ~consult-yank-pop~ |
-
 ** ~SPC s~ search
 
 | Key | Action | Command |
 |-----+--------+---------|
-| ~SPC s b~ | search buffer | ~consult-line~ |
 | ~SPC s B~ | search open buffers | ~consult-line-multi~ |
 | ~SPC s d~ | search directory | ~my-search-directory~ |
 | ~SPC s D~ | search other directory | ~my-search-other-directory~ |
 | ~SPC s e~ | search config | ~my-search-config~ |
-| ~SPC s f~ | locate file | ~consult-locate~ |
 | ~SPC s i~ | jump to symbol | ~consult-imenu~ |
 | ~SPC s I~ | jump to symbol in buffers | ~consult-imenu-multi~ |
 | ~SPC s j~ | jump list | ~consult-global-mark~ |
@@ -324,7 +321,6 @@ Escape to the program. ~C-.~, ~M-h~ ~M-j~ ~M-k~ ~M-l~ stay with Emacs.
 | ~SPC s s~ | search buffer | ~consult-line~ |
 | ~SPC s S~ | search buffer for symbol | ~my-search-buffer-symbol~ |
 | ~SPC s t~ | dictionary | ~dictionary-lookup-definition~ |
-| ~SPC s u~ | undo history | ~vundo~ |
 
 ** ~SPC t~ toggle
 
@@ -356,7 +352,6 @@ Escape to the program. ~C-.~, ~M-h~ ~M-j~ ~M-k~ ~M-l~ stay with Emacs.
 | ~SPC v b~ | switch branch | ~magit-branch-checkout~ |
 | ~SPC v B~ | blame | ~magit-blame-addition~ |
 | ~SPC v c~ | +create | |
-| ~SPC v C~ | clone | ~magit-clone~ |
 | ~SPC v D~ | delete file | ~magit-file-delete~ |
 | ~SPC v f~ | +find | |
 | ~SPC v F~ | fetch | ~magit-fetch~ |
@@ -402,15 +397,10 @@ Escape to the program. ~C-.~, ~M-h~ ~M-j~ ~M-k~ ~M-l~ stay with Emacs.
 | ~SPC w +~ | taller | ~enlarge-window~ |
 | ~SPC w -~ | shorter | ~shrink-window~ |
 | ~SPC w <~ | narrower | ~shrink-window-horizontally~ |
-| ~SPC w <down>~ | window below | ~windmove-down~ |
-| ~SPC w <left>~ | window left | ~windmove-left~ |
-| ~SPC w <right>~ | window right | ~windmove-right~ |
-| ~SPC w <up>~ | window above | ~windmove-up~ |
 | ~SPC w =~ | balance | ~balance-windows~ |
 | ~SPC w >~ | wider | ~enlarge-window-horizontally~ |
 | ~SPC w _~ | full height | ~my-window-full-height~ |
 | ~SPC w b~ | bottom-right window | ~my-window-bottom-right~ |
-| ~SPC w c~ | close window | ~delete-window~ |
 | ~SPC w d~ | close window | ~delete-window~ |
 | ~SPC w f~ | file at point in window | ~ffap-other-window~ |
 | ~SPC w h~ | window left | ~windmove-left~ |

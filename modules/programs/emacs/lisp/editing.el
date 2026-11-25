@@ -20,9 +20,7 @@
    '("7" . meow-digit-argument)
    '("8" . meow-digit-argument)
    '("9" . meow-digit-argument)
-   '("0" . meow-digit-argument)
-   '("/" . meow-keypad-describe-key)
-   '("?" . meow-cheatsheet))
+   '("0" . meow-digit-argument))
   (meow-normal-define-key
    '("0" . meow-expand-0)
    '("9" . meow-expand-9)
@@ -44,8 +42,8 @@
    '("A" . meow-open-below)
    '("b" . meow-back-word)
    '("B" . meow-back-symbol)
-   '("c" . meow-change)
-   '("d" . meow-delete)
+   '("c" . my-change)
+   '("d" . my-delete)
    '("D" . meow-backward-delete)
    '("e" . meow-next-word)
    '("E" . meow-next-symbol)
@@ -86,6 +84,19 @@
    '("'" . repeat)
    '("<escape>" . ignore)))
 
+(defun my-delete ()
+  "Delete the selection and save it to the kill ring, as in Helix."
+  (interactive)
+  (if (region-active-p)
+      (let ((select-enable-clipboard meow-use-clipboard))
+        (kill-region (region-beginning) (region-end)))
+    (meow-delete)))
+
+(defun my-change ()
+  "Change the selection and save it to the kill ring, as in Helix."
+  (interactive)
+  (if (region-active-p) (meow-change-save) (meow-change)))
+
 (use-package meow
   :demand t
   :custom
@@ -99,7 +110,6 @@
                    (eshell-mode . insert)
                    (dashboard-mode . motion)
                    (dired-mode . motion)
-                   (dirvish-mode . motion)
                    (help-mode . motion)
                    (helpful-mode . motion)
                    (magit-mode . motion)
@@ -114,7 +124,10 @@
   (which-key-idle-delay 0.4)
   (which-key-sort-order 'which-key-key-order-alpha)
   (which-key-add-column-padding 2)
+  (which-key-side-window-max-height 0.6)
   :config
+  (add-to-list 'which-key-replacement-alist
+               '((nil . "\\`meow-digit-argument\\'") . t))
   (which-key-mode 1))
 
 (defun my-escape-quits-read (char)
