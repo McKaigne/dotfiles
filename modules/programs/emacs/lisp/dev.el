@@ -17,6 +17,10 @@
                  ("\\(?:CMakeLists\\.txt\\|\\.cmake\\)\\'" . cmake-ts-mode)))
   (add-to-list 'auto-mode-alist entry))
 
+(setq find-sibling-rules
+      '(("\\([^/]+\\)\\.\\(?:c\\|cc\\|cpp\\|cxx\\)\\'" "\\1.\\(?:h\\|hh\\|hpp\\|hxx\\)\\'")
+        ("\\([^/]+\\)\\.\\(?:h\\|hh\\|hpp\\|hxx\\)\\'" "\\1.\\(?:c\\|cc\\|cpp\\|cxx\\)\\'")))
+
 (use-package nix-ts-mode
   :mode "\\.nix\\'")
 

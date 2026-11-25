@@ -17,10 +17,15 @@ the keypad's own and are not menus:
 |-------------+---------------------------------------------------------|
 | ~SPC c ...~ | ~C-c ...~: the current mode's commands (Doom's ~SPC m~) |
 | ~SPC x ...~ | ~C-x ...~                                               |
-| ~SPC h ...~ | ~C-h ...~: help, with helpful                           |
+| ~SPC h ...~ | ~C-h ...~: help, with helpful (see below)               |
 | ~SPC m ...~ | ~M-...~                                                 |
 | ~SPC g ...~ | ~C-M-...~                                               |
 | ~SPC 0~-~9~ | digit argument                                          |
+
+After a keypad key, Meow tries each letter with =Ctrl= first and uses the
+plain letter only when the =Ctrl= version is unbound. Put ~SPC~ before a
+letter to force it plain: ~SPC h SPC f~ is ~C-h f~ (plain ~SPC h f~ is
+~C-h C-f~, the FAQ), ~SPC c SPC ,~ is ~C-c ,~. Or use ~SPC d f/v/k~.
 
 * Everywhere
 

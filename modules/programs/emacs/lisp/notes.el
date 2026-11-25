@@ -27,7 +27,18 @@
       (file+headline ,(expand-file-name "tasks.org" org-directory) "Inbox")
       "* TODO %?\n:PROPERTIES:\n:CREATED: %U\n:END:\n")
      ("j" "Journal" entry (file+olp+datetree my-journal-file)
-      "* %<%H:%M> %?\n"))))
+      "* %<%H:%M> %?\n")))
+  :config
+  (org-babel-do-load-languages 'org-babel-load-languages
+                               '((emacs-lisp . t) (python . t) (C . t) (shell . t)))
+  (setq org-confirm-babel-evaluate #'my-org-confirm-babel-evaluate))
+
+(defun my-org-confirm-babel-evaluate (_language _body)
+  "Ask before running code blocks outside the notes directory."
+  (not (and buffer-file-name
+            (not (file-remote-p buffer-file-name))
+            (file-in-directory-p (file-truename buffer-file-name)
+                                 (file-truename org-directory)))))
 
 (use-package org-modern
   :hook (org-mode . org-modern-mode))

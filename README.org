@@ -14,6 +14,18 @@ config built around [[file:modules/desktops/umbriel][Umbriel]] and
 · [[file:modules/programs/emacs][Emacs]]
 · [[file:modules/programs/librewolf][LibreWolf]] · [[file:modules/programs/helium][Helium]]
 
+** Emacs
+
+A plain Emacs config (no Doom, no Evil) in
+[[file:modules/programs/emacs][modules/programs/emacs]], every package from Nix.
+Meow edits and its keypad is the leader: ~SPC~ opens Doom-style menus
+(~SPC v~ git, ~SPC l~ code, ~SPC c~ the mode's own keys), and ~Esc~ leaves
+any menu or prompt. The theme follows Noctalia live. ~F2~ opens the
+dashboard; its ~?~ is the [[file:modules/programs/emacs/org/keybindings.org][key guide]].
+
+Languages: C/C++, Nix, Rust, Python, Go + htmx (templ) and CMake through
+Eglot, plus Emacs Lisp, Markdown, shell, fish, YAML, JSON and TOML.
+
 ** Build
 
 #+begin_src sh
