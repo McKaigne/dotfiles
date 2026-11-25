@@ -1,387 +1,177 @@
 ;;; editing.el -*- lexical-binding: t -*-
 
-(setq-default indent-tabs-mode nil
-              tab-width 2
-              fill-column 100)
 (setq display-line-numbers-type 'relative)
+(add-hook 'prog-mode-hook #'display-line-numbers-mode)
 
-(use-package undo-fu-session
-  :demand t
-  :custom (undo-fu-session-directory (my-state-file "undo/"))
-  :config (undo-fu-session-global-mode 1))
-;; Meow, as Ly-sec set it up: the QWERTY layout, tool buffers in motion
-;; state, shells in insert. The Space menu is in keys.el.
-(use-package meow
-  :demand t
-  :custom (meow-use-clipboard t)
-  :config
-  (setq meow-cheatsheet-layout meow-cheatsheet-layout-qwerty
-        meow-cheatsheet-physical-layout meow-cheatsheet-physical-layout-ansi)
+(defun meow-setup ()
+  "Meow's QWERTY layout, from its documentation."
+  (setq meow-cheatsheet-layout meow-cheatsheet-layout-qwerty)
   (meow-motion-define-key
    '("j" . meow-next)
    '("k" . meow-prev)
    '("<escape>" . ignore))
-  (dotimes (digit 10)
-    (meow-normal-define-key
-     (cons (number-to-string digit) (intern (format "meow-expand-%s" digit)))))
+  (meow-leader-define-key
+   '("1" . meow-digit-argument)
+   '("2" . meow-digit-argument)
+   '("3" . meow-digit-argument)
+   '("4" . meow-digit-argument)
+   '("5" . meow-digit-argument)
+   '("6" . meow-digit-argument)
+   '("7" . meow-digit-argument)
+   '("8" . meow-digit-argument)
+   '("9" . meow-digit-argument)
+   '("0" . meow-digit-argument)
+   '("/" . meow-keypad-describe-key)
+   '("?" . meow-cheatsheet))
   (meow-normal-define-key
+   '("0" . meow-expand-0)
+   '("9" . meow-expand-9)
+   '("8" . meow-expand-8)
+   '("7" . meow-expand-7)
+   '("6" . meow-expand-6)
+   '("5" . meow-expand-5)
+   '("4" . meow-expand-4)
+   '("3" . meow-expand-3)
+   '("2" . meow-expand-2)
+   '("1" . meow-expand-1)
    '("-" . negative-argument)
    '(";" . meow-reverse)
-   '("," . meow-inner-of-thing) '("." . meow-bounds-of-thing)
-   '("[" . meow-beginning-of-thing) '("]" . meow-end-of-thing)
-   '("a" . meow-append) '("A" . meow-open-below)
-   '("b" . meow-back-word) '("B" . meow-back-symbol)
+   '("," . meow-inner-of-thing)
+   '("." . meow-bounds-of-thing)
+   '("[" . meow-beginning-of-thing)
+   '("]" . meow-end-of-thing)
+   '("a" . meow-append)
+   '("A" . meow-open-below)
+   '("b" . meow-back-word)
+   '("B" . meow-back-symbol)
    '("c" . meow-change)
-   '("d" . meow-delete) '("D" . meow-backward-delete)
-   '("e" . meow-next-word) '("E" . meow-next-symbol)
+   '("d" . meow-delete)
+   '("D" . meow-backward-delete)
+   '("e" . meow-next-word)
+   '("E" . meow-next-symbol)
    '("f" . meow-find)
-   '("g" . meow-cancel-selection) '("G" . meow-grab)
-   '("h" . meow-left) '("H" . meow-left-expand)
-   '("i" . meow-insert) '("I" . meow-open-above)
-   '("j" . meow-next) '("J" . meow-next-expand)
-   '("k" . meow-prev) '("K" . meow-prev-expand)
-   '("l" . meow-right) '("L" . meow-right-expand)
+   '("g" . meow-cancel-selection)
+   '("G" . meow-grab)
+   '("h" . meow-left)
+   '("H" . meow-left-expand)
+   '("i" . meow-insert)
+   '("I" . meow-open-above)
+   '("j" . meow-next)
+   '("J" . meow-next-expand)
+   '("k" . meow-prev)
+   '("K" . meow-prev-expand)
+   '("l" . meow-right)
+   '("L" . meow-right-expand)
    '("m" . meow-join)
    '("n" . meow-search)
-   '("o" . meow-block) '("O" . meow-to-block)
+   '("o" . meow-block)
+   '("O" . meow-to-block)
    '("p" . meow-yank)
    '("q" . meow-quit)
    '("Q" . meow-goto-line)
-   '("r" . meow-replace) '("R" . meow-swap-grab)
+   '("r" . meow-replace)
+   '("R" . meow-swap-grab)
    '("s" . meow-kill)
    '("t" . meow-till)
-   '("u" . meow-undo) '("U" . meow-undo-in-selection)
+   '("u" . meow-undo)
+   '("U" . meow-undo-in-selection)
    '("v" . meow-visit)
-   '("w" . meow-mark-word) '("W" . meow-mark-symbol)
-   '("x" . meow-line) '("X" . meow-goto-line)
-   '("y" . meow-save) '("Y" . meow-sync-grab)
+   '("w" . meow-mark-word)
+   '("W" . meow-mark-symbol)
+   '("x" . meow-line)
+   '("X" . meow-goto-line)
+   '("y" . meow-save)
+   '("Y" . meow-sync-grab)
    '("z" . meow-pop-selection)
    '("'" . repeat)
-   '("<escape>" . ignore))
-  (dolist (entry '((dired-mode . motion) (treemacs-mode . motion)
-                   (magit-mode . motion) (org-agenda-mode . motion)
-                   (dashboard-mode . motion) (eshell-mode . insert)
-                   (ghostel-mode . insert) (helpful-mode . motion)))
+   '("<escape>" . ignore)))
+
+(use-package meow
+  :demand t
+  :custom
+  (meow-use-clipboard t)
+  (meow-cheatsheet-physical-layout meow-cheatsheet-physical-layout-ansi)
+  (meow-expand-hint-remove-delay 1.5)
+  (meow-keypad-describe-delay 0.4)
+  :config
+  (meow-setup)
+  (dolist (entry '((ghostel-mode . insert)
+                   (eshell-mode . insert)
+                   (dashboard-mode . motion)
+                   (dired-mode . motion)
+                   (dirvish-mode . motion)
+                   (help-mode . motion)
+                   (helpful-mode . motion)
+                   (magit-mode . motion)
+                   (org-agenda-mode . motion)
+                   (eww-mode . motion)))
     (add-to-list 'meow-mode-state-list entry))
   (meow-global-mode 1))
-;; Centaur Emacs's editing and kill-ring modules (lisp/init-edit.el,
-;; lisp/init-kill-ring.el). Its hydras (rectangle, folding) are Meow menus
-;; here, opened from the Space menu (keys.el);
-;; its global keys are kept as they are, and work in every Meow state.
-;; Left out: ace-pinyin (Chinese input) and xclip (core.el already talks to
-;; the Wayland clipboard).
 
-(use-package delsel
-  :ensure nil
-  :hook (after-init . delete-selection-mode))
-
-(use-package rect
-  :ensure nil
-  :bind (:map text-mode-map
-         ("<C-return>" . my-rectangle-menu)
-         :map prog-mode-map
-         ("<C-return>" . my-rectangle-menu))
-  :init
-  (with-eval-after-load 'org
-    (bind-key "<s-return>" #'my-rectangle-menu org-mode-map))
-  (with-eval-after-load 'wgrep
-    (bind-key "<C-return>" #'my-rectangle-menu wgrep-mode-map))
-  (with-eval-after-load 'wdired
-    (bind-key "<C-return>" #'my-rectangle-menu wdired-mode-map)))
-(my-define-menu my-rectangle-menu "Rectangle"
-  :pre (rectangle-mark-mode 1)
-  :post (deactivate-mark)
-  ("h" #'backward-char "←")
-  ("j" #'next-line "↓")
-  ("k" #'previous-line "↑")
-  ("l" #'forward-char "→")
-  ("w" #'copy-rectangle-as-kill "copy")
-  ("y" #'yank-rectangle "yank")
-  ("t" #'string-rectangle "string")
-  ("d" #'kill-rectangle "kill")
-  ("c" #'clear-rectangle "clear")
-  ("o" #'open-rectangle "open")
-  ("N" #'rectangle-number-lines "number lines")
-  ("e" #'rectangle-exchange-point-and-mark "exchange")
-  ("u" #'undo "undo")
-  ("r" (lambda () (interactive)
-         (if (region-active-p) (deactivate-mark) (rectangle-mark-mode 1)))
-   "reset"))
-
-(use-package autorevert
-  :ensure nil
-  :hook (after-init . global-auto-revert-mode))
-
-(use-package browse-url
-  :ensure nil
-  :bind (("C-c C-z ." . browse-url-at-point)
-         ("C-c C-z b" . browse-url-of-buffer)
-         ("C-c C-z r" . browse-url-of-region)
-         ("C-c C-z u" . browse-url)
-         ("C-c C-z e" . browse-url-emacs)
-         ("C-c C-z v" . browse-url-of-file))
-  :init
-  (with-eval-after-load 'dired
-    (bind-key "C-c C-z f" #'browse-url-of-file dired-mode-map)))
-
-(use-package goto-addr
-  :ensure nil
-  :hook (prog-mode . goto-address-prog-mode))
-
-(use-package avy
-  :bind (("C-:"   . avy-goto-char)
-         ("C-'"   . avy-goto-char-2)
-         ("M-g l" . avy-goto-line)
-         ("M-g w" . avy-goto-word-1)
-         ;; Centaur also puts this on M-g e, where consult-compile-error wins
-         ("M-g W" . avy-goto-word-0))
-  :hook (after-init . avy-setup-default)
-  :config (setq avy-all-windows nil
-                avy-all-windows-alt t
-                avy-background t
-                avy-style 'pre))
-
-(use-package link-hint
-  :bind (("M-o"     . link-hint-open-link)
-         ("C-c l o" . link-hint-open-link)
-         ("C-c l c" . link-hint-copy-link))
-  :init
-  (with-eval-after-load 'compile
-    (bind-key "o" #'link-hint-open-link compilation-mode-map))
-  (with-eval-after-load 'cus-edit
-    (bind-key "o" #'link-hint-open-link custom-mode-map))
-  (with-eval-after-load 'elfeed-show
-    (bind-key "o" #'link-hint-open-link elfeed-show-mode-map))
-  (with-eval-after-load 'eww
-    (bind-key "o" #'link-hint-open-link eww-mode-map))
-  (with-eval-after-load 'help
-    (bind-key "o" #'link-hint-open-link help-mode-map))
-  (with-eval-after-load 'helpful
-    (bind-key "o" #'link-hint-open-link helpful-mode-map))
-  (with-eval-after-load 'info
-    (bind-key "o" #'link-hint-open-link Info-mode-map))
-  (with-eval-after-load 'nov
-    (bind-key "o" #'link-hint-open-link nov-mode-map))
-  (with-eval-after-load 'woman
-    (bind-key "o" #'link-hint-open-link woman-mode-map))
-  (with-eval-after-load 'xref
-    (bind-key "o" #'link-hint-open-link xref--xref-buffer-mode-map))
-  (with-eval-after-load 'embark
-    (setq link-hint-action-fallback-commands
-          (list :open (lambda ()
-                        (condition-case _
-                            (progn
-                              (embark-dwim)
-                              t)
-                          (error
-                           nil)))))))
-
-(use-package anzu
-  :bind (([remap query-replace] . anzu-query-replace)
-         ([remap query-replace-regexp] . anzu-query-replace-regexp)
-         :map isearch-mode-map
-         ([remap isearch-query-replace] . anzu-isearch-query-replace)
-         ([remap isearch-query-replace-regexp] . anzu-isearch-query-replace-regexp))
-  :hook (after-init . global-anzu-mode))
-
-(use-package beginend
-  :hook (after-init . beginend-global-mode))
-
-(use-package drag-stuff
-  :autoload drag-stuff-define-keys
-  :hook (after-init . drag-stuff-global-mode)
-  :config
-  (add-to-list 'drag-stuff-except-modes 'org-mode)
-  (drag-stuff-define-keys))
-
-(use-package ediff
-  :ensure nil
-  :hook ((ediff-prepare-buffer . outline-show-all)
-         (ediff-quit . winner-undo))
-  :config
-  (setq ediff-window-setup-function 'ediff-setup-windows-plain
-        ediff-split-window-function 'split-window-horizontally
-        ediff-merge-split-window-function 'split-window-horizontally))
-
-(use-package elec-pair
-  :hook (after-init . electric-pair-mode)
-  :init (setq electric-pair-inhibit-predicate 'electric-pair-conservative-inhibit))
-
-(use-package ialign :commands ialign)
-
-(use-package iedit
-  :bind (:map global-map
-         ("C-;" . iedit-mode)
-         ("C-x r RET" . iedit-rectangle-mode)
-         :map isearch-mode-map ("C-;" . iedit-mode-from-isearch)
-         :map esc-map ("C-;" . iedit-execute-last-modification)
-         :map help-map ("C-;" . iedit-mode-toggle-on-function)))
-
-;; Left out of Centaur's editing tools: expand-region, multiple-cursors,
-;; smart-region and avy-zap. Meow covers them: numbers and , . expand a
-;; selection, G and beacon state give many cursors, f/t then s zap.
-
-;; Spell checking (aspell is on PATH, default.nix).
-(use-package flyspell
-  :ensure nil
-  :if (executable-find "aspell")
-  :bind (:map flyspell-mode-map
-         ("C-;" . nil)
-         ("C-," . nil)
-         ("C-." . nil))
-  :hook (((text-mode outline-mode) . (lambda ()
-                                       "Check spells unless the file is too big."
-                                       (unless (file-too-big-p)
-                                         (flyspell-mode 1))))
-         (prog-mode . flyspell-prog-mode))
-  :init (setq flyspell-issue-message-flag nil
-              flyspell-issue-welcome-flag nil
-              ispell-program-name "aspell"
-              ispell-extra-args '("--sug-mode=ultra" "--lang=en_US" "--run-together")))
-
-(use-package hungry-delete
-  :hook (after-init . global-hungry-delete-mode)
-  :init (setq hungry-delete-chars-to-skip " \t\f\v"
-              hungry-delete-except-modes
-              '(help-mode minibuffer-mode minibuffer-inactive-mode calc-mode)))
-
-(use-package mwim
-  :bind (([remap move-beginning-of-line] . mwim-beginning)
-         ([remap move-end-of-line] . mwim-end)))
-
-(use-package vundo
-  :bind ("C-x u" . vundo)
-  :config (setq vundo-glyph-alist vundo-unicode-symbols))
-
-(use-package goto-chg
-  :bind ("C-," . goto-last-change))
-
-(use-package subword
-  :ensure nil
-  :hook ((prog-mode minibuffer-setup) . subword-mode))
-
-;; Folding: kirigami works the same over hideshow, outline, Org and
-;; tree-sitter, and its menu carries hideshow's extras, so it is the only
-;; fold menu (Centaur's hideshow key, C-S-<escape>, opens it too).
-(use-package kirigami
+(use-package which-key
+  :demand t
   :custom
-  (kirigami-show-menu-bar t)
-  (kirigami-show-context-menu t)
-  :bind (:map kirigami-mode-map
-         ("C-~" . my-kirigami-menu)
-         ("C-c z o" . kirigami-open-fold)
-         ("C-c z O" . kirigami-open-fold-rec)
-         ("C-c z r" . kirigami-open-folds)
-         ("C-c z c" . kirigami-close-fold)
-         ("C-c z m" . kirigami-close-folds)
-         ("C-c z a" . kirigami-toggle-fold))
-  :hook (after-init . kirigami-global-mode))
-;; Hideshow only folds code; elsewhere these say so instead of failing.
-(defun my-hs-run (command)
-  "Run hideshow's COMMAND interactively, if this buffer folds with hideshow."
-  (require 'hideshow)
-  (unless (bound-and-true-p hs-minor-mode)
-    (user-error "Hideshow folds code buffers only"))
-  (call-interactively command))
-
-(defun my-hs-hide-level ()
-  "Hide the blocks one level below point (hideshow)."
-  (interactive)
-  (my-hs-run #'hs-hide-level))
-
-(defun my-hs-cycle ()
-  "Cycle the block at point through hidden, children and shown (hideshow)."
-  (interactive)
-  ;; hs-cycle picks its next step from `last-command', so this press is
-  ;; recorded as hs-cycle's own.
-  (setq this-command 'hs-cycle)
-  (my-hs-run #'hs-cycle))
-
-(my-define-menu my-kirigami-menu "Kirigami"
-  ("o" #'kirigami-open-fold "open fold at point")
-  ("O" #'kirigami-open-fold-rec "open fold recursively")
-  ("r" #'kirigami-open-folds "open all folds")
-  ("c" #'kirigami-close-fold "close fold at point")
-  ("m" #'kirigami-close-folds "close all folds")
-  ("a" #'kirigami-toggle-fold "toggle fold at point")
-  ;; Hideshow's own extras, so one fold menu is enough.
-  ("l" #'my-hs-hide-level "hide level (code)")
-  ("C" #'my-hs-cycle "cycle block (code)")
-  ("C-a" #'mwim-beginning-of-code-or-line "⭰")
-  ("C-e" #'mwim-end-of-code-or-line "⭲")
-  ("C-b" #'backward-char "←")
-  ("C-n" #'next-line "↓")
-  ("C-p" #'previous-line "↑")
-  ("C-f" #'forward-char "→")
-  ("C-v" #'scroll-up-command "↘")
-  ("M-v" #'scroll-down-command "↖")
-  ("M-<" #'beginning-of-buffer "⭶")
-  ("M->" #'end-of-buffer "⭸"))
-
-(use-package hideshow
-  :ensure nil
-  :bind (:map hs-minor-mode-map
-         ("C-S-<escape>" . my-kirigami-menu))
-  :hook (prog-mode . hs-minor-mode)
+  (which-key-idle-delay 0.4)
+  (which-key-sort-order 'which-key-key-order-alpha)
+  (which-key-add-column-padding 2)
   :config
-  (defun hs-cycle (&optional level)
-    (interactive "p")
-    (let (message-log-max
-          (inhibit-message t))
-      (if (= level 1)
-          (pcase last-command
-            ('hs-cycle
-             (hs-hide-level 1)
-             (setq this-command 'hs-cycle-children))
-            ('hs-cycle-children
-             (save-excursion (hs-show-block))
-             (setq this-command 'hs-cycle-subtree))
-            ('hs-cycle-subtree
-             (hs-hide-block))
-            (_
-             (if (not (hs-already-hidden-p))
-                 (hs-hide-block)
-               (hs-hide-level 1)
-               (setq this-command 'hs-cycle-children))))
-        (hs-hide-level level)
-        (setq this-command 'hs-hide-level))))
+  (which-key-mode 1))
 
-  ;; Display line counts
-  (defun hs-display-code-line-counts (ov)
-    "Display line counts when hiding codes."
-    (when (eq 'code (overlay-get ov 'hs))
-      (overlay-put ov 'display
-                   (concat
-                    " "
-                    (propertize
-                     (format "%s(%d lines)..."
-                             (and (char-displayable-p ?⏷) "⏷ ")
-                             (count-lines (overlay-start ov)
-                                          (overlay-end ov)))
-                     'face '(:inherit shadow :height 0.8)
-                     'mouse-face 'highlight
-                     'local-map (let ((map (make-sparse-keymap)))
-                                  (define-key map [mouse-1] #'hs-show-block)
-                                  map))
-                    " "))))
-  (setq hs-set-up-overlay #'hs-display-code-line-counts))
+(defun my-escape-quits-read (char)
+  "Quit when CHAR, a key just read, is Esc; otherwise return CHAR."
+  (if (memq char '(?\e escape)) (signal 'quit nil) char))
 
-(use-package sudo-edit :commands sudo-edit)
+(advice-add 'read-char-exclusive :filter-return #'my-escape-quits-read)
+(advice-add 'read-char :filter-return #'my-escape-quits-read)
 
-(use-package so-long
-  :ensure nil
-  :hook (after-init . global-so-long-mode))
+(defun my-escape-quits-events (fn &rest args)
+  "Call FN with ARGS, quitting when Esc is read as an event."
+  (advice-add 'read-event :filter-return #'my-escape-quits-read)
+  (unwind-protect (apply fn args)
+    (advice-remove 'read-event #'my-escape-quits-read)))
 
-;; Kill ring
-(setq kill-ring-max 200
-      save-interprogram-paste-before-kill t)
+(with-eval-after-load 'ox
+  (advice-add 'org-export--dispatch-action :around #'my-escape-quits-events))
 
-(use-package easy-kill
-  :bind (([remap kill-ring-save] . easy-kill)
-         ([remap mark-sexp] . easy-mark)))
+(defun my-escape-insert ()
+  "Close the completion popup and return to normal state."
+  (interactive)
+  (when (bound-and-true-p completion-in-region-mode)
+    (corfu-quit))
+  (when (meow-insert-mode-p)
+    (meow-insert-exit)))
 
-(use-package browse-kill-ring
-  :bind ("C-c k" . browse-kill-ring)
-  :hook (after-init . browse-kill-ring-default-keybindings)
-  :init (setq browse-kill-ring-separator "────────────────"
-              browse-kill-ring-separator-face 'shadow))
+(defun my-escape-normal ()
+  "Cancel the selection, or close the documentation popup."
+  (interactive)
+  (cond ((region-active-p) (meow-cancel-selection))
+        ((and (fboundp 'eldoc-box-quit-frame)
+              (bound-and-true-p eldoc-box--frame)
+              (frame-visible-p eldoc-box--frame))
+         (eldoc-box-quit-frame))))
+
+(defun my-escape-motion ()
+  "Leave the tool buffer shown in this window."
+  (interactive)
+  (cond ((derived-mode-p 'dashboard-mode) (my-quit-dashboard))
+        ((and (derived-mode-p 'dired-mode) (fboundp 'dirvish-curr) (dirvish-curr))
+         (dirvish-quit))
+        ((derived-mode-p 'org-agenda-mode) (org-agenda-quit))
+        ((region-active-p) (meow-cancel-selection))
+        (t (quit-window))))
+
+(keymap-set meow-insert-state-keymap "<escape>" #'my-escape-insert)
+(keymap-set meow-normal-state-keymap "<escape>" #'my-escape-normal)
+(keymap-set meow-motion-state-keymap "<escape>" #'my-escape-motion)
+
+(define-key function-key-map [escape] nil)
+(keymap-global-set "<escape>" #'keyboard-quit)
+(dolist (map (list minibuffer-local-map read-expression-map))
+  (keymap-set map "<escape>" #'abort-minibuffers))
+(keymap-set isearch-mode-map "<escape>" #'isearch-cancel)
+
+(with-eval-after-load 'embark
+  (keymap-set embark-general-map "<escape>" #'abort-recursive-edit))
+
+(with-eval-after-load 'transient
+  (keymap-set transient-map "<escape>" #'transient-quit-one))

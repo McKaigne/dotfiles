@@ -5,7 +5,7 @@
 {
   flake.modules.homeManager.development = {pkgs, ...}: {
     home.packages = with pkgs; [
-      # Math: Python (with the usual numeric stack), Julia.
+      # Python, with the usual numeric stack.
       (python3.withPackages (ps:
         with ps; [
           numpy
@@ -17,13 +17,6 @@
         ]))
       basedpyright
       ruff
-      # Its language server is a Julia package, installed once per machine:
-      #   julia -e 'using Pkg; Pkg.add(["LanguageServer", "SymbolServer"])'
-      julia-bin
-      # Writing math up: Typst (LaTeX-like output, instant preview).
-      typst
-      tinymist
-      typstyle
 
       # Systems: Rust (C/C++ toolchain is in cpp.nix), debugging, CMake.
       cargo
@@ -31,30 +24,19 @@
       clippy
       rustfmt
       rust-analyzer
-      llvmPackages_23.lldb # lldb-dap: Emacs debugging
+      llvmPackages_23.lldb
       neocmakelsp
 
-      # Web: Go + htmx (templ templates), HTML/CSS/JSON, TypeScript, SQL.
+      # Web: Go + htmx (templ templates).
       go
       gopls
       gofumpt
       golangci-lint
       templ
       htmx-lsp
-      superhtml
-      vscode-langservers-extracted
-      vtsls
       prettier
-      sqls
-      sqlfluff
 
-      # Kotlin and Flutter (Dart ships with Flutter); no Android SDK.
-      kotlin
-      kotlin-language-server
-      ktfmt
-      flutter
-
-      # Config, shell and containers.
+      # Config and shell.
       nixd
       nixfmt
       bash-language-server
@@ -63,10 +45,6 @@
       yaml-language-server
       taplo
       marksman
-      just-lsp
-      dockerfile-language-server
-      docker-compose-language-service
-      glsl_analyzer
     ];
   };
 }

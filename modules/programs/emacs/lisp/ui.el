@@ -1,39 +1,82 @@
 ;;; ui.el -*- lexical-binding: t -*-
 
-(add-to-list 'custom-theme-load-path
-             (expand-file-name "themes" my-config-directory))
-(load-theme 'noctalia t)
-;; Mode line: doom-modeline set up as in Centaur Emacs (icons, the minor
-;; modes collapsed into one menu, a scroll HUD in the bar; none in terminals,
-;; a short one on the dashboard), taller, with the bar in the theme's accent. Its own
-;; segments pad themselves, so they are listed without extra spacers; only
-;; the right edge gets a margin.
+(require 'color)
+
+(add-to-list 'custom-theme-load-path (expand-file-name "themes" my-config-directory))
+(add-to-list 'default-frame-alist `(alpha-background . ,my-glass))
+(set-fringe-mode '(6 . 0))
+
+(use-package nerd-icons
+  :demand t)
+
+(use-package solaire-mode
+  :demand t
+  :custom
+  (solaire-mode-supported-themes '(noctalia))
+  :config
+  (solaire-global-mode 1))
+
+(defun my-darken-hex (hex points)
+  "Return HEX, a #rrggbb color, with its lightness lowered by POINTS percent."
+  (pcase-let* ((rgb (mapcar (lambda (start)
+                              (/ (string-to-number (substring hex start (+ start 2)) 16) 255.0))
+                            '(1 3 5)))
+               (`(,h ,s ,l) (apply #'color-rgb-to-hsl rgb)))
+    (apply #'color-rgb-to-hex
+           (append (color-hsl-to-rgb h s (color-clamp (- l (/ points 100.0)))) '(2)))))
+
+(defun my-solaire-faces (&rest _)
+  "Derive the solaire faces from the enabled theme and apply them everywhere."
+  (when-let* ((background (face-background 'default nil t))
+              ((string-match-p "\\`#[[:xdigit:]]\\{6\\}\\'" background))
+              (alternate (my-darken-hex background 4)))
+    (set-face-attribute 'solaire-default-face nil :background alternate)
+    (set-face-attribute 'solaire-fringe-face nil :background alternate)
+    (set-face-attribute 'solaire-line-number-face nil :background alternate)
+    (solaire-global-mode 1)
+    (solaire-mode-reset)))
+
+(defun my-style-panes (&rest _)
+  "Color the mode line's accents from the enabled theme."
+  (let ((foreground (face-foreground 'mode-line nil t))
+        (accent (face-foreground 'font-lock-keyword-face nil t))
+        (inactive (face-background 'mode-line-inactive nil t)))
+    (set-face-attribute 'mode-line-buffer-id nil
+                        :foreground (or foreground 'unspecified) :weight 'bold)
+    (when (and (facep 'doom-modeline-bar) accent inactive)
+      (set-face-attribute 'doom-modeline-bar nil :background accent)
+      (set-face-attribute 'doom-modeline-bar-inactive nil :background inactive)
+      (doom-modeline-refresh-bars))))
+
+(add-hook 'enable-theme-functions #'my-solaire-faces 80)
+(add-hook 'enable-theme-functions #'my-style-panes 85)
+
+(use-package spacious-padding
+  :demand t
+  :custom
+  (spacious-padding-widths '(:internal-border-width 12 :header-line-width 4
+                             :mode-line-width 4 :tab-width 4
+                             :right-divider-width 12 :scroll-bar-width 0
+                             :fringe-width 6))
+  :config
+  (spacious-padding-mode 1))
+
 (use-package doom-modeline
   :demand t
   :custom
-  (doom-modeline-height 32)
-  (doom-modeline-bar-width 5)
-  (doom-modeline-icon t)
-  (doom-modeline-major-mode-color-icon t)
-  (doom-modeline-minor-modes t)
-  (doom-modeline-hud t)
-  (doom-modeline-project-name nil)
-  (doom-modeline-buffer-encoding nil)
+  (doom-modeline-height 28)
+  (doom-modeline-bar-width 4)
+  (doom-modeline-buffer-file-name-style 'relative-from-project)
+  (doom-modeline-minor-modes nil)
+  (doom-modeline-modal-icon t)
   :config
-  (doom-modeline-def-segment my-edge
-    "Room between the last segment and the window's edge."
-    (doom-modeline-wspc))
-  ;; A wider gap between an icon and its text: doom-modeline's is half a
-  ;; character, and Nerd Font icons spill past their cell, which jammed the
-  ;; folder icon against the path. These are its buffer and directory
-  ;; segments with only that gap changed.
   (defun my-modeline-icon (icon)
-    "ICON and a gap after it, or nothing if ICON is empty."
+    "Return ICON followed by a gap, or nothing when ICON is empty."
     (when (and icon (not (string-empty-p icon)))
       (concat icon (propertize " " 'face (doom-modeline-spc-face)
                                'display '(space :width 1.5)))))
   (doom-modeline-def-segment buffer-info
-    "The buffer's icon, state (modified, read-only...) and name."
+    "The buffer's icon, state and name."
     (concat
      (doom-modeline-spc)
      (when (and doom-modeline-icon doom-modeline-major-mode-icon)
@@ -49,8 +92,7 @@
         (doom-modeline-display-icon doom-modeline--buffer-file-state-icon)))
      (doom-modeline--buffer-name)))
   (defun my-modeline-directory (face &optional state)
-    "The folder icon and `default-directory', in FACE.
-With STATE, the buffer-state icon too."
+    "Return the folder icon and `default-directory' in FACE, with STATE icon."
     (concat
      (doom-modeline-spc)
      (and doom-modeline-major-mode-icon
@@ -63,216 +105,98 @@ With STATE, the buffer-state icon too."
            (doom-modeline-display-icon doom-modeline--buffer-file-state-icon)))
      (propertize (abbreviate-file-name default-directory) 'face face)))
   (doom-modeline-def-segment buffer-default-directory
-    "The folder icon and `default-directory' (dired, scratch...)."
+    "The folder icon and `default-directory'."
     (my-modeline-directory
      (doom-modeline-face (if (and buffer-file-name (buffer-modified-p))
                              'doom-modeline-buffer-modified
                            'doom-modeline-buffer-path))
      t))
   (doom-modeline-def-segment buffer-default-directory-simple
-    "The folder icon and `default-directory' (the dashboard)."
+    "The folder icon and `default-directory', without state."
     (my-modeline-directory (doom-modeline-face 'doom-modeline-buffer-path)))
-  ;; doom-modeline's own layouts, minus what the file icon or the rest of
-  ;; the frame already says: major-mode name, indentation, word count,
-  ;; clock. These replace its 'main, 'special (help, magit, ...) and
-  ;; 'project (dired) layouts, so every buffer gets them.
-  (doom-modeline-def-modeline 'main
-    '(bar window-state modals matches follow buffer-info remote-host buffer-position selection-info)
-    '(compilation misc-info repl lsp minor-modes input-method process vcs check my-edge))
-  (doom-modeline-def-modeline 'special
-    '(bar window-state modals matches buffer-info remote-host buffer-position selection-info)
-    '(compilation misc-info minor-modes input-method process my-edge))
-  (doom-modeline-def-modeline 'project
-    '(bar window-state modals buffer-default-directory remote-host buffer-position)
-    '(compilation misc-info minor-modes input-method process vcs my-edge))
   (doom-modeline-mode 1))
-;; Minor modes collapse into one menu, except Markdown's table and code
-;; block modes, which say where you are.
-(setq mode-line-collapse-minor-modes '(not markdown-ts-code-block-in-context-mode
-                                           markdown-ts-in-table-mode))
-;; No mode line where it adds nothing (Centaur's list, plus the file tree).
-;; The dashboard keeps doom-modeline's own short one, as in Centaur.
-(dolist (hook '(eshell-mode-hook ghostel-mode-hook shell-mode-hook term-mode-hook
-                embark-collect-mode-hook pdf-annot-list-mode-hook
-                treemacs-mode-hook))
-  (add-hook hook #'mode-line-invisible-mode))
 
-;; Centaur's frame and redisplay settings.
-(setq-default cursor-in-non-selected-windows nil)
-(setq highlight-nonselected-windows nil
-      fast-but-imprecise-scrolling t
-      redisplay-skip-fontification-on-input t)
-(setq-default bidi-display-reordering 'left-to-right
-              bidi-paragraph-direction 'left-to-right)
-(setq bidi-inhibit-bpa t)
-(setq frame-resize-pixelwise t
-      frame-title-format '("Emacs - %b")
-      icon-title-format frame-title-format)
-(setq use-file-dialog nil
-      use-dialog-box nil
-      inhibit-startup-screen t
-      inhibit-default-init t
-      initial-scratch-message nil)
-(unless (daemonp)
-  (advice-add #'display-startup-echo-area-message :override #'ignore))
-
-;; The bell flashes the mode line (doom-themes' visual bell, without its
-;; themes).
-(use-package doom-themes-ext-visual-bell
-  :ensure nil
-  :demand t
-  :config (doom-themes-visual-bell-config))
-
-(use-package time
-  :init (setq display-time-default-load-average nil
-              display-time-format "%H:%M"))
-
-(require 'disp-table)
-(unless standard-display-table
-  (setq standard-display-table (make-display-table)))
-(set-display-table-slot standard-display-table 'vertical-border
-                        (make-glyph-code ?│ 'vertical-border))
-
-(defun my-style-panes (&rest _)
-  "Keep pane boundaries visible using colors from the active theme."
-  (let ((border (face-foreground 'shadow nil t))
-        (active-background (face-background 'mode-line nil t))
-        (active-foreground (face-foreground 'mode-line nil t))
-        (inactive-background (face-background 'corfu-default nil t)))
-    (set-face-attribute 'vertical-border nil
-                        :foreground border
-                        :background (face-background 'default nil t))
-    (set-face-attribute 'mode-line-active nil
-                        :background active-background
-                        :foreground active-foreground :box nil)
-    (set-face-attribute 'mode-line-inactive nil
-                        :background inactive-background :box nil)
-    (dolist (face '(window-divider window-divider-first-pixel window-divider-last-pixel))
-      (set-face-attribute face nil :foreground border))
-    ;; The mode line's bar (and its scroll HUD) in the theme's accent.
-    (when (facep 'doom-modeline-bar)
-      (set-face-attribute 'doom-modeline-bar nil
-                          :background (face-foreground 'font-lock-keyword-face nil t))
-      (set-face-attribute 'doom-modeline-bar-inactive nil
-                          :background (face-background 'mode-line-inactive nil t))
-      ;; Its bar and scroll images are cached; draw them again in the new colour.
-      (doom-modeline-refresh-bars)
-      (doom-modeline-invalidate-huds))
-    (set-face-attribute 'mode-line-buffer-id nil
-                        :foreground active-foreground :weight 'bold)))
-
-(add-hook 'enable-theme-functions #'my-style-panes)
-(my-style-panes)
-
-;; Glass: translucent background, solid text, blurred by the compositor
-;; (pgtk). In a terminal frame the terminal's own translucency shows through
-;; instead (the emacs/emacsclient wrappers in default.nix never make one).
-(add-to-list 'default-frame-alist `(alpha-background . ,my-glass))
+(load-theme 'noctalia t)
 
 (defun my-transparent-background (&rest _)
-  "Let the terminal's translucent background show through in tty frames."
+  "Let a terminal's own translucency show through in text frames."
   (dolist (frame (frame-list))
     (unless (display-graphic-p frame)
       (set-face-background 'default "unspecified-bg" frame))))
 
-;; Run after the theme and pane styling have set their colors, and for each
-;; new frame.
 (add-hook 'enable-theme-functions #'my-transparent-background 90)
 (add-hook 'after-make-frame-functions #'my-transparent-background 90)
 
-;; Magit's menus and the minibuffer pickers (completion.el) sit in a floating
-;; box near the middle of the frame, as in Centaur.
-(use-package transient-posframe
-  :commands transient-posframe-mode
+(with-eval-after-load 'posframe
+  (define-advice posframe--create-posframe (:after (&rest _) solid)
+    (set-frame-parameter posframe--frame 'alpha-background 100)))
+
+(defun my-delete-focused-child-frame (hide &optional frame &rest args)
+  "Call HIDE on FRAME with ARGS, or delete FRAME when it is a focused child."
+  (let ((frame (or frame (selected-frame))))
+    (if-let* (((frame-live-p frame))
+              (parent (frame-parent frame))
+              ((or (eq frame (selected-frame))
+                   (eq (frame-focus-state frame) t))))
+        (let ((selected (eq frame (selected-frame)))
+              (global-hooks (default-value 'delete-frame-functions)))
+          (save-current-buffer
+            (unwind-protect
+                (progn
+                  (set-default 'delete-frame-functions nil)
+                  (delete-frame frame))
+              (set-default 'delete-frame-functions global-hooks))
+            (when (and selected (frame-live-p parent))
+              (select-frame parent))))
+      (apply hide frame args))))
+(advice-add 'make-frame-invisible :around #'my-delete-focused-child-frame)
+
+(use-package hl-todo
+  :demand t
+  :config
+  (global-hl-todo-mode 1))
+
+(use-package rainbow-delimiters
+  :hook (prog-mode . rainbow-delimiters-mode))
+
+(use-package indent-bars
+  :hook (prog-mode . indent-bars-mode)
   :custom
-  (transient-mode-line-format nil)
-  (transient-posframe-border-width posframe-border-width)
-  (transient-posframe-parameters '((left-fringe . 8)
-                                   (right-fringe . 8)))
-  (transient-posframe-poshandler #'posframe-poshandler-frame-center)
-  :custom-face
-  (transient-posframe-border ((t (:inherit posframe-border :background unspecified))))
-  :hook ((after-init server-after-make-frame)
-         .
-         (lambda ()
-           "Display transient in the child frame if applicable."
-           (if (childframe-completion-workable-p)
-               (transient-posframe-mode 1)
-             (transient-posframe-mode -1)))))
+  (indent-bars-treesit-support t)
+  (indent-bars-no-descend-string t)
+  (indent-bars-width-frac 0.15)
+  (indent-bars-color '(highlight :face-bg t :blend 0.3))
+  (indent-bars-highlight-current-depth '(:blend 0.6)))
 
-(defun my-split-window (side &optional blank)
-  "Focus a new pane on SIDE, optionally starting with a BLANK buffer."
-  (select-window (split-window nil nil side))
-  (when blank (my-new-buffer)))
+(use-package breadcrumb
+  :hook (prog-mode . breadcrumb-local-mode))
 
-(defun my-terminal ()
-  "Open a project shell in the lower panel with the current environment."
-  (interactive)
-  (require 'eshell)
-  (let* ((root (or (when-let* ((project (project-current))) (project-root project))
-                   default-directory))
-         (default-directory root)
-         (eshell-buffer-name (format "*eshell:%s*" (abbreviate-file-name root)))
-         (buffer (save-window-excursion (eshell))))
-    (select-window (display-buffer buffer))))
+(use-package pulsar
+  :demand t
+  :custom
+  (pulsar-pulse t)
+  (pulsar-delay 0.04)
+  (pulsar-iterations 8)
+  (pulsar-face 'pulsar-magenta)
+  :config
+  (dolist (command '(ace-window avy-goto-char-timer avy-goto-line
+                     windmove-left windmove-right windmove-up windmove-down
+                     xref-find-definitions xref-go-back consult-line
+                     consult-imenu consult-ripgrep))
+    (add-to-list 'pulsar-pulse-functions command))
+  (pulsar-global-mode 1))
 
 (use-package ligature
   :demand t
   :config
-  (ligature-set-ligatures 'prog-mode
-    '("-->" "//" "/*" "*/" "<!--" "-->" "==" "===" "!=" "!==" "||" "&&"
-      ">=" "<=" "=>" "->" "<-" "<<" ">>" "::" "++" "--" "..." ".."
-      "/*" "*/" "/**" "**" "***" ";;" "!!" "??"))
-  (global-ligature-mode t))
-
-;; Flat one-pixel dividers between windows (right and bottom), a slim left
-;; fringe for the git bars.
-(setq window-divider-default-places t
-      window-divider-default-bottom-width 1
-      window-divider-default-right-width 1)
-(add-hook 'window-setup-hook #'window-divider-mode)
-(window-divider-mode 1)
-(set-fringe-mode '(6 . 0))
-
-;; Line numbers in code and config files, sized to the whole file.
-(use-package display-line-numbers
-  :ensure nil
-  :hook ((prog-mode
-          conf-mode toml-ts-mode
-          yaml-mode yaml-ts-mode)
-         . display-line-numbers-mode)
-  :init (setq display-line-numbers-width-start t))
-
-;; Mouse & Smooth Scroll
-(setq hscroll-step 1
-      hscroll-margin 2
-      scroll-step 1
-      scroll-margin 0
-      scroll-conservatively 100000
-      scroll-preserve-screen-position t
-      auto-window-vscroll nil
-      mouse-wheel-scroll-amount-horizontal 1
-      mouse-wheel-progressive-speed nil)
-(use-package ultra-scroll
-  :custom
-  (scroll-conservatively 3)
-  (scroll-margin 0)
-  :hook (window-setup . ultra-scroll-mode))
-
-;; Font size for every buffer at once: s-= / s-- / s-0.
-(use-package default-text-scale
-  :hook (after-init . default-text-scale-mode)
-  :bind (:map default-text-scale-mode-map
-         ("s-="   . default-text-scale-increase)
-         ("s--"   . default-text-scale-decrease)
-         ("s-0"   . default-text-scale-reset)
-         ("C-s-=" . default-text-scale-increase)
-         ("C-s--" . default-text-scale-decrease)
-         ("C-s-0" . default-text-scale-reset)))
-
-;; Proportional fonts for prose where wanted (centaur-read-mode uses it).
-(use-package mixed-pitch :commands mixed-pitch-mode)
-
-;; Repeatable window/buffer commands, a match counter.
-(repeat-mode 1)
-(setq isearch-lazy-count t)
+  (ligature-set-ligatures
+   'prog-mode
+   '("<--" "<---" "<<-" "<-" "->" "-->" "--->" "->>" "-<" ">-" "-<<" ">>-"
+     "<==" "<===" "<<=" "<=" "=>" "==>" "===>" "=>>" "=<" ">=" "=<<" ">>="
+     "<=>" "<==>" "<->" "<-->" "==" "===" "!=" "!==" "=/=" "=!=" "::" ":::"
+     ":=" "=:" ":>" "<:" "..." ".." "..<" ".=" "&&" "||" "|>" "<|" "<|>"
+     "||>" "<||" "//" "///" "/*" "*/" "/**" "++" "+++" "--" "---" "<>" "</"
+     "/>" "</>" "<<" ">>" "<<<" ">>>" "##" "###" "####" "#{" "#[" "#(" "#?"
+     "#!" "#:" "#=" "#_" "#_(" "{{" "}}" "[|" "|]" ";;" "~~" "~>" "<~" "~-"
+     "-~" "??" "?." "?:" "!!" "%%" "__" "_|_" "|-" "-|" "\\\\" "0x"))
+  (global-ligature-mode 1))

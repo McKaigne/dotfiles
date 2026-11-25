@@ -10,7 +10,7 @@
       lazyssh
       usbtree
       linecast
-      # AI coding agents (Emacs's adapters for them are in its own tools)
+      # AI coding agents
       claude-code
       codex
       whois

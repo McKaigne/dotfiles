@@ -1,9 +1,3 @@
-# Ly-sec's Emacs (meow, vertico/corfu, eglot, magit, org-roam) as a GUI:
-# pgtk for a real translucent background (Umbriel blurs behind it), themed
-# live by Noctalia's emacs template (themes/ is where it writes and the
-# fallback seed). The daemon is Home Manager's services.emacs, started with
-# the graphical session (and by its socket if it was stopped); `emacs`,
-# `emacsclient` and Super+D all open a GUI frame on it.
 {
   flake.modules.homeManager.emacs = {
     config,
@@ -14,13 +8,12 @@
     emacs = config.programs.emacs.finalPackage;
     emacsDir = "${config.xdg.configHome}/emacs";
     style = import ../../appearance/_style.nix;
-    # In Areas so Syncthing carries it to the other machine.
     orgDir = "${config.home.homeDirectory}/Areas/Org";
+    ghostelDir = "${config.xdg.dataHome}/emacs/ghostel";
+    ghostelModule = (pkgs.emacsPackagesFor pkgs.emacs-pgtk).ghostel.module;
     tools = pkgs.buildEnv {
       name = "emacs-tools";
       pathsToLink = ["/bin"];
-      # Language servers and formatters are on PATH (development/languages.nix);
-      # these are what this config itself calls.
       paths = with pkgs; [
         git
         fd
@@ -29,16 +22,9 @@
         cmark-gfm
         wl-clipboard
         emacs-lsp-booster
-        # Centaur's spell checking, GitHub preview and fish language server.
-        (aspellWithDicts (d: [d.en]))
-        python3Packages.grip
         fish-lsp
-        # agent-shell drives Claude Code and Codex through these.
-        claude-agent-acp
-        codex-acp
       ];
     };
-    # The text types Emacs opens by default (the names shared-mime-info reports).
     textTypes = [
       "text/plain"
       "text/markdown"
@@ -60,12 +46,6 @@
       "application/toml"
       "application/yaml"
     ];
-    # Every way in opens a GUI frame on the daemon; the terminal versions are
-    # not used. Batch/daemon/info flags reach real Emacs; `emacsclient -e`
-    # (Noctalia's theme reload) passes through without opening a frame.
-    # A program Emacs itself started without a terminal (M-! git commit) is
-    # refused: Emacs is waiting on it, so it would wait on Emacs forever.
-    # Terminals inside Emacs (ghostel, shell, eshell) set INSIDE_EMACS.
     guard = ''
       if [ -n "''${EMACS_DAEMON_CHILD-}" ] && [ -z "''${INSIDE_EMACS-}" ]; then
         echo "''${0##*/}: run from inside Emacs without a terminal, so it would wait on itself; use M-& or a terminal" >&2
@@ -104,237 +84,88 @@
     programs.emacs = {
       enable = true;
       package = pkgs.emacs-pgtk;
-      extraPackages = epkgs:
+      extraPackages = epkgs: let
+        eglot-booster = epkgs.melpaBuild {
+          pname = "eglot-booster";
+          version = "0-unstable-2025-07-16";
+          src = pkgs.fetchFromGitHub {
+            owner = "jdtsmith";
+            repo = "eglot-booster";
+            rev = "510f579409627c333ef0e9157db713b1004da842";
+            hash = "sha256-HhWR40j/WFcorp8QttXtOz5yxL1B4JUXL+9IuNpoND0=";
+          };
+        };
+      in
         with epkgs; [
           meow
-          undo-fu-session
-          meow-tree-sitter
-          # The look: mode line, dashboard, icons, floating menus.
-          doom-modeline
-          doom-themes # only its visual bell (ui.el); the theme is Noctalia's
-          dashboard
-          page-break-lines
+          vertico
+          orderless
+          consult
+          corfu
+          cape
+          marginalia
+          embark
+          embark-consult
           nerd-icons
           nerd-icons-completion
           nerd-icons-corfu
-          nerd-icons-ibuffer
-          posframe
-          vertico-posframe
-          transient-posframe
-          ultra-scroll
-          default-text-scale
-          mixed-pitch
-          ligature
-          transwin
-          gcmh
-          helpful
-          # Completion (completion.el)
-          vertico
-          orderless
-          marginalia
-          consult
-          consult-dir
-          consult-flyspell
-          consult-yasnippet
-          embark
-          embark-consult
-          corfu
-          cape
           yasnippet
-          yasnippet-snippets
-          yasnippet-capf
-          # Editing (editing.el)
           avy
-          link-hint
-          anzu
-          beginend
-          drag-stuff
-          ialign
-          iedit
-          hungry-delete
-          mwim
-          vundo
-          goto-chg
-          kirigami
-          sudo-edit
-          easy-kill
-          browse-kill-ring
-          wgrep
-          # Highlighting (highlight.el)
-          symbol-overlay
-          region-occurrences-highlighter
-          indent-bars
-          colorful-mode
-          rainbow-delimiters
-          hl-todo
-          consult-todo
-          diff-hl
-          pulsar
-          goggles
-          # Windows (window.el)
           ace-window
-          popper
-          # Files, buffers, projects (files.el)
-          dirvish
-          dired-quick-sort
-          dired-gitignore
-          dired-rsync
-          diredfl
-          ibuffer-vc
-          treemacs
-          treemacs-nerd-icons
-          treemacs-magit
-          treemacs-tab-bar
-          project-x
-          # Git (vc.el)
-          magit
-          magit-todos
-          git-timemachine
-          git-messenger
-          browse-at-remote
-          git-modes
-          blamer
-          # Shells (shell.el)
-          eshell-prompt-extras
-          xterm-color
-          ghostel
-          popterm
-          # Development (development.el, langs.el)
-          envrc
+          vundo
+          helpful
+          gcmh
+          jinx
           apheleia
+          eldoc-box
           eglot-booster
-          consult-eglot
-          flyover
-          dape
-          eldoc-mouse
-          quickrun
-          highlight-defined
-          macrostep
-          nix-mode
-          julia-ts-mode
-          kotlin-ts-mode
-          dart-mode
-          typst-ts-mode
-          go-gen-test
-          go-fill-struct
-          gotest
-          rust-mode
-          ron-mode
-          flymake-ruff
-          inf-ruby
-          yard-mode
-          ruby-refactor
-          yari
-          rspec-mode
-          alchemist
-          elixir-ts-mode
-          scss-mode
-          coffee-mode
-          web-mode
-          add-node-modules-path
-          haml-mode
-          php-mode
-          restclient
-          cask-mode
-          cmake-mode
-          csv-mode
-          cue-sheet-mode
-          lua-mode
-          v-mode
-          vimrc-mode
-          powershell
-          mermaid-ts-mode
-          scala-ts-mode
-          swift-ts-mode
-          protobuf-mode
-          fish-mode
-          # Notes (notes.el)
+          treesit-fold
+          envrc
+          magit
+          diff-hl
+          ghostel
+          dirvish
+          dashboard
+          doom-modeline
+          hl-todo
+          rainbow-delimiters
+          pulsar
+          indent-bars
+          solaire-mode
+          spacious-padding
+          breadcrumb
+          ligature
+          olivetti
+          org
           org-modern
           org-appear
           org-roam
-          org-roam-ui
-          org-rich-yank
-          toc-org
-          org-preview-html
-          dslide
-          ox-gfm
-          ob-go
-          ob-powershell
-          ob-rust
-          ob-mermaid
+          consult-org-roam
+          org-super-agenda
+          nix-ts-mode
           markdown-mode
-          markdown-mermaid
-          markdown-toc
-          grip-mode
-          # Tools (tools.el)
-          pdf-tools
-          saveplace-pdf-view
-          # MELPA's nov is fetched from a host whose certificate has expired.
-          nongnuPackages.nov
-          elfeed
-          fanyi
-          gt
-          docker
-          persistent-scratch
-          rg
-          pomidor
-          olivetti
-          atomic-chrome
-          ztree
-          file-info
-          reveal-in-folder
-          gptel
-          gptel-magit
-          agent-shell
-          # Tree-sitter grammars for the languages in use (see
-          # development/languages.nix); Emacs has modes for each of these.
+          fish-mode
+          templ-ts-mode
           (treesit-grammars.with-grammars (g:
             with g; [
               tree-sitter-c
               tree-sitter-cpp
               tree-sitter-rust
               tree-sitter-python
-              tree-sitter-julia
-              tree-sitter-html
-              tree-sitter-css
-              tree-sitter-json
-              tree-sitter-javascript
-              tree-sitter-typescript
-              tree-sitter-tsx
               tree-sitter-go
               tree-sitter-gomod
               tree-sitter-templ
-              tree-sitter-kotlin
-              tree-sitter-dart
+              tree-sitter-html
+              tree-sitter-nix
               tree-sitter-bash
               tree-sitter-yaml
               tree-sitter-toml
+              tree-sitter-json
               tree-sitter-cmake
-              tree-sitter-dockerfile
-              tree-sitter-typst
-              # For Centaur's modes (markdown-ts-mode, langs.el).
-              tree-sitter-markdown
-              tree-sitter-markdown-inline
-              tree-sitter-ruby
-              tree-sitter-elixir
-              tree-sitter-heex
-              tree-sitter-lua
-              tree-sitter-scala
-              tree-sitter-swift
-              tree-sitter-php
-              tree-sitter-java
-              tree-sitter-proto
-              tree-sitter-mermaid
-              tree-sitter-scss
-              tree-sitter-fish
             ]))
         ];
     };
 
-    # The daemon as a systemd user service, the way Home Manager documents
-    # it: it starts once the graphical session is up (so it has the Wayland
-    # display), and its socket starts it again on demand after a stop. A
-    # switch doesn't restart it; `systemctl --user restart emacs` does.
     services.emacs = {
       enable = true;
       package = emacs;
@@ -343,15 +174,12 @@
     };
 
     home.packages = [
-      # ghostel's TERM is xterm-ghostty; programs in it need its terminfo.
       pkgs.ghostty.terminfo
       (lib.hiPrio launcher)
       (lib.hiPrio client)
       tools
     ];
 
-    # One launcher entry, through the same client; the package's own entries
-    # (standalone Emacs, and a client with X11-only flags) are hidden.
     xdg.desktopEntries = {
       emacs = {
         name = "Emacs";
@@ -379,7 +207,13 @@
     };
     xdg.mimeApps.defaultApplications = lib.genAttrs textTypes (_: "emacs.desktop");
 
+    xdg.dataFile = {
+      "emacs/ghostel/ghostel-module.so".source = "${ghostelModule}/ghostel-module.so";
+      "emacs/ghostel/ghostel-module.version".source = "${ghostelModule}/ghostel-module.version";
+    };
+
     xdg.configFile = {
+      "enchant/hunspell".source = "${pkgs.hunspellDicts.en_US}/share/hunspell";
       "emacs/init.el" = {
         source = ./init.el;
         force = true;
@@ -393,14 +227,15 @@
         recursive = true;
         force = true;
       };
-      # The start page's art (lisp/dashboard.el).
       "emacs/splash.png".source = ./splash.png;
       "emacs/paths.el".text = ''
         ;;; paths.el -*- lexical-binding: t -*-
         (defvar my-tools-directory "${tools}/bin")
+        (defvar my-config-source "/etc/nixos/modules/programs/emacs/")
         (defvar my-keybindings-file "/etc/nixos/modules/programs/emacs/org/keybindings.org")
         (defvar my-org-directory "${orgDir}/")
-        ;; Background opacity (appearance/_style.nix); text stays solid.
+        (defvar my-ghostel-module-directory "${ghostelDir}/")
+        (defvar my-font "${style.font}")
         (defvar my-glass ${toString (builtins.floor (style.opacity * 100))})
       '';
     };
@@ -421,10 +256,8 @@
     home.activation.seedEmacsOrg = lib.hm.dag.entryAfter ["writeBoundary"] ''
       orgDir=${lib.escapeShellArg orgDir}
       if [ -z "''${DRY_RUN_CMD:-}" ]; then
-        mkdir -p "$orgDir/notes" "$orgDir/journal"
-        for f in inbox tasks; do
-          [ -f "$orgDir/$f.org" ] || install -m 0644 ${./org}/$f.org "$orgDir/$f.org"
-        done
+        mkdir -p "$orgDir/roam" "$orgDir/journal"
+        [ -f "$orgDir/tasks.org" ] || install -m 0644 ${./org/tasks.org} "$orgDir/tasks.org"
       fi
     '';
   };

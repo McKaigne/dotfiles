@@ -1,617 +1,638 @@
 ;;; keys.el -*- lexical-binding: t -*-
 
-;; The Space menu, on Doom Emacs's SPC layout (without Evil; Meow still edits):
-;;   SPC SPC  find in project   SPC .  find file     SPC ,  switch buffer
-;;   SPC :    command           SPC ;  eval          SPC /  search project
-;;   SPC x    scratch           SPC X  capture       SPC u  universal argument
-;;   SPC TAB  workspaces        SPC RET bookmarks    SPC `  last buffer
-;; with Doom's groups: b buffer, c code, f file, g git, h help, i insert,
-;; n notes, o open, p project, q quit, s search, t toggle, w window.
-;; Only Doom's own duplicate keys are kept (b d = b k, s s = s b, ...).
-;; Doom leaves these letters free, so they carry the rest:
-;;   SPC e  editing Meow has no answer for: rectangle, iedit, align, links
-;;   SPC z  folds (kirigami, C-~)       SPC d  debugger (dape, M-F5)
-;;   SPC l  LLM agents (C-c a)          SPC j / J  jump to char / line
-;; Centaur's other menus sit in Doom's groups: words on SPC s w (C-c d; SPC s t
-;; is Doom's look-up), TODOs on SPC s x (C-c t), URLs on SPC o u (C-c C-z), the
-;; mode line on SPC t M (C-F6). Menus that stayed open as hydras stay open too
-;; (funcs.el). Centaur's own global keys (C-c ..., M-..., F-keys) work as
-;; well, in every Meow state. SPC m is the major mode's C-c keys (SPC m c =
-;; C-c C-c), SPC \ is Meta (SPC \ x = M-x) and SPC 0-9 a numeric prefix;
-;; meow's editing keys are unchanged.
+(defun my-define-keys (map &rest bindings)
+  "Bind BINDINGS in MAP; each is (KEY LABEL DEFINITION)."
+  (dolist (binding bindings map)
+    (pcase-let ((`(,key ,label ,definition) binding))
+      (when (and (symbolp definition) (not (fboundp definition))
+                 (boundp definition) (keymapp (symbol-value definition)))
+        (setq definition (symbol-value definition)))
+      (define-key map (kbd key) (cons label definition)))))
 
-(require 'windmove)
-(defvar my-leader-map (make-sparse-keymap "Commands"))
-
-;; Labels are written as shown: `capitalize' would turn LLM into Llm.
-(dolist (group '(("TAB" . "Workspaces")
-                 ("b" . "Buffer")
-                 ("c" . "Code")
-                 ("f" . "File")
-                 ("g" . "Git")
-                 ("g c" . "Create")
-                 ("g o" . "Open on remote")
-                 ("h" . "Help")
-                 ("h b" . "Bindings")
-                 ("h r" . "Reload")
-                 ("i" . "Insert")
-                 ("l" . "LLM")
-                 ("n" . "Notes")
-                 ("n r" . "Roam")
-                 ("o" . "Open")
-                 ("o a" . "Agenda")
-                 ("o u" . "URL")
-                 ("p" . "Project")
-                 ("q" . "Quit")
-                 ("s" . "Search")
-                 ("s w" . "Words")
-                 ("s x" . "TODOs")
-                 ("e" . "Edit")))
-  (define-key my-leader-map (kbd (car group))
-              (cons (cdr group) (make-sparse-keymap (cdr group)))))
-
-;; Doom's SPC commands that Emacs has no single command for.
-(defun my-project-find-file-dwim ()
-  "Find a file in this project, or anywhere when outside one."
-  (interactive)
-  (call-interactively (if (project-current) #'project-find-file #'find-file)))
-
-(defun my-project-buffer-dwim ()
-  "Switch among this project's buffers, or all of them when outside one."
-  (interactive)
-  (call-interactively
-   (if (project-current) #'consult-project-buffer #'consult-buffer)))
-
-(defun my-symbol-at-point-regexp ()
-  "The symbol at point as a literal search pattern, or nil."
-  (when-let* ((symbol (thing-at-point 'symbol t)))
-    (regexp-quote symbol)))
+(defmacro my-define-menu (name &rest bindings)
+  "Define NAME as a keymap holding BINDINGS, each (KEY LABEL DEFINITION)."
+  `(progn
+     (defvar ,name (make-sparse-keymap))
+     (my-define-keys ,name ,@(mapcar (lambda (b) `'(,@b)) bindings))))
 
 (defun my-search-project-symbol ()
   "Search the project for the symbol at point."
   (interactive)
-  (consult-ripgrep nil (my-symbol-at-point-regexp)))
-
-(defun my-search-buffer-symbol ()
-  "Search this buffer for the symbol at point."
-  (interactive)
-  (consult-line (my-symbol-at-point-regexp)))
+  (consult-ripgrep nil (thing-at-point 'symbol t)))
 
 (defun my-search-directory ()
   "Search the current directory."
   (interactive)
   (consult-ripgrep default-directory))
 
-(defun my-search-notes ()
-  "Search the text of the notes."
+(defun my-search-other-directory ()
+  "Search a directory chosen from a prompt."
   (interactive)
-  (consult-ripgrep my-org-directory))
+  (consult-ripgrep (read-directory-name "Search directory: ")))
 
-(defun my-find-in-notes ()
-  "Find a file by name in the notes."
+(defun my-search-config ()
+  "Search this Emacs config's source."
   (interactive)
-  (consult-fd my-org-directory))
+  (consult-ripgrep my-config-source))
 
-(defun my-capture-goto-target ()
-  "Pick a capture template and visit where it files entries."
+(defun my-search-other-project ()
+  "Search a project chosen from a prompt."
   (interactive)
-  (org-capture '(4)))
+  (consult-ripgrep (project-prompt-project-dir)))
 
-(defun my-find-in-config ()
-  "Find a file in this Emacs configuration."
+(defun my-search-buffer-symbol ()
+  "Search this buffer for the symbol at point."
   (interactive)
-  (let ((default-directory "/etc/nixos/modules/programs/emacs/"))
-    (call-interactively #'find-file)))
+  (consult-line (thing-at-point 'symbol t)))
 
-(defun my-save-project-buffers ()
-  "Save the changed buffers under the current project or directory."
+(defun my-toggle-narrow ()
+  "Widen a narrowed buffer, or narrow to the region or the defun."
   (interactive)
-  (save-some-buffers nil #'save-some-buffers-root))
-
-;; Doom closes a workspace's buffers; workspaces here are project tabs.
-;; Only file and directory buffers count, so terminals, agent sessions and
-;; Emacs's own buffers survive, as do other projects' files. Outside a
-;; project there is no workspace, so nothing is closed.
-(defun my-kill-project-buffers (&optional keep-current)
-  "Close this project's file and directory buffers, asking first.
-With KEEP-CURRENT, leave this buffer open."
-  (unless (project-current)
-    (user-error "Not in a project (SPC b k closes this buffer)"))
-  (let* ((current (current-buffer))
-         (files '(or buffer-file-name (derived-mode . dired-mode)))
-         (project-kill-buffer-conditions
-          (list (if keep-current
-                    `(and (not ,(lambda (buffer) (eq buffer current))) ,files)
-                  files))))
-    (call-interactively #'project-kill-buffers)))
-
-(defun my-kill-other-buffers ()
-  "Close the other file buffers in this project, asking first."
-  (interactive)
-  (my-kill-project-buffers t))
+  (cond ((buffer-narrowed-p) (widen))
+        ((region-active-p) (narrow-to-region (region-beginning) (region-end)))
+        (t (narrow-to-defun))))
 
 (defun my-kill-all-buffers ()
-  "Close this project's file buffers, asking first."
+  "Kill every buffer and show the dashboard."
   (interactive)
-  (my-kill-project-buffers))
-
-(defun my-quit-without-saving ()
-  "Stop Emacs, and every client, without saving. Asks first."
-  (interactive)
-  (when (yes-or-no-p "Stop Emacs now and lose unsaved changes? ")
-    (kill-emacs)))
-
-;; The daemon is a socket-activated systemd service (default.nix), and
-;; `restart-emacs' would re-exec without systemd's socket, so systemd
-;; restarts it instead.
-(defun my-restart-emacs ()
-  "Save, then restart the Emacs daemon (or this Emacs, outside one)."
-  (interactive)
-  (if (not (daemonp))
-      (restart-emacs)
+  (when (yes-or-no-p "Kill all buffers? ")
     (save-some-buffers)
-    (when (yes-or-no-p "Restart the Emacs daemon? Every frame closes. ")
-      (call-process "systemctl" nil 0 nil "--user" "restart" "emacs.service"))))
+    (dolist (buffer (buffer-list))
+      (unless (string-prefix-p " " (buffer-name buffer))
+        (kill-buffer buffer)))
+    (my-open-dashboard)))
 
-(defun my-yank-buffer ()
+(defun my-kill-other-buffers ()
+  "Kill every buffer except this one."
+  (interactive)
+  (when (yes-or-no-p "Kill all other buffers? ")
+    (dolist (buffer (buffer-list))
+      (unless (or (eq buffer (current-buffer))
+                  (string-prefix-p " " (buffer-name buffer)))
+        (kill-buffer buffer)))))
+
+(defun my-new-buffer ()
+  "Open a new empty buffer."
+  (interactive)
+  (switch-to-buffer (generate-new-buffer "untitled")))
+
+(defun my-save-all-buffers ()
+  "Save every modified file buffer."
+  (interactive)
+  (save-some-buffers t))
+
+(defun my-copy-buffer ()
   "Copy the whole buffer."
   (interactive)
   (kill-new (buffer-substring-no-properties (point-min) (point-max)))
-  (message "Copied buffer"))
+  (message "Copied the buffer"))
 
-(defun my-buffer-path (&optional relative)
-  "This buffer's file or directory, RELATIVE to the project when non-nil."
-  (let ((path (or buffer-file-name default-directory))
-        (project (and relative (project-current))))
-    (if project (file-relative-name path (project-root project)) path)))
+(defun my-sudo-file-name (file)
+  "Return FILE opened through sudo."
+  (concat "/sudo::" (expand-file-name file)))
 
-(defun my-yank-file-path ()
-  "Copy this file's path."
+(defun my-sudo-save-buffer ()
+  "Save this buffer's text to its file as root."
   (interactive)
-  (let ((path (my-buffer-path)))
-    (kill-new path)
-    (message "Copied %s" path)))
+  (unless buffer-file-name (user-error "This buffer isn't visiting a file"))
+  (write-region nil nil (my-sudo-file-name buffer-file-name))
+  (set-buffer-modified-p nil))
 
-(defun my-yank-relative-path ()
-  "Copy this file's path relative to the project."
+(defun my-sudo-find-file (file)
+  "Open FILE as root."
+  (interactive "FSudo find file: ")
+  (find-file (my-sudo-file-name file)))
+
+(defun my-sudo-this-file ()
+  "Open this buffer's file again as root."
   (interactive)
-  (let ((path (my-buffer-path t)))
-    (kill-new path)
-    (message "Copied %s" path)))
+  (unless buffer-file-name (user-error "This buffer isn't visiting a file"))
+  (find-alternate-file (my-sudo-file-name buffer-file-name)))
+
+(defun my-copy-this-file (new)
+  "Copy this buffer's file to NEW and open the copy."
+  (interactive (list (read-file-name "Copy to: ")))
+  (unless buffer-file-name (user-error "This buffer isn't visiting a file"))
+  (copy-file buffer-file-name new 1)
+  (find-file new))
+
+(defun my-delete-this-file ()
+  "Delete this buffer's file and kill the buffer."
+  (interactive)
+  (let ((file (or buffer-file-name (user-error "This buffer isn't visiting a file"))))
+    (when (yes-or-no-p (format "Delete %s? " (abbreviate-file-name file)))
+      (delete-file file t)
+      (kill-buffer))))
+
+(defun my-find-in-emacs-directory ()
+  "Find a file in the deployed Emacs directory."
+  (interactive)
+  (consult-fd user-emacs-directory))
+
+(defun my-browse-emacs-directory ()
+  "Browse the deployed Emacs directory."
+  (interactive)
+  (dired user-emacs-directory))
+
+(defun my-find-in-config ()
+  "Find a file in this Emacs config's source."
+  (interactive)
+  (consult-fd my-config-source))
+
+(defun my-browse-config ()
+  "Browse this Emacs config's source."
+  (interactive)
+  (dired my-config-source))
+
+(defun my-find-file-here ()
+  "Find a file under the current directory."
+  (interactive)
+  (consult-fd default-directory))
+
+(defun my-copy-file-path ()
+  "Copy this buffer's file path."
+  (interactive)
+  (let ((path (or buffer-file-name default-directory)))
+    (kill-new (abbreviate-file-name path))
+    (message "Copied %s" (abbreviate-file-name path))))
+
+(defun my-copy-project-file-path ()
+  "Copy this buffer's file path relative to the project."
+  (interactive)
+  (let* ((path (or buffer-file-name default-directory))
+         (project (project-current))
+         (relative (if project (file-relative-name path (project-root project)) path)))
+    (kill-new relative)
+    (message "Copied %s" relative)))
 
 (defun my-insert-file-name ()
   "Insert this buffer's file name."
   (interactive)
-  (unless buffer-file-name
-    (user-error "This buffer isn't visiting a file"))
-  (insert (file-name-nondirectory buffer-file-name)))
+  (insert (file-name-nondirectory (or buffer-file-name (buffer-name)))))
 
-;; SPC ' resumes the last search.
-(add-hook 'minibuffer-setup-hook #'vertico-repeat-save)
+(defun my-insert-file-path ()
+  "Insert this buffer's full file path."
+  (interactive)
+  (insert (abbreviate-file-name (or buffer-file-name default-directory))))
 
-;; Magit doesn't autoload these two.
-(autoload 'magit-file-stage "magit-files" nil t)
-(autoload 'magit-file-unstage "magit-files" nil t)
+(defun my-insert-shell-output (command)
+  "Insert the output of the shell COMMAND."
+  (interactive (list (read-shell-command "Insert output of: ")))
+  (insert (string-trim-right (shell-command-to-string command))))
 
-;; Centaur's toggles hydra (F6) on Doom's SPC t letters, minus its theme and
-;; package-archive columns (Noctalia sets the theme, Nix the packages), plus
-;; this config's own toggles on the letters it leaves free.
-(my-define-menu my-toggles-menu "Toggles"
-  ("l" #'display-line-numbers-mode "line numbers")
-  ("s" #'flyspell-mode "spell check")
-  ("f" #'flymake-mode "flymake")
-  ("F" #'toggle-frame-fullscreen "fullscreen")
-  ("w" #'visual-line-mode "soft wrap")
-  ("z" #'olivetti-mode "zen (centered)")
-  ("r" #'read-only-mode "read-only")
-  ("R" #'centaur-read-mode "reading mode")
-  ("i" #'indent-bars-mode "indent guides")
-  ("I" (lambda () (interactive)
-         (setq indent-tabs-mode (not indent-tabs-mode))
-         (message "Indent with %s" (if indent-tabs-mode "tabs" "spaces")))
-   "indent style")
-  ("c" #'display-fill-column-indicator-mode "fill column")
-  ("v" #'visible-mode "visible mode")
-  ("d" #'global-hungry-delete-mode "hungry delete *")
-  ("e" #'electric-pair-mode "electric pair *")
-  ("p" #'prettify-symbols-mode "pretty symbol")
-  ("P" #'global-page-break-lines-mode "page break lines *")
-  ("b" #'display-battery-mode "battery *")
-  ("t" #'display-time-mode "time *")
-  ("m" #'doom-modeline-mode "modern mode-line *")
-  ("M" #'my-mode-line-menu "mode line…" :exit t)
-  ("h l" #'global-hl-line-mode "highlight line *")
-  ("h p" #'show-paren-mode "highlight parenthesis *")
-  ("h s" #'symbol-overlay-mode "highlight symbol")
-  ("h r" #'global-colorful-mode "highlight color *")
-  ("h w" (lambda () (interactive)
-           (setq-default show-trailing-whitespace (not show-trailing-whitespace)))
-   "highlight whitespace")
-  ("h d" #'rainbow-delimiters-mode "highlight delimiter")
-  ("h t" #'global-hl-todo-mode "highlight todo *")
-  ("O" #'hs-minor-mode "hideshow")
-  ("u" #'subword-mode "subword")
-  ("W" #'which-function-mode "current function *")
-  ("E" #'toggle-debug-on-error "debug on error")
-  ("Q" #'toggle-debug-on-quit "debug on quit")
-  ("g g" #'global-diff-hl-mode "gutter *")
-  ("g l" #'diff-hl-flydiff-mode "live gutter *")
-  ("g m" #'diff-hl-margin-mode "margin gutter *")
-  ("g d" #'diff-hl-dired-mode "dired gutter")
-  ("B" #'blamer-mode "line blame")
-  ("A" #'apheleia-mode "format on save"))
+(defun my-eval-buffer-or-region ()
+  "Evaluate the region, or the whole buffer, as Emacs Lisp."
+  (interactive)
+  (if (region-active-p)
+      (eval-region (region-beginning) (region-end))
+    (eval-buffer))
+  (message "Evaluated"))
 
-;; Centaur's mode-line hydra (C-F6).
-(defmacro my-mode-line-toggle (variable)
-  "A command that flips VARIABLE and redraws the mode line."
-  `(lambda () (interactive)
-     (setq ,variable (not ,variable))
-     (force-mode-line-update t)
-     (message "%s: %s" ',variable (if ,variable "on" "off"))))
-(my-define-menu my-mode-line-menu "Mode Line"
-  ("i e" (my-mode-line-toggle doom-modeline-icon) "enable icons")
-  ("i u" (my-mode-line-toggle doom-modeline-unicode-fallback) "unicode fallback")
-  ("i m" (my-mode-line-toggle doom-modeline-major-mode-icon) "major mode icon")
-  ("i c" (my-mode-line-toggle doom-modeline-major-mode-color-icon) "colorful major mode")
-  ("i o" (my-mode-line-toggle doom-modeline-buffer-modification-icon) "modification icon")
-  ("i s" (my-mode-line-toggle doom-modeline-buffer-state-icon) "buffer state icon")
-  ("i t" (my-mode-line-toggle doom-modeline-time-icon) "time icon")
-  ("i v" (my-mode-line-toggle doom-modeline-modal-icon) "modal icon")
-  ("g h" (my-mode-line-toggle doom-modeline-hud) "hud")
-  ("g m" (my-mode-line-toggle doom-modeline-minor-modes) "minor modes")
-  ("g c" (my-mode-line-toggle doom-modeline-enable-word-count) "word count")
-  ("g e" (my-mode-line-toggle doom-modeline-buffer-encoding) "encoding")
-  ("g i" (my-mode-line-toggle doom-modeline-indent-info) "indent")
-  ("g x" (my-mode-line-toggle doom-modeline-display-misc-in-all-mode-lines) "misc info")
-  ("g l" (my-mode-line-toggle doom-modeline-lsp) "lsp")
-  ("g p" (my-mode-line-toggle doom-modeline-project-name) "project")
-  ("g w" (my-mode-line-toggle doom-modeline-workspace-name) "workspace")
-  ("g s" (my-mode-line-toggle doom-modeline-spell) "spell")
-  ("g b" (my-mode-line-toggle doom-modeline-battery) "battery")
-  ("g g" (my-mode-line-toggle doom-modeline-github) "github")
-  ("g t" (my-mode-line-toggle doom-modeline-time) "time")
-  ("g v" (my-mode-line-toggle doom-modeline-env-version) "version"))
+(defun my-project-edit-dir-locals ()
+  "Open the project's .dir-locals.el."
+  (interactive)
+  (find-file (expand-file-name ".dir-locals.el" (project-root (project-current t)))))
 
-(dolist (binding
-         `(("SPC" my-project-find-file-dwim "find in project")
-           ("." find-file "find file")
-           ("," my-project-buffer-dwim "switch buffer")
-           ("<" consult-buffer "switch buffer (all)")
-           ("`" mode-line-other-buffer "last buffer")
-           ("'" vertico-repeat "resume last search")
-           (":" execute-extended-command "command")
-           (";" pp-eval-expression "eval expression")
-           ("/" consult-ripgrep "search project")
-           ("*" my-search-project-symbol "search symbol in project")
-           ("x" create-scratch-buffer "scratch")
-           ("X" org-capture "capture")
-           ("u" meow-universal-argument "universal argument")
-           ("RET" bookmark-jump "jump to bookmark")
-           ("~" popper-toggle "toggle popup")
-           ("j" avy-goto-char-timer "jump")
-           ("J" avy-goto-line "jump to line")
-           ("a" embark-act "act on this")
-           ;; Centaur's hydras
-           ("t" my-toggles-menu "toggles…")
-           ("w" my-window-menu "windows…")
-           ("z" my-kirigami-menu "folds…")
-           ("d" my-dape-menu "debugger…")
-           ;; Workspaces (project-x's tabs)
-           ("TAB TAB" tab-switch "switch")
-           ("TAB n" tab-new "new")
-           ("TAB d" tab-close "close")
-           ("TAB r" tab-rename "rename")
-           ("TAB ]" tab-next "next")
-           ("TAB [" tab-previous "previous")
-           ("TAB s" project-x-window-state-save "save session")
-           ("TAB R" project-x-restore-last-project "restore last session")
-           ;; Buffer
-           ("b b" my-project-buffer-dwim "switch")
-           ("b B" consult-buffer "switch (all)")
-           ("b c" clone-indirect-buffer "clone")
-           ("b d" kill-current-buffer "close")
-           ("b k" kill-current-buffer "close")
-           ("b i" ibuffer "buffer list")
-           ("b K" my-kill-all-buffers "close all")
-           ("b l" mode-line-other-buffer "last buffer")
-           ("b m" bookmark-set "set bookmark")
-           ("b M" bookmark-delete "delete bookmark")
-           ("b n" next-buffer "next")
-           ("b ]" next-buffer "next")
-           ("b p" previous-buffer "previous")
-           ("b [" previous-buffer "previous")
-           ("b N" my-new-buffer "blank buffer")
-           ("b O" my-kill-other-buffers "close others")
-           ("b r" revert-buffer-quick "revert")
-           ("b R" rename-buffer "rename")
-           ("b s" save-buffer "save")
-           ("b S" save-some-buffers "save all")
-           ("b x" create-scratch-buffer "scratch")
-           ("b y" my-yank-buffer "copy buffer")
-           ("b z" bury-buffer "bury")
-           ;; Code
-           ("c a" eglot-code-actions "actions")
-           ("c b" xref-go-back "back")
-           ("c d" xref-find-definitions "definition")
-           ("c D" xref-find-references "references")
-           ("c e" quickrun "run this file")
-           ("c f" apheleia-format-buffer "format")
-           ("c i" eglot-find-implementation "implementation")
-           ("c j" consult-eglot-symbols "workspace symbols")
-           ("c k" eldoc-mouse-pop-doc-at-cursor "documentation")
-           ("c l" eglot "connect LSP")
-           ("c n" flymake-goto-next-error "next issue")
-           ("c o" eglot-code-action-organize-imports "organize imports")
-           ("c p" flymake-goto-prev-error "previous issue")
-           ("c r" eglot-rename "rename")
-           ("c t" eglot-find-typeDefinition "type definition")
-           ("c w" delete-trailing-whitespace "delete trailing spaces")
-           ("c x" flymake-show-buffer-diagnostics "list errors")
-           ("c X" consult-flymake "search errors")
-           ;; File
-           ("f d" consult-dir "directory")
-           ("f D" delete-this-file "delete this file")
-           ("f f" find-file "find file")
-           ("f i" file-info-show "file info")
-           ("f n" my-new-file "new file")
-           ("f p" my-find-in-config "find in config")
-           ("f r" consult-recent-file "recent files")
-           ("f R" rename-this-file "rename this file")
-           ("f s" save-buffer "save")
-           ("f S" write-file "save as")
-           ("f u" sudo-edit-find-file "find as root")
-           ("f U" sudo-edit "edit this as root")
-           ("f y" my-yank-file-path "copy path")
-           ("f Y" my-yank-relative-path "copy project path")
-           ("f 8" save-buffer-as-utf8 "save as UTF-8")
-           ;; Git
-           ("g g" magit-status "status")
-           ("g G" magit-status-here "status here")
-           ("g /" magit-dispatch "actions")
-           ("g ." magit-file-dispatch "file actions")
-           ("g b" magit-branch-checkout "switch branch")
-           ("g B" magit-blame-addition "blame")
-           ("g C" magit-clone "clone")
-           ("g c c" magit-commit-create "commit")
-           ("g c f" magit-commit-instant-fixup "fixup")
-           ("g c b" magit-branch-and-checkout "branch")
-           ("g h" diff-hl-show-hunk "show change")
-           ("g i" blamer-show-commit-info "line commit info")
-           ("g L" magit-log-buffer-file "file log")
-           ("g m" my-smerge-menu "merge conflicts…")
-           ("g o o" browse-at-remote "this file")
-           ("g p" git-messenger:popup-message "line commit message")
-           ("g P" my-magit-repository "pick repository")
-           ("g r" diff-hl-revert-hunk "revert change")
-           ("g s" diff-hl-stage-current-hunk "stage change")
-           ("g S" magit-file-stage "stage file")
-           ("g t" git-timemachine "file history")
-           ("g U" magit-file-unstage "unstage file")
-           ("g y" browse-at-remote-kill "copy remote URL")
-           ("g ]" diff-hl-next-hunk "next change")
-           ("g [" diff-hl-previous-hunk "previous change")
-           ;; Help
-           ("h a" apropos "apropos")
-           ("h b b" embark-bindings "all keys (search)")
-           ("h b g" my-open-keybindings "key guide")
-           ("h e" view-echo-area-messages "messages")
-           ("h f" describe-function "function")
-           ("h F" describe-face "face")
-           ("h i" info "manuals")
-           ("h I" consult-info "search manuals")
-           ("h k" describe-key "key")
-           ("h l" view-lossage "recent keys")
-           ("h L" find-library "library")
-           ("h m" describe-mode "mode")
-           ("h o" helpful-at-point "thing at point")
-           ("h r r" reload-init-file "reload config")
-           ("h t" consult-theme "theme")
-           ("h T" meow-tutor "Meow tutorial")
-           ("h v" describe-variable "variable")
-           ("h w" where-is "where is command")
-           ("h x" consult-mode-command "mode commands")
-           ("h ?" meow-cheatsheet "Meow cheatsheet")
-           ;; Insert
-           ("i c" consult-colors-emacs "color name")
-           ("i C" consult-colors-web "web color")
-           ("i e" emoji-search "emoji")
-           ("i f" my-insert-file-name "file name")
-           ("i s" yas-insert-snippet "snippet")
-           ("i S" consult-yasnippet "snippet (search)")
-           ("i t" hl-todo-insert "TODO")
-           ("i u" insert-char "unicode")
-           ("i y" consult-yank-pop "from kill ring")
-           ;; LLM (C-c a)
-           ("l c" agent-shell-anthropic-start-claude-code "Claude Code")
-           ("l x" agent-shell-openai-start-codex "Codex")
-           ("l a" agent-shell "agent shell")
-           ("l A" agent-shell-new-shell "new agent shell")
-           ("l g" gptel "chat (gptel)")
-           ("l G" gptel-menu "gptel menu")
-           ("l l" my-chatgpt-login "ChatGPT login")
-           ;; Notes
-           ("n a" org-agenda "agenda")
-           ("n B" org-switchb "org buffers")
-           ("n e" org-export-dispatch "export")
-           ("n f" my-find-in-notes "find note file")
-           ("n F" my-org-open "browse notes")
-           ("n j" my-org-journal "journal")
-           ("n l" org-store-link "store link")
-           ("n m" org-tags-view "tags")
-           ("n n" org-capture "capture")
-           ("n N" my-capture-goto-target "go to capture target")
-           ("n s" my-search-notes "search notes")
-           ("n S" consult-org-agenda "search headlines")
-           ("n t" org-todo-list "todo list")
-           ("n r c" org-roam-capture "capture note")
-           ("n r f" org-roam-node-find "find / create note")
-           ("n r g" org-roam-graph "graph")
-           ("n r i" org-roam-node-insert "insert link")
-           ("n r r" org-roam-buffer-toggle "backlinks")
-           ("n r u" org-roam-ui-mode "graph in browser")
-           ;; Open
-           ("o -" my-file-manager "file manager")
-           ("o a a" org-agenda "agenda")
-           ("o a m" org-tags-view "tags")
-           ("o a t" org-todo-list "todo list")
-           ("o b" browse-this-file "browser")
-           ("o B" bookmark-bmenu-list "bookmarks")
-           ("o c" pomidor "pomodoro")
-           ("o d" dape "debugger")
-           ("o D" docker "docker")
-           ("o e" my-terminal "eshell")
-           ("o f" make-frame "new frame")
-           ("o F" select-frame-by-name "select frame")
-           ("o h" open-dashboard "dashboard")
-           ("o i" erc "IRC")
-           ("o m" my-markdown-preview "Markdown preview")
-           ("o N" newsticker-show-news "news")
-           ("o o" reveal-in-folder "reveal in folder")
-           ("o p" treemacs "file tree")
-           ("o P" treemacs-find-file "find in file tree")
-           ("o t" popterm-toggle "terminal")
-           ("o T" ghostel "new terminal")
-           ("o u ." browse-url-at-point "URL at point")
-           ("o u u" browse-url "URL")
-           ("o u b" browse-url-of-buffer "this buffer")
-           ("o u r" browse-url-of-region "region")
-           ("o u e" browse-url-emacs "URL in Emacs")
-           ("o u f" browse-url-of-dired-file "file in dired")
-           ("o x" proced "processes")
-           ("o z" ztree-diff "compare directories")
-           ("o =" elfeed "feeds (elfeed)")
-           ;; Project
-           ("p p" my-project-open "open project")
-           ("p b" consult-project-buffer "project buffers")
-           ("p c" project-compile "compile")
-           ("p C" recompile "recompile")
-           ("p d" project-forget-project "forget project")
-           ("p e" my-project-environment-setup "set up Nix shell")
-           ("p E" envrc-reload "reload environment")
-           ("p f" project-find-file "find file")
-           ("p k" project-kill-buffers "close its buffers")
-           ("p o" ff-find-other-file "other file (header/source)")
-           ("p s" my-save-project-buffers "save its buffers")
-           ("p t" magit-todos-list "TODOs")
-           ("p T" ghostel-project "terminal")
-           ("p !" project-shell-command "run command")
-           ("p &" project-async-shell-command "run command (async)")
-           ;; Search
-           ("s b" consult-line "buffer text")
-           ("s B" consult-line-multi "all buffers' text")
-           ("s c" goto-last-change "last change")
-           ("s d" my-search-directory "this directory")
-           ("s f" consult-fd "file names")
-           ("s h" symbol-overlay-put "highlight symbol")
-           ("s H" symbol-overlay-remove-all "clear highlights")
-           ("s i" consult-imenu "symbols")
-           ("s I" consult-imenu-multi "symbols, all buffers")
-           ("s k" consult-keep-lines "keep lines")
-           ("s m" consult-bookmark "bookmarks")
-           ("s o" webjump "online")
-           ("s p" consult-ripgrep "project text")
-           ("s r" consult-mark "marks")
-           ("s R" rg "rg")
-           ("s s" consult-line "buffer text")
-           ("s S" my-search-buffer-symbol "symbol at point")
-           ("s u" vundo "undo history")
-           ("s U" consult-focus-lines "focus lines")
-           ;; Words: dictionary and translation (C-c d); s t is Doom's look-up
-           ("s t" fanyi-dwim "dictionary")
-           ("s w f" fanyi-dwim "look up")
-           ("s w d" fanyi-dwim2 "look up at point")
-           ("s w h" fanyi-from-history "history")
-           ("s w g" gt-translate "translate")
-           ("s w G" gt-translate-prompt "translate (prompt)")
-           ("s w p" gt-speak "speak")
-           ("s w s" gt-setup "set up translator")
-           ("s w u" gt-use-text-utility "text utility")
-           ;; TODOs (C-c t)
-           ("s x o" hl-todo-occur "list in buffer")
-           ("s x n" hl-todo-next "next")
-           ("s x p" hl-todo-previous "previous")
-           ("s x l" consult-todo "search buffer")
-           ("s x a" consult-todo-all "search all buffers")
-           ("s x r" hl-todo-rg-project "search project")
-           ("s x R" hl-todo-rg "search directory")
-           ;; Edit (Centaur's editing keys Meow has no answer for)
-           ("e r" my-rectangle-menu "rectangle…")
-           ("e i" iedit-mode "edit all occurrences")
-           ("e a" ialign "align")
-           ("e l" link-hint-open-link "open link")
-           ("e L" link-hint-copy-link "copy link")
-           ("e k" browse-kill-ring "kill ring")
-           ("e m" consult-kmacro "keyboard macros")
-           ("e s" consult-flyspell "spelling errors")
-           ("e w" ispell-word "check word")
-           ("e u" dos2unix "Unix line endings")
-           ("e U" unix2dos "DOS line endings")
-           ;; Quit
-           ("q q" save-buffers-kill-terminal "close client")
-           ("q f" delete-frame "close frame")
-           ("q l" project-x-restore-last-project "restore last session")
-           ("q r" my-restart-emacs "restart")
-           ("q K" save-buffers-kill-emacs "stop the daemon")
-           ("q Q" my-quit-without-saving "quit without saving")))
-  (define-key my-leader-map (kbd (car binding))
-              (cons (nth 2 binding) (nth 1 binding))))
-(dotimes (digit 10)
-  (define-key my-leader-map (number-to-string digit) #'meow-digit-argument))
-;; SPC TAB 1-9 go straight to a workspace.
-(dolist (tab (number-sequence 1 9))
-  (define-key my-leader-map (kbd (format "TAB %d" tab))
-              (cons (format "workspace %d" tab)
-                    (lambda () (interactive) (tab-bar-select-tab tab)))))
+(defun my-project-find-file-other ()
+  "Find a file in a project chosen from a prompt."
+  (interactive)
+  (let ((default-directory (project-prompt-project-dir)))
+    (call-interactively #'project-find-file)))
 
-;; Centaur's hydra keys outside the Space menu.
-(bind-keys ("<f6>"   . my-toggles-menu)
-           ("C-<f6>" . my-mode-line-menu))
+(defun my-project-save-buffers ()
+  "Save every modified buffer in the current project."
+  (interactive)
+  (let ((root (project-root (project-current t))))
+    (save-some-buffers t (lambda ()
+                           (and buffer-file-name
+                                (file-in-directory-p buffer-file-name root))))))
 
-;; Meow's Meta prefix is m by default, which would take SPC m from C-c.
-(setq meow-keypad-leader-dispatch my-leader-map
-      meow-keypad-start-keys '((?m . ?c))
-      meow-keypad-meta-prefix ?\\
-      meow-keypad-ctrl-meta-prefix ?G)
+(defun my-restart-daemon ()
+  "Save, then restart the Emacs daemon through systemd."
+  (interactive)
+  (save-some-buffers)
+  (when (yes-or-no-p "Restart the Emacs daemon? Every frame closes. ")
+    (call-process "systemctl" nil 0 nil "--user" "restart" "emacs.service")))
 
-;; Meow's own popup shows the keys. It would call every labelled entry
-;; "+prefix", so it gets the label, and it would list the <remap> row that
-;; its display keymap carries.
-(defun my-keypad-title (def)
-  "The name Meow's popup shows for DEF: its label, if it has one."
-  (pcase def
-    (`(,(and (pred stringp) label) . ,target)
-     (let ((title (make-symbol label)))
-       ;; Meow shows a command as its name and anything else as +name.
-       (unless (keymapp target) (fset title #'ignore))
-       title))
-    (_ (meow-keypad-get-title def))))
+(defun my-quit-without-saving ()
+  "Stop Emacs without saving, after asking."
+  (interactive)
+  (when (yes-or-no-p "Quit Emacs without saving? ")
+    (kill-emacs 1)))
 
-(defun my-keypad-popup (keymap)
-  "Show KEYMAP in Meow's popup, without its <remap> row.
-Meow leaves SPC, TAB, RET and m out of the top menu, so they go back in."
-  (when keymap
-    (setq keymap (assq-delete-all 'remap keymap))
-    (unless meow--keypad-keys
-      (dolist (key '(?\s ?\t ?\r))
-        (define-key keymap (vector key)
-                    (my-keypad-title (alist-get key my-leader-map))))
-      (define-key keymap "m" (my-keypad-title '("mode keys (C-c)" . ignore)))))
-  (meow-describe-keymap keymap))
+(defun my-window-previous ()
+  "Select the previous window."
+  (interactive)
+  (other-window -1))
 
-(setq meow-keypad-get-title-function #'my-keypad-title
-      meow-keypad-describe-keymap-function #'my-keypad-popup)
+(defun my-window-last-used ()
+  "Select the window used before this one."
+  (interactive)
+  (if-let* ((window (get-mru-window nil t t)))
+      (select-window window)
+    (user-error "No other window")))
 
-;; M-SPC opens the menu while typing, except in a completion popup, where it
-;; stays corfu's separator for multi-word filtering.
-(define-key meow-insert-state-keymap (kbd "M-SPC")
-            '(menu-item "" meow-keypad
-                        :filter (lambda (cmd) (unless completion-in-region-mode cmd))))
+(defun my-window-top-left ()
+  "Select the top-left window."
+  (interactive)
+  (select-window (frame-first-window)))
 
-;; In Emacs's own maps where one fits.
-(keymap-set project-prefix-map "C" #'recompile)
-(keymap-set project-prefix-map "E" #'my-project-environment-setup)
-(with-eval-after-load 'markdown-mode
-  (keymap-set markdown-mode-map "C-c C-c v" #'my-markdown-preview)
-  (keymap-set markdown-mode-map "C-c v" #'my-markdown-preview))
-(with-eval-after-load 'markdown-ts-mode
-  (keymap-set markdown-ts-mode-map "C-c v" #'my-markdown-preview))
+(defun my-window-bottom-right ()
+  "Select the bottom-right window."
+  (interactive)
+  (select-window (previous-window (frame-first-window) 'nomini)))
+
+(defun my-window-exchange ()
+  "Swap this window with the next one."
+  (interactive)
+  (window-swap-states nil (next-window nil 'nomini)))
+
+(defun my-window-split-below-follow ()
+  "Split below and select the new window."
+  (interactive)
+  (select-window (split-window-below)))
+
+(defun my-window-split-right-follow ()
+  "Split right and select the new window."
+  (interactive)
+  (select-window (split-window-right)))
+
+(defun my-window-new ()
+  "Split below and show a new empty buffer there."
+  (interactive)
+  (select-window (split-window-below))
+  (switch-to-buffer (generate-new-buffer "untitled")))
+
+(defun my-window-quit ()
+  "Close this window, or the frame when it is the last one."
+  (interactive)
+  (if (one-window-p) (delete-frame) (delete-window)))
+
+(defun my-window-full-height ()
+  "Make this window as tall as it can be."
+  (interactive)
+  (window-resize nil (window-max-delta nil nil) nil))
+
+(defun my-window-full-width ()
+  "Make this window as wide as it can be."
+  (interactive)
+  (window-resize nil (window-max-delta nil t) t))
+
+(defvar-keymap my-zoom-repeat-map
+  :repeat t
+  "+" #'text-scale-increase
+  "=" #'text-scale-increase
+  "-" #'text-scale-decrease)
+
+(my-define-menu my-buffer-map
+  ("-" "toggle narrowing" my-toggle-narrow)
+  ("[" "previous buffer" previous-buffer)
+  ("]" "next buffer" next-buffer)
+  ("b" "switch buffer" consult-buffer)
+  ("c" "clone buffer" clone-indirect-buffer)
+  ("C" "clone buffer other window" clone-indirect-buffer-other-window)
+  ("d" "kill buffer" kill-current-buffer)
+  ("i" "ibuffer" ibuffer)
+  ("k" "kill buffer" kill-current-buffer)
+  ("K" "kill all buffers" my-kill-all-buffers)
+  ("l" "last buffer" meow-last-buffer)
+  ("m" "set bookmark" bookmark-set)
+  ("M" "delete bookmark" bookmark-delete)
+  ("n" "next buffer" next-buffer)
+  ("N" "new empty buffer" my-new-buffer)
+  ("O" "kill other buffers" my-kill-other-buffers)
+  ("p" "previous buffer" previous-buffer)
+  ("r" "revert buffer" revert-buffer)
+  ("R" "rename buffer" rename-buffer)
+  ("s" "save buffer" basic-save-buffer)
+  ("S" "save all buffers" my-save-all-buffers)
+  ("u" "save buffer as root" my-sudo-save-buffer)
+  ("x" "scratch buffer" scratch-buffer)
+  ("X" "switch to scratch buffer" scratch-buffer)
+  ("y" "copy buffer" my-copy-buffer)
+  ("z" "bury buffer" bury-buffer)
+  ("Z" "kill old buffers" clean-buffer-list))
+
+(my-define-menu my-docs-map
+  ("d" "documentation at point" eldoc-box-help-at-point)
+  ("f" "describe function" helpful-callable)
+  ("v" "describe variable" helpful-variable)
+  ("k" "describe key" helpful-key))
+
+(my-define-menu my-errors-map
+  ("l" "buffer errors" flymake-show-buffer-diagnostics)
+  ("L" "project errors" flymake-show-project-diagnostics)
+  ("n" "next error" flymake-goto-next-error)
+  ("p" "previous error" flymake-goto-prev-error))
+
+(my-define-menu my-file-map
+  ("c" "open project editorconfig" editorconfig-find-current-editorconfig)
+  ("C" "copy this file" my-copy-this-file)
+  ("d" "find directory" dired)
+  ("D" "delete this file" my-delete-this-file)
+  ("e" "find file in emacs.d" my-find-in-emacs-directory)
+  ("E" "browse emacs.d" my-browse-emacs-directory)
+  ("f" "find file" find-file)
+  ("F" "find file from here" my-find-file-here)
+  ("l" "locate file" consult-locate)
+  ("p" "find file in config" my-find-in-config)
+  ("P" "browse config" my-browse-config)
+  ("r" "recent files" consult-recent-file)
+  ("R" "rename/move file" rename-visited-file)
+  ("s" "save file" save-buffer)
+  ("S" "save file as" write-file)
+  ("u" "sudo find file" my-sudo-find-file)
+  ("U" "sudo this file" my-sudo-this-file)
+  ("y" "copy file path" my-copy-file-path)
+  ("Y" "copy project file path" my-copy-project-file-path))
+
+(my-define-menu my-insert-map
+  ("e" "emoji" emoji-search)
+  ("f" "file name" my-insert-file-name)
+  ("F" "file path" my-insert-file-path)
+  ("p" "shell command output" my-insert-shell-output)
+  ("r" "from register" consult-register)
+  ("s" "snippet" yas-insert-snippet)
+  ("u" "unicode" insert-char)
+  ("y" "from kill ring" consult-yank-pop))
+
+(my-define-menu my-macro-map
+  ("s" "start macro" kmacro-start-macro)
+  ("e" "stop macro" meow-end-kmacro)
+  ("r" "run macro" kmacro-call-macro)
+  ("n" "name macro" kmacro-name-last-macro))
+
+(my-define-menu my-code-map
+  ("a" "code actions" eglot-code-actions)
+  ("b" "go back" xref-go-back)
+  ("c" "compile" compile)
+  ("C" "recompile" recompile)
+  ("d" "find definition" xref-find-definitions)
+  ("D" "find references" xref-find-references)
+  ("e" "evaluate buffer/region" my-eval-buffer-or-region)
+  ("f" "format buffer" apheleia-format-buffer)
+  ("i" "find implementations" eglot-find-implementation)
+  ("j" "find workspace symbol" xref-find-apropos)
+  ("k" "documentation at point" eldoc-box-help-at-point)
+  ("o" "organize imports" eglot-code-action-organize-imports)
+  ("r" "rename" eglot-rename)
+  ("t" "find type definition" eglot-find-typeDefinition)
+  ("w" "delete trailing whitespace" delete-trailing-whitespace)
+  ("x" "list errors" flymake-show-buffer-diagnostics))
+
+(my-define-menu my-roam-map
+  ("a" "random node" org-roam-node-random)
+  ("b" "backlinks" consult-org-roam-backlinks)
+  ("f" "find node" org-roam-node-find)
+  ("F" "find ref" org-roam-ref-find)
+  ("i" "insert node" org-roam-node-insert)
+  ("l" "forward links" consult-org-roam-forward-links)
+  ("n" "capture to node" org-roam-capture)
+  ("r" "toggle roam buffer" org-roam-buffer-toggle)
+  ("R" "launch roam buffer" org-roam-buffer-display-dedicated)
+  ("s" "sync database" org-roam-db-sync)
+  ("/" "search notes" consult-org-roam-search))
+
+(my-define-menu my-notes-map
+  ("*" "search notes for symbol" my-notes-search-symbol)
+  ("a" "org agenda" org-agenda)
+  ("c" "toggle last clock" my-org-toggle-last-clock)
+  ("C" "cancel clock" org-clock-cancel)
+  ("f" "find file in notes" my-notes-find-file)
+  ("F" "browse notes" my-notes-browse)
+  ("j" "journal entry" my-org-journal)
+  ("l" "store link" org-store-link)
+  ("m" "tags search" org-tags-view)
+  ("n" "org capture" org-capture)
+  ("N" "goto capture" org-capture-goto-target)
+  ("o" "active clock" org-clock-goto)
+  ("r" "roam" my-roam-map)
+  ("s" "search notes" my-notes-search)
+  ("S" "search agenda headlines" consult-org-agenda)
+  ("t" "todo list" org-todo-list)
+  ("v" "view search" org-search-view))
+
+(my-define-menu my-open-map
+  ("-" "dirvish" dirvish)
+  ("a" "org agenda" org-agenda)
+  ("b" "default browser" browse-url-of-file)
+  ("f" "new frame" make-frame)
+  ("F" "select frame" select-frame-by-name)
+  ("m" "markdown preview" my-markdown-preview)
+  ("p" "project sidebar" dirvish-side)
+  ("t" "terminal" ghostel)
+  ("T" "terminal in project" my-ghostel-project))
+
+(my-define-menu my-project-map
+  ("." "browse project" project-find-dir)
+  ("!" "run command in root" project-shell-command)
+  ("&" "async command in root" project-async-shell-command)
+  ("b" "switch project buffer" consult-project-buffer)
+  ("c" "compile project" project-compile)
+  ("C" "recompile project" project-recompile)
+  ("d" "forget project" project-forget-project)
+  ("D" "discover projects" project-remember-projects-under)
+  ("e" "edit .dir-locals" my-project-edit-dir-locals)
+  ("f" "find file in project" project-find-file)
+  ("F" "find file in other project" my-project-find-file-other)
+  ("k" "kill project buffers" project-kill-buffers)
+  ("n" "set up nix shell" my-project-environment-setup)
+  ("o" "find sibling file" find-sibling-file)
+  ("p" "switch project" project-switch-project)
+  ("s" "save project buffers" my-project-save-buffers))
+
+(my-define-menu my-quit-map
+  ("d" "restart daemon" my-restart-daemon)
+  ("f" "delete frame" delete-frame)
+  ("K" "kill emacs" save-buffers-kill-emacs)
+  ("l" "restore session" desktop-read)
+  ("L" "restore session from" desktop-change-dir)
+  ("q" "quit emacs" save-buffers-kill-terminal)
+  ("Q" "quit without saving" my-quit-without-saving)
+  ("r" "restart emacs" restart-emacs)
+  ("s" "save session" desktop-save-in-desktop-dir)
+  ("S" "save session to" desktop-save))
+
+(my-define-menu my-ring-map
+  ("y" "yank from kill ring" consult-yank-pop))
+
+(my-define-menu my-search-map
+  ("b" "search buffer" consult-line)
+  ("B" "search open buffers" consult-line-multi)
+  ("d" "search directory" my-search-directory)
+  ("D" "search other directory" my-search-other-directory)
+  ("e" "search config" my-search-config)
+  ("f" "locate file" consult-locate)
+  ("i" "jump to symbol" consult-imenu)
+  ("I" "jump to symbol in buffers" consult-imenu-multi)
+  ("j" "jump list" consult-global-mark)
+  ("L" "jump to link" ffap-menu)
+  ("m" "jump to bookmark" consult-bookmark)
+  ("o" "look up online" eww-search-words)
+  ("p" "search project" consult-ripgrep)
+  ("P" "search other project" my-search-other-project)
+  ("r" "jump to mark" consult-mark)
+  ("s" "search buffer" consult-line)
+  ("S" "search buffer for symbol" my-search-buffer-symbol)
+  ("t" "dictionary" dictionary-lookup-definition)
+  ("u" "undo history" vundo))
+
+(my-define-menu my-toggle-map
+  ("b" "big text" global-text-scale-adjust)
+  ("c" "fill column indicator" global-display-fill-column-indicator-mode)
+  ("d" "git gutter" diff-hl-mode)
+  ("f" "flymake" flymake-mode)
+  ("F" "fullscreen" toggle-frame-fullscreen)
+  ("g" "pulse on jumps" pulsar-global-mode)
+  ("i" "indent guides" indent-bars-mode)
+  ("I" "indent with tabs" indent-tabs-mode)
+  ("l" "line numbers" display-line-numbers-mode)
+  ("r" "read-only" read-only-mode)
+  ("s" "spell checker" jinx-mode)
+  ("v" "visible mode" visible-mode)
+  ("w" "soft line wrapping" visual-line-mode)
+  ("z" "zen mode" olivetti-mode))
+
+(my-define-menu my-git-find-map
+  ("c" "find commit" magit-show-commit)
+  ("f" "find file" magit-find-file)
+  ("g" "find gitconfig" magit-find-git-config-file))
+
+(my-define-menu my-git-list-map
+  ("r" "list repositories" magit-list-repositories)
+  ("s" "list submodules" magit-list-submodules))
+
+(my-define-menu my-git-create-map
+  ("b" "branch" magit-branch-and-checkout)
+  ("c" "commit" magit-commit-create)
+  ("f" "fixup" magit-commit-fixup)
+  ("r" "initialize repo" magit-init)
+  ("R" "clone repo" magit-clone))
+
+(my-define-menu my-git-map
+  ("." "magit file dispatch" magit-file-dispatch)
+  ("/" "magit dispatch" magit-dispatch)
+  ("[" "previous hunk" diff-hl-previous-hunk)
+  ("]" "next hunk" diff-hl-next-hunk)
+  ("b" "switch branch" magit-branch-checkout)
+  ("B" "blame" magit-blame-addition)
+  ("c" "create" my-git-create-map)
+  ("C" "clone" magit-clone)
+  ("D" "delete file" magit-file-delete)
+  ("f" "find" my-git-find-map)
+  ("F" "fetch" magit-fetch)
+  ("g" "status" magit-status)
+  ("G" "status here" magit-status-here)
+  ("l" "list" my-git-list-map)
+  ("L" "file log" magit-log-buffer-file)
+  ("r" "revert hunk" diff-hl-revert-hunk)
+  ("R" "revert file" vc-revert)
+  ("s" "stage hunk" diff-hl-stage-current-hunk)
+  ("S" "stage file" magit-file-stage)
+  ("U" "unstage file" magit-file-unstage))
+
+(my-define-menu my-window-map
+  ("+" "taller" enlarge-window)
+  ("-" "shorter" shrink-window)
+  ("<" "narrower" shrink-window-horizontally)
+  (">" "wider" enlarge-window-horizontally)
+  ("=" "balance" balance-windows)
+  ("_" "full height" my-window-full-height)
+  ("|" "full width" my-window-full-width)
+  ("<left>" "window left" windmove-left)
+  ("<down>" "window below" windmove-down)
+  ("<up>" "window above" windmove-up)
+  ("<right>" "window right" windmove-right)
+  ("b" "bottom-right window" my-window-bottom-right)
+  ("c" "close window" delete-window)
+  ("d" "close window" delete-window)
+  ("f" "file at point in window" ffap-other-window)
+  ("h" "window left" windmove-left)
+  ("j" "window below" windmove-down)
+  ("k" "window above" windmove-up)
+  ("l" "window right" windmove-right)
+  ("H" "move window left" windmove-swap-states-left)
+  ("J" "move window down" windmove-swap-states-down)
+  ("K" "move window up" windmove-swap-states-up)
+  ("L" "move window right" windmove-swap-states-right)
+  ("n" "new window" my-window-new)
+  ("o" "maximize" maximize-window)
+  ("p" "last window" my-window-last-used)
+  ("q" "quit window" my-window-quit)
+  ("r" "rotate" rotate-windows)
+  ("R" "rotate back" rotate-windows-back)
+  ("s" "split below" split-window-below)
+  ("S" "split below and follow" my-window-split-below-follow)
+  ("t" "top-left window" my-window-top-left)
+  ("T" "tear off window" tear-off-window)
+  ("u" "undo layout" winner-undo)
+  ("U" "redo layout" winner-redo)
+  ("v" "split right" split-window-right)
+  ("V" "split right and follow" my-window-split-right-follow)
+  ("w" "ace window" ace-window)
+  ("W" "previous window" my-window-previous)
+  ("x" "swap with next" my-window-exchange))
+
+(my-define-menu my-fold-map
+  ("z" "toggle fold" treesit-fold-toggle)
+  ("o" "open all folds" treesit-fold-open-all)
+  ("c" "close all folds" treesit-fold-close-all)
+  ("+" "zoom in" text-scale-increase)
+  ("-" "zoom out" text-scale-decrease))
+
+(my-define-keys
+ mode-specific-map
+ '("SPC" "find file in project" project-find-file)
+ '("/" "search project" consult-ripgrep)
+ '("," "switch buffer" consult-buffer)
+ '("." "find file" find-file)
+ '("*" "search project for symbol" my-search-project-symbol)
+ '("`" "last buffer" meow-last-buffer)
+ '("'" "resume last search" vertico-repeat)
+ '("RET" "jump to bookmark" consult-bookmark)
+ '(";" "eval expression" pp-eval-expression)
+ '(":" "M-x" execute-extended-command)
+ '("~" "toggle side windows" window-toggle-side-windows)
+ '("?" "meow cheatsheet" meow-cheatsheet)
+ '("a" "code actions" eglot-code-actions)
+ '("j" "jump to characters" avy-goto-char-timer)
+ '("J" "jump to line" avy-goto-line)
+ '("S" "correct spelling" jinx-correct)
+ '("u" "undo tree" vundo)
+ '("X" "org capture" org-capture)
+ '("y" "copy to clipboard" clipboard-kill-ring-save)
+ '("Y" "paste from clipboard" clipboard-yank))
+
+(my-define-keys
+ mode-specific-map
+ '("b" "buffer" my-buffer-map)
+ '("d" "docs" my-docs-map)
+ '("e" "errors" my-errors-map)
+ '("f" "file" my-file-map)
+ '("i" "insert" my-insert-map)
+ '("k" "macros" my-macro-map)
+ '("l" "code" my-code-map)
+ '("n" "notes" my-notes-map)
+ '("o" "open" my-open-map)
+ '("p" "project" my-project-map)
+ '("q" "quit" my-quit-map)
+ '("r" "rings" my-ring-map)
+ '("s" "search" my-search-map)
+ '("t" "toggle" my-toggle-map)
+ '("v" "git" my-git-map)
+ '("w" "window" my-window-map)
+ '("z" "folds and zoom" my-fold-map))
+
+(keymap-global-set "C-." #'embark-act)
+(keymap-global-set "<remap> <describe-function>" #'helpful-callable)
+(keymap-global-set "<remap> <describe-variable>" #'helpful-variable)
+(keymap-global-set "<remap> <describe-key>" #'helpful-key)
+(keymap-global-set "<remap> <describe-command>" #'helpful-command)
+(keymap-set meow-keymap "<remap> <describe-key>" #'helpful-key)
+
+(dolist (map (list global-map meow-normal-state-keymap meow-insert-state-keymap
+                   meow-motion-state-keymap))
+  (keymap-set map "M-h" #'windmove-left)
+  (keymap-set map "M-j" #'windmove-down)
+  (keymap-set map "M-k" #'windmove-up)
+  (keymap-set map "M-l" #'windmove-right))
