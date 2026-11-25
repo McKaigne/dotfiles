@@ -39,8 +39,14 @@ letter to force it plain: ~SPC h SPC f~ is ~C-h f~ (plain ~SPC h f~ is
 
 * Terminal (ghostel)
 
+~SPC o t~ toggles a terminal popup at the bottom, one per project, opened in
+the project root; it keeps running while hidden, and closing it returns to
+the window you came from. ~C-u SPC o t~ starts it fresh. ~SPC o T~ opens a
+terminal in the current window (with ~C-u~, in the current directory).
+
 Opens in insert state; keys go to the program. ~Esc~ leaves insert state
-(then ~i~ to type again). ~M-SPC~ opens the leader. ~C-q Esc~ sends a real
+(then ~i~ to type again). ~M-SPC~ opens the leader, so ~M-SPC o t~ hides the
+popup from inside it. ~C-q Esc~ sends a real
 Escape to the program. ~C-.~, ~M-h~ ~M-j~ ~M-k~ ~M-l~ stay with Emacs.
 
 * Leader (SPC)
@@ -251,8 +257,8 @@ Escape to the program. ~C-.~, ~M-h~ ~M-j~ ~M-k~ ~M-l~ stay with Emacs.
 | ~SPC o F~ | select frame | ~select-frame-by-name~ |
 | ~SPC o m~ | markdown preview | ~my-markdown-preview~ |
 | ~SPC o p~ | project sidebar | ~dirvish-side~ |
-| ~SPC o t~ | terminal | ~ghostel~ |
-| ~SPC o T~ | terminal in project | ~my-ghostel-project~ |
+| ~SPC o t~ | toggle terminal popup | ~my-terminal-toggle~ |
+| ~SPC o T~ | terminal here | ~my-terminal-here~ |
 
 ** ~SPC p~ project
 

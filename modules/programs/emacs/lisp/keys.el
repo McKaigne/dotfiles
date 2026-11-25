@@ -420,8 +420,8 @@
   ("F" "select frame" select-frame-by-name)
   ("m" "markdown preview" my-markdown-preview)
   ("p" "project sidebar" dirvish-side)
-  ("t" "terminal" ghostel)
-  ("T" "terminal in project" my-ghostel-project))
+  ("t" "toggle terminal popup" my-terminal-toggle)
+  ("T" "terminal here" my-terminal-here))
 
 (my-define-menu my-project-map
   ("." "browse project" project-find-dir)
