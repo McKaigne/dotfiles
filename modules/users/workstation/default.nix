@@ -3,6 +3,9 @@
 in {
   flake.modules.nixos.user-workstation = {config, ...}: {
     home-manager.users.${config.workstation.username}.imports = [m.homeManager.user-workstation];
+    # A file-name index (plocate, rebuilt daily) for Emacs's locate keys,
+    # SPC f l and SPC s f.
+    services.locate.enable = true;
   };
   flake.modules.homeManager.user-workstation = {config, ...}: let
     avatar = ../../../avatar.jpg;
