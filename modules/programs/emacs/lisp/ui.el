@@ -1,7 +1,5 @@
 ;;; ui.el -*- lexical-binding: t -*-
 
-(require 'color)
-
 (add-to-list 'custom-theme-load-path (expand-file-name "themes" my-config-directory))
 (add-to-list 'default-frame-alist `(alpha-background . ,my-glass))
 (set-fringe-mode '(6 . 0))
@@ -9,54 +7,45 @@
 (use-package nerd-icons
   :demand t)
 
-(use-package solaire-mode
-  :demand t
-  :custom
-  (solaire-mode-supported-themes '(noctalia))
-  :config
-  (solaire-global-mode 1))
+(defvar my-flat-faces
+  '(mode-line mode-line-active mode-line-inactive header-line header-line-inactive
+    tab-bar tab-bar-tab tab-bar-tab-inactive tab-line tab-line-tab
+    tab-line-tab-active tab-line-tab-inactive tab-line-tab-current))
 
-(defun my-darken-hex (hex points)
-  "Return HEX, a #rrggbb color, with its lightness lowered by POINTS percent."
-  (pcase-let* ((rgb (mapcar (lambda (start)
-                              (/ (string-to-number (substring hex start (+ start 2)) 16) 255.0))
-                            '(1 3 5)))
-               (`(,h ,s ,l) (apply #'color-rgb-to-hsl rgb)))
-    (apply #'color-rgb-to-hex
-           (append (color-hsl-to-rgb h s (color-clamp (- l (/ points 100.0)))) '(2)))))
-
-(defun my-solaire-faces (&rest _)
-  "Derive the solaire faces from the enabled theme and apply them everywhere."
+(defun my-flatten-frame (&rest _)
+  "Give bars, fringes and dividers the theme's background, with no borders."
   (when-let* ((background (face-background 'default nil t))
-              ((string-match-p "\\`#[[:xdigit:]]\\{6\\}\\'" background))
-              (alternate (my-darken-hex background 4)))
-    (set-face-attribute 'solaire-default-face nil :background alternate)
-    (set-face-attribute 'solaire-fringe-face nil :background alternate)
-    (set-face-attribute 'solaire-line-number-face nil :background alternate)
-    (solaire-global-mode 1)
-    (solaire-mode-reset)))
-
-(defun my-style-panes (&rest _)
-  "Color the mode line's accents from the enabled theme."
-  (let ((foreground (face-foreground 'mode-line nil t))
-        (accent (face-foreground 'font-lock-keyword-face nil t))
-        (inactive (face-background 'mode-line-inactive nil t)))
+              ((string-match-p "\\`#[[:xdigit:]]\\{6\\}\\'" background)))
+    (dolist (face my-flat-faces)
+      (when (facep face)
+        (set-face-attribute face nil :background background :box nil
+                            :overline nil :underline nil)))
+    (dolist (face '(mode-line-highlight header-line-highlight))
+      (when (facep face)
+        (set-face-attribute face nil :box nil)))
+    (dolist (face '(fringe internal-border))
+      (set-face-attribute face nil :background background))
+    (dolist (face '(vertical-border window-divider window-divider-first-pixel
+                    window-divider-last-pixel))
+      (set-face-attribute face nil :foreground background :background background))
     (set-face-attribute 'mode-line-buffer-id nil
-                        :foreground (or foreground 'unspecified) :weight 'bold)
-    (when (and (facep 'doom-modeline-bar) accent inactive)
-      (set-face-attribute 'doom-modeline-bar nil :background accent)
-      (set-face-attribute 'doom-modeline-bar-inactive nil :background inactive)
+                        :foreground (or (face-foreground 'mode-line nil t) 'unspecified)
+                        :weight 'bold)
+    (when (facep 'doom-modeline-bar)
+      (set-face-attribute 'doom-modeline-bar nil
+                          :background (or (face-background 'cursor nil t)
+                                          (face-foreground 'font-lock-keyword-face nil t)))
+      (set-face-attribute 'doom-modeline-bar-inactive nil :background background)
       (doom-modeline-refresh-bars))))
 
-(add-hook 'enable-theme-functions #'my-solaire-faces 80)
-(add-hook 'enable-theme-functions #'my-style-panes 85)
+(add-hook 'enable-theme-functions #'my-flatten-frame 85)
 
 (use-package spacious-padding
   :demand t
   :custom
-  (spacious-padding-widths '(:internal-border-width 12 :header-line-width 4
-                             :mode-line-width 4 :tab-width 4
-                             :right-divider-width 12 :scroll-bar-width 0
+  (spacious-padding-widths '(:internal-border-width 12 :header-line-width 0
+                             :mode-line-width 0 :tab-width 0
+                             :right-divider-width 1 :scroll-bar-width 0
                              :fringe-width 6))
   :config
   (spacious-padding-mode 1))

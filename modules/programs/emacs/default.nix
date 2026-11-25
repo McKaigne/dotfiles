@@ -131,7 +131,6 @@
           rainbow-delimiters
           pulsar
           indent-bars
-          solaire-mode
           spacious-padding
           breadcrumb
           ligature

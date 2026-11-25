@@ -104,6 +104,7 @@ With HERE, open it in `default-directory' instead."
   :custom
   (dirvish-attributes '(nerd-icons subtree-state vc-state file-size))
   (dirvish-side-width 32)
+  (dirvish-mode-line-bar-image-width 0)
   (dired-listing-switches "-l --almost-all --human-readable --group-directories-first --no-group")
   (dired-dwim-target t)
   (delete-by-moving-to-trash t)
