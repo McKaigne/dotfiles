@@ -92,7 +92,7 @@
   "Copy the whole buffer."
   (interactive)
   (kill-new (buffer-substring-no-properties (point-min) (point-max)))
-  (my-notify "Copied" "The whole buffer" "nf-cod-copy"))
+  (message "Copied the buffer"))
 
 (defun my-sudo-file-name (file)
   "Return FILE opened through sudo."
@@ -161,7 +161,7 @@
   (interactive)
   (let ((path (or buffer-file-name default-directory)))
     (kill-new (abbreviate-file-name path))
-    (my-notify "Copied" (abbreviate-file-name path) "nf-cod-copy")))
+    (message "Copied %s" (abbreviate-file-name path))))
 
 (defun my-copy-project-file-path ()
   "Copy this buffer's file path relative to the project."
@@ -170,7 +170,7 @@
          (project (project-current))
          (relative (if project (file-relative-name path (project-root project)) path)))
     (kill-new relative)
-    (my-notify "Copied" relative "nf-cod-copy")))
+    (message "Copied %s" relative)))
 
 (defun my-insert-file-name ()
   "Insert this buffer's file name."

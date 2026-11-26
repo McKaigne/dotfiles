@@ -65,11 +65,6 @@
                    (cmake-ts-mode . ("neocmakelsp" "stdio"))))
     (add-to-list 'eglot-server-programs entry)))
 
-(use-package eglot-booster
-  :after eglot
-  :config
-  (eglot-booster-mode 1))
-
 (use-package eldoc-box
   :commands eldoc-box-help-at-point)
 
@@ -82,12 +77,13 @@
   :hook (flymake-mode . flyover-mode)
   :custom
   (flyover-checkers '(flymake))
+  (flyover-base-height 1.0)
   (flyover-levels '(error warning info))
   (flyover-display-mode 'always)
   (flyover-line-position-offset 1)
   (flyover-show-at-eol nil)
   (flyover-show-virtual-line t)
-  (flyover-virtual-line-type 'straight-arrow)
+  (flyover-virtual-line-type 'line-no-arrow)
   (flyover-border-style 'none)
   (flyover-show-icon t)
   (flyover-use-theme-colors t)

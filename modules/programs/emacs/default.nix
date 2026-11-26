@@ -21,7 +21,6 @@
         direnv
         cmark-gfm
         wl-clipboard
-        emacs-lsp-booster
         fish-lsp
       ];
     };
@@ -84,29 +83,7 @@
     programs.emacs = {
       enable = true;
       package = pkgs.emacs-pgtk;
-      extraPackages = epkgs: let
-        eglot-booster = epkgs.melpaBuild {
-          pname = "eglot-booster";
-          version = "0-unstable-2025-07-16";
-          src = pkgs.fetchFromGitHub {
-            owner = "jdtsmith";
-            repo = "eglot-booster";
-            rev = "510f579409627c333ef0e9157db713b1004da842";
-            hash = "sha256-HhWR40j/WFcorp8QttXtOz5yxL1B4JUXL+9IuNpoND0=";
-          };
-        };
-        knockknock = epkgs.melpaBuild {
-          pname = "knockknock";
-          version = "0.3.0-unstable-2026-01-07";
-          src = pkgs.fetchFromGitHub {
-            owner = "konrad1977";
-            repo = "knockknock";
-            rev = "0920b9b390d4b4cc0818574e115d87eb245a41b5";
-            hash = "sha256-hTkXfXMIEL4GtZV177/6uFybdmH+zxwsDnaXSXvG4hs=";
-          };
-          packageRequires = with epkgs; [posframe nerd-icons];
-        };
-      in
+      extraPackages = epkgs:
         with epkgs; [
           meow
           vertico
@@ -120,8 +97,6 @@
           nerd-icons
           nerd-icons-completion
           nerd-icons-corfu
-          posframe
-          knockknock
           yasnippet
           avy
           ace-window
@@ -131,7 +106,6 @@
           jinx
           apheleia
           eldoc-box
-          eglot-booster
           flyover
           treesit-fold
           envrc
