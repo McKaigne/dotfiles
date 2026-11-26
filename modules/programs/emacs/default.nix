@@ -118,7 +118,6 @@
           hl-todo
           rainbow-delimiters
           pulsar
-          zoom
           indent-bars
           spacious-padding
           breadcrumb
@@ -218,13 +217,13 @@
       "emacs/splash.png".source = ./splash.png;
       "emacs/paths.el".text = ''
         ;;; paths.el -*- lexical-binding: t -*-
-        (defvar my-tools-directory "${tools}/bin")
-        (defvar my-config-source "/etc/nixos/modules/programs/emacs/")
-        (defvar my-keybindings-file "/etc/nixos/modules/programs/emacs/org/keybindings.org")
-        (defvar my-org-directory "${orgDir}/")
-        (defvar my-ghostel-module-directory "${ghostelDir}/")
-        (defvar my-font "${style.font}")
-        (defvar my-glass ${toString (builtins.floor (style.opacity * 100))})
+        (defvar nixmacs-tools-directory "${tools}/bin")
+        (defvar nixmacs-config-source "/etc/nixos/modules/programs/emacs/")
+        (defvar nixmacs-keybindings-file "/etc/nixos/modules/programs/emacs/org/keybindings.org")
+        (defvar nixmacs-org-directory "${orgDir}/")
+        (defvar nixmacs-ghostel-module-directory "${ghostelDir}/")
+        (defvar nixmacs-font "${style.font}")
+        (defvar nixmacs-glass ${toString (builtins.floor (style.opacity * 100))})
       '';
     };
 

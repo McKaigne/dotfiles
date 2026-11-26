@@ -78,7 +78,7 @@
   (corfu-cycle t)
   (corfu-preselect 'prompt)
   :config
-  (keymap-set corfu-map "<escape>" #'my-escape-insert)
+  (keymap-set corfu-map "<escape>" #'nixmacs-escape-insert)
   (global-corfu-mode 1))
 
 (use-package corfu-popupinfo

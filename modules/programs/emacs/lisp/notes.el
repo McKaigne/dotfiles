@@ -1,9 +1,9 @@
 ;;; notes.el -*- lexical-binding: t -*-
 
-(setq org-directory (directory-file-name my-org-directory)
-      org-roam-directory (expand-file-name "roam" my-org-directory))
+(setq org-directory (directory-file-name nixmacs-org-directory)
+      org-roam-directory (expand-file-name "roam" nixmacs-org-directory))
 
-(defun my-journal-file ()
+(defun nixmacs-journal-file ()
   "Return today's journal file."
   (expand-file-name (format-time-string "journal/%Y-%m-%d.org") org-directory))
 
@@ -13,8 +13,8 @@
   (org-default-notes-file (expand-file-name "tasks.org" org-directory))
   (org-agenda-files (list (expand-file-name "tasks.org" org-directory)
                           (expand-file-name "journal" org-directory)))
-  (org-id-locations-file (my-state-file "org-id-locations"))
-  (org-persist-directory (my-state-file "org-persist/"))
+  (org-id-locations-file (nixmacs-state-file "org-id-locations"))
+  (org-persist-directory (nixmacs-state-file "org-persist/"))
   (org-todo-keywords '((sequence "TODO(t)" "NEXT(n)" "WAIT(w@)" "|" "DONE(d!)" "CANCELLED(c@)")))
   (org-log-done 'time)
   (org-log-into-drawer t)
@@ -32,14 +32,14 @@
    `(("t" "Todo" entry
       (file+headline ,(expand-file-name "tasks.org" org-directory) "Inbox")
       "* TODO %?\n:PROPERTIES:\n:CREATED: %U\n:END:\n")
-     ("j" "Journal" entry (file+olp+datetree my-journal-file)
+     ("j" "Journal" entry (file+olp+datetree nixmacs-journal-file)
       "* %<%H:%M> %?\n")))
   :config
   (org-babel-do-load-languages 'org-babel-load-languages
                                '((emacs-lisp . t) (python . t) (C . t) (shell . t)))
-  (setq org-confirm-babel-evaluate #'my-org-confirm-babel-evaluate))
+  (setq org-confirm-babel-evaluate #'nixmacs-org-confirm-babel-evaluate))
 
-(defun my-org-confirm-babel-evaluate (_language _body)
+(defun nixmacs-org-confirm-babel-evaluate (_language _body)
   "Ask before running code blocks outside the notes directory."
   (not (and buffer-file-name
             (not (file-remote-p buffer-file-name))
@@ -80,7 +80,7 @@
 (use-package org-roam
   :defer t
   :custom
-  (org-roam-db-location (my-state-file "org-roam.db"))
+  (org-roam-db-location (nixmacs-state-file "org-roam.db"))
   (org-roam-capture-templates
    '(("f" "Fleeting: a quick thought to process later" plain "%?"
       :target (file+head "%<%Y%m%d%H%M%S>-${slug}.org"
@@ -107,33 +107,33 @@
   :config
   (consult-org-roam-mode 1))
 
-(defun my-org-journal ()
+(defun nixmacs-org-journal ()
   "Add an entry to today's journal."
   (interactive)
   (org-capture nil "j"))
 
-(defun my-org-toggle-last-clock ()
+(defun nixmacs-org-toggle-last-clock ()
   "Clock out of the running clock, or clock back in to the last one."
   (interactive)
   (require 'org-clock)
   (if (org-clocking-p) (org-clock-out) (org-clock-in-last)))
 
-(defun my-notes-find-file ()
+(defun nixmacs-notes-find-file ()
   "Find a file in the notes directory."
   (interactive)
   (consult-fd org-directory))
 
-(defun my-notes-search ()
+(defun nixmacs-notes-search ()
   "Search the notes directory."
   (interactive)
   (consult-ripgrep org-directory))
 
-(defun my-notes-search-symbol ()
+(defun nixmacs-notes-search-symbol ()
   "Search the notes directory for the symbol at point."
   (interactive)
   (consult-ripgrep org-directory (thing-at-point 'symbol t)))
 
-(defun my-notes-browse ()
+(defun nixmacs-notes-browse ()
   "Browse the notes directory."
   (interactive)
-  (dirvish org-directory))
+  (dired org-directory))

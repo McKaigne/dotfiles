@@ -1,6 +1,6 @@
 ;;; tools.el -*- lexical-binding: t -*-
 
-(setq ghostel-module-directory my-ghostel-module-directory
+(setq ghostel-module-directory nixmacs-ghostel-module-directory
       ghostel-module-auto-install nil)
 
 (use-package ghostel
@@ -11,93 +11,96 @@
      "C-." "M-SPC" "M-h" "M-j" "M-k" "M-l"))
   :config
   (keymap-set ghostel-mode-map "M-SPC" #'meow-keypad)
-  (add-hook 'ghostel-exit-functions #'my-terminal-popup-exit))
+  (add-hook 'ghostel-exit-functions #'nixmacs-terminal-popup-exit))
 
-(defvar-local my-terminal-popup nil)
-(defvar-local my-terminal-popup-origin nil)
+(defvar-local nixmacs-terminal-popup nil)
+(defvar-local nixmacs-terminal-popup-origin nil)
 
-(defvar my-terminal-popup-action
-  '((display-buffer-reuse-window display-buffer-in-side-window)
-    (side . bottom) (slot . 0) (window-height . 0.3)
-    (preserve-size . (nil . t))))
+(defvar nixmacs-terminal-popup-action
+  '((display-buffer-reuse-window nixmacs-display-buffer-below-selected)))
 
-(defun my-terminal-root ()
+(defun nixmacs-terminal-root ()
   "Return the project root, or `default-directory' outside a project."
   (if-let* ((project (project-current))) (project-root project) default-directory))
 
-(defun my-terminal-popup-name ()
+(defun nixmacs-terminal-popup-name ()
   "Return the popup terminal's buffer name for the current project."
   (format "*ghostel-popup: %s*"
           (if-let* ((project (project-current))) (project-name project) "main")))
 
-(defun my-terminal-popup-windows ()
+(defun nixmacs-terminal-popup-windows ()
   "Return the windows of this frame showing a popup terminal."
   (seq-filter (lambda (window)
-                (buffer-local-value 'my-terminal-popup (window-buffer window)))
+                (buffer-local-value 'nixmacs-terminal-popup (window-buffer window)))
               (window-list nil 'nomini)))
 
-(defun my-terminal-enter-insert ()
+(defun nixmacs-terminal-enter-insert ()
   "Put the selected terminal in insert state."
   (when (and (bound-and-true-p meow-mode) (not (meow-insert-mode-p)))
     (meow--switch-state 'insert)))
 
-(defun my-terminal-return-to (window)
+(defun nixmacs-terminal-return-to (window)
   "Select WINDOW if it still exists, else any ordinary window."
   (select-window
    (if (window-live-p window)
        window
      (or (get-mru-window nil nil t) (frame-first-window)))))
 
-(defun my-terminal-popup-close ()
+(defun nixmacs-terminal-popup-close ()
   "Hide every popup terminal in this frame and return to where it was opened."
   (let (origin)
-    (dolist (window (my-terminal-popup-windows))
-      (setq origin (or origin (buffer-local-value 'my-terminal-popup-origin
+    (dolist (window (nixmacs-terminal-popup-windows))
+      (setq origin (or origin (buffer-local-value 'nixmacs-terminal-popup-origin
                                                   (window-buffer window))))
       (when (window-live-p window)
-        (delete-window window)))
-    (my-terminal-return-to origin)))
+        (quit-restore-window window 'bury)))
+    (nixmacs-terminal-return-to origin)))
 
-(defun my-terminal-popup-exit (buffer _event)
+(defun nixmacs-terminal-popup-exit (buffer _event)
   "Return focus to the popup's origin when its shell in BUFFER exits."
-  (when (buffer-local-value 'my-terminal-popup buffer)
-    (let ((origin (buffer-local-value 'my-terminal-popup-origin buffer)))
-      (run-at-time 0 nil #'my-terminal-return-to origin))))
+  (when (buffer-local-value 'nixmacs-terminal-popup buffer)
+    (let ((origin (buffer-local-value 'nixmacs-terminal-popup-origin buffer)))
+      (run-at-time 0 nil #'nixmacs-terminal-return-to origin))))
 
-(defun my-terminal-toggle (&optional recreate)
+(defun nixmacs-terminal-toggle (&optional recreate)
   "Toggle a terminal popup in the project root.
 With RECREATE, start a fresh terminal in place of the old one."
   (interactive "P")
-  (if (and (my-terminal-popup-windows) (not recreate))
-      (my-terminal-popup-close)
-    (when (my-terminal-popup-windows)
-      (my-terminal-popup-close))
+  (if (and (nixmacs-terminal-popup-windows) (not recreate))
+      (nixmacs-terminal-popup-close)
+    (when (nixmacs-terminal-popup-windows)
+      (nixmacs-terminal-popup-close))
     (let* ((origin (selected-window))
-           (name (my-terminal-popup-name))
+           (name (nixmacs-terminal-popup-name))
            (buffer (get-buffer name)))
       (when (and recreate (buffer-live-p buffer))
         (let ((kill-buffer-query-functions nil))
           (kill-buffer buffer))
         (setq buffer nil))
       (unless (buffer-live-p buffer)
-        (let ((default-directory (my-terminal-root)))
-          (setq buffer (ghostel-create name my-terminal-popup-action)))
+        (let ((default-directory (nixmacs-terminal-root)))
+          (setq buffer (ghostel-create name nixmacs-terminal-popup-action)))
         (with-current-buffer buffer
-          (setq my-terminal-popup t)))
+          (setq nixmacs-terminal-popup t)))
       (with-current-buffer buffer
-        (setq my-terminal-popup-origin origin))
+        (setq nixmacs-terminal-popup-origin origin))
       (select-window (or (get-buffer-window buffer)
-                         (display-buffer buffer my-terminal-popup-action)))
-      (my-terminal-enter-insert))))
+                         (display-buffer buffer nixmacs-terminal-popup-action)))
+      (nixmacs-terminal-enter-insert))))
 
-(defun my-terminal-here (&optional here)
+(defun nixmacs-terminal-here (&optional here)
   "Open a terminal in this window, in the project root.
 With HERE, open it in `default-directory' instead."
   (interactive "P")
   (if (or here (not (project-current)))
       (ghostel)
     (ghostel-project))
-  (my-terminal-enter-insert))
+  (nixmacs-terminal-enter-insert))
+
+(defun nixmacs-dirvish-side-select-last ()
+  "Select the pane used last before the sidebar."
+  (when-let* ((window (nixmacs-last-tiled-window)))
+    (select-window window)))
 
 (use-package dirvish
   :demand t
@@ -108,11 +111,17 @@ With HERE, open it in `default-directory' instead."
   (dired-listing-switches "-l --almost-all --human-readable --group-directories-first --no-group")
   (dired-dwim-target t)
   (delete-by-moving-to-trash t)
+  (dired-kill-when-opening-new-dired-buffer t)
+  (dirvish-side-open-file-action #'nixmacs-dirvish-side-select-last)
   :config
   (require 'dirvish-side)
   (require 'dirvish-subtree)
   (keymap-set dirvish-mode-map "DEL" #'dired-up-directory)
   (keymap-set dirvish-mode-map "TAB" #'dirvish-subtree-toggle)
+  (keymap-set dirvish-mode-map "h" #'dired-up-directory)
+  (keymap-set dirvish-mode-map "l" #'dired-find-file)
+  (dolist (key '("L" "o" "S-<return>"))
+    (keymap-set dirvish-mode-map key #'dired-find-file-other-window))
   (dirvish-override-dired-mode 1)
   (dirvish-side-follow-mode 1))
 
@@ -120,24 +129,24 @@ With HERE, open it in `default-directory' instead."
   :commands (helpful-callable helpful-variable helpful-key helpful-command
              helpful-at-point))
 
-(defvar-local my-markdown-preview-source nil)
+(defvar-local nixmacs-markdown-preview-source nil)
 
-(defun my-markdown-render-code (dom)
+(defun nixmacs-markdown-render-code (dom)
   "Render DOM as inline code."
   (shr-fontize-dom dom 'org-code))
 
-(defun my-markdown-render-code-block (dom)
+(defun nixmacs-markdown-render-code-block (dom)
   "Render DOM as a code block, keeping its whitespace."
   (let ((start (point)))
     (shr-tag-pre dom)
     (shr-add-font start (point) 'org-block)))
 
-(defun my-markdown-preview ()
+(defun nixmacs-markdown-preview ()
   "Render Markdown in a reading pane, or refresh its preview."
   (interactive)
   (require 'eww)
   (require 'markdown-mode)
-  (let* ((source (or my-markdown-preview-source (current-buffer)))
+  (let* ((source (or nixmacs-markdown-preview-source (current-buffer)))
          (html (generate-new-buffer " *Markdown HTML*"))
          preview)
     (unwind-protect
@@ -156,7 +165,7 @@ With HERE, open it in `default-directory' instead."
             (setq preview (get-buffer-create (format "*Markdown: %s*" name)))
             (with-current-buffer preview
               (eww-mode)
-              (setq-local my-markdown-preview-source source
+              (setq-local nixmacs-markdown-preview-source source
                           default-directory directory
                           shr-use-fonts nil
                           shr-use-colors nil
@@ -165,8 +174,8 @@ With HERE, open it in `default-directory' instead."
                           shr-table-vertical-line ?│
                           shr-table-corner ?┼
                           shr-external-rendering-functions
-                          '((code . my-markdown-render-code)
-                            (pre . my-markdown-render-code-block))
+                          '((code . nixmacs-markdown-render-code)
+                            (pre . nixmacs-markdown-render-code-block))
                           eww-data (list :url url))
               (dotimes (index 6)
                 (face-remap-add-relative
@@ -174,11 +183,10 @@ With HERE, open it in `default-directory' instead."
                  :inherit (intern (format "org-level-%d" (1+ index)))
                  :height 1.0 :weight 'bold :slant 'normal))
               (let ((map (copy-keymap eww-mode-map)))
-                (keymap-set map "g" #'my-markdown-preview)
+                (keymap-set map "g" #'nixmacs-markdown-preview)
                 (use-local-map map)))
             (pop-to-buffer preview
-                           '((display-buffer-reuse-window display-buffer-in-side-window)
-                             (side . right) (slot . 0) (window-width . 0.5)))
+                           '((display-buffer-reuse-window nixmacs-display-buffer-below-selected)))
             (with-current-buffer html
               (goto-char (point-min))
               (eww-display-html 'utf-8 url nil nil preview))

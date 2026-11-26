@@ -12,5 +12,5 @@
 (menu-bar-mode -1)
 (tool-bar-mode -1)
 (scroll-bar-mode -1)
-(add-to-list 'default-frame-alist `(font . ,(format "%s-11" my-font)))
+(add-to-list 'default-frame-alist `(font . ,(format "%s-11" nixmacs-font)))
 (setq-default mode-line-format nil)

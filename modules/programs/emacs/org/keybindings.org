@@ -32,14 +32,21 @@ letter to force it plain: ~SPC h SPC f~ is ~C-h f~ (plain ~SPC h f~ is
 | Key                     | Action                                      |
 |-------------------------+---------------------------------------------|
 | ~Esc~                   | leave a menu, prompt or popup; insert → normal |
-| ~M-h~ ~M-j~ ~M-k~ ~M-l~ | window left / down / up / right             |
+| ~M-j~ ~M-k~             | next / previous pane                        |
+| ~M-J~ ~M-K~             | swap with next / previous pane              |
+| ~M-h~ ~M-l~             | shrink / grow the master area               |
+| ~M-i~ ~M-d~             | more / fewer panes in the master area       |
+| ~M-RET~                 | zoom: swap with the master                  |
+| ~M-S-RET~               | show this buffer in a new pane              |
+| ~M-C~                   | close this pane                             |
+| ~M-r~                   | re-tile and reset sizes                     |
 | ~C-.~                   | embark: act on the thing at point (GUI)     |
 | ~F2~                    | dashboard                                   |
 | ~C-h f~ ~v~ ~k~ ~x~     | helpful: function, variable, key, command   |
 
 * Terminal (ghostel)
 
-~SPC o t~ toggles a terminal popup at the bottom, one per project, opened in
+~SPC o t~ toggles a terminal in a new pane, one per project, opened in
 the project root; it keeps running while hidden, and closing it returns to
 the window you came from. ~C-u SPC o t~ starts it fresh. ~SPC o T~ opens a
 terminal in the current window (with ~C-u~, in the current directory).
@@ -47,32 +54,32 @@ terminal in the current window (with ~C-u~, in the current directory).
 Opens in insert state; keys go to the program. ~Esc~ leaves insert state
 (then ~i~ to type again). ~M-SPC~ opens the leader, so ~M-SPC o t~ hides the
 popup from inside it. ~C-q Esc~ sends a real
-Escape to the program. ~C-.~, ~M-h~ ~M-j~ ~M-k~ ~M-l~ stay with Emacs.
+Escape to the program. ~C-.~ and the pane keys (~M-j~, ~M-k~, ~M-RET~ …) stay with Emacs.
 
 * Files (dirvish)
 
-~SPC o p~ opens the project sidebar, ~SPC o -~ a full dirvish, ~SPC f d~ any
-folder. ~M-h~ / ~M-l~ move into and out of the sidebar.
+~SPC o p~ toggles the project sidebar, ~SPC f d~ opens any folder in this pane. ~SPC w h~ / ~SPC w l~ move into and out of the sidebar.
 
 | Key           | Action                                       |
 |---------------+----------------------------------------------|
 | ~j~ ~k~       | down / up (the arrow keys too)               |
-| ~RET~         | open the folder or file                      |
-| ~Backspace~   | up a folder                                  |
+| ~l~ ~RET~     | open the folder or file in this pane         |
+| ~L~ ~o~       | open in a new pane at the bottom of the stack |
+| ~h~ ~Backspace~ | up a folder                                |
 | ~TAB~         | fold a folder open in place                  |
 | ~m~ ~u~ ~U~   | mark / unmark / unmark all                   |
 | ~C~ ~R~ ~D~   | copy / rename or move / delete (to trash)    |
 | ~+~           | new folder                                   |
 | ~(~           | toggle details                               |
 | ~g~           | refresh                                      |
-| ~Esc~         | close                                        |
+| ~Esc~         | back to the previous buffer                  |
 
 * Leader (SPC)
 
 | Key | Action | Command |
 |-----+--------+---------|
 | ~SPC '~ | resume last search | ~vertico-repeat~ |
-| ~SPC *~ | search project for symbol | ~my-search-project-symbol~ |
+| ~SPC *~ | search project for symbol | ~nixmacs-search-project-symbol~ |
 | ~SPC ,~ | switch buffer | ~consult-buffer~ |
 | ~SPC .~ | find file | ~find-file~ |
 | ~SPC /~ | search project | ~consult-ripgrep~ |
@@ -80,7 +87,7 @@ folder. ~M-h~ / ~M-l~ move into and out of the sidebar.
 | ~SPC ;~ | eval expression | ~pp-eval-expression~ |
 | ~SPC ?~ | meow cheatsheet | ~meow-cheatsheet~ |
 | ~SPC `~ | last buffer | ~meow-last-buffer~ |
-| ~SPC a~ | code actions | ~my-code-actions~ |
+| ~SPC a~ | code actions | ~nixmacs-code-actions~ |
 | ~SPC b~ | +buffer | |
 | ~SPC d~ | +docs | |
 | ~SPC e~ | +errors | |
@@ -108,27 +115,27 @@ folder. ~M-h~ / ~M-l~ move into and out of the sidebar.
 
 | Key | Action | Command |
 |-----+--------+---------|
-| ~SPC b -~ | toggle narrowing | ~my-toggle-narrow~ |
+| ~SPC b -~ | toggle narrowing | ~nixmacs-toggle-narrow~ |
 | ~SPC b b~ | switch buffer | ~consult-buffer~ |
 | ~SPC b c~ | clone buffer | ~clone-indirect-buffer~ |
 | ~SPC b C~ | clone buffer other window | ~clone-indirect-buffer-other-window~ |
 | ~SPC b d~ | kill buffer | ~kill-current-buffer~ |
 | ~SPC b i~ | ibuffer | ~ibuffer~ |
-| ~SPC b K~ | kill all buffers | ~my-kill-all-buffers~ |
+| ~SPC b K~ | kill all buffers | ~nixmacs-kill-all-buffers~ |
 | ~SPC b l~ | last buffer | ~meow-last-buffer~ |
 | ~SPC b m~ | set bookmark | ~bookmark-set~ |
 | ~SPC b M~ | delete bookmark | ~bookmark-delete~ |
 | ~SPC b n~ | next buffer | ~next-buffer~ |
-| ~SPC b N~ | new empty buffer | ~my-new-buffer~ |
-| ~SPC b O~ | kill other buffers | ~my-kill-other-buffers~ |
+| ~SPC b N~ | new empty buffer | ~nixmacs-new-buffer~ |
+| ~SPC b O~ | kill other buffers | ~nixmacs-kill-other-buffers~ |
 | ~SPC b p~ | previous buffer | ~previous-buffer~ |
 | ~SPC b r~ | revert buffer | ~revert-buffer~ |
 | ~SPC b R~ | rename buffer | ~rename-buffer~ |
 | ~SPC b s~ | save buffer | ~basic-save-buffer~ |
-| ~SPC b S~ | save all buffers | ~my-save-all-buffers~ |
-| ~SPC b u~ | save buffer as root | ~my-sudo-save-buffer~ |
+| ~SPC b S~ | save all buffers | ~nixmacs-save-all-buffers~ |
+| ~SPC b u~ | save buffer as root | ~nixmacs-sudo-save-buffer~ |
 | ~SPC b x~ | scratch buffer | ~scratch-buffer~ |
-| ~SPC b y~ | copy buffer | ~my-copy-buffer~ |
+| ~SPC b y~ | copy buffer | ~nixmacs-copy-buffer~ |
 | ~SPC b z~ | bury buffer | ~bury-buffer~ |
 | ~SPC b Z~ | kill old buffers | ~clean-buffer-list~ |
 
@@ -155,33 +162,33 @@ folder. ~M-h~ / ~M-l~ move into and out of the sidebar.
 | Key | Action | Command |
 |-----+--------+---------|
 | ~SPC f c~ | open project editorconfig | ~editorconfig-find-current-editorconfig~ |
-| ~SPC f C~ | copy this file | ~my-copy-this-file~ |
+| ~SPC f C~ | copy this file | ~nixmacs-copy-this-file~ |
 | ~SPC f d~ | find directory | ~dired~ |
-| ~SPC f D~ | delete this file | ~my-delete-this-file~ |
-| ~SPC f e~ | find file in emacs.d | ~my-find-in-emacs-directory~ |
-| ~SPC f E~ | browse emacs.d | ~my-browse-emacs-directory~ |
+| ~SPC f D~ | delete this file | ~nixmacs-delete-this-file~ |
+| ~SPC f e~ | find file in emacs.d | ~nixmacs-find-in-emacs-directory~ |
+| ~SPC f E~ | browse emacs.d | ~nixmacs-browse-emacs-directory~ |
 | ~SPC f f~ | find file | ~find-file~ |
-| ~SPC f F~ | find file from here | ~my-find-file-here~ |
+| ~SPC f F~ | find file from here | ~nixmacs-find-file-here~ |
 | ~SPC f l~ | locate file | ~consult-locate~ |
-| ~SPC f p~ | find file in config | ~my-find-in-config~ |
-| ~SPC f P~ | browse config | ~my-browse-config~ |
+| ~SPC f p~ | find file in config | ~nixmacs-find-in-config~ |
+| ~SPC f P~ | browse config | ~nixmacs-browse-config~ |
 | ~SPC f r~ | recent files | ~consult-recent-file~ |
 | ~SPC f R~ | rename/move file | ~rename-visited-file~ |
 | ~SPC f s~ | save file | ~save-buffer~ |
 | ~SPC f S~ | save file as | ~write-file~ |
-| ~SPC f u~ | sudo find file | ~my-sudo-find-file~ |
-| ~SPC f U~ | sudo this file | ~my-sudo-this-file~ |
-| ~SPC f y~ | copy file path | ~my-copy-file-path~ |
-| ~SPC f Y~ | copy project file path | ~my-copy-project-file-path~ |
+| ~SPC f u~ | sudo find file | ~nixmacs-sudo-find-file~ |
+| ~SPC f U~ | sudo this file | ~nixmacs-sudo-this-file~ |
+| ~SPC f y~ | copy file path | ~nixmacs-copy-file-path~ |
+| ~SPC f Y~ | copy project file path | ~nixmacs-copy-project-file-path~ |
 
 ** ~SPC i~ insert
 
 | Key | Action | Command |
 |-----+--------+---------|
 | ~SPC i e~ | emoji | ~emoji-search~ |
-| ~SPC i f~ | file name | ~my-insert-file-name~ |
-| ~SPC i F~ | file path | ~my-insert-file-path~ |
-| ~SPC i p~ | shell command output | ~my-insert-shell-output~ |
+| ~SPC i f~ | file name | ~nixmacs-insert-file-name~ |
+| ~SPC i F~ | file path | ~nixmacs-insert-file-path~ |
+| ~SPC i p~ | shell command output | ~nixmacs-insert-shell-output~ |
 | ~SPC i r~ | from register | ~consult-register~ |
 | ~SPC i s~ | snippet | ~yas-insert-snippet~ |
 | ~SPC i u~ | unicode | ~insert-char~ |
@@ -205,7 +212,7 @@ folder. ~M-h~ / ~M-l~ move into and out of the sidebar.
 | ~SPC l C~ | recompile | ~recompile~ |
 | ~SPC l d~ | find definition | ~xref-find-definitions~ |
 | ~SPC l D~ | find references | ~xref-find-references~ |
-| ~SPC l e~ | evaluate buffer/region | ~my-eval-buffer-or-region~ |
+| ~SPC l e~ | evaluate buffer/region | ~nixmacs-eval-buffer-or-region~ |
 | ~SPC l f~ | format buffer | ~apheleia-format-buffer~ |
 | ~SPC l i~ | find implementations | ~eglot-find-implementation~ |
 | ~SPC l j~ | find workspace symbol | ~xref-find-apropos~ |
@@ -218,20 +225,20 @@ folder. ~M-h~ / ~M-l~ move into and out of the sidebar.
 
 | Key | Action | Command |
 |-----+--------+---------|
-| ~SPC n *~ | search notes for symbol | ~my-notes-search-symbol~ |
+| ~SPC n *~ | search notes for symbol | ~nixmacs-notes-search-symbol~ |
 | ~SPC n a~ | org agenda | ~org-agenda~ |
-| ~SPC n c~ | toggle last clock | ~my-org-toggle-last-clock~ |
+| ~SPC n c~ | toggle last clock | ~nixmacs-org-toggle-last-clock~ |
 | ~SPC n C~ | cancel clock | ~org-clock-cancel~ |
-| ~SPC n f~ | find file in notes | ~my-notes-find-file~ |
-| ~SPC n F~ | browse notes | ~my-notes-browse~ |
-| ~SPC n j~ | journal entry | ~my-org-journal~ |
+| ~SPC n f~ | find file in notes | ~nixmacs-notes-find-file~ |
+| ~SPC n F~ | browse notes | ~nixmacs-notes-browse~ |
+| ~SPC n j~ | journal entry | ~nixmacs-org-journal~ |
 | ~SPC n l~ | store link | ~org-store-link~ |
 | ~SPC n m~ | tags search | ~org-tags-view~ |
 | ~SPC n n~ | org capture | ~org-capture~ |
 | ~SPC n N~ | goto capture | ~org-capture-goto-target~ |
 | ~SPC n o~ | active clock | ~org-clock-goto~ |
 | ~SPC n r~ | +roam | |
-| ~SPC n s~ | search notes | ~my-notes-search~ |
+| ~SPC n s~ | search notes | ~nixmacs-notes-search~ |
 | ~SPC n S~ | search agenda headlines | ~consult-org-agenda~ |
 | ~SPC n t~ | todo list | ~org-todo-list~ |
 | ~SPC n v~ | view search | ~org-search-view~ |
@@ -256,14 +263,13 @@ folder. ~M-h~ / ~M-l~ move into and out of the sidebar.
 
 | Key | Action | Command |
 |-----+--------+---------|
-| ~SPC o -~ | dirvish | ~dirvish~ |
 | ~SPC o b~ | default browser | ~browse-url-of-file~ |
 | ~SPC o f~ | new frame | ~make-frame~ |
 | ~SPC o F~ | select frame | ~select-frame-by-name~ |
-| ~SPC o m~ | markdown preview | ~my-markdown-preview~ |
+| ~SPC o m~ | markdown preview | ~nixmacs-markdown-preview~ |
 | ~SPC o p~ | project sidebar | ~dirvish-side~ |
-| ~SPC o t~ | toggle terminal popup | ~my-terminal-toggle~ |
-| ~SPC o T~ | terminal here | ~my-terminal-here~ |
+| ~SPC o t~ | toggle terminal popup | ~nixmacs-terminal-toggle~ |
+| ~SPC o T~ | terminal here | ~nixmacs-terminal-here~ |
 
 ** ~SPC p~ project
 
@@ -277,26 +283,26 @@ folder. ~M-h~ / ~M-l~ move into and out of the sidebar.
 | ~SPC p C~ | recompile project | ~project-recompile~ |
 | ~SPC p d~ | forget project | ~project-forget-project~ |
 | ~SPC p D~ | discover projects | ~project-remember-projects-under~ |
-| ~SPC p e~ | edit .dir-locals | ~my-project-edit-dir-locals~ |
+| ~SPC p e~ | edit .dir-locals | ~nixmacs-project-edit-dir-locals~ |
 | ~SPC p f~ | find file in project | ~project-find-file~ |
-| ~SPC p F~ | find file in other project | ~my-project-find-file-other~ |
+| ~SPC p F~ | find file in other project | ~nixmacs-project-find-file-other~ |
 | ~SPC p k~ | kill project buffers | ~project-kill-buffers~ |
-| ~SPC p n~ | set up nix shell | ~my-project-environment-setup~ |
+| ~SPC p n~ | set up nix shell | ~nixmacs-project-environment-setup~ |
 | ~SPC p o~ | find sibling file | ~find-sibling-file~ |
 | ~SPC p p~ | switch project | ~project-switch-project~ |
-| ~SPC p s~ | save project buffers | ~my-project-save-buffers~ |
+| ~SPC p s~ | save project buffers | ~nixmacs-project-save-buffers~ |
 
 ** ~SPC q~ quit
 
 | Key | Action | Command |
 |-----+--------+---------|
-| ~SPC q d~ | restart daemon | ~my-restart-daemon~ |
+| ~SPC q d~ | restart daemon | ~nixmacs-restart-daemon~ |
 | ~SPC q f~ | delete frame | ~delete-frame~ |
 | ~SPC q K~ | kill emacs | ~save-buffers-kill-emacs~ |
 | ~SPC q l~ | restore session | ~desktop-read~ |
 | ~SPC q L~ | restore session from | ~desktop-change-dir~ |
 | ~SPC q q~ | quit emacs | ~save-buffers-kill-terminal~ |
-| ~SPC q Q~ | quit without saving | ~my-quit-without-saving~ |
+| ~SPC q Q~ | quit without saving | ~nixmacs-quit-without-saving~ |
 | ~SPC q r~ | restart emacs | ~restart-emacs~ |
 | ~SPC q s~ | save session | ~desktop-save-in-desktop-dir~ |
 | ~SPC q S~ | save session to | ~desktop-save~ |
@@ -306,9 +312,9 @@ folder. ~M-h~ / ~M-l~ move into and out of the sidebar.
 | Key | Action | Command |
 |-----+--------+---------|
 | ~SPC s B~ | search open buffers | ~consult-line-multi~ |
-| ~SPC s d~ | search directory | ~my-search-directory~ |
-| ~SPC s D~ | search other directory | ~my-search-other-directory~ |
-| ~SPC s e~ | search config | ~my-search-config~ |
+| ~SPC s d~ | search directory | ~nixmacs-search-directory~ |
+| ~SPC s D~ | search other directory | ~nixmacs-search-other-directory~ |
+| ~SPC s e~ | search config | ~nixmacs-search-config~ |
 | ~SPC s i~ | jump to symbol | ~consult-imenu~ |
 | ~SPC s I~ | jump to symbol in buffers | ~consult-imenu-multi~ |
 | ~SPC s j~ | jump list | ~consult-global-mark~ |
@@ -316,10 +322,10 @@ folder. ~M-h~ / ~M-l~ move into and out of the sidebar.
 | ~SPC s m~ | jump to bookmark | ~consult-bookmark~ |
 | ~SPC s o~ | look up online | ~eww-search-words~ |
 | ~SPC s p~ | search project | ~consult-ripgrep~ |
-| ~SPC s P~ | search other project | ~my-search-other-project~ |
+| ~SPC s P~ | search other project | ~nixmacs-search-other-project~ |
 | ~SPC s r~ | jump to mark | ~consult-mark~ |
 | ~SPC s s~ | search buffer | ~consult-line~ |
-| ~SPC s S~ | search buffer for symbol | ~my-search-buffer-symbol~ |
+| ~SPC s S~ | search buffer for symbol | ~nixmacs-search-buffer-symbol~ |
 | ~SPC s t~ | dictionary | ~dictionary-lookup-definition~ |
 
 ** ~SPC t~ toggle
@@ -393,44 +399,29 @@ folder. ~M-h~ / ~M-l~ move into and out of the sidebar.
 
 ** ~SPC w~ window
 
+Panes tile dwm style, like Edwina: master on the left (on top in frames under
+132 columns), the stack beside it. New buffers open in a pane right after the
+one you are in. The Meta pane keys are listed under Everywhere.
+
 | Key | Action | Command |
 |-----+--------+---------|
-| ~SPC w +~ | taller | ~enlarge-window~ |
-| ~SPC w -~ | shorter | ~shrink-window~ |
-| ~SPC w <~ | narrower | ~shrink-window-horizontally~ |
-| ~SPC w =~ | balance | ~balance-windows~ |
-| ~SPC w >~ | wider | ~enlarge-window-horizontally~ |
-| ~SPC w _~ | full height | ~my-window-full-height~ |
-| ~SPC w b~ | bottom-right window | ~my-window-bottom-right~ |
+| ~SPC w RET~ | zoom to master | ~nixmacs-zoom~ |
+| ~SPC w b~ | bottom-right window | ~nixmacs-window-bottom-right~ |
 | ~SPC w d~ | close window | ~delete-window~ |
 | ~SPC w f~ | file at point in window | ~ffap-other-window~ |
 | ~SPC w h~ | window left | ~windmove-left~ |
-| ~SPC w H~ | move window left | ~windmove-swap-states-left~ |
 | ~SPC w j~ | window below | ~windmove-down~ |
-| ~SPC w J~ | move window down | ~windmove-swap-states-down~ |
 | ~SPC w k~ | window above | ~windmove-up~ |
-| ~SPC w K~ | move window up | ~windmove-swap-states-up~ |
 | ~SPC w l~ | window right | ~windmove-right~ |
-| ~SPC w L~ | move window right | ~windmove-swap-states-right~ |
-| ~SPC w n~ | new window | ~my-window-new~ |
-| ~SPC w o~ | maximize | ~maximize-window~ |
-| ~SPC w p~ | last window | ~my-window-last-used~ |
-| ~SPC w q~ | quit window | ~my-window-quit~ |
-| ~SPC w r~ | rotate | ~rotate-windows~ |
-| ~SPC w R~ | rotate back | ~rotate-windows-back~ |
-| ~SPC w s~ | split below | ~split-window-below~ |
-| ~SPC w S~ | split below and follow | ~my-window-split-below-follow~ |
-| ~SPC w t~ | top-left window | ~my-window-top-left~ |
+| ~SPC w n~ | new pane | ~nixmacs-new-pane~ |
+| ~SPC w p~ | last window | ~nixmacs-window-last-used~ |
+| ~SPC w q~ | quit window | ~nixmacs-window-quit~ |
+| ~SPC w t~ | top-left window | ~nixmacs-window-top-left~ |
 | ~SPC w T~ | tear off window | ~tear-off-window~ |
 | ~SPC w u~ | undo layout | ~winner-undo~ |
 | ~SPC w U~ | redo layout | ~winner-redo~ |
-| ~SPC w v~ | split right | ~split-window-right~ |
-| ~SPC w V~ | split right and follow | ~my-window-split-right-follow~ |
 | ~SPC w w~ | ace window | ~ace-window~ |
-| ~SPC w W~ | previous window | ~my-window-previous~ |
-| ~SPC w x~ | swap with next | ~my-window-exchange~ |
-| ~SPC w z~ | zoom layout | ~zoom-mode~ |
-| SPC w \vert{} | full width | ~my-window-full-width~ |
+| ~SPC w W~ | previous window | ~nixmacs-window-previous~ |
 
 ** ~SPC z~ folds and zoom
 

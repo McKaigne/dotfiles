@@ -103,13 +103,13 @@
 (use-package treesit-fold
   :commands (treesit-fold-toggle treesit-fold-open-all treesit-fold-close-all))
 
-(defun my-treesit-fold-maybe ()
+(defun nixmacs-treesit-fold-maybe ()
   "Turn on folding when this buffer is parsed by tree-sitter."
   (when (and (treesit-available-p) (treesit-parser-list))
     (treesit-fold-mode 1)))
 
-(add-hook 'prog-mode-hook #'my-treesit-fold-maybe 90)
-(add-hook 'conf-mode-hook #'my-treesit-fold-maybe 90)
+(add-hook 'prog-mode-hook #'nixmacs-treesit-fold-maybe 90)
+(add-hook 'conf-mode-hook #'nixmacs-treesit-fold-maybe 90)
 
 (use-package jinx
   :hook ((text-mode prog-mode conf-mode) . jinx-mode)
@@ -122,11 +122,11 @@
   (magit-display-buffer-function #'magit-display-buffer-same-window-except-diff-v1)
   (magit-diff-refine-hunk t))
 
-(defun my-diff-hl-bitmap (_type _pos)
+(defun nixmacs-diff-hl-bitmap (_type _pos)
   "Draw every change as the same solid bar."
-  'my-diff-hl-bar)
+  'nixmacs-diff-hl-bar)
 
-(defun my-diff-hl-colors (&rest _)
+(defun nixmacs-diff-hl-colors (&rest _)
   "Color the git gutter bars from the theme, on the fringe's background."
   (pcase-dolist (`(,face . ,source) '((diff-hl-insert . success)
                                       (diff-hl-change . warning)
@@ -142,12 +142,12 @@
          (magit-post-refresh . diff-hl-magit-post-refresh)
          (dired-mode . diff-hl-dired-mode))
   :custom
-  (diff-hl-fringe-bmp-function #'my-diff-hl-bitmap)
+  (diff-hl-fringe-bmp-function #'nixmacs-diff-hl-bitmap)
   (diff-hl-draw-borders nil)
   :config
-  (define-fringe-bitmap 'my-diff-hl-bar [7] nil 3 '(center repeated))
-  (my-diff-hl-colors)
-  (add-hook 'enable-theme-functions #'my-diff-hl-colors 90)
+  (define-fringe-bitmap 'nixmacs-diff-hl-bar [7] nil 3 '(center repeated))
+  (nixmacs-diff-hl-colors)
+  (add-hook 'enable-theme-functions #'nixmacs-diff-hl-colors 90)
   (require 'diff-hl-flydiff)
   (global-diff-hl-mode 1)
   (diff-hl-flydiff-mode 1))
@@ -162,7 +162,7 @@
   :config
   (envrc-global-mode 1))
 
-(defun my-project-environment-setup ()
+(defun nixmacs-project-environment-setup ()
   "Create and allow a direnv file that loads the project's flake shell."
   (interactive)
   (let* ((project (or (project-current) (user-error "Not in a project")))

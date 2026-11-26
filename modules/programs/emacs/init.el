@@ -1,8 +1,8 @@
 ;;; init.el -*- lexical-binding: t -*-
 
-(defvar my-config-directory
+(defvar nixmacs-config-directory
   (file-name-directory (or load-file-name user-init-file)))
-(load (expand-file-name "paths.el" my-config-directory) nil t)
+(load (expand-file-name "paths.el" nixmacs-config-directory) nil t)
 
-(dolist (file '(core ui editing completion dev notes tools dashboard keys))
-  (load (expand-file-name (format "lisp/%s.el" file) my-config-directory) nil t))
+(dolist (file '(core ui windows editing completion dev notes tools dashboard keys))
+  (load (expand-file-name (format "lisp/%s.el" file) nixmacs-config-directory) nil t))

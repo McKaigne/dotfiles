@@ -42,8 +42,8 @@
    '("A" . meow-open-below)
    '("b" . meow-back-word)
    '("B" . meow-back-symbol)
-   '("c" . my-change)
-   '("d" . my-delete)
+   '("c" . nixmacs-change)
+   '("d" . nixmacs-delete)
    '("D" . meow-backward-delete)
    '("e" . meow-next-word)
    '("E" . meow-next-symbol)
@@ -84,7 +84,7 @@
    '("'" . repeat)
    '("<escape>" . ignore)))
 
-(defun my-delete ()
+(defun nixmacs-delete ()
   "Delete the selection and save it to the kill ring, as in Helix."
   (interactive)
   (if (region-active-p)
@@ -92,7 +92,7 @@
         (kill-region (region-beginning) (region-end)))
     (meow-delete)))
 
-(defun my-change ()
+(defun nixmacs-change ()
   "Change the selection and save it to the kill ring, as in Helix."
   (interactive)
   (if (region-active-p) (meow-change-save) (meow-change)))
@@ -130,23 +130,23 @@
                '((nil . "\\`meow-digit-argument\\'") . t))
   (which-key-mode 1))
 
-(defun my-escape-quits-read (char)
+(defun nixmacs-escape-quits-read (char)
   "Quit when CHAR, a key just read, is Esc; otherwise return CHAR."
   (if (memq char '(?\e escape)) (signal 'quit nil) char))
 
-(advice-add 'read-char-exclusive :filter-return #'my-escape-quits-read)
-(advice-add 'read-char :filter-return #'my-escape-quits-read)
+(advice-add 'read-char-exclusive :filter-return #'nixmacs-escape-quits-read)
+(advice-add 'read-char :filter-return #'nixmacs-escape-quits-read)
 
-(defun my-escape-quits-events (fn &rest args)
+(defun nixmacs-escape-quits-events (fn &rest args)
   "Call FN with ARGS, quitting when Esc is read as an event."
-  (advice-add 'read-event :filter-return #'my-escape-quits-read)
+  (advice-add 'read-event :filter-return #'nixmacs-escape-quits-read)
   (unwind-protect (apply fn args)
-    (advice-remove 'read-event #'my-escape-quits-read)))
+    (advice-remove 'read-event #'nixmacs-escape-quits-read)))
 
 (with-eval-after-load 'ox
-  (advice-add 'org-export--dispatch-action :around #'my-escape-quits-events))
+  (advice-add 'org-export--dispatch-action :around #'nixmacs-escape-quits-events))
 
-(defun my-escape-insert ()
+(defun nixmacs-escape-insert ()
   "Close the completion popup and return to normal state."
   (interactive)
   (when (bound-and-true-p completion-in-region-mode)
@@ -154,7 +154,7 @@
   (when (meow-insert-mode-p)
     (meow-insert-exit)))
 
-(defun my-escape-normal ()
+(defun nixmacs-escape-normal ()
   "Cancel the selection, or close the documentation popup."
   (interactive)
   (cond ((region-active-p) (meow-cancel-selection))
@@ -163,19 +163,19 @@
               (frame-visible-p eldoc-box--frame))
          (eldoc-box-quit-frame))))
 
-(defun my-escape-motion ()
+(defun nixmacs-escape-motion ()
   "Leave the tool buffer shown in this window."
   (interactive)
-  (cond ((derived-mode-p 'dashboard-mode) (my-quit-dashboard))
+  (cond ((derived-mode-p 'dashboard-mode) (nixmacs-quit-dashboard))
         ((and (derived-mode-p 'dired-mode) (fboundp 'dirvish-curr) (dirvish-curr))
          (dirvish-quit))
         ((derived-mode-p 'org-agenda-mode) (org-agenda-quit))
         ((region-active-p) (meow-cancel-selection))
         (t (quit-window))))
 
-(keymap-set meow-insert-state-keymap "<escape>" #'my-escape-insert)
-(keymap-set meow-normal-state-keymap "<escape>" #'my-escape-normal)
-(keymap-set meow-motion-state-keymap "<escape>" #'my-escape-motion)
+(keymap-set meow-insert-state-keymap "<escape>" #'nixmacs-escape-insert)
+(keymap-set meow-normal-state-keymap "<escape>" #'nixmacs-escape-normal)
+(keymap-set meow-motion-state-keymap "<escape>" #'nixmacs-escape-motion)
 
 (define-key function-key-map [escape] nil)
 (keymap-global-set "<escape>" #'keyboard-quit)
