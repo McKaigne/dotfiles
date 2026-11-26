@@ -123,12 +123,32 @@
   (magit-display-buffer-function #'magit-display-buffer-same-window-except-diff-v1)
   (magit-diff-refine-hunk t))
 
+(defun my-diff-hl-bitmap (_type _pos)
+  "Draw every change as the same solid bar."
+  'my-diff-hl-bar)
+
+(defun my-diff-hl-colors (&rest _)
+  "Color the git gutter bars from the theme, on the fringe's background."
+  (pcase-dolist (`(,face . ,source) '((diff-hl-insert . success)
+                                      (diff-hl-change . warning)
+                                      (diff-hl-delete . error)))
+    (set-face-attribute face nil
+                        :foreground (face-foreground source nil t)
+                        :background 'unspecified
+                        :inherit nil)))
+
 (use-package diff-hl
   :demand t
   :hook ((magit-pre-refresh . diff-hl-magit-pre-refresh)
          (magit-post-refresh . diff-hl-magit-post-refresh)
          (dired-mode . diff-hl-dired-mode))
+  :custom
+  (diff-hl-fringe-bmp-function #'my-diff-hl-bitmap)
+  (diff-hl-draw-borders nil)
   :config
+  (define-fringe-bitmap 'my-diff-hl-bar [7] nil 3 '(center repeated))
+  (my-diff-hl-colors)
+  (add-hook 'enable-theme-functions #'my-diff-hl-colors 90)
   (require 'diff-hl-flydiff)
   (global-diff-hl-mode 1)
   (diff-hl-flydiff-mode 1))
