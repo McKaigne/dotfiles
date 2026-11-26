@@ -120,6 +120,92 @@
   (define-advice posframe--create-posframe (:after (&rest _) solid)
     (set-frame-parameter posframe--frame 'alpha-background 100)))
 
+(use-package knockknock
+  :demand t
+  :custom
+  (knockknock-poshandler #'posframe-poshandler-frame-top-right-corner)
+  (knockknock-use-svg-layout t)
+  (knockknock-border-width 0)
+  (knockknock-lighten-background-percent 6)
+  (knockknock-default-duration 3))
+
+(defun my-notify (title message icon &optional duration)
+  "Show a notification with TITLE, MESSAGE and ICON for DURATION seconds."
+  (knockknock-notify :title title :message message :icon icon
+                     :duration (or duration knockknock-default-duration)))
+
+(defun my-notify-compile (buffer status)
+  "Report how the compilation in BUFFER ended, from STATUS."
+  (let ((name (buffer-name buffer))
+        (status (string-trim status)))
+    (if (string-prefix-p "finished" status)
+        (my-notify "Compilation finished" name "nf-cod-check")
+      (my-notify "Compilation failed" (format "%s: %s" name status)
+                 "nf-cod-error" 5))))
+
+(add-hook 'compilation-finish-functions #'my-notify-compile)
+
+(defun my-notify-save ()
+  "Report that this buffer was saved."
+  (my-notify "Saved" (buffer-name) "nf-fa-save"))
+
+(setq save-silently t)
+(add-hook 'after-save-hook #'my-notify-save)
+
+(defun my-notify-magit (arg &rest _)
+  "Report how the git push, pull or fetch process ARG ended."
+  (when-let* (((processp arg))
+              (command (seq-find (lambda (word) (member word '("push" "pull" "fetch")))
+                                 (process-command arg))))
+    (if (zerop (process-exit-status arg))
+        (my-notify (format "Git %s finished" command)
+                   (abbreviate-file-name (or (process-get arg 'default-dir) ""))
+                   "nf-dev-git")
+      (my-notify (format "Git %s failed" command)
+                 "See the process buffer ($) for details" "nf-dev-git" 5))))
+
+(with-eval-after-load 'magit-process
+  (advice-add 'magit-process-finish :before #'my-notify-magit))
+
+(defun my-notify-eglot (server)
+  "Report that SERVER is connected."
+  (my-notify (format "%s ready" (or (plist-get (eglot--server-info server) :name)
+                                    "Language server"))
+             (eglot-project-nickname server) "nf-cod-server"))
+
+(add-hook 'eglot-connect-hook #'my-notify-eglot)
+
+(defun my-notify-formatter (&rest args)
+  "Report a formatter failure described by ARGS."
+  (when (plist-get args :error)
+    (my-notify "Formatting failed"
+               (format "%s on %s" (plist-get args :formatter) (buffer-name))
+               "nf-cod-warning" 5)))
+
+(add-hook 'apheleia-formatter-exited-hook #'my-notify-formatter)
+
+(defun my-notify-timer ()
+  "Report that the Org timer is done."
+  (my-notify "Timer done" "The Org countdown has finished" "nf-md-timer" 5))
+
+(defun my-notify-clock-in ()
+  "Report the task just clocked in."
+  (my-notify "Clocked in" org-clock-heading "nf-md-clock"))
+
+(defun my-notify-clock-out ()
+  "Report the task just clocked out and the time it took."
+  (my-notify "Clocked out"
+             (format "%s (%s)" org-clock-heading
+                     (org-duration-from-minutes
+                      (floor (float-time (time-subtract org-clock-out-time
+                                                        org-clock-start-time))
+                             60)))
+             "nf-md-clock"))
+
+(add-hook 'org-timer-done-hook #'my-notify-timer)
+(add-hook 'org-clock-in-hook #'my-notify-clock-in)
+(add-hook 'org-clock-out-hook #'my-notify-clock-out)
+
 (defun my-delete-focused-child-frame (hide &optional frame &rest args)
   "Call HIDE on FRAME with ARGS, or delete FRAME when it is a focused child."
   (let ((frame (or frame (selected-frame))))
@@ -174,6 +260,20 @@
                      consult-imenu consult-ripgrep))
     (add-to-list 'pulsar-pulse-functions command))
   (pulsar-global-mode 1))
+
+(defun my-zoom-ignore-p ()
+  "Leave side windows and dedicated windows at their own size."
+  (or (window-parameter nil 'window-side)
+      (window-dedicated-p)))
+
+(use-package zoom
+  :demand t
+  :custom
+  (zoom-size '(0.618 . 0.618))
+  (zoom-ignore-predicates '(my-zoom-ignore-p))
+  (zoom-ignored-buffer-name-regexps '("\\`\\*which-key\\*" "\\`\\*transient\\*"))
+  :config
+  (zoom-mode 1))
 
 (use-package ligature
   :demand t

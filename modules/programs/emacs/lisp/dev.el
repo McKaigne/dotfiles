@@ -78,6 +78,25 @@
   :custom
   (flymake-fringe-indicator-position 'right-fringe))
 
+(use-package flyover
+  :hook (flymake-mode . flyover-mode)
+  :custom
+  (flyover-checkers '(flymake))
+  (flyover-levels '(error warning info))
+  (flyover-display-mode 'always)
+  (flyover-line-position-offset 1)
+  (flyover-show-at-eol nil)
+  (flyover-show-virtual-line t)
+  (flyover-virtual-line-type 'straight-arrow)
+  (flyover-border-style 'none)
+  (flyover-show-icon t)
+  (flyover-use-theme-colors t)
+  (flyover-hide-checker-name nil)
+  (flyover-show-error-id t)
+  (flyover-wrap-messages t)
+  (flyover-max-line-length 80)
+  (flyover-hide-during-completion t))
+
 (use-package apheleia
   :demand t
   :config

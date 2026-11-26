@@ -18,10 +18,16 @@
   (org-todo-keywords '((sequence "TODO(t)" "NEXT(n)" "WAIT(w@)" "|" "DONE(d!)" "CANCELLED(c@)")))
   (org-log-done 'time)
   (org-log-into-drawer t)
+  (org-auto-align-tags nil)
+  (org-tags-column 0)
+  (org-agenda-tags-column 0)
+  (org-catch-invisible-edits 'show-and-error)
+  (org-special-ctrl-a/e t)
+  (org-insert-heading-respect-content t)
   (org-hide-emphasis-markers t)
   (org-pretty-entities t)
-  (org-startup-indented t)
-  (org-ellipsis " ⌄")
+  (org-startup-indented nil)
+  (org-ellipsis "…")
   (org-capture-templates
    `(("t" "Todo" entry
       (file+headline ,(expand-file-name "tasks.org" org-directory) "Inbox")
@@ -41,7 +47,10 @@
                                  (file-truename org-directory)))))
 
 (use-package org-modern
-  :hook (org-mode . org-modern-mode))
+  :after org
+  :demand t
+  :config
+  (global-org-modern-mode 1))
 
 (use-package org-appear
   :hook (org-mode . org-appear-mode)

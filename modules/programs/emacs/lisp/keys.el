@@ -92,7 +92,7 @@
   "Copy the whole buffer."
   (interactive)
   (kill-new (buffer-substring-no-properties (point-min) (point-max)))
-  (message "Copied the buffer"))
+  (my-notify "Copied" "The whole buffer" "nf-cod-copy"))
 
 (defun my-sudo-file-name (file)
   "Return FILE opened through sudo."
@@ -161,7 +161,7 @@
   (interactive)
   (let ((path (or buffer-file-name default-directory)))
     (kill-new (abbreviate-file-name path))
-    (message "Copied %s" (abbreviate-file-name path))))
+    (my-notify "Copied" (abbreviate-file-name path) "nf-cod-copy")))
 
 (defun my-copy-project-file-path ()
   "Copy this buffer's file path relative to the project."
@@ -170,7 +170,7 @@
          (project (project-current))
          (relative (if project (file-relative-name path (project-root project)) path)))
     (kill-new relative)
-    (message "Copied %s" relative)))
+    (my-notify "Copied" relative "nf-cod-copy")))
 
 (defun my-insert-file-name ()
   "Insert this buffer's file name."
@@ -482,6 +482,7 @@
   ("i" "indent guides" indent-bars-mode)
   ("I" "indent with tabs" indent-tabs-mode)
   ("l" "line numbers" display-line-numbers-mode)
+  ("o" "error overlays" flyover-mode)
   ("r" "read-only" read-only-mode)
   ("s" "spell checker" jinx-mode)
   ("v" "visible mode" visible-mode)
@@ -560,7 +561,8 @@
   ("V" "split right and follow" my-window-split-right-follow)
   ("w" "ace window" ace-window)
   ("W" "previous window" my-window-previous)
-  ("x" "swap with next" my-window-exchange))
+  ("x" "swap with next" my-window-exchange)
+  ("z" "zoom layout" zoom-mode))
 
 (my-define-menu my-fold-map
   ("z" "toggle fold" treesit-fold-toggle)

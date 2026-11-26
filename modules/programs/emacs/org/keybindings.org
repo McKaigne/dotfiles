@@ -335,6 +335,7 @@ folder. ~M-h~ / ~M-l~ move into and out of the sidebar.
 | ~SPC t i~ | indent guides | ~indent-bars-mode~ |
 | ~SPC t I~ | indent with tabs | ~indent-tabs-mode~ |
 | ~SPC t l~ | line numbers | ~display-line-numbers-mode~ |
+| ~SPC t o~ | error overlays | ~flyover-mode~ |
 | ~SPC t r~ | read-only | ~read-only-mode~ |
 | ~SPC t s~ | spell checker | ~jinx-mode~ |
 | ~SPC t v~ | visible mode | ~visible-mode~ |
@@ -428,6 +429,7 @@ folder. ~M-h~ / ~M-l~ move into and out of the sidebar.
 | ~SPC w w~ | ace window | ~ace-window~ |
 | ~SPC w W~ | previous window | ~my-window-previous~ |
 | ~SPC w x~ | swap with next | ~my-window-exchange~ |
+| ~SPC w z~ | zoom layout | ~zoom-mode~ |
 | SPC w \vert{} | full width | ~my-window-full-width~ |
 
 ** ~SPC z~ folds and zoom
