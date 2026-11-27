@@ -22,7 +22,7 @@ in {
       noctalia-plymouth
       noctalia-greeter-package
       media-tools
-      pcmanfm
+      thunar
       zathura
     ];
     # Per-host monitor layout for the active desktop.

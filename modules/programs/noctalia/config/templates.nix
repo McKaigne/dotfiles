@@ -26,20 +26,30 @@ in {
       text = builtins.readFile ../../../appearance/_gtk-glass-last.sh;
     };
 
-    # The file picker is drawn by xdg-desktop-portal-gtk, which, like any GTK
-    # app, reads gtk.css once at startup. Restart it so the next picker has
-    # the new colours; a couple of seconds later, so Noctalia's own gtk3
-    # template has written noctalia.css by then.
+    # Running GTK3 apps only re-read gtk.css when the theme setting changes,
+    # so flip it away and back. The file picker is drawn by
+    # xdg-desktop-portal-gtk, which ignores that; restart it instead. Both a
+    # couple of seconds later, so Noctalia's own gtk3 template has written
+    # noctalia.css by then.
+    gtk3Reload = pkgs.writeShellScript "gtk3-reload" ''
+      key=/org/gnome/desktop/interface/gtk-theme
+      theme="$(${pkgs.dconf}/bin/dconf read "$key")"
+      if [ -n "$theme" ]; then
+        ${pkgs.dconf}/bin/dconf write "$key" "'Adwaita'"
+        ${pkgs.coreutils}/bin/sleep 0.2
+        ${pkgs.dconf}/bin/dconf write "$key" "$theme"
+      fi
+      ${pkgs.systemd}/bin/systemctl --user try-restart xdg-desktop-portal-gtk.service || true
+    '';
+
     gtk3Changed = pkgs.writeShellScript "gtk3-theme-changed" ''
       ${glassLast}/bin/gtk-glass-last
-      ${pkgs.systemd}/bin/systemd-run --user --quiet --on-active=2 \
-        ${pkgs.systemd}/bin/systemctl --user try-restart xdg-desktop-portal-gtk.service \
-        || true
+      ${pkgs.systemd}/bin/systemd-run --user --quiet --on-active=2 ${gtk3Reload} || true
     '';
 
     # GTK glass: redefine Noctalia's surface backgrounds with alpha. Only
     # background colors change, so text, icons and selections stay solid.
-    gtkGlass = pkgs.writeText "gtk-glass.css.in" (let
+    gtkGlassCss = extra: (let
       a = toString style.opacity;
       surface = "alpha({{colors.surface.default.hex}}, ${a})";
       container = "alpha({{colors.surface_container.default.hex}}, ${a})";
@@ -53,7 +63,14 @@ in {
       @define-color dialog_bg_color ${surface};
       @define-color theme_bg_color ${surface};
       @define-color theme_base_color ${surface};
-    '');
+    ''
+    + extra);
+    gtkGlass = pkgs.writeText "gtk-glass.css.in" (gtkGlassCss "");
+
+    # Thunar draws its own background on the notebook, views and sidebar on
+    # top of the window's, and the translucent layers add up to nearly
+    # opaque; its stylesheet clears them so only the window is glass.
+    gtk3Glass = pkgs.writeText "gtk3-glass.css.in" (gtkGlassCss ("\n" + builtins.readFile ../templates/gtk3-thunar.css));
   in {
     xdg.configFile."noctalia/70-templates.toml".source =
       (pkgs.formats.toml {}).generate "70-templates.toml"
@@ -65,7 +82,7 @@ in {
             post_hook = "${pushTerminalColors}";
           };
           gtk3-glass = {
-            input_path = "${gtkGlass}";
+            input_path = "${gtk3Glass}";
             output_path = "$XDG_CONFIG_HOME/gtk-3.0/glass.css";
             post_hook = "${gtk3Changed}";
           };

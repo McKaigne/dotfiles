@@ -67,7 +67,7 @@
           "group_single_icon_per_app" = true;
           "hide_empty_workspaces" = true;
           "pinned" = [
-            "pcmanfm"
+            "thunar"
           ];
           "workspace_label_placement" = "inside";
         };

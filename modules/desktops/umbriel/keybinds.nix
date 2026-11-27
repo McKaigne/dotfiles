@@ -29,7 +29,7 @@
     browser = config.home.sessionVariables.BROWSER;
     noctalia = lib.getExe pkgs.noctalia;
     foot = "${pkgs.foot}/bin/foot";
-    pcmanfm = "${pkgs.pcmanfm}/bin/pcmanfm";
+    thunar = "${pkgs.thunar}/bin/thunar";
     # One press, one window: spawns otherwise repeat while held.
     once = action: {
       inherit action;
@@ -68,7 +68,7 @@
         "Mod+B" = spawn browser; # Browser (LibreWolf)
         "Mod+Shift+B" = spawn "helium"; # alternate Browser (Helium)
         "Mod+D" = spawn "emacs"; # Emacs (GUI frame on the daemon)
-        "Mod+E" = spawn pcmanfm; # Explorer
+        "Mod+E" = spawn thunar; # Explorer
         "Mod+M" = inFoot "btop"; # Monitor
         "Mod+P" = spawn "bitwarden"; # Passwords
 

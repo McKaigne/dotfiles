@@ -9,7 +9,7 @@
         "launcher_position" = "start";
         "pinned" = [
           "foot"
-          "pcmanfm"
+          "thunar"
         ];
         "radius" = 12;
         "reserve_space" = false;

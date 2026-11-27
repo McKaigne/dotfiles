@@ -63,6 +63,12 @@ in {
           match.app_id = ".*";
           blur = true;
         }
+        # Floating windows (dialogs, pickers, PiP) open over other windows, so
+        # the cached wallpaper blur would hide them; blur the live content.
+        {
+          match.is_floating = true;
+          blur_optimized = false;
+        }
         {
           match.is_focused = false;
           window_effect = "unfocused-darken";
