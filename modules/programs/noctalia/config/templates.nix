@@ -74,6 +74,12 @@ in {
             output_path = "$XDG_CONFIG_HOME/gtk-4.0/glass.css";
             post_hook = "${glassLast}/bin/gtk-glass-last";
           };
+          # fzf reads this file on every launch, so pickers recolour without a
+          # shell reload (FZF_DEFAULT_OPTS_FILE, set in cli.nix).
+          fzf = {
+            input_path = "${../templates/fzf}";
+            output_path = "$XDG_CONFIG_HOME/fzf/noctalia";
+          };
           zathura = {
             # Backgrounds take the shared glass opacity; pages stay solid.
             input_path = pkgs.writeText "zathura.in" (builtins.replaceStrings ["@GLASS@"] [(toString style.opacity)] (builtins.readFile ../templates/zathura));

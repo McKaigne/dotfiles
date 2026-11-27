@@ -22,7 +22,6 @@
           "community_ids" = [
             "pywalfox"
             "bat"
-            "fzf"
           ];
         };
       };

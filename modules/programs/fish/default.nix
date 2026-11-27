@@ -75,6 +75,10 @@ in {
         (builtins.readFile ./data/config.fish)
         + ''
 
+          # Noctalia's old fzf template appended its colours to a universal
+          # FZF_DEFAULT_OPTS on every theme change; fzf now reads them from a file.
+          set -qU FZF_DEFAULT_OPTS; and set -Ue FZF_DEFAULT_OPTS
+
           if status is-interactive; and test "$__nixos_tide_vars_hash" != "${tideVarsHash}"
             set -U __nixos_tide_vars_hash ${tideVarsHash}
             ${tideVarInit}

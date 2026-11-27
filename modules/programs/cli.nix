@@ -29,7 +29,27 @@ in {
     ];
   };
 
-  flake.modules.homeManager.cli = {pkgs, ...}: {
+  flake.modules.homeManager.cli = {
+    config,
+    lib,
+    pkgs,
+    ...
+  }: let
+    fzfTheme = "${config.xdg.configHome}/fzf/noctalia";
+  in {
+    # Noctalia renders the colours (noctalia/config/templates.nix).
+    home.sessionVariables.FZF_DEFAULT_OPTS_FILE = fzfTheme;
+
+    # fzf refuses to start if the options file is missing; seed it until
+    # Noctalia's first render.
+    home.activation.seedFzfTheme = lib.hm.dag.entryAfter ["writeBoundary"] ''
+      theme=${lib.escapeShellArg fzfTheme}
+      $DRY_RUN_CMD ${pkgs.coreutils}/bin/mkdir -p "$(dirname "$theme")"
+      if [ ! -f "$theme" ] && [ -z "''${DRY_RUN_CMD:-}" ]; then
+        printf -- '--color=bg:-1,preview-bg:-1,gutter:-1\n' > "$theme"
+      fi
+    '';
+
     programs = {
       zoxide = {
         enable = true;
@@ -51,6 +71,15 @@ in {
           options = ["--preview '${pkgs.eza}/bin/eza --tree --level=2 --color=always {} | head -200'" "--preview-window=right:60%:wrap"];
         };
         historyWidget.command = "";
+        defaultOptions = [
+          "--height=50%"
+          "--layout=reverse"
+          "--border=none"
+          "--info=inline"
+          "--prompt='➜ '"
+          "--pointer='▶'"
+          "--marker='✓'"
+        ];
       };
 
       carapace = {
