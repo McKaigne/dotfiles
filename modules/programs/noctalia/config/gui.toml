@@ -82,8 +82,9 @@ widget_order = [ "lockscreen-login-box@DP-1", "lockscreen-login-box@eDP-1" ]
 
 [theme]
 builtin = "Catppuccin"
-community_palette = "Zenbones"
+community_palette = "Aura"
 source = "builtin"
+wallpaper_scheme = "m3-content"
 
 [wallpaper.default]
 path = "/var/lib/wallpapers/isekaiJoucho.jpg"
@@ -110,9 +111,63 @@ path = "/var/lib/wallpapers/Pretender.(Oberon).full.3921260.png"
 theme_mode = "dark"
 
 [[wallpaper.favorite]]
-community_palette = "Zenbones"
+community_palette = "Solarized Osaka"
 palette_source = "community"
-path = "/var/lib/wallpapers/wallhaven-o5rjq9.png"
+path = "/var/lib/wallpapers/a_group_of_people_walking_in_a_field_with_a_round_object_in_the_foreground.jpg"
+theme_mode = "dark"
+
+[[wallpaper.favorite]]
+community_palette = "NaySayer"
+palette_source = "community"
+path = "/var/lib/wallpapers/a_group_of_tall_buildings_with_cartoon_characters_on_them.jpg"
+theme_mode = "dark"
+
+[[wallpaper.favorite]]
+palette_source = "wallpaper"
+path = "/var/lib/wallpapers/lady.png"
+theme_mode = "dark"
+wallpaper_scheme = "m3-content"
+
+[[wallpaper.favorite]]
+palette_source = "wallpaper"
+path = "/var/lib/wallpapers/a_sculpture_of_a_man_with_a_face_on_his_head.png"
+theme_mode = "dark"
+wallpaper_scheme = "m3-content"
+
+[[wallpaper.favorite]]
+palette_source = "wallpaper"
+path = "/var/lib/wallpapers/a_snow_covered_road_with_two_large_machines.jpg"
+theme_mode = "dark"
+wallpaper_scheme = "m3-content"
+
+[[wallpaper.favorite]]
+community_palette = "Mine"
+palette_source = "community"
+path = "/var/lib/wallpapers/a_machine_with_a_box_of_brain_inside.png"
+theme_mode = "dark"
+
+[[wallpaper.favorite]]
+community_palette = "Vesper"
+palette_source = "community"
+path = "/var/lib/wallpapers/a_cartoon_of_a_girl_with_blue_hair_and_a_skull.jpg"
+theme_mode = "dark"
+
+[[wallpaper.favorite]]
+palette_source = "wallpaper"
+path = "/var/lib/wallpapers/a_glass_with_a_clock_on_it.jpg"
+theme_mode = "dark"
+wallpaper_scheme = "m3-tonal-spot"
+
+[[wallpaper.favorite]]
+community_palette = "SeaBed"
+palette_source = "community"
+path = "/var/lib/wallpapers/a_cartoon_of_a_woman_with_flowers_in_her_hair.jpg"
+theme_mode = "dark"
+
+[[wallpaper.favorite]]
+community_palette = "Aura"
+palette_source = "community"
+path = "/var/lib/wallpapers/a_colorful_mask_on_a_black_background.jpg"
 theme_mode = "dark"
 
 [[wallpaper.favorite]]
