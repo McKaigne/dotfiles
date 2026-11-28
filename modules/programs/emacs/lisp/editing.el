@@ -106,6 +106,8 @@
   (meow-keypad-describe-delay 0.4)
   :config
   (meow-setup)
+  (setq meow--kbd-raise-sexp #'raise-sexp
+        meow--kbd-join-sexp #'ignore)
   (dolist (entry '((ghostel-mode . insert)
                    (eshell-mode . insert)
                    (dashboard-mode . motion)
