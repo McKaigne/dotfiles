@@ -101,7 +101,10 @@
   (apheleia-global-mode 1))
 
 (use-package treesit-fold
-  :commands (treesit-fold-toggle treesit-fold-open-all treesit-fold-close-all))
+  :commands (treesit-fold-toggle treesit-fold-open-all treesit-fold-close-all)
+  :config
+  (set-face-attribute 'treesit-fold-replacement-face nil :inherit 'shadow
+                      :foreground 'unspecified :box nil))
 
 (defun nixmacs-treesit-fold-maybe ()
   "Turn on folding when this buffer is parsed by tree-sitter."
@@ -111,10 +114,44 @@
 (add-hook 'prog-mode-hook #'nixmacs-treesit-fold-maybe 90)
 (add-hook 'conf-mode-hook #'nixmacs-treesit-fold-maybe 90)
 
+(use-package outline
+  :defer t
+  :custom
+  (outline-minor-mode-use-buttons 'in-margins)
+  :config
+  (define-icon outline-open-in-margins nil
+    '((symbol "▾" :face shadow) (text "v" :face shadow))
+    "Fold arrow for an open section, matching Org headings."
+    :version "31.1")
+  (define-icon outline-close-in-margins nil
+    '((symbol "▸" :face shadow) (text ">" :face shadow))
+    "Fold arrow for a closed section, matching Org headings."
+    :version "31.1"))
+
+(defun nixmacs-outline-maybe ()
+  "Show fold arrows beside the definitions this buffer can outline."
+  (when (and buffer-file-name
+             (or (bound-and-true-p treesit-outline-predicate)
+                 (derived-mode-p 'emacs-lisp-mode)))
+    (outline-minor-mode 1)))
+
+(add-hook 'prog-mode-hook #'nixmacs-outline-maybe 95)
+
+(defun nixmacs-jinx-face (&rest _)
+  "Mark misspellings with a quiet dotted underline."
+  (when-let* (((facep 'jinx-misspelled))
+              (color (face-foreground 'warning nil t))
+              ((string-match-p "\\`#[[:xdigit:]]\\{6\\}\\'" color)))
+    (set-face-attribute 'jinx-misspelled nil
+                        :underline `(:style dots :color ,color))))
+
 (use-package jinx
   :hook ((text-mode prog-mode conf-mode) . jinx-mode)
   :custom
-  (jinx-languages "en_US"))
+  (jinx-languages "en_US")
+  :config
+  (nixmacs-jinx-face)
+  (add-hook 'enable-theme-functions #'nixmacs-jinx-face 90))
 
 (use-package magit
   :commands (magit-status magit-dispatch magit-file-dispatch)
@@ -159,6 +196,8 @@
 
 (use-package envrc
   :demand t
+  :custom
+  (envrc-show-summary-in-minibuffer nil)
   :config
   (envrc-global-mode 1))
 

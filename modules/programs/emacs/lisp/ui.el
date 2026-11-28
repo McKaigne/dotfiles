@@ -140,10 +140,66 @@
       (apply hide frame args))))
 (advice-add 'make-frame-invisible :around #'nixmacs-delete-focused-child-frame)
 
+(defface nixmacs-label
+  '((t :height 0.8 :width condensed :weight semibold :slant normal
+       :inverse-video t))
+  "Base face for keyword labels, drawn like Org's todo labels.")
+
+(defface nixmacs-label-todo
+  '((t :inherit (font-lock-function-name-face nixmacs-label)))
+  "Label for work still to do.")
+
+(defface nixmacs-label-next
+  '((t :inherit (font-lock-string-face nixmacs-label)))
+  "Label for work in progress.")
+
+(defface nixmacs-label-wait
+  '((t :inherit (font-lock-keyword-face nixmacs-label)))
+  "Label for work on hold.")
+
+(defface nixmacs-label-fix
+  '((t :inherit (error nixmacs-label)))
+  "Label for something broken.")
+
+(defface nixmacs-label-hack
+  '((t :inherit (warning nixmacs-label)))
+  "Label for a workaround.")
+
+(defface nixmacs-label-note
+  '((t :inherit (shadow nixmacs-label)))
+  "Label for a remark or finished work.")
+
 (use-package hl-todo
   :demand t
+  :custom
+  (hl-todo-keyword-faces
+   '(("TODO" . nixmacs-label-todo)
+     ("NEXT" . nixmacs-label-next)
+     ("PROG" . nixmacs-label-next)
+     ("WIP" . nixmacs-label-next)
+     ("HOLD" . nixmacs-label-wait)
+     ("WAIT" . nixmacs-label-wait)
+     ("MAYBE" . nixmacs-label-wait)
+     ("TEMP" . nixmacs-label-wait)
+     ("FIXME" . nixmacs-label-fix)
+     ("BUG" . nixmacs-label-fix)
+     ("FAIL" . nixmacs-label-fix)
+     ("DEBUG" . nixmacs-label-fix)
+     ("DONT" . nixmacs-label-fix)
+     ("XXXX*" . nixmacs-label-fix)
+     ("HACK" . nixmacs-label-hack)
+     ("KLUDGE" . nixmacs-label-hack)
+     ("NOTE" . nixmacs-label-note)
+     ("OKAY" . nixmacs-label-note)
+     ("DONE" . nixmacs-label-note)))
   :config
   (global-hl-todo-mode 1))
+
+(unless standard-display-table
+  (setq standard-display-table (make-display-table)))
+(set-display-table-slot standard-display-table 'selective-display
+                        (vconcat (mapcar (lambda (char) (make-glyph-code char 'shadow))
+                                         " …")))
 
 (use-package rainbow-delimiters
   :hook (prog-mode . rainbow-delimiters-mode))
@@ -153,9 +209,10 @@
   :custom
   (indent-bars-treesit-support t)
   (indent-bars-no-descend-string t)
+  (indent-bars-display-on-blank-lines nil)
   (indent-bars-width-frac 0.15)
-  (indent-bars-color '(highlight :face-bg t :blend 0.3))
-  (indent-bars-highlight-current-depth '(:blend 0.6)))
+  (indent-bars-color '(shadow :face-bg nil :blend 0.4))
+  (indent-bars-highlight-current-depth '(:face font-lock-function-name-face :blend 0.45)))
 
 (use-package breadcrumb
   :hook (prog-mode . breadcrumb-local-mode))

@@ -451,6 +451,7 @@
   ("I" "indent with tabs" indent-tabs-mode)
   ("l" "line numbers" display-line-numbers-mode)
   ("o" "error overlays" flyover-mode)
+  ("p" "org property drawers" org-tidy-mode)
   ("r" "read-only" read-only-mode)
   ("s" "spell checker" jinx-mode)
   ("v" "visible mode" visible-mode)

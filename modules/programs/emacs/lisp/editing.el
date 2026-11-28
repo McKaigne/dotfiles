@@ -3,6 +3,20 @@
 (setq display-line-numbers-type 'relative)
 (add-hook 'prog-mode-hook #'display-line-numbers-mode)
 
+(defun nixmacs-detect-indent-tabs ()
+  "Indent with tabs when most indented lines in the buffer already do."
+  (save-excursion
+    (goto-char (point-min))
+    (let ((tabs 0) (spaces 0))
+      (while (and (< (+ tabs spaces) 200)
+                  (re-search-forward "^\\(?:\\(\t\\)\\|  \\)" nil t))
+        (if (match-beginning 1) (setq tabs (1+ tabs)) (setq spaces (1+ spaces))))
+      (when (> tabs spaces)
+        (setq-local indent-tabs-mode t)))))
+
+(add-hook 'prog-mode-hook #'nixmacs-detect-indent-tabs -50)
+(add-hook 'conf-mode-hook #'nixmacs-detect-indent-tabs -50)
+
 (defun meow-setup ()
   "Meow's QWERTY layout, from its documentation."
   (setq meow-cheatsheet-layout meow-cheatsheet-layout-qwerty)

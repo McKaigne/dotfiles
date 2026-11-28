@@ -342,6 +342,7 @@ Escape to the program. ~C-.~ and the pane keys (~M-j~, ~M-k~, ~M-RET~ …) stay 
 | ~SPC t I~ | indent with tabs | ~indent-tabs-mode~ |
 | ~SPC t l~ | line numbers | ~display-line-numbers-mode~ |
 | ~SPC t o~ | error overlays | ~flyover-mode~ |
+| ~SPC t p~ | org property drawers | ~org-tidy-mode~ |
 | ~SPC t r~ | read-only | ~read-only-mode~ |
 | ~SPC t s~ | spell checker | ~jinx-mode~ |
 | ~SPC t v~ | visible mode | ~visible-mode~ |

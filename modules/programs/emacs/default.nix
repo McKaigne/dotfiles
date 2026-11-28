@@ -164,6 +164,7 @@
           org
           org-modern
           org-appear
+          org-tidy
           org-roam
           consult-org-roam
           org-super-agenda
