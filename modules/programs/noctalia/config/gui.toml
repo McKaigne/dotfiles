@@ -82,21 +82,21 @@ widget_order = [ "lockscreen-login-box@DP-1", "lockscreen-login-box@eDP-1" ]
 
 [theme]
 builtin = "Catppuccin"
-community_palette = "Vesper"
+community_palette = "Solarized Osaka"
 source = "community"
-wallpaper_scheme = "m3-tonal-spot"
+wallpaper_scheme = "m3-content"
 
 [wallpaper.default]
-path = "/var/lib/wallpapers/a_cartoon_of_a_girl_with_blue_hair_and_a_skull.jpg"
+path = "/var/lib/wallpapers/a_red_sun_over_mountains.jpg"
 
 [wallpaper.last]
-path = "/var/lib/wallpapers/a_cartoon_of_a_girl_with_blue_hair_and_a_skull.jpg"
+path = "/var/lib/wallpapers/a_red_sun_over_mountains.jpg"
 
 [wallpaper.monitors.DP-1]
-path = "/var/lib/wallpapers/a_cartoon_of_a_girl_with_blue_hair_and_a_skull.jpg"
+path = "/var/lib/wallpapers/a_red_sun_over_mountains.jpg"
 
 [wallpaper.monitors.eDP-1]
-path = "/var/lib/wallpapers/a_cartoon_of_a_girl_with_blue_hair_and_a_skull.jpg"
+path = "/var/lib/wallpapers/a_red_sun_over_mountains.jpg"
 
 [[wallpaper.favorite]]
 community_palette = "Occult Umbral"
@@ -174,4 +174,10 @@ theme_mode = "dark"
 builtin_palette = "Catppuccin"
 palette_source = "builtin"
 path = "/var/lib/wallpapers/isekaiJoucho.jpg"
+theme_mode = "dark"
+
+[[wallpaper.favorite]]
+community_palette = "Solarized Osaka"
+palette_source = "community"
+path = "/var/lib/wallpapers/a_red_sun_over_mountains.jpg"
 theme_mode = "dark"
